@@ -1,7 +1,9 @@
 // const admin = require('./admin')
-const { location } = require('./web')
+const router = require('express').Router()
+const web = require('./web')
+// const admin = require('./admin')
 
-module.exports={
-    // admin,
-    location
-}
+router.use('/api', web)
+// router.use('/api', admin)
+
+module.exports = router

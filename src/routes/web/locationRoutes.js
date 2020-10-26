@@ -4,5 +4,9 @@ const { Router } = express;
 const router = Router();
 
 router.get("/states", location.getAllStates);
+router.post("/states", location.createState)
+
+router.get("/countries", location.getAllCountries)
+router.post("/countries", location.createCountry)
 
 module.exports = router;

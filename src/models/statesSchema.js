@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const { Schema, model, Types } = mongoose
-const Countries = require('./countriesSchema')
+const Country = require('./countriesSchema')
 const { ObjectId } = Types
 
 const statesSchema = new Schema({
@@ -11,7 +11,7 @@ const statesSchema = new Schema({
     },
     countryId: {
         type: ObjectId,
-        ref: Countries,
+        ref: Country,
         required: true
     },
     status: {

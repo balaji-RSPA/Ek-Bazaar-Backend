@@ -16,7 +16,7 @@ require('./config/db').dbConnection();
 const app = express();
 const server = require('http').Server(app);
 
-const router = require('./src/routes/web/locationRoutes');
+const router = require('./src/routes');
 const models = require('./src/models')
 // const States = models.States
 // const Countries = models.Countries

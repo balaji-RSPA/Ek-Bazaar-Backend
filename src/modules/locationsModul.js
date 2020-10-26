@@ -1,16 +1,47 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const { States, Countries } = require('../models')
+const { States, Countries } = require("../models");
+// const States = require("../models/statesSchema");
 
-module.exports.getAllStates = () =>  new Promise ((resolve, reject) => {
+module.exports.getAllStates = () =>
+  new Promise((resolve, reject) => {
+    States.find({})
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
 
-    States.find({}).then((doc) => {
+module.exports.getAllCountries = () =>
+  new Promise((resolve, reject) => {
+    Countries.find({})
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
 
-        resolve(doc)
+module.exports.addState = (newData) =>
+  new Promise((resolve, reject) => {
+    States.create(newData)
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error.message));
+  });
 
-    }).catch(error => {
-
-        reject(error)
-
-    })
-})
+module.exports.addCountry = (newData) =>
+  new Promise((resolve, reject) => {
+    Countries.create(newData)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
