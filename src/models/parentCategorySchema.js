@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const SecondaryCategory = require('./secondaryCategorySchema')
+const PrimaryCategory = require('./primaryCategorySchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
@@ -14,30 +14,30 @@ const image = new Schema({
   },
 });
 
-const productsSchema = new Schema(
+const parentCatSchema = new Schema(
   {
     vendorId: {
         type: String,
         trim: true
     },
     name: {
-      type: String,
-      trim: true,
-      required: true,
+        type: String,
+        trim: true,
+        required: true,
     },
     status: {
         type: Boolean,
         default: true
     },
+    primaryCategotyId:[{
+        type: ObjectId,
+        ref: PrimaryCategory,
+        default: null
+    }],
     image: {
-      type: { image },
-      trim: true,
+        type: { image }
     },
-    secondaryId: {
-      type: ObjectId,
-      ref: SecondaryCategory,
-      default: null
-    }
+    
   },
   {
     timestamps: true,
@@ -45,5 +45,5 @@ const productsSchema = new Schema(
   }
 );
 
-const Products = model("products", productsSchema);
-module.exports = Products;
+const ParentCategory = model("parentCategory", parentCatSchema);
+module.exports = ParentCategory;
