@@ -4,7 +4,6 @@ const { ObjectId } = Types;
 
 const Product = require("./productsSchema");
 const Seller = require("./sellersSchema");
-const Buyer = require("./buyersSchema");
 
 const productDetails = new Schema({
   name: {
@@ -66,11 +65,11 @@ const rfpSchema = new Schema(
       ref: Seller,
       required: true,
     },
-    // buyerId: {
-    //   type: ObjectId,
-    //   ref: Buyer,
-    //   required: true,
-    // },
+    buyerId: {
+      type: ObjectId,
+      ref: 'buyers',
+      required: true,
+    },
     buyerDetails: {
       type: { buyerDetails },
       trim: true,
