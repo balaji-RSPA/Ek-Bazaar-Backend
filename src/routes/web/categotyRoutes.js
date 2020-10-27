@@ -27,4 +27,8 @@ router.get("/getSecondaryCategory/:id", category.getSecondaryCategory);
 router.post("/addProductCategory", category.addProduct);
 router.get("/getProductCategory/:id", category.getProduct);
 
+// Seller Types
+router.post("/sellerType", category.addSellerType);
+router.get("/sellerTypes", category.getAllSellerTypes);
+
 module.exports = router;

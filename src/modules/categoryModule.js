@@ -1,10 +1,22 @@
 const { resolve } = require("app-root-path");
 const mongoose = require("mongoose");
-const PrimaryCategory = require('../models/primaryCategorySchema')
-const ParentCategory = require('../models/parentCategorySchema')
-const SecondaryCategory = require('../models/secondaryCategorySchema')
-const Products = require('../models/productsSchema')
+const { PrimaryCategory, ParentCategory, SecondaryCategory, Products, SellerTypes } = require("../models");
 
+module.exports.addSellerType = (data) => new Promise ((resolve, reject) => {
+    
+    SellerTypes.create(data).then((doc) => {
+        resolve(doc)
+    }).catch(reject)
+
+})
+
+module.exports.getAllSellerTypes = () => new Promise ((resolve, reject) => {
+
+    SellerTypes.find({}).then((doc) => {
+        resolve(doc)
+    }).catch(reject)
+
+})
 module.exports.getAllCategories = (query) => new Promise((resolve, reject) => {
 
     ParentCategory.find(query)
@@ -54,29 +66,37 @@ module.exports.getParentCategory = (reqQuery) => new Promise((resolve, reject) =
 
     const skip = parseInt(reqQuery.skip) || 0
     const limit = parseInt(reqQuery.limit) || 1000
-    const search = reqQuery.search || ''
+    const search = reqQuery.search|| ''
     const status = reqQuery.status || true
     const id = reqQuery.id
 
     const query = {
         _id: reqQuery.id,
-        status
-        // name:search
+        status,
     }
 
-    ParentCategory.find(query)
-    .skip(skip)
-    .limit(limit)
+    ParentCategory.findOne(query)
     .populate({
         path: 'primaryCategotyId', 
         model: PrimaryCategory,
         select: 'name vendorId',
+        match : {
+        $and: [
+                 { name: {
+                    $regex: `^${search}`,
+                    $options: 'i'
+                }}
+            ]
+    },
         populate: {
             path: 'secondaryCategotyId',
             model: SecondaryCategory,
             select: 'name vendorId'
         }
     })
+    // .slice(PrimaryCategory, -1)
+    // .select(PrimaryCategory)
+    .lean()
     .then((doc) => {
         resolve(doc)
     }).catch(reject)

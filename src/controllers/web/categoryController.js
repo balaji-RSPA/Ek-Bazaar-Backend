@@ -14,11 +14,31 @@ const {
     addProductCategories,
     addProductCategory,
     getProductCategory,
-    updateSecondaryCategory
+    updateSecondaryCategory,
+    getAllSellerTypes,
+    addSellerType
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
 
+module.exports.addSellerType = async(req, res) => {
+    try {
+        const reqData = req.body
+        const result = await addSellerType(reqData)
+        respSuccess(res, result)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.getAllSellerTypes = async(req, res) => {
+    try {
+        const result = await getAllSellerTypes()
+        respSuccess(res, result)
+    } catch (error) {
+        respError(error)
+    }
+}
 
 module.exports.getAllCategories = async (req, res) => {
 
@@ -80,12 +100,11 @@ module.exports.getParentCategory = async (req, res) => {
 
     try {
 
-        console.log(req.params.id, ' test----------')
         const id = req.params.id;
         const reqQuery = camelcaseKeys(req.query)
         const query ={
             id,
-            reqQuery
+            search:reqQuery.search
         }
         const result = await getParentCategory(query)
         respSuccess(res, result)

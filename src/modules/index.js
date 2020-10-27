@@ -1,4 +1,4 @@
-const location = require('./locationsModul')
+const location = require('./locationsModule')
 const buyers = require('./buyersModule')
 const category = require('./categoryModule')
 
