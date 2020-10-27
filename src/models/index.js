@@ -5,6 +5,16 @@ const Products = require('./productsSchema')
 const Buyers = require('./buyersSchema')
 const Sellers = require('./sellersSchema')
 const RFP = require('./rfpSchema')
+const ParentCategory = require('./parentCategorySchema')
+const PrimaryCategory = require('./primaryCategorySchema')
+const SecondaryCategory = require('./secondaryCategorySchema')
+const SellerBusiness = require('./sellerBusinessSchema')
+const SellerStatutory = require('./sellerStatutorySchema')
+const SellerEstablishment = require('./sellerEstablishmentSchema')
+const SellerContact = require('./sellerContactsSchema')
+const SellerCompany = require('./sellerCompanySchema')
+const SellerProducts = require('./sellerProductListSchema')
+const SellerTypes = require('./sellertTypesSchema')
 
 module.exports = {
     Cities,
@@ -13,5 +23,15 @@ module.exports = {
     Products,
     Buyers,
     Sellers,
-    RFP
+    RFP,
+    ParentCategory,
+    PrimaryCategory,
+    SecondaryCategory,
+    SellerBusiness,
+    SellerStatutory,
+    SellerEstablishment,
+    SellerContact,
+    SellerCompany,
+    SellerProducts,
+    SellerTypes
 }

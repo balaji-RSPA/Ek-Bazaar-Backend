@@ -16,6 +16,10 @@ const productDetails = new Schema({
     trim: true,
     required: true,
   },
+  weight: {
+    type: String,
+    trim: true
+  },
 });
 
 const location = new Schema({
@@ -61,7 +65,7 @@ const buyerDetails = new Schema({
 const rfpSchema = new Schema(
   {
     sellerId: {
-      type: ObjectId,
+      type: [ObjectId],
       ref: Seller,
       required: true,
     },

@@ -59,7 +59,7 @@ const buyerSchema = new Schema(
     rfpId: {
       type: [ObjectId],
       ref: RFP,
-    },
+    }
   },
   {
     timestamps: true,
