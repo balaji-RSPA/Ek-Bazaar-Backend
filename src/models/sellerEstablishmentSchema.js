@@ -16,9 +16,9 @@ const imageSchema = new Schema({
 const sellerEstablishmentSchema = new Schema(
 {
     sellerId: {
-    type: ObjectId,
-    ref: 'sellers',
-    default: null
+        type: ObjectId,
+        ref: 'sellers',
+        default: null
     },
     photos: [imageSchema]
 },
