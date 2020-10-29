@@ -1,3 +1,4 @@
+const { query } = require("express");
 const mongoose = require("mongoose");
 const { PrimaryCategory, ParentCategory, SecondaryCategory, Products, SellerTypes } = require("../models");
 
@@ -61,18 +62,26 @@ module.exports.addParentCategory = (data) => new Promise((resolve, reject) => {
 
 })
 
+module.exports.getParentCat = (query) => new Promise((resolve, reject) => {
+  ParentCategory.findOne(query)
+  .then((doc) => {
+    resolve(doc)
+  }).catch(reject)
+})
+
 module.exports.getParentCategory = (reqQuery) => new Promise((resolve, reject) => {
-
-    const skip = parseInt(reqQuery.skip) || 0
-    const limit = parseInt(reqQuery.limit) || 1000
-    const search = reqQuery.search|| ''
-    const status = reqQuery.status || true
-    const id = reqQuery.id
-
-    const query = {
-        _id: reqQuery.id,
-        status,
-    }
+  
+  const skip = parseInt(reqQuery.skip) || 0
+  const limit = parseInt(reqQuery.limit) || 1000
+  const search = reqQuery.search|| ''
+  const status = reqQuery.status || true
+  const id = reqQuery.id
+  
+  const query = {
+    _id: reqQuery.id,
+    status,
+  }
+  console.log("module.exports.getParentCategory -> reqQuery", query)
 
     ParentCategory.findOne(query)
     .populate({
@@ -116,13 +125,20 @@ exports.updateParentCategory = (id, newData) => new Promise((resolve, reject) =>
 
 })
 
+exports.checkParentCategory = (query) => new Promise((resolve, reject) => {
+  ParentCategory.findOne(query)
+  .then((doc) => {
+    resolve(doc._id)
+  }).catch(reject)
+})
+
 
 // Primary Category
 module.exports.addPrimaryCategories = (data) =>
   new Promise((resolve, reject) => {
-    PrimaryCategory.insertMany(data, {
+    PrimaryCategory.insertMany(data/* , {
       ordered: false,
-    }) /* .select('_id') */
+    } */) /* .select('_id') */
       .then((doc) => {
         resolve(doc);
       })
@@ -145,7 +161,16 @@ module.exports.getPrimaryCategory = (id) =>
         resolve(doc);
       })
       .catch(reject);
-  });
+});
+
+module.exports.getPrimaryCat = (query) =>
+  new Promise((resolve, reject) => {
+    PrimaryCategory.findOne(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+});
 
 exports.updatePrimaryCategory = (id, newData) =>
   new Promise((resolve, reject) => {
@@ -193,7 +218,16 @@ module.exports.getSecondaryCategory = (id) =>
         resolve(doc);
       })
       .catch(reject);
-  });
+});
+
+module.exports.getSecondaryCat = (query) =>
+  new Promise((resolve, reject) => {
+    SecondaryCategory.findOne(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+});
 
 exports.updateSecondaryCategory = (id, newData) =>
   new Promise((resolve, reject) => {
