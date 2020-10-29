@@ -65,6 +65,16 @@ const sellersSchema = new Schema(
       required: true,
       trim: true,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
     location: {
       type: { location },
       trim: true,
@@ -109,11 +119,11 @@ const sellersSchema = new Schema(
       ref: SellerEstablishment,
       default: null
     },
-    sellerProductId:[{
-      type: ObjectId,
+    sellerProductId:{
+      type: [ObjectId],
       ref: SellerProducts,
       default: null
-    }]
+    }
   },
   {
     timestamps: true,

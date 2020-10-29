@@ -4,41 +4,41 @@ const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
 const companySchema = new Schema({
-    number: {
-        type: String,
-        trim: true,
-    }, 
-    name: {
-        type: String,
-        trim: true,
-    },
-    code: {
-        type: String,
-        trim: true,
-    },
-})
+  number: {
+    type: String,
+    trim: true,
+  },
+  name: {
+    type: String,
+    trim: true,
+  },
+  code: {
+    type: String,
+    trim: true,
+  },
+});
 
 const sellerStatutorySchema = new Schema(
   {
     sellerId: {
-        type: ObjectId,
-        ref: 'sellers',
-        default: null
+      type: ObjectId,
+      ref: "sellers",
+      default: null,
     },
     comapany: {
-        type: { companySchema }
+      type: { companySchema },
     },
     CinNumber: {
-        type: String,
-        trim: true,
+      type: String,
+      trim: true,
     },
     GstNumber: {
-        type: { companySchema }
+      type: { companySchema },
     },
     IeCode: {
-        type: String,
-        trim: true,
-    }
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,
@@ -46,5 +46,5 @@ const sellerStatutorySchema = new Schema(
   }
 );
 
-const SellerStatutory = model('sellerStatutory', sellerStatutorySchema)
-module.exports = SellerStatutory
+const SellerStatutory = model("sellerStatutory", sellerStatutorySchema);
+module.exports = SellerStatutory;
