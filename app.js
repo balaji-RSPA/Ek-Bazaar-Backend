@@ -12,6 +12,7 @@ const { env } = process
 
 global.environment = env.NODE_ENV || 'production'
 require('./config/db').dbConnection();
+require('./config/db').elasticSearchConnect();
 
 const app = express();
 const server = require('http').Server(app);
