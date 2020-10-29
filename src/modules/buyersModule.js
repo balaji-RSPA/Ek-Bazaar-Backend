@@ -1,17 +1,61 @@
-const { Buyers } = require('../models')
+const { Buyers } = require("../models");
 
-module.exports.addBuyer = new Promise((resolve, reject) => {
+module.exports.checkBuyerExistOrNot = (mobile) =>
+  new Promise((resolve, reject) => {
+    Buyers.find({ mobile })
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(Error));
+  });
 
-})
+module.exports.addBuyer = (data) =>
+  new Promise((resolve, reject) => {
+    Buyers.create(data)
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
 
-module.exports.getBuyer = new Promise((resolve, reject) => {
-    
-})
+module.exports.getBuyer = (id) =>
+  new Promise((resolve, reject) => {
+    Buyers.find({ _id: id })
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
 
-module.exports.updateBuyer = new Promise((resolve, reject) => {
-    
-})
+module.exports.updateBuyer = (id, data) =>
+  new Promise((resolve, reject) => {
+    Buyers.findOneAndUpdate({ _id: id }, data, { new: true })
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
 
-module.exports.getAllBuyers = new Promise((resolve, reject) => {
-    
-})
+module.exports.getAllBuyers = () =>
+  new Promise((resolve, reject) => {
+    Buyers.find({})
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
+
+module.exports.updateBuyerPassword = (mobile, data) =>
+  new Promise((resolve, reject) => {
+    Buyers.findOneAndUpdate({ mobile }, data, { new: true })
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
