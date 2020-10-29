@@ -16,7 +16,11 @@ const {
     getProductCategory,
     updateSecondaryCategory,
     getAllSellerTypes,
-    addSellerType
+    addSellerType,
+    // checkParentCategory,
+    getParentCat,
+    getSecondaryCat,
+    getPrimaryCat
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
@@ -43,6 +47,7 @@ module.exports.getAllSellerTypes = async(req, res) => {
 module.exports.getAllCategories = async (req, res) => {
 
     try {
+        console.log('all categories ---------')
         const reqQuery = camelcaseKeys(req.query)
         let qery = {
             status: true
@@ -123,8 +128,27 @@ module.exports.addPrimaryCategories = async (req, res) => {
     try {
 
         const reqData = req.body
-        const result = await addPrimaryCategories(reqData)
-        respSuccess(res, result)
+        let bulkData =[]
+        for (let index = 0; index < reqData.length; index++) {
+            const element = reqData[index];
+            const query = {
+                vendorId: element.parentId.toString()
+            }
+            // const parentCatId = await checkParentCategory(query)
+            const parentCat = await getParentCat(query)
+            const primaryData = {
+                ...element,
+                parentCatId: parentCat._id
+            }
+            const result = await addPrimaryCategory(primaryData)
+            const updateData= {
+                primaryCategotyId: parentCat.primaryCategotyId.concat(result._id)
+            }
+            await updateParentCategory(parentCat._id, updateData)
+            // bulkData.push(primaryData)
+            
+        }
+        respSuccess(res, 'Uploaded Successfully')
         
     } catch (error) {
 
@@ -174,6 +198,39 @@ module.exports.getPrimaryCategory = async (req, res) => {
 
 // Secondary Categories
 
+module.exports.addSecondaryCategories = async (req, res) => {
+
+    try {
+
+        const reqData = req.body
+        for (let index = 0; index < reqData.length; index++) {
+            const element = reqData[index];
+            const query = {
+                vendorId: element.primaryCatId.toString()
+            }
+            const parentCat = await getPrimaryCat(query)
+            // console.log("module.exports.addSecondaryCategories -> parentCat", parentCat)
+            const secData = {
+                ...element,
+                primaryCatId: parentCat._id
+            }
+            const result = await addSecondaryCategory(secData)
+            const updateData= {
+                secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
+            }
+            await updatePrimaryCategory(parentCat._id, updateData)
+            
+        }
+        respSuccess(res, 'Uploaded Successfully')
+        
+    } catch (error) {
+
+        respError(error)
+        
+    }
+
+}
+
 module.exports.addSecondaryCategory = async (req, res) => {
 
     try {
@@ -215,6 +272,43 @@ module.exports.getSecondaryCategory = async (req, res) => {
 }
 
 // Products categories
+
+
+module.exports.addBulkProducts = async (req, res) => {
+
+    try {
+
+        const reqData = req.body
+        for (let index = 0; index < reqData.length; index++) {
+            const element = reqData[index];
+            const query = {
+                vendorId: element.secondaryId.toString()
+            }
+            const parentCat = await getSecondaryCat(query)
+            if(parentCat){
+                const productData = {
+                    ...element,
+                    secondaryId: parentCat._id
+                }
+                const result = await addProductCategory(productData)
+                const updateData= {
+                    productId: parentCat.productId.concat(result._id)
+                }
+                console.log("COunt--------------------", index)
+                await updateSecondaryCategory(parentCat._id, updateData)
+            }
+            
+        }
+        respSuccess(res, 'Uploaded Successfully')
+        
+    } catch (error) {
+
+        respError(error)
+        
+    }
+
+}
+
 module.exports.addProduct = async (req, res) => {
 
     try {
