@@ -64,7 +64,7 @@ module.exports.getParentCategory = (reqQuery) => new Promise((resolve, reject) =
         // name:search
     }
 
-    ParentCategory.find(query)
+    ParentCategory.findById(query)
     .skip(skip)
     .limit(limit)
     .populate({
@@ -119,9 +119,17 @@ module.exports.addPrimaryCategory = (data) => new Promise((resolve, reject) => {
 
 })
 
-module.exports.getPrimaryCategory = (id) => new Promise((resolve, reject) => {
+module.exports.getPrimaryCategory = (reqQuery) => new Promise((resolve, reject) => {
 
-    PrimaryCategory.findById(id).then((doc) => {
+    const skip = parseInt(reqQuery.skip) || 0
+    const limit = parseInt(reqQuery.limit) || 1000
+    PrimaryCategory.findById(reqQuery.id)
+    .populate({
+        path: 'secondaryCategotyId',
+        model: SecondaryCategory,
+        select: 'name vendorId'
+    })
+    .then((doc) => {
         resolve(doc)
     }).catch(reject)
 

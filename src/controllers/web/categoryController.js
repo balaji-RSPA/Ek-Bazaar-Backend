@@ -80,7 +80,6 @@ module.exports.getParentCategory = async (req, res) => {
 
     try {
 
-        console.log(req.params.id, ' test----------')
         const id = req.params.id;
         const reqQuery = camelcaseKeys(req.query)
         const query ={
@@ -142,7 +141,13 @@ module.exports.getPrimaryCategory = async (req, res) => {
     try {
 
         const id = req.params.id;
-        const result = await getPrimaryCategory(id)
+        const { skip, limit} = req.query
+        const query = {
+            id,
+            skip,
+            limit
+        }
+        const result = await getPrimaryCategory(query)
         respSuccess(res, result)
         
     } catch (error) {
