@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const SecondaryCategory = require('./secondaryCategorySchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
@@ -32,6 +33,11 @@ const productsSchema = new Schema(
       type: { image },
       trim: true,
     },
+    secondaryId: {
+      type: ObjectId,
+      ref: SecondaryCategory,
+      default: null
+    }
   },
   {
     timestamps: true,
@@ -39,5 +45,5 @@ const productsSchema = new Schema(
   }
 );
 
-const products = model("products", productsSchema);
-module.exports = products;
+const Products = model("products", productsSchema);
+module.exports = Products;

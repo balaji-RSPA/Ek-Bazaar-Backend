@@ -52,6 +52,16 @@ const buyerSchema = new Schema(
       required: true,
       trim: true,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
     location: {
       type: { location },
       trim: true,
@@ -59,7 +69,7 @@ const buyerSchema = new Schema(
     rfpId: {
       type: [ObjectId],
       ref: RFP,
-    },
+    }
   },
   {
     timestamps: true,
