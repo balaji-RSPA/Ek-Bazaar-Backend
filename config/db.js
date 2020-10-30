@@ -34,7 +34,7 @@ function dbConnection () {
 
 };
 
-function elasticSearchConnect() {
+// function elasticSearchConnect() {
   let host = 'localhost:9200'
   if (env) {
 
@@ -73,11 +73,13 @@ function elasticSearchConnect() {
     }
 
   })
-  return esClient
-}
+  // return esClient
+// }
+
+module.exports = esClient
 
 module.exports = { 
     mongoose,
     dbConnection,
-    elasticSearchConnect
+    // elasticSearchConnect
 }
