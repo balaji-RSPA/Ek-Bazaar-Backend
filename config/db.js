@@ -76,10 +76,11 @@ function dbConnection () {
   // return esClient
 // }
 
-module.exports = esClient
+// module.exports = esClient
 
 module.exports = { 
     mongoose,
     dbConnection,
+    esClient
     // elasticSearchConnect
 }

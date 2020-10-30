@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const esClient  = require("../../config/db");
+const esClient  = require("../../config/db").esClient;
 const { INDEXNAME } = require("../utils/globalConstants");
 const { Sellers } = require("../models");
 
