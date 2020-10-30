@@ -88,3 +88,86 @@ exports.bulkStoreInElastic = (foundDoc) =>
       })
       .catch(reject);
   });
+
+  exports.sellerSearch = async(catId) => {
+    let query = {
+    bool: {
+      should: [],
+      must: [],
+      must_not: [],
+    },
+  };
+  if(catId){
+      console.log("exports.sellerSearch -> catId", catId)
+      const categoryMatch = {
+        term: {
+            "primaryCatId._id": catId,
+        },
+    };
+        query.bool.must.push(categoryMatch);
+  }
+//   const cityId = [ '5e312f988acbee60ab54df37', '5f7c1eaecdb53325e1358a08' ];
+  const cityId = '';
+    if (cityId) {
+        if (Array.isArray(cityId)) {
+            query.bool.must.unshift({ bool: { should: [] } });
+            cityId.forEach((c) => {
+            const locationMatch = {
+                term: {
+                "location.city._id": c,
+                },
+            };
+            query.bool.must[0].bool.should.push(locationMatch);
+            });
+        } else {
+            const locationMatch = {
+            term: {
+                "location.city._id": cityId,
+            },
+            };
+            query.bool.must.push(locationMatch);
+        }
+    }
+    console.log("exports.sellerSearch -> query", query)
+    return query
+
+  }
+
+  exports.searchFromElastic = (query, range) => 
+  new Promise((resolve, reject) => {
+
+    const { skip, limit } = range;
+    const body = {
+      size: limit || 10,
+      from: skip || 0,
+      query/* ,
+      highlight, */
+    };
+    const searchQuery = {
+      index: INDEXNAME,
+      body,
+    };
+    esClient
+      .search(searchQuery)
+      .then(async (results) => {
+          const { count } = await this.getCounts(query); // To get exact count
+      console.log("exports.searchFromElastic -> results---------------", results)
+      resolve([
+          results.hits.hits,
+          count,
+        ]);
+      })
+  })
+
+  exports.getCounts = (query) =>
+  new Promise((resolve, reject) => {
+    esClient
+      .count({
+        index: INDEXNAME,
+        body: {
+          query,
+        },
+      })
+      .then(resolve)
+      .catch(reject);
+  });
