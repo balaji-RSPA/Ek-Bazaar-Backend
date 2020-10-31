@@ -15,6 +15,8 @@ const {
   addProductDetails,
   addStatutoryDetails,
   updateSellerPassword,
+  inserSeller,
+  sellerBulkInser
 } = sellers;
 const { createToken } = require("../../utils/utils");
 
@@ -173,3 +175,30 @@ module.exports.updateSellerPassword = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+
+module.exports.sellerBulkInsert = async (req, res) => {
+
+  try {
+
+    const reqData = req.body
+    let bulkData = [];
+    for (let index = 0; index < reqData.length; index++) {
+
+      const seller = reqData[index];
+      const result = await inserSeller(seller)
+      // console.log("module.exports.sellerBulkInsert -> result", result)
+      bulkData.push(result)
+      
+    }
+    // console.log("module.exports.sellerBulkInsert -> redData", bulkData)
+    await sellerBulkInser(bulkData);
+    respSuccess(res, "Data Uploades Successfully!")
+   
+  } catch (error) {
+
+    respError(res, error.message);
+    
+  }
+
+}

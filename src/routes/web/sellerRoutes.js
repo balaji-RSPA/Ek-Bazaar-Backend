@@ -5,6 +5,8 @@ const seller = require("../../controllers/web/sellersController");
 const auth = require("../../controllers/web/authController");
 const { sellerAuthenticate } = require("../../middleware/auth");
 
+router.post("/seller/bulkInsert", seller.sellerBulkInsert);
+
 router.post("/seller", seller.addSeller);
 router.get("/seller", sellerAuthenticate, seller.getSeller);
 router.put("/seller", sellerAuthenticate, seller.updateSeller);

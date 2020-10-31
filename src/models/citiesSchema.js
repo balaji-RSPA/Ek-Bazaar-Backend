@@ -11,10 +11,10 @@ const citiesSchema = new Schema(
       trim: true,
       required: true,
     },
-    stateId: {
+    state: {
       type: ObjectId,
       ref: State,
-      required: true,
+      // required: true,
     },
     status: {
       type: Boolean,
