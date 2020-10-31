@@ -19,4 +19,20 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-28T21:04:35.297Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-28T21:09:51.059Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-28T21:10:48.209Z"}
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-29T05:47:57.117Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-30T03:14:09.328Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-30T10:47:50.659Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-30T10:51:11.073Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-30T10:54:28.112Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-30T10:56:28.031Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-30T17:32:57.080Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-31T05:23:48.804Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-31T05:23:59.540Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-31T05:25:14.531Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-31T05:49:42.129Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-31T05:50:51.898Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-31T05:51:25.696Z"}
+>>>>>>> sprint-01
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-31T06:10:46.719Z"}

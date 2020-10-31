@@ -72,24 +72,9 @@ module.exports.getAllSellers = () =>
       .populate("comapanyId")
       .populate("establishmentId")
       .populate("sellerProductId")
-      // .populate({
-      //   path: 'contactId',
-      //   populate: {
-      //     path: 'location',
-      //     populate: {
-      //       path: 'city',
-      //       model: 'cities'
-      //     },
-      //     populate: {
-      //       path: 'state',
-      //       model: 'states'
-      //     },
-      //     populate: {
-      //       path: 'country',
-      //       model: 'countries'
-      //     }
-      //   }
-      // })
+      .populate('location.city', 'name')
+      .populate('location.state', 'name')
+      .populate('location.country', 'name')
       .then((doc) => {
         console.log(doc);
         resolve(doc);
