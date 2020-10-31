@@ -18,6 +18,19 @@ const {
 } = sellers;
 const { createToken } = require("../../utils/utils");
 
+module.exports.checkSellerExistOrNot = async(req, res) => {
+  try {
+    const { mobile } = req.body;
+    const seller = await checkSellerExistOrNot(mobile);
+    if (seller) {
+      respSuccess(res);
+    }
+    respError(res, "No selelr found with this number");
+  } catch (error) {
+    respError(res, error.message);
+  }
+}
+
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile } = req.body;

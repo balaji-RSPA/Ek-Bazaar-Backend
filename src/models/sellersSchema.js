@@ -76,7 +76,7 @@ const sellersSchema = new Schema(
       required: true
     },
     location: {
-      type: { location },
+      type: location,
       trim: true,
     },
     deactivateAccount: {

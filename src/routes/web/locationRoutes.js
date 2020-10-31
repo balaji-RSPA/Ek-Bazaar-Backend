@@ -3,6 +3,8 @@ const location = require('../../controllers/web/locationsController')
 const { Router } = express;
 const router = Router();
 
+router.get('/cities', location.getAllCities)
+
 router.get("/states", location.getAllStates);
 router.post("/states", location.createState)
 
