@@ -52,6 +52,16 @@ const buyerSchema = new Schema(
       required: true,
       trim: true,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
     location: {
       type: { location },
       trim: true,

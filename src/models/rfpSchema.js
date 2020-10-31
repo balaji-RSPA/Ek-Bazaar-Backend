@@ -4,7 +4,6 @@ const { ObjectId } = Types;
 
 const Product = require("./productsSchema");
 const Seller = require("./sellersSchema");
-// const Buyer = require("./buyersSchema");
 
 const productDetails = new Schema({
   name: {

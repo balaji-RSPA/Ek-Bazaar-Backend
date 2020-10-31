@@ -28,3 +28,26 @@ content-type: application/json
 ####
 GET  http://localhost:8070/api/getParentCategory/5f969f4cbfc3dc4ef73efc29 HTTP/1.1
 content-type: application/json
+####
+
+POST  http://localhost:8070/api/seller/bulkInsert HTTP/1.1
+content-type: application/json
+
+# [
+#   {
+#     "name": "Swayam Enterprises",
+#     "rating": 5,
+#     "address": "B Wing 704 Navkar Co Operative Housing Society, Shivaji Udyog Nagar, Dombivli East, Thane - 421201, Near Ice Factory",
+#     "number_of_votes": "2Votes",
+#     "url": "https://www.justdial.com/Mumbai/Swayam-Enterprises-Near-Ice-Factory-Dombivli-East/022PXX22-XX22-180211190006-J3V2_BZDET?xid=QWRvbmkgUG91bHRyeSBGZWVkIERpc3RyaWJ1dG9ycw==",
+#     "numbers": "[' +917678092570', ' +919870088716']",
+#     "City": "Mumbai",
+#     "Category": "Cereals & Food Grains"
+#   }
+# ]
+
+####
+
+POST  http://localhost:8070/api/elastic/seller/bulkwrite HTTP/1.1
+content-type: application/json
+

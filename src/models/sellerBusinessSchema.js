@@ -5,43 +5,43 @@ const { ObjectId } = Types;
 
 const sellerBusinessSchema = new Schema(
   {
-      sellerId: {
-        type: ObjectId,
-        ref: 'sellers',
-        default: null
-      },
+    sellerId: {
+      type: ObjectId,
+      ref: "sellers",
+      default: null,
+    },
     name: {
       type: String,
       required: true,
       trim: true,
     },
     yearOfEstablishment: {
-        type: Date,
-        sparse: true,
-        default: null
+      type: Date,
+      sparse: true,
+      default: null,
     },
     promotorName: {
       type: String,
-    //   required: true,
+      //   required: true,
       trim: true,
     },
     designation: {
       type: String,
-    //   required: true,
+      //   required: true,
       trim: true,
     },
     alternateNumber: {
       type: String,
       trim: true,
     },
-    businesType:{
-        type: String,
-        trim: true,
+    businesType: {
+      type: String,
+      trim: true,
     },
     ownershipType: {
-        type: String,
-        trim: true,
-    }
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,
@@ -49,5 +49,5 @@ const sellerBusinessSchema = new Schema(
   }
 );
 
-const SellerBusiness = model('sellerbusiness', sellerBusinessSchema)
-module.exports = SellerBusiness
+const SellerBusiness = model("sellerbusiness", sellerBusinessSchema);
+module.exports = SellerBusiness;
