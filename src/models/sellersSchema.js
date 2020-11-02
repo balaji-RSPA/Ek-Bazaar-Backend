@@ -56,6 +56,10 @@ const mobile = new Schema({
 
 const sellersSchema = new Schema(
   {
+    userId: {
+      type: ObjectId,
+      required: true
+    },
     name: {
       type: String,
       required: true,
@@ -149,6 +153,11 @@ const sellersSchema = new Schema(
       type: ObjectId,
       ref: 'primaryCategory',
       default: null
+    },
+    website: {
+      type: String,
+      default: null,
+      trim: true
     }
   },
   {

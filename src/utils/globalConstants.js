@@ -1,4 +1,4 @@
-exports.INDEXNAME = 'tradebazaar'
+exports.INDEXNAME = 'ekbazaar'
 
 exports.bcryptSalt = {
   SALT: 10,

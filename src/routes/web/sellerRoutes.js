@@ -13,6 +13,9 @@ router.put("/seller", sellerAuthenticate, seller.updateSeller);
 router.get("/sellers", seller.getAllSellers);
 router.post("/seller/update-seller-password", seller.updateSellerPassword);
 
+router.post('/seller/check-seller-exist-or-not', seller.checkSellerExistOrNot)
+router.post('/seller/send-otp', seller.sendOtp)
+
 router.post("/seller/login", auth.sellerLogin);
 
 module.exports = router;

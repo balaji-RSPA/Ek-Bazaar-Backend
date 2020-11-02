@@ -4,6 +4,7 @@ const { respSuccess, respError } = require("../../utils/respHadler");
 const { sellers } = require("../../modules");
 const {
   checkSellerExistOrNot,
+  addSellerToTender,
   addSeller,
   updateSeller,
   getSeller,
@@ -18,19 +19,35 @@ const {
   inserSeller,
   sellerBulkInser
 } = sellers;
-const { createToken } = require("../../utils/utils");
+const { createToken, encodePassword } = require("../../utils/utils");
+
+module.exports.checkSellerExistOrNot = async(req, res) => {
+  try {
+    console.log(req.body)
+    const { mobile } = req.body;
+    const seller = await checkSellerExistOrNot(mobile);
+    if (seller) {
+      respSuccess(res);
+    }
+    respError(res, "No selelr found with this number");
+  } catch (error) {
+    respError(res, error.message);
+  }
+}
 
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile } = req.body;
+    console.log(req.body)
     const seller = await checkSellerExistOrNot(mobile);
-    if (seller) {
-      respError(res, "A seller with this number already exist");
+    console.log(seller, 'seller.....')
+    if (seller && seller.length) {
+      return respError(res, "A seller with this number already exist");
     }
     const otp = 1234;
-    respSuccess(res, { otp });
+    return respSuccess(res, { otp });
   } catch (error) {
-    respError(res, error.message);
+    return respError(res, error.message);
   }
 };
 
@@ -47,12 +64,27 @@ module.exports.verifySellerMobile = async (req, res) => {
 
 module.exports.addSeller = async (req, res) => {
   try {
-    req.body.isPhoneVerified = true;
+    const {password, mobile, name, business} = req.body
+    req.body.password = encodePassword(password)
+    console.log(req.body, '00000-------')
+    const tenderUser = {
+      countryCode: mobile.countryCode,
+      mobile: mobile.mobile,
+      isPhoneVerified: 2,
+      name: name,
+      password: req.body.password
+    }
+    const user = await addSellerToTender(tenderUser)
+    console.log(user, 'user....')
+    req.body.userId = user._id
     const seller = await addSeller(req.body);
-    if (seller) {
+    const bsnsDtls = await addbusinessDetails(seller._id, {name: business})
+    const _seller = await updateSeller(seller._id, {busenessId: bsnsDtls._id})
+    console.log(seller, 'seller........')
+    if (_seller) {
       const deviceId = machineIdSync();
       // const userAgent = getUserAgent(req.useragent)
-      const token = createToken(deviceId, { sellerId: seller._id });
+      const token = createToken(deviceId, { sellerId: _seller.userId });
       // const finalData = {
       //   userAgent,
       //   sellerId: seller._id,
@@ -62,9 +94,9 @@ module.exports.addSeller = async (req, res) => {
       // }
 
       // const result1 = await handleUserSession(data._id, finalData)
-      return respSuccess(res, { token, seller }, "Auth Success");
+      return respSuccess(res, { token, _seller }, "Auth Success");
     }
-    return respError(res, "Buyer not added");
+    return respError(res, "Seller not added");
   } catch (error) {
     respError(res, error.message);
   }
