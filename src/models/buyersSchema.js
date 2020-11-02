@@ -27,6 +27,10 @@ const location = new Schema({
 
 const buyerSchema = new Schema(
   {
+    userId: {
+      type: ObjectId,
+      required: true
+    },
     name: {
       type: String,
       required: true,

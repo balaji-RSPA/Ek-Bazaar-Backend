@@ -1,6 +1,6 @@
-const { query } = require("express");
 const mongoose = require("mongoose");
 const { PrimaryCategory, ParentCategory, SecondaryCategory, Products, SellerTypes } = require("../models");
+const { populate } = require("../models/rfpSchema");
 
 module.exports.addSellerType = (data) => new Promise ((resolve, reject) => {
     
@@ -293,3 +293,20 @@ exports.updateProductCategory = (id, newData) =>
       })
       .catch(reject);
   });
+
+  exports.getCatId = (query) => new Promise((resolve, reject) => {
+    Products.findOne(query)
+    .populate({
+      path: "secondaryId",
+      model: SecondaryCategory,
+      populate: {
+          path: "primaryCatId",
+          model: PrimaryCategory
+      },
+    })
+    // .populate
+    .then((doc) => {
+    // console.log("exports.getCatId -> doc", doc.secondaryId.primaryCatId)
+      resolve(doc.secondaryId.primaryCatId._id)
+    }).catch(reject)
+  })
