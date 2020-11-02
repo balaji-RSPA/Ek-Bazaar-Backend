@@ -27,11 +27,11 @@ module.exports.getAllCategories = (query) => new Promise((resolve, reject) => {
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
-          select: "name vendorId",
+          // select: "name vendorId",
           populate: {
             path: "productId",
             model: Products,
-            select: "name vendorId",
+            // select: "name vendorId",
           },
         },
       })
@@ -81,7 +81,6 @@ module.exports.getParentCategory = (reqQuery) => new Promise((resolve, reject) =
     _id: reqQuery.id,
     status,
   }
-  console.log("module.exports.getParentCategory -> reqQuery", query)
 
     ParentCategory.findOne(query)
     .populate({
@@ -157,6 +156,7 @@ module.exports.addPrimaryCategory = (data) =>
 module.exports.getPrimaryCategory = (id) =>
   new Promise((resolve, reject) => {
     PrimaryCategory.findById(id)
+    .populate('secondaryCategotyId', 'name vendorId')
       .then((doc) => {
         resolve(doc);
       })
@@ -294,7 +294,7 @@ exports.updateProductCategory = (id, newData) =>
       .catch(reject);
   });
 
-  exports.getCatId = (query) => new Promise((resolve, reject) => {
+  exports.getCatId = (query, id) => new Promise((resolve, reject) => {
     Products.findOne(query)
     .populate({
       path: "secondaryId",
@@ -304,9 +304,50 @@ exports.updateProductCategory = (id, newData) =>
           model: PrimaryCategory
       },
     })
-    // .populate
     .then((doc) => {
-    // console.log("exports.getCatId -> doc", doc.secondaryId.primaryCatId)
-      resolve(doc.secondaryId.primaryCatId._id)
+      resolve(doc && id ? doc.secondaryId.primaryCatId._id : doc)
     }).catch(reject)
   })
+
+
+  exports.getSecCatId = (query, id) => new Promise((resolve, reject) => {
+    SecondaryCategory.findOne(query)
+    .populate({
+      path: "primaryCatId",
+      model: PrimaryCategory,
+      select: 'name venderId'
+    }).select('name venderId')
+    .then((doc) => {
+      resolve(doc && id ? doc.primaryCatId._id : doc)
+    }).catch(reject)
+  })
+
+  exports.getAllProducts = (reqQuery) => new Promise((resolve, reject) => {
+
+    const skip = parseInt(reqQuery.skip) || 0
+    const limit = parseInt(reqQuery.limit) || 1000
+    const search = reqQuery.search || ''
+
+    let execQuery;
+    execQuery = Products.aggregate([{
+      $match: {
+        name: {
+          $regex: `^${search}`,
+          $options: 'i'
+        }
+      }
+    }, {
+      $skip: skip
+    }, {
+      $limit: limit
+    }])
+
+    execQuery.then((products) => {
+
+      resolve(products)
+
+    }).catch(reject)
+
+  })
+
+  
