@@ -34,6 +34,7 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-26T02:11:43.046Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-26T02:12:48.119Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-26T02:13:48.634Z"}
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-26T04:31:21.632Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-26T04:41:11.817Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-26T04:42:41.732Z"}
@@ -96,3 +97,10 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-26T08:31:09.952Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-26T08:31:44.507Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-29T11:23:28.946Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-26T08:24:25.701Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-29T06:03:34.832Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-29T11:26:11.598Z"}
+>>>>>>> 961198ebb7cbf6ca44793bdd545b3f77cbcf0a1d
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-29T11:29:39.071Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-10-29T12:21:57.800Z"}

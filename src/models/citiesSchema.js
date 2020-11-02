@@ -14,7 +14,7 @@ const citiesSchema = new Schema(
     stateId: {
       type: ObjectId,
       ref: State,
-      required: true,
+      // required: true,
     },
     status: {
       type: Boolean,
