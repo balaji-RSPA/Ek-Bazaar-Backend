@@ -20,7 +20,8 @@ const {
     // checkParentCategory,
     getParentCat,
     getSecondaryCat,
-    getPrimaryCat
+    getPrimaryCat,
+    getAllProducts,
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
@@ -47,7 +48,6 @@ module.exports.getAllSellerTypes = async(req, res) => {
 module.exports.getAllCategories = async (req, res) => {
 
     try {
-        console.log('all categories ---------')
         const reqQuery = camelcaseKeys(req.query)
         let qery = {
             status: true
@@ -238,7 +238,6 @@ module.exports.addSecondaryCategory = async (req, res) => {
         const reqData = req.body
         const primaryCatId = req.body.primaryCatId
         const primaryData = await getPrimaryCategory(primaryCatId)
-        console.log("module.exports.addSecondaryCategory -> primaryData", primaryData)
 
         const result = await addSecondaryCategory(reqData)
         const formData= {
@@ -347,3 +346,35 @@ module.exports.getProduct = async (req, res) => {
     }
 
 }
+
+module.exports.getAllProducts = async (req, res) => {
+
+    try {
+        const reqQuery = req.query
+        const result = await getAllProducts(reqQuery)
+        respSuccess(res, result)
+        
+    } catch (error) {
+
+        respError(error)
+        
+    }
+
+}
+
+module.exports.getRelatedCategories = async (req, res) => {
+
+    try {
+        const id = req.params.id
+        console.log("module.exports.getRelatedCategories -> id", id)
+        const result = await getPrimaryCategory(id)
+        respSuccess(res, result)
+        
+    } catch (error) {
+
+        respError(error)
+        
+    }
+
+}
+

@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const esClient  = require("../../config/db").esClient;
 const { INDEXNAME } = require("../utils/globalConstants");
 const { Sellers } = require("../models");
+const { getCatId, getSecCatId  } = require('../modules/categoryModule')
+// const { getCatId } = category
 
 module.exports.addSellerBulkIndex = async () => {
 
@@ -89,7 +91,10 @@ exports.bulkStoreInElastic = (foundDoc) =>
       .catch(reject);
   });
 
-  exports.sellerSearch = async(catId) => {
+exports.sellerSearch = async(reqQuery) => {
+
+  const { cityId, productId, secondaryId, primaryId } = reqQuery
+  let catId=''
     let query = {
     bool: {
       should: [],
@@ -97,17 +102,41 @@ exports.bulkStoreInElastic = (foundDoc) =>
       must_not: [],
     },
   };
-  if(catId){
-      console.log("exports.sellerSearch -> catId", catId)
+
+  if(productId){
+    const categoryId = await getCatId({_id: productId }, '_id')
+    catId = categoryId
       const categoryMatch = {
         term: {
-            "primaryCatId._id": catId,
+            "primaryCatId._id": categoryId,
+        },
+    };
+        query.bool.must.push(categoryMatch);
+  }
+
+  if(secondaryId){
+    const categoryId = await getSecCatId({_id: secondaryId }, '_id')
+    catId = categoryId
+      const categoryMatch = {
+        term: {
+            "primaryCatId._id": categoryId,
+        },
+    };
+        query.bool.must.push(categoryMatch);
+  }
+
+  if(primaryId){
+    // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
+    catId = primaryId
+      const categoryMatch = {
+        term: {
+            "primaryCatId._id": primaryId,
         },
     };
         query.bool.must.push(categoryMatch);
   }
 //   const cityId = [ '5e312f988acbee60ab54df37', '5f7c1eaecdb53325e1358a08' ];
-  const cityId = '';
+  
     if (cityId) {
         if (Array.isArray(cityId)) {
             query.bool.must.unshift({ bool: { should: [] } });
@@ -128,12 +157,14 @@ exports.bulkStoreInElastic = (foundDoc) =>
             query.bool.must.push(locationMatch);
         }
     }
-    console.log("exports.sellerSearch -> query", query)
-    return query
+    return {
+      query,
+      catId
+    }
 
   }
 
-  exports.searchFromElastic = (query, range) => 
+exports.searchFromElastic = (query, range) => 
   new Promise((resolve, reject) => {
 
     const { skip, limit } = range;
@@ -151,7 +182,6 @@ exports.bulkStoreInElastic = (foundDoc) =>
       .search(searchQuery)
       .then(async (results) => {
           const { count } = await this.getCounts(query); // To get exact count
-      console.log("exports.searchFromElastic -> results---------------", results)
       resolve([
           results.hits.hits,
           count,
@@ -159,7 +189,7 @@ exports.bulkStoreInElastic = (foundDoc) =>
       })
   })
 
-  exports.getCounts = (query) =>
+exports.getCounts = (query) =>
   new Promise((resolve, reject) => {
     esClient
       .count({
