@@ -1,4 +1,4 @@
-exports.TRADESAMPLE = "tradesample";
+exports.INDEXNAME = 'ekbazaar'
 
 exports.bcryptSalt = {
   SALT: 10,

@@ -5,6 +5,7 @@ const { States, Countries, Cities } = require("../models");
 module.exports.getAllCities = () =>
 new Promise((resolve, reject) => {
   Cities.find({})
+    .populate('state', '_id name')
     .then((doc) => {
       resolve(doc);
     })
@@ -16,6 +17,7 @@ new Promise((resolve, reject) => {
 module.exports.getAllStates = () =>
   new Promise((resolve, reject) => {
     States.find({})
+      .populate('country', '_id name')
       .then((doc) => {
         resolve(doc);
       })

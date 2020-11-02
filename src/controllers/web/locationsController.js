@@ -1,4 +1,5 @@
 const { location } = require("../../modules");
+const { respSuccess, respError } = require("../../utils/respHadler");
 const {
   getAllCities,
   getAllStates,
@@ -9,21 +10,20 @@ const {
 
 module.exports.getAllCities = async (req, res) => {
   try {
-    const cities = await getAllCities();
-    console.log(cities, "cities-------");
-    res.send(cities);
+    console.log(req.query)
+    const cities = await getAllCities(req.query);
+    respSuccess(res, cities);
   } catch (error) {
-    res.send(error.message);
+    respError(res, error.message);
   }
 };
 
 module.exports.getAllStates = async (req, res) => {
   try {
     const states = await getAllStates();
-    console.log(states, "states-------");
-    res.send(states);
+    respSuccess(res, states);
   } catch (error) {
-    res.send(error.message);
+    respError(res, error.message);
   }
 };
 

@@ -9,7 +9,7 @@ const statesSchema = new Schema({
         trim: true,
         required: true
     },
-    countryId: {
+    country: {
         type: ObjectId,
         ref: Country,
         required: true

@@ -7,7 +7,7 @@ const State = require("./statesSchema");
 const Country = require("./countriesSchema");
 const SellerBusiness =require('./sellerBusinessSchema')
 const SellerStatutory = require('./sellerStatutorySchema')
-const SellerContact =require('./sellerContactsSchema')
+// const SellerContact =require('./sellerContactsSchema')
 const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
@@ -18,24 +18,48 @@ const location = new Schema({
     type: ObjectId,
     ref: City,
     trim: true,
-    required: true,
+    // required: true,
   },
   state: {
     type: ObjectId,
     ref: State,
     trim: true,
-    required: true,
+    // required: true,
   },
   country: {
     type: ObjectId,
     ref: Country,
     trim: true,
-    required: true,
+    // required: true,
   },
+  address: {
+    type: String,
+    trim: true
+  },
+  pincode: {
+    type: String,
+    trim: true
+  }
 });
+
+const mobile = new Schema({
+      mobile: {
+        type: String,
+        trim: true
+      },
+      countryCode: {
+        type: String,
+        trim: true,
+        default: null
+      }
+    })
 
 const sellersSchema = new Schema(
   {
+    userId: {
+      type: ObjectId,
+      required: true
+    },
     name: {
       type: String,
       required: true,
@@ -43,17 +67,18 @@ const sellersSchema = new Schema(
     },
     countryCode: {
       type: String,
-      required: true,
       trim: true,
+      default: null
     },
-    mobile: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    // mobile: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    // },
+    mobile: [mobile],
     password: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     alternateNumber: {
@@ -62,7 +87,7 @@ const sellersSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     isEmailVerified: {
@@ -73,7 +98,7 @@ const sellersSchema = new Schema(
     isPhoneVerified: {
       type: Boolean,
       default: false,
-      required: true
+      // required: true
     },
     location: {
       type: location,
@@ -92,7 +117,7 @@ const sellersSchema = new Schema(
     sellerType: {
       type: ObjectId,
       ref: SellerTypes,
-      required: true
+      // required: true
     },
     busenessId: {
       type: ObjectId,
@@ -104,11 +129,11 @@ const sellersSchema = new Schema(
       ref: SellerStatutory,
       default: null
     },
-    contactId: {
+    /* contactId: {
       type: ObjectId,
       ref: SellerContact,
       default: null
-    },
+    }, */
     comapanyId: {
       type: ObjectId,
       ref: SellerCompany,
@@ -123,6 +148,16 @@ const sellersSchema = new Schema(
       type: [ObjectId],
       ref: SellerProducts,
       default: null
+    },
+    primaryCatId:{
+      type: ObjectId,
+      ref: 'primaryCategory',
+      default: null
+    },
+    website: {
+      type: String,
+      default: null,
+      trim: true
     }
   },
   {
