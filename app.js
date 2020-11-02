@@ -6,13 +6,15 @@ const cors = require('cors');
 const Logger = require('./src/utils/logger');
 const useragent = require('express-useragent');
 const config = require('./config/config')
+const { tradedb } = config
 
 require('dotenv').config();
 const { env } = process
 
 global.environment = env.NODE_ENV || 'production'
 require('./config/db').dbConnection();
-require('./config/db').elasticSearchConnect();
+require('./config/tenderdb').conn
+// require('./config/db').elasticSearchConnect();
 
 const app = express();
 const server = require('http').Server(app);
@@ -39,7 +41,7 @@ app.get('/', function (req, res){
 
 app.use(router)
 
-server.listen(config.server_port);
+server.listen(tradedb.server_port);
 
 server.on('error', (e) => {
 
