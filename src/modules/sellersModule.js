@@ -81,6 +81,27 @@ module.exports.getSeller = (id) =>
       .catch((error) => reject(error));
   });
 
+exports.getSellerProfile = (id) =>
+  new Promise((resolve, reject) => {
+    console.log(id, 'seacg is seller-----------')
+      Sellers.find({_id: id})
+      .populate("primaryCatId")
+      .populate("sellerType")
+      .populate("busenessId")
+      .populate("statutoryId")
+      .populate("contactId")
+      .populate("comapanyId")
+      .populate("establishmentId")
+      .populate("sellerProductId")
+      .populate("location.city", "name")
+      .populate("location.state", "name")
+      .populate("location.country", "name")
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
+
 module.exports.getAllSellers = () =>
   new Promise((resolve, reject) => {
     Sellers.find({})

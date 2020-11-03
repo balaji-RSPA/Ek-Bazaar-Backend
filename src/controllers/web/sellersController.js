@@ -17,7 +17,8 @@ const {
   addStatutoryDetails,
   updateSellerPassword,
   inserSeller,
-  sellerBulkInser
+  sellerBulkInser,
+  getSellerProfile
 } = sellers;
 const { createToken, encodePassword } = require("../../utils/utils");
 
@@ -105,7 +106,9 @@ module.exports.addSeller = async (req, res) => {
 module.exports.getSeller = async (req, res) => {
   try {
     const { sellerID } = req;
-    const seller = await getSeller(sellerID);
+    const { id } = req.query
+    const seller = sellerID ? await getSeller(sellerID): await getSellerProfile(id);
+    console.log(seller, ' dinal ressss')
     respSuccess(res, seller);
   } catch (error) {
     respError(res, error.message);
