@@ -77,11 +77,12 @@ const sellersSchema = new Schema(
   {
     userId: {
       type: ObjectId,
-      // required: true
+      required: true
     },
     name: {
       type: String,
-      required: true,
+      default: null,
+      // required: true,
       trim: true,
     },
     countryCode: {
@@ -89,30 +90,21 @@ const sellersSchema = new Schema(
       trim: true,
       default: null
     },
-    // mobile: {
-    //   type: String,
-    //   required: true,
-    //   trim: true,
-    // },
     mobile: [mobile],
-    password: {
-      type: String,
-      // required: true,
-      trim: true,
-    },
     alternateNumber: {
       type: String,
       trim: true,
     },
     email: {
       type: String,
+      default: null,
       // required: true,
       trim: true,
     },
     isEmailVerified: {
       type: Boolean,
       default: false,
-      required: true
+      // required: true
     },
     isPhoneVerified: {
       type: Boolean,

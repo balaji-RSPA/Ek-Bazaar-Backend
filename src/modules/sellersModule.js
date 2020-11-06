@@ -45,27 +45,81 @@ module.exports.checkSellerExist = (query) =>
       .catch((error) => reject(error));
 });
 
-module.exports.checkSellerExistOrNot = (mobile) =>
+/**
+ * user functions
+ */
+module.exports.checkUserExistOrNot = (mobile) =>
   new Promise((resolve, reject) => {
     Users.find({ mobile: mobile })
+      .select({
+        name: 1,
+        email: 1,
+        mobile: 1,
+        isPhoneVerified: 1,
+        isMobileVerified: 1,
+        password: 1
+        // _id: -1,
+      })
       .then((doc) => {
         resolve(doc);
       })
       .catch((error) => reject(error));
 });
 
-module.exports.addSeller = (data) =>
+module.exports.addUser = (data) =>
   new Promise((resolve, reject) => {
-    Sellers.create(data)
+    Users.create(data)
       .then((doc) => {
         resolve(doc);
       })
       .catch((error) => reject(error));
   });
 
-module.exports.addSellerToTender = (data) =>
+module.exports.getUserProfile = (id) =>
   new Promise((resolve, reject) => {
-    Users.create(data)
+    Users.find({ _id: id })
+      .select({
+        name: 1,
+        email: 1,
+        mobile: 1,
+        isPhoneVerified: 1,
+        isMobileVerified: 1,
+        // _id: -1,
+      })
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
+
+module.exports.updateUser = (id, data) =>
+  new Promise((resolve, reject) => {
+    Users.findOneAndUpdate({ _id: id }, data, { new: true })
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
+
+module.exports.forgetPassword = (mobile, data) =>
+  new Promise((resolve, reject) => {
+    Users.findOneAndUpdate({ mobile }, data, { new: true })
+      .then((doc) => {
+        console.log(doc);
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });
+
+/**
+ * seller functions
+ */
+
+module.exports.addSeller = (data) =>
+  new Promise((resolve, reject) => {
+    Sellers.create(data)
       .then((doc) => {
         resolve(doc);
       })
@@ -85,6 +139,7 @@ module.exports.sellerBulkInser = (data) =>
 module.exports.getSeller = (id) =>
   new Promise((resolve, reject) => {
     Sellers.find({ userId: id })
+      .select({ _id: -1 })
       .populate("sellerType")
       .populate("busenessId")
       .populate("statutoryId")
@@ -104,8 +159,8 @@ module.exports.getSeller = (id) =>
 
 exports.getSellerProfile = (id) =>
   new Promise((resolve, reject) => {
-    console.log(id, 'seacg is seller-----------')
-      Sellers.find({_id: id})
+    console.log(id, "seacg is seller-----------");
+    Sellers.find({ _id: id })
       .populate("primaryCatId")
       .populate("sellerType")
       .populate("busenessId")
@@ -143,10 +198,9 @@ module.exports.getAllSellers = () =>
       .catch((error) => reject(error));
   });
 
-module.exports.updateSeller = (id, data) =>
-new Promise((resolve, reject) => {
-  // console.log("id, data", id, data)
-    Sellers.findOneAndUpdate({ _id: id }, data, { new: true })
+module.exports.updateSeller = (query, data) =>
+  new Promise((resolve, reject) => {
+    Sellers.findOneAndUpdate(query, data, { new: true })
       .then((doc) => {
         console.log(doc);
         resolve(doc);
@@ -232,16 +286,6 @@ module.exports.addStatutoryDetails = (sellerId, data) =>
       { $set: data },
       { new: true, upsert: true }
     )
-      .then((doc) => {
-        console.log(doc);
-        resolve(doc);
-      })
-      .catch((error) => reject(error));
-  });
-
-module.exports.updateSellerPassword = (mobile, data) =>
-  new Promise((resolve, reject) => {
-    Sellers.findOneAndUpdate({ mobile }, data, { new: true })
       .then((doc) => {
         console.log(doc);
         resolve(doc);
@@ -353,7 +397,7 @@ exports.structureSellerData = async (seller) => {
     }
     // console.log("finalData", _sellerType[1].cities)
 
-  const updateSeller = await this.updateSeller(sellerExist._id,finalData)
+  const updateSeller = await this.updateSeller({_id: sellerExist._id},finalData)
   // console.log("updateSeller +++++++++++++++++", updateSeller)
     
   }else{
@@ -453,7 +497,7 @@ exports.structureSellerData = async (seller) => {
           const upData = {
             sellerProductId: proData
           }
-        const updateSeller = await this.updateSeller(result._id,upData)
+        const updateSeller = await this.updateSeller({_id:result._id},upData)
         console.log("proData inseted data-------", updateSeller)
 
       }
