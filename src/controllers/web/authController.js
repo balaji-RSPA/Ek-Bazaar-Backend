@@ -12,7 +12,7 @@ const { createToken } = require("../../utils/utils");
 //   handleUserSession, getSessionCount, handleUserLogoutSession
 // } = require('../../modules/sessionModules')
 
-const { buyers, sellers } = require("../../modules");
+const { sellers } = require("../../modules");
 
 const { JWTTOKEN } = require("../../utils/globalConstants");
 
@@ -26,21 +26,26 @@ const getUserAgent = (userAgent) => {
     source,
   };
 };
-exports.buyerLogin = async (req, res) => {
+
+exports.login = async(req, res) => {
   try {
     const { password, ipAddress, location, mobile } = req.body;
-    const buyer = await buyers.checkBuyerExistOrNot(mobile);
-    if (!buyer) {
-      return respAuthFailed(res, "Buyer not found");
+    console.log(password, mobile, '..........')
+    let user = await sellers.checkUserExistOrNot(mobile);
+    user = user[0]
+    console.log(user, 'user......')
+    if (!user) {
+      return respAuthFailed(res, "User not found");
     }
-    const result = await bcrypt.compare(password, buyer.password);
+    const result = await bcrypt.compare(password, user.password);
+    console.log(user, 'user......', result)
     if (result) {
       // const sessionCount = await getSessionCount(user._id);
 
       const deviceId = machineIdSync();
 
       // const userAgent = getUserAgent(req.useragent);
-      const token = createToken(deviceId, {buyerId: buyer._id});
+      const token = createToken(deviceId, {userId: user._id});
       // const finalData = {
       //   userAgent,
       //   buyerId: buyer._id,
@@ -53,42 +58,10 @@ exports.buyerLogin = async (req, res) => {
       return respSuccess(res, { token, location }, "successfully logged in!");
     }
     return respAuthFailed(res, "Invalid Credentials!");
-  } catch (err) {
-    return respError(res, err.message);
+  } catch (error) {
+    return respError(res, error.message);
   }
-};
-
-exports.sellerLogin = async (req, res) => {
-  try {
-    const { password, ipAddress, location, mobile } = req.body;
-    const seller = await sellers.checkSellerExistOrNot(mobile);
-    if (!seller) {
-      return respAuthFailed(res, "Seller not found");
-    }
-    const result = await bcrypt.compare(password, seller.password);
-    if (result) {
-      // const sessionCount = await getSessionCount(seller._id);
-
-      const deviceId = machineIdSync();
-
-      // const userAgent = getUserAgent(req.useragent);
-      const token = createToken(deviceId, {sellerId: seller._id});
-      // const finalData = {
-      //   userAgent,
-      //   sellerId: seller._id,
-      //   token,
-      //   deviceId,
-      //   ipAddress
-      // }
-
-      // const result1 = await handleUserSession(user._id, finalData);
-      return respSuccess(res, { token, location }, "successfully logged in!");
-    }
-    return respAuthFailed(res, "Invalid Credentials!");
-  } catch (err) {
-    return respError(res, err.message);
-  }
-};
+}
 
 exports.logout = async (req, res) => {
   try {
