@@ -23,5 +23,21 @@ const statesSchema = new Schema({
     versionKey: false
 })
 
+statesSchema.index({
+  name: 1,
+  country: 1
+}, {
+  background: false,
+  unique: true,
+  partialFilterExpression: {
+    name: {
+      $exists: true
+    },
+    country: {
+      $exists: true
+    }
+  }
+})
+
 const States = model('states', statesSchema)
 module.exports = States
