@@ -11,7 +11,8 @@ const SellerStatutory = require('./sellerStatutorySchema')
 const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
-const SellerTypes = require('./sellertTypesSchema')
+const SellerTypes = require('./sellertTypesSchema');
+const { identity } = require("lodash");
 
 const location = new Schema({
   city: {
@@ -53,6 +54,24 @@ const mobile = new Schema({
         default: null
       }
     })
+const serviceSchema =  new Schema({
+  name: {
+    type: ObjectId,
+    default: null
+  },
+  cities: [{
+    city:{
+      type: ObjectId,
+      ref: City,
+      default: null
+    },
+    state:{
+      type: ObjectId,
+      ref: State,
+      default: null
+    },
+  }]
+})
 
 const sellersSchema = new Schema(
   {
@@ -114,11 +133,16 @@ const sellersSchema = new Schema(
         default: null,
       },
     },
-    sellerType: {
-      type: ObjectId,
-      ref: SellerTypes,
-      // required: true
-    },
+    // Array Object
+    sellerType: [serviceSchema],
+    // Array Object
+    // serviceCity:[
+    //   {
+    //     cityId: Object
+    //   },{
+    //      cityId: Object
+    //   }
+    // ],
     busenessId: {
       type: ObjectId,
       ref: SellerBusiness,
@@ -127,15 +151,6 @@ const sellersSchema = new Schema(
     statutoryId: {
       type: ObjectId,
       ref: SellerStatutory,
-      default: null
-    },
-    /* contactId: {
-      type: ObjectId,
-      ref: SellerContact,
-      default: null
-    }, */
-    comapanyId: {
-      type: ObjectId,
       ref: SellerCompany,
       default: null
     },
@@ -149,11 +164,11 @@ const sellersSchema = new Schema(
       ref: SellerProducts,
       default: null
     },
-    primaryCatId:{
-      type: ObjectId,
-      ref: 'primaryCategory',
-      default: null
-    },
+    // primaryCatId:{
+    //   type: ObjectId,
+    //   ref: 'primaryCategory',
+    //   default: null
+    // },
     website: {
       type: String,
       default: null,

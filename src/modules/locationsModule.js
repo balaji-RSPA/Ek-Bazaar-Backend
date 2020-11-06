@@ -164,14 +164,49 @@ module.exports.checkAndAddCity = (query) =>
     this.getCity(query)
       .then((doc) => {
         if (doc) {
-          console.log("existing City -------");
+          // console.log("existing City -------");
           resolve(doc);
         } else {
-          // this.addCity(query).then((newDoc) => {
-          console.log("New City -------");
-          //   resolve(newDoc)
-          // }).catch(reject)
+          this.addCity(query).then((newDoc) => {
+          // console.log("New City -------");
+            resolve(newDoc)
+          }).catch(reject)
         }
       })
       .catch(reject);
   });
+
+module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) => {
+    match = {
+    $match: {
+      name: {
+        $in: serviceCity.map((name) => (name)),
+      }
+    },
+  };
+  const execQuery = Cities.aggregate([
+      match,
+      {
+        $lookup: {
+          from: "states",
+          localField: "state",
+          foreignField: "_id",
+          as: "state",
+        },
+      },
+      {$unwind: '$state'},
+      {
+        $project: {
+          "_id": 1,
+          "name": 1,
+          "state.name": 1,
+          "state._id": 1
+        }
+      }      
+    ]);
+    execQuery
+      .then((cities) => {
+        resolve(cities);
+      })
+      .catch(reject);
+})

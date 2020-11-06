@@ -18,7 +18,8 @@ const {
   updateSellerPassword,
   inserSeller,
   sellerBulkInser,
-  getSellerProfile
+  getSellerProfile,
+  structureSellerData
 } = sellers;
 const { createToken, encodePassword } = require("../../utils/utils");
 
@@ -205,17 +206,17 @@ module.exports.sellerBulkInsert = async (req, res) => {
 
     const reqData = req.body
     let bulkData = [];
+    let result;
     for (let index = 0; index < reqData.length; index++) {
 
       const seller = reqData[index];
-      const result = await inserSeller(seller)
-      // console.log("module.exports.sellerBulkInsert -> result", result)
-      bulkData.push(result)
+      // const result = await inserSeller(seller)
+      result = await structureSellerData(seller)
+      // bulkData.push(result)
       
     }
-    // console.log("module.exports.sellerBulkInsert -> redData", bulkData)
-    await sellerBulkInser(bulkData);
-    respSuccess(res, "Data Uploades Successfully!")
+    // await sellerBulkInser(bulkData);
+    respSuccess(res, result)
    
   } catch (error) {
 
