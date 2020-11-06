@@ -27,12 +27,12 @@ module.exports.getAllCategories = (query) => new Promise((resolve, reject) => {
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
-          // select: "name vendorId",
-          populate: {
-            path: "productId",
-            model: Products,
-            // select: "name vendorId",
-          },
+          select: "name vendorId",
+          // populate: {
+          //   path: "productId",
+          //   model: Products,
+          //   // select: "name vendorId",
+          // },
         },
       })
       .then((doc) => {
@@ -321,6 +321,7 @@ exports.updateProductCategory = (id, newData) =>
       resolve(doc && id ? doc.primaryCatId._id : doc)
     }).catch(reject)
   })
+// find( { $and: [ productId: {$exists: true, $eq: []}, { 'vendorId': {'$regex': '^L3FB'} } ] } )
 
   exports.getAllProducts = (reqQuery) => new Promise((resolve, reject) => {
 
