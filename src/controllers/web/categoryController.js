@@ -218,9 +218,11 @@ module.exports.addSecondaryCategories = async (req, res) => {
             const updateData= {
                 secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
             }
+            console.log(index, '------', element.primaryCatId, '---',element.l1, 'Count-----')
             await updatePrimaryCategory(parentCat._id, updateData)
             
         }
+        console.log('COmpleted +++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
         
     } catch (error) {
@@ -293,11 +295,12 @@ module.exports.addBulkProducts = async (req, res) => {
                 const updateData= {
                     productId: parentCat.productId.concat(result._id)
                 }
-                console.log("COunt--------------------", index)
+                console.log(index, "COunt----", element.l1, element.vendorId)
                 await updateSecondaryCategory(parentCat._id, updateData)
             }
             
         }
+        console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
         
     } catch (error) {

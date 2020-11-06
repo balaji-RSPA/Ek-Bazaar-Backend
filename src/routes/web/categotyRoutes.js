@@ -26,7 +26,7 @@ router.get("/getSecondaryCategory/:id", category.getSecondaryCategory);
 
 
 // Secondary Categories
-router.post("/addBulkProduct", category.addBulkProducts);
+router.post("/addBulkProducts", category.addBulkProducts);
 router.post("/addProductCategory", category.addProduct);
 router.get("/getProductCategory/:id", category.getProduct);
 
