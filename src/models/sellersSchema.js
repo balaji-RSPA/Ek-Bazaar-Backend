@@ -58,7 +58,7 @@ const sellersSchema = new Schema(
   {
     userId: {
       type: ObjectId,
-      required: true
+      // required: true
     },
     name: {
       type: String,
