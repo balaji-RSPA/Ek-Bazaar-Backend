@@ -57,6 +57,7 @@ const mobile = new Schema({
 const serviceSchema =  new Schema({
   name: {
     type: ObjectId,
+    ref:SellerTypes,
     default: null
   },
   cities: [{
@@ -77,7 +78,8 @@ const sellersSchema = new Schema(
   {
     userId: {
       type: ObjectId,
-      required: true
+      // required: true
+      default: null
     },
     name: {
       type: String,
@@ -162,6 +164,11 @@ const sellersSchema = new Schema(
     //   default: null
     // },
     website: {
+      type: String,
+      default: null,
+      trim: true
+    },
+    source: {
       type: String,
       default: null,
       trim: true

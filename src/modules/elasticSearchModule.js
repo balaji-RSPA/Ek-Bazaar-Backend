@@ -20,10 +20,42 @@ module.exports.addSellerBulkIndex = async () => {
             const foundDoc = await Sellers.find()
                 .skip(skip)
                 .limit(limit)
-                .populate("primaryCatId", "name venderId")
+                // .populate("primaryCatId", "name venderId")
                 .populate("location.state", "name region")
                 .populate("location.country", "name")
                 .populate("location.city", "name")
+                .populate("sellerType.name", "name")
+                .populate("sellerType.cities.city", "name")
+                .populate("sellerType.cities.state", "name region")
+                .populate({
+                    path: 'sellerProductId',
+                    model: 'sellerProducts',
+                    select:'sellerId serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId',
+                    populate:[
+                    {
+                      path: 'serviceType',
+                      model: 'sellerTypes',
+                      select:'name',
+                    },
+                    {
+                      path: 'parentCategoryId',
+                      model: 'parentCategory',
+                      select:'name'
+                    },{
+                      path: 'primaryCategoryId',
+                      model: 'primaryCategory',
+                      select:'name'
+                    },{
+                      path: 'secondaryCategoryId',
+                      model: 'secondaryCategory',
+                      select:'name'
+                    }, {
+                      path: 'poductId',
+                      model: 'products',
+                      select:'name'
+                    }
+                  ]
+                })
                 .lean();
 
             try {
@@ -93,7 +125,7 @@ exports.bulkStoreInElastic = (foundDoc) =>
 
 exports.sellerSearch = async(reqQuery) => {
 
-  const { cityId, productId, secondaryId, primaryId } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId } = reqQuery
   let catId=''
     let query = {
     bool: {
@@ -104,22 +136,22 @@ exports.sellerSearch = async(reqQuery) => {
   };
 
   if(productId){
-    const categoryId = await getCatId({_id: productId }, '_id')
-    catId = categoryId
+    // const categoryId = await getCatId({_id: productId }, '_id')
+    // catId = categoryId
       const categoryMatch = {
-        term: {
-            "primaryCatId._id": categoryId,
+        match: {
+            "sellerProductId.poductId._id": productId,
         },
     };
+    
         query.bool.must.push(categoryMatch);
   }
 
   if(secondaryId){
-    const categoryId = await getSecCatId({_id: secondaryId }, '_id')
-    catId = categoryId
+    // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
       const categoryMatch = {
         term: {
-            "primaryCatId._id": categoryId,
+            "sellerProductId.secondaryCategoryId._id": secondaryId,
         },
     };
         query.bool.must.push(categoryMatch);
@@ -127,15 +159,23 @@ exports.sellerSearch = async(reqQuery) => {
 
   if(primaryId){
     // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
-    catId = primaryId
       const categoryMatch = {
         term: {
-            "primaryCatId._id": primaryId,
+            "sellerProductId.primaryCategoryId._id": primaryId,
         },
     };
         query.bool.must.push(categoryMatch);
   }
-//   const cityId = [ '5e312f988acbee60ab54df37', '5f7c1eaecdb53325e1358a08' ];
+
+  if(parentId){
+    // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
+      const categoryMatch = {
+        term: {
+            "sellerProductId.parentCategoryId._id": parentId,
+        },
+    };
+        query.bool.must.push(categoryMatch);
+  }
   
     if (cityId) {
         if (Array.isArray(cityId)) {
@@ -143,20 +183,23 @@ exports.sellerSearch = async(reqQuery) => {
             cityId.forEach((c) => {
             const locationMatch = {
                 term: {
-                "location.city._id": c,
+                // "location.city._id": c,
+                  "sellerType.cities.city._id" : c
                 },
             };
             query.bool.must[0].bool.should.push(locationMatch);
             });
         } else {
             const locationMatch = {
-            term: {
-                "location.city._id": cityId,
-            },
+              term: {
+                  // "location.city._id": cityId,
+                  "sellerType.cities.city._id" : cityId
+              },
             };
             query.bool.must.push(locationMatch);
         }
     }
+
     return {
       query,
       catId
@@ -168,6 +211,7 @@ exports.searchFromElastic = (query, range) =>
   new Promise((resolve, reject) => {
 
     const { skip, limit } = range;
+    console.log("range", range, query)
     const body = {
       size: limit || 10,
       from: skip || 0,

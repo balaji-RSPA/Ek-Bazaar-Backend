@@ -363,6 +363,8 @@ exports.structureSellerData = async (seller) => {
 
   const sellerExist = await this.checkSellerExist({name})
   if(sellerExist){
+
+    console.log(" Existing Seller --------------")
     let productData=[]
     let proData=[]
     productData = levelFour.map((pro) => ({
@@ -402,7 +404,7 @@ exports.structureSellerData = async (seller) => {
     
   }else{
 
-      console.log("sellerExist", sellerExist)
+      console.log("New Seller -----------------------------", )
       let addr = address.split(",");
       const pincodeSplit = addr.filter((data) => data.includes("-"));
       const pinData = pincodeSplit[pincodeSplit.length - 1];
@@ -410,13 +412,11 @@ exports.structureSellerData = async (seller) => {
       addr.splice(addr.indexOf(pinData), 1);
       const completeAddress = addr.join(",");
       
-      Level_1 = Level_1.split(",");
-      Level_2 = Level_2.split(",");
-      Level_3 = Level_3.split(",");
+      Level_1 = Level_1.toString().split(",");
+      Level_2 = Level_2.toString().split(",");
+      Level_3 = Level_3.toString().split(",");
 
       // Level_4 = Level_4.split(","); -----------
-
-      // console.log("Level_2", Level_3)
 
       let cityData = City ? await checkAndAddCity({ name: City.trim() }) : null;
       let stateData =
@@ -441,8 +441,6 @@ exports.structureSellerData = async (seller) => {
 
       // const levelFour = await getLevelFourCategoryList(Level_4) ------
       
-      
-      // console.log(levelFour, ' lllllllllllllllllllllllllll')
       // serviceCity = await checkAndAddSellerType()
 
       Mobile_1 &&  mobile.push({
@@ -477,28 +475,28 @@ exports.structureSellerData = async (seller) => {
             city: cat._id,
             state: cat.state._id || null
           })),
-        }]
+        }],
+        source: 'vendor'
       }
       const result = await this.addSeller(finalData)
       let productData=[]
       let proData=[]
+
       if(result){
         
           productData = levelFour.map((pro) => ({
             sellerId: result._id,
-            serviceType: capitalizeFirstLetter(Service_Type),
+            serviceType: sellerType,
             parentCategoryId: pro.parentCatId._id,
             primaryCategoryId: pro.primaryCatId._id,
             secondaryCategoryId: pro.secondaryId._id,
             poductId: pro._id,
           }))
-          // console.log("productData========", productData)
           proData = await sellerProductsBulkInsert(productData)
           const upData = {
             sellerProductId: proData
           }
         const updateSeller = await this.updateSeller({_id:result._id},upData)
-        console.log("proData inseted data-------", updateSeller)
 
       }
 
