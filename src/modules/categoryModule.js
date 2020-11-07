@@ -188,6 +188,18 @@ module.exports.getPrimaryCategory = (id) =>
       .catch(reject);
 });
 
+module.exports.getRelatedPrimaryCategory = (id) =>
+  new Promise((resolve, reject) => {
+    PrimaryCategory.findById(id)
+    .skip(0)
+    .limit(2)
+    .populate('secondaryCategotyId', 'name vendorId')
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+});
+
 module.exports.getPrimaryCat = (query) =>
   new Promise((resolve, reject) => {
     PrimaryCategory.findOne(query)
@@ -320,18 +332,44 @@ exports.updateProductCategory = (id, newData) =>
   });
 
   exports.getCatId = (query, id) => new Promise((resolve, reject) => {
-    Products.findOne(query)
-    .populate({
-      path: "secondaryId",
-      model: SecondaryCategory,
-      populate: {
+
+    if(query.productId){
+
+      Products.findOne({_id: query.productId})
+      .populate({
+        path: "secondaryId",
+        model: SecondaryCategory,
+        populate: {
+            path: "primaryCatId",
+            model: PrimaryCategory
+        },
+      })
+      .then((doc) => {
+        resolve(doc && id ? doc.secondaryId.primaryCatId._id : doc)
+      }).catch(reject)
+
+    }else if(query.secondaryId){
+
+      SecondaryCategory.findOne({_id: query.secondaryId})
+      .populate({
           path: "primaryCatId",
           model: PrimaryCategory
-      },
-    })
-    .then((doc) => {
-      resolve(doc && id ? doc.secondaryId.primaryCatId._id : doc)
-    }).catch(reject)
+      })
+      .then((doc) => {
+        console.log("doc ssssssss", doc)
+        resolve(doc && id ? doc.primaryCatId._id : doc)
+      }).catch(reject)
+
+    }else if(query.primaryId){
+
+      PrimaryCategory.findOne({_id: query.primaryId})
+      .then((doc) => {
+        console.log("doc ppppppp", doc)
+        resolve(doc && id ? doc._id : doc)
+      }).catch(reject)
+
+    }
+    
   })
 
 
