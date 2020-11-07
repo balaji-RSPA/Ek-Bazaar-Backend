@@ -16,5 +16,17 @@ const countrySchema = new Schema({
     versionKey: false
 })
 
+countrySchema.index({
+  name: 1
+}, {
+  background: false,
+  unique: true,
+  partialFilterExpression: {
+    name: {
+      $exists: true
+    }
+  }
+})
+
 const Countries = model('countries', countrySchema)
 module.exports = Countries

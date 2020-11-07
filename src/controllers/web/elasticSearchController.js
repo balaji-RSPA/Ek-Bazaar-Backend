@@ -2,7 +2,7 @@ const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { elastic, category } = require('../../modules')
 const { addSellerBulkIndex, sellerSearch, searchFromElastic } = elastic
-const { getPrimaryCategory } = category
+const { /* getPrimaryCategory, */ getRelatedPrimaryCategory , getCatId } = category
 module.exports.addSellerBulkIndex = async (req, res) => {
 
   try {
@@ -29,13 +29,15 @@ module.exports.serachSeller = async (req, res) => {
             limit: parseInt(reqQuery.limit)
         }
         // const que = {
-        //     name: 'Basmati Rice'
+        //     _id: reqQuery.productId
         // }
-        // const primaryCatId = await getCatId(que)
+        const primaryCatId = await getCatId(reqQuery, '_id')
+        console.log("primaryCatId", primaryCatId)
         const result = await sellerSearch(reqQuery)
         const { query, catId } = result
         const seller = await searchFromElastic(query, range)
-        const relatedCat = await getPrimaryCategory(catId)
+        const relatedCat = await getRelatedPrimaryCategory(primaryCatId)
+        // console.log(" qurty result------", relatedCat)
         const resp = {
             total: seller[1],
             data: seller[0],

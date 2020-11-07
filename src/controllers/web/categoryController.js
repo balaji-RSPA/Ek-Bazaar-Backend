@@ -354,6 +354,7 @@ module.exports.getAllProducts = async (req, res) => {
 
     try {
         const reqQuery = req.query
+        console.log("reqQuery Product ---------", reqQuery)
         const result = await getAllProducts(reqQuery)
         respSuccess(res, result)
         
