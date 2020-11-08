@@ -64,12 +64,12 @@ module.exports.addCountry = (newData) =>
         reject(error);
       });
   });
-  
+
 module.exports.addCity = (newData, id) =>
   new Promise((resolve, reject) => {
     Cities.create(newData)
       .then((doc) => {
-         resolve(doc && id ? doc._id : doc)
+        resolve(doc && id ? doc._id : doc);
       })
       .catch((error) => {
         reject(error);
@@ -79,82 +79,134 @@ module.exports.addCity = (newData, id) =>
 module.exports.getCity = (query, id) =>
   new Promise((resolve, reject) => {
     Cities.findOne(query)
-    // .populate('state', 'name')
+      // .populate('state', 'name')
       .then((doc) => {
-         resolve(doc && id ? doc._id : doc)
+        resolve(doc && id ? doc._id : doc);
       })
       .catch((error) => {
         reject(error);
       });
   });
 
-exports.getAllCities = (reqQuery) => new Promise((resolve, reject) => {
+exports.getAllCities = (reqQuery) =>
+  new Promise((resolve, reject) => {
+    const skip = parseInt(reqQuery.skip) || 0;
+    const limit = parseInt(reqQuery.limit) || 1000;
+    const search = reqQuery.search || "";
 
-  const skip = parseInt(reqQuery.skip) || 0
-  const limit = parseInt(reqQuery.limit) || 1000
-  const search = reqQuery.search || ''
+    let { state } = reqQuery;
+    let match;
 
-  let { state } = reqQuery
-  let match;
-
-  if (state) {
-
-    state = Array.isArray(state) ? state : [state]
-    match = {
-      $match: {
-        name: {
-          $regex: `^${search}`,
-          $options: 'i'
+    if (state) {
+      state = Array.isArray(state) ? state : [state];
+      match = {
+        $match: {
+          name: {
+            $regex: `^${search}`,
+            $options: "i",
+          },
+          state: {
+            $in: state.map((id) => ObjectId(id)),
+          },
         },
-        state: {
-          $in: state.map((id) => ObjectId(id))
-        }
-      }
+      };
+    } else {
+      match = {
+        $match: {
+          name: {
+            $regex: `^${search}`,
+            $options: "i",
+          },
+        },
+      };
     }
 
-  } else {
+    const execQuery = Cities.aggregate([
+      match,
+      {
+        $sort: {
+          name: 1,
+        },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $lookup: {
+          from: "states",
+          localField: "state",
+          foreignField: "_id",
+          as: "state",
+        },
+      },
+      {
+        $project: {
+          "_id": 1,
+          "name": 1,
+          "state.name": 1,
+          "state._id": 1
+        }
+      }      
+    ]);
 
+    execQuery
+      .then((cities) => {
+        resolve(cities);
+      })
+      .catch(reject);
+  });
+
+module.exports.checkAndAddCity = (query) =>
+  new Promise((resolve, reject) => {
+    this.getCity(query)
+      .then((doc) => {
+        if (doc) {
+          // console.log("existing City -------");
+          resolve(doc);
+        } else {
+          this.addCity(query).then((newDoc) => {
+          // console.log("New City -------");
+            resolve(newDoc)
+          }).catch(reject)
+        }
+      })
+      .catch(reject);
+  });
+
+module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) => {
     match = {
-      $match: {
-        name: {
-          $regex: `^${search}`,
-          $options: 'i'
-        }
+    $match: {
+      name: {
+        $in: serviceCity.map((name) => (name)),
       }
-    }
-
-  }
-
-  const execQuery = Cities.aggregate([match, {
-    $sort: {
-      name: 1
-    }
-  }, {
-    $skip: skip
-  }, {
-    $limit: limit
-  }])
-
-  execQuery.then((cities) => {
-
-    resolve(cities)
-
-  }).catch(reject)
-
-})
-
-module.exports.checkAndAddCity = (query) => new Promise ((resolve, reject) => {
-
- this.getCity(query).then((doc) => {
-    if(doc){
-      console.log('existing City -------')
-      resolve(doc)
-    }else{
-      // this.addCity(query).then((newDoc) => {
-        console.log('New City -------')
-      //   resolve(newDoc)
-      // }).catch(reject)
-    }
-  }).catch(reject)
-
+    },
+  };
+  const execQuery = Cities.aggregate([
+      match,
+      {
+        $lookup: {
+          from: "states",
+          localField: "state",
+          foreignField: "_id",
+          as: "state",
+        },
+      },
+      {$unwind: '$state'},
+      {
+        $project: {
+          "_id": 1,
+          "name": 1,
+          "state.name": 1,
+          "state._id": 1
+        }
+      }      
+    ]);
+    execQuery
+      .then((cities) => {
+        resolve(cities);
+      })
+      .catch(reject);
 })

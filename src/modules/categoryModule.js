@@ -1,12 +1,37 @@
 const mongoose = require("mongoose");
 const { PrimaryCategory, ParentCategory, SecondaryCategory, Products, SellerTypes } = require("../models");
-const { populate } = require("../models/rfpSchema");
 
-module.exports.addSellerType = (data) => new Promise ((resolve, reject) => {
+module.exports.addSellerType = (data, id) => new Promise ((resolve, reject) => {
     
     SellerTypes.create(data).then((doc) => {
-        resolve(doc)
+       resolve(doc && id ? doc._id : doc)
     }).catch(reject)
+
+})
+
+module.exports.getSellerType = (query, id) => new Promise ((resolve, reject) => {
+
+    SellerTypes.findOne(query).then((doc) => {
+        resolve(doc && id ? doc._id : doc)
+    }).catch(reject)
+
+})
+
+module.exports.checkAndAddSellerType = (query) => new Promise ((resolve, reject) => {
+    
+    this.getSellerType(query, '_id')
+      .then((doc) => {
+        if (doc) {
+          console.log("existing seller type +++++");
+          resolve(doc);
+        } else {
+          this.addSellerType(query, '_id').then((newDoc) => {
+          console.log("New seller type ++++");
+            resolve(newDoc)
+          }).catch(reject)
+        }
+      })
+      .catch(reject);
 
 })
 
@@ -28,11 +53,11 @@ module.exports.getAllCategories = (query) => new Promise((resolve, reject) => {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
           select: "name vendorId",
-          populate: {
-            path: "productId",
-            model: Products,
-            select: "name vendorId",
-          },
+          // populate: {
+          //   path: "productId",
+          //   model: Products,
+          //   // select: "name vendorId",
+          // },
         },
       })
       .then((doc) => {
@@ -81,7 +106,6 @@ module.exports.getParentCategory = (reqQuery) => new Promise((resolve, reject) =
     _id: reqQuery.id,
     status,
   }
-  console.log("module.exports.getParentCategory -> reqQuery", query)
 
     ParentCategory.findOne(query)
     .populate({
@@ -157,6 +181,19 @@ module.exports.addPrimaryCategory = (data) =>
 module.exports.getPrimaryCategory = (id) =>
   new Promise((resolve, reject) => {
     PrimaryCategory.findById(id)
+    .populate('secondaryCategotyId', 'name vendorId')
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+});
+
+module.exports.getRelatedPrimaryCategory = (id) =>
+  new Promise((resolve, reject) => {
+    PrimaryCategory.findById(id)
+    .skip(0)
+    .limit(2)
+    .populate('secondaryCategotyId', 'name vendorId')
       .then((doc) => {
         resolve(doc);
       })
@@ -294,19 +331,222 @@ exports.updateProductCategory = (id, newData) =>
       .catch(reject);
   });
 
-  exports.getCatId = (query) => new Promise((resolve, reject) => {
-    Products.findOne(query)
-    .populate({
-      path: "secondaryId",
-      model: SecondaryCategory,
-      populate: {
+  exports.getCatId = (query, id) => new Promise((resolve, reject) => {
+
+    if(query.productId){
+
+      Products.findOne({_id: query.productId})
+      .populate({
+        path: "secondaryId",
+        model: SecondaryCategory,
+        populate: {
+            path: "primaryCatId",
+            model: PrimaryCategory
+        },
+      })
+      .then((doc) => {
+        resolve(doc && id ? doc.secondaryId.primaryCatId._id : doc)
+      }).catch(reject)
+
+    }else if(query.secondaryId){
+
+      SecondaryCategory.findOne({_id: query.secondaryId})
+      .populate({
           path: "primaryCatId",
           model: PrimaryCategory
-      },
-    })
-    // .populate
+      })
+      .then((doc) => {
+        console.log("doc ssssssss", doc)
+        resolve(doc && id ? doc.primaryCatId._id : doc)
+      }).catch(reject)
+
+    }else if(query.primaryId){
+
+      PrimaryCategory.findOne({_id: query.primaryId})
+      .then((doc) => {
+        console.log("doc ppppppp", doc)
+        resolve(doc && id ? doc._id : doc)
+      }).catch(reject)
+
+    }
+    
+  })
+
+
+  exports.getSecCatId = (query, id) => new Promise((resolve, reject) => {
+    SecondaryCategory.findOne(query)
+    .populate({
+      path: "primaryCatId",
+      model: PrimaryCategory,
+      select: 'name venderId'
+    }).select('name venderId')
     .then((doc) => {
-    // console.log("exports.getCatId -> doc", doc.secondaryId.primaryCatId)
-      resolve(doc.secondaryId.primaryCatId._id)
+      resolve(doc && id ? doc.primaryCatId._id : doc)
     }).catch(reject)
   })
+// find( { $and: [ productId: {$exists: true, $eq: []}, { 'vendorId': {'$regex': '^L3FB'} } ] } )
+
+  exports.getAllProducts = (reqQuery) => new Promise((resolve, reject) => {
+
+    const skip = parseInt(reqQuery.skip) || 0
+    const limit = parseInt(reqQuery.limit) || 1000
+    const search = reqQuery.search || ''
+
+    let execQuery;
+    execQuery = Products.aggregate([{
+      $match: {
+        name: {
+          $regex: `^${search}`,
+          $options: 'i'
+        }
+      }
+    }, {
+      $skip: skip
+    }, {
+      $limit: limit
+    }])
+
+    execQuery.then((products) => {
+
+      resolve(products)
+
+    }).catch(reject)
+
+  })
+
+exports.getLevelOneCategoryList = (list) => new Promise((resolve, reject) => {
+  match = {
+    $match: {
+      vendorId: {
+        $in: list.map((vendorId) => (vendorId)),
+      }
+    },
+  };
+  const execQuery = ParentCategory.aggregate([
+      match,
+      {
+        $project: {
+          "_id": 1,
+          "name": 1,
+          "vendorId": 1,
+        }
+      }      
+    ]);
+    execQuery
+      .then((l1) => {
+        resolve(l1);
+      })
+      .catch(reject);
+})
+
+exports.getLevelTwoCategoryList = (list) => new Promise((resolve, reject) => {
+  match = {
+    $match: {
+      vendorId: {
+        $in: list.map((vendorId) => (vendorId)),
+      }
+    },
+  };
+  const execQuery = PrimaryCategory.aggregate([
+      match,
+      {
+        $project: {
+          "_id": 1,
+          "name": 1,
+          "vendorId": 1,
+        }
+      }      
+    ]);
+    execQuery
+      .then((l1) => {
+        resolve(l1);
+      })
+      .catch(reject);
+})
+
+exports.getLevelThreeCategoryList = (list) => new Promise((resolve, reject) => {
+  match = {
+    $match: {
+      vendorId: {
+        $in: list.map((vendorId) => (vendorId)),
+      }
+    },
+  };
+  const execQuery = SecondaryCategory.aggregate([
+      match,
+      {
+        $project: {
+          "_id": 1,
+          "name": 1,
+          "vendorId": 1,
+        }
+      }      
+    ]);
+    execQuery
+      .then((l1) => {
+        resolve(l1);
+      })
+      .catch(reject);
+})
+
+exports.getLevelFourCategoryList = (list) => new Promise((resolve, reject) => {
+  match = {
+    $match: {
+      vendorId: {
+        $in: list.map((vendorId) => (vendorId)),
+      }
+    },
+  };
+  const execQuery = Products.aggregate([
+      match,
+      {
+        $lookup: {
+          from: SecondaryCategory.collection.name,
+          localField: "secondaryId",
+          foreignField: "_id",
+          as: "secondaryId",
+        },
+      },
+      {$unwind: '$secondaryId'},
+      {
+        $lookup: {
+          from: PrimaryCategory.collection.name,
+          localField: "secondaryId.primaryCatId",
+          foreignField: "_id",
+          as: "primaryCatId",
+        },
+      },
+      {$unwind: '$primaryCatId'},
+      {
+        $lookup: {
+          from: ParentCategory.collection.name,
+          localField: "primaryCatId.parentCatId",
+          foreignField: "_id",
+          as: "parentCatId",
+        },
+      },
+      {$unwind: '$parentCatId'},
+      {
+        $project: {
+          "_id": 1,
+          "name": 1,
+          "vendorId": 1,
+          "secondaryId._id": 1,
+          "secondaryId.name": 1,
+          "secondaryId.vendorId": 1,
+          // "secondaryId.primaryCatId": 1,
+          "primaryCatId._id": 1,
+          "primaryCatId.name": 1,
+          "parentCatId._id": 1,
+          "parentCatId.name": 1
+        }
+      }      
+    ]);
+    execQuery
+      .then((l1) => {
+        resolve(l1);
+      })
+      .catch(reject);
+})
+
+  

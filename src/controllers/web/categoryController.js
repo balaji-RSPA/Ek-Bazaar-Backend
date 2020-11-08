@@ -20,7 +20,8 @@ const {
     // checkParentCategory,
     getParentCat,
     getSecondaryCat,
-    getPrimaryCat
+    getPrimaryCat,
+    getAllProducts,
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
@@ -47,7 +48,6 @@ module.exports.getAllSellerTypes = async(req, res) => {
 module.exports.getAllCategories = async (req, res) => {
 
     try {
-        console.log('all categories ---------')
         const reqQuery = camelcaseKeys(req.query)
         let qery = {
             status: true
@@ -218,9 +218,11 @@ module.exports.addSecondaryCategories = async (req, res) => {
             const updateData= {
                 secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
             }
+            console.log(index, '------', element.primaryCatId, '---',element.l1, 'Count-----')
             await updatePrimaryCategory(parentCat._id, updateData)
             
         }
+        console.log('COmpleted +++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
         
     } catch (error) {
@@ -238,7 +240,6 @@ module.exports.addSecondaryCategory = async (req, res) => {
         const reqData = req.body
         const primaryCatId = req.body.primaryCatId
         const primaryData = await getPrimaryCategory(primaryCatId)
-        console.log("module.exports.addSecondaryCategory -> primaryData", primaryData)
 
         const result = await addSecondaryCategory(reqData)
         const formData= {
@@ -294,11 +295,12 @@ module.exports.addBulkProducts = async (req, res) => {
                 const updateData= {
                     productId: parentCat.productId.concat(result._id)
                 }
-                console.log("COunt--------------------", index)
+                console.log(index, "COunt----", element.l1, element.vendorId)
                 await updateSecondaryCategory(parentCat._id, updateData)
             }
             
         }
+        console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
         
     } catch (error) {
@@ -347,3 +349,36 @@ module.exports.getProduct = async (req, res) => {
     }
 
 }
+
+module.exports.getAllProducts = async (req, res) => {
+
+    try {
+        const reqQuery = req.query
+        console.log("reqQuery Product ---------", reqQuery)
+        const result = await getAllProducts(reqQuery)
+        respSuccess(res, result)
+        
+    } catch (error) {
+
+        respError(error)
+        
+    }
+
+}
+
+module.exports.getRelatedCategories = async (req, res) => {
+
+    try {
+        const id = req.params.id
+        console.log("module.exports.getRelatedCategories -> id", id)
+        const result = await getPrimaryCategory(id)
+        respSuccess(res, result)
+        
+    } catch (error) {
+
+        respError(error)
+        
+    }
+
+}
+

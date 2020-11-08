@@ -14,40 +14,248 @@ POST http://localhost:8070/api/countries HTTP/1.1
 content-type: application/json
 
 ####
-POST http://localhost:8070/api/addPrimaryCategories HTTP/1.1
+POST http://localhost:8070/api/addBulkProducts HTTP/1.1
 content-type: application/json
 
 [
-    {
-        "vendorId": "ST1t",
-        "name": "Steel888",
-        "parentCatId": "5f969f4cbfc3dc4ef73efc28"
-    }
+  {
+    "vendorId1": "L4FB2576",
+    "secondaryId1": "L3FB186",
+    "name1": "Freeze Dried Mango",
+    "l11": 3
+  }
 ]
 
+
+
 ####
-GET  http://localhost:8070/api/getParentCategory/5f969f4cbfc3dc4ef73efc29 HTTP/1.1
+POST  http://localhost:8070/api/elastic/seller/bulkwrite HTTP/1.1
 content-type: application/json
 ####
 
+
+
+
+# get  http://localhost:8070/api/elastic/seller/searchSeller?skip=0&limit=10&city_id=5e312f988acbee60ab54df37&city_id=5f7c1eaecdb53325e1358a08&product_id=5f9a8160a4d11133656fdfc4 HTTP/1.1
+get  http://localhost:8070/api/elastic/seller/searchSeller?skip=0&limit=10&secondary_id=5fa3add4faba1914007079ec HTTP/1.1
+content-type: application/json
+
+####
+
+GET  http://localhost:8070/api/getAllProducts?search=r HTTP/1.1
+content-type: application/json
+
+####
+GET  http://localhost:8070/api/getRelatedCategories/5f9a6da3f5c69804c6664ed6 HTTP/1.1
+content-type: application/json
+
+####
 POST  http://localhost:8070/api/seller/bulkInsert HTTP/1.1
 content-type: application/json
 
-# [
-#   {
-#     "name": "Swayam Enterprises",
-#     "rating": 5,
-#     "address": "B Wing 704 Navkar Co Operative Housing Society, Shivaji Udyog Nagar, Dombivli East, Thane - 421201, Near Ice Factory",
-#     "number_of_votes": "2Votes",
-#     "url": "https://www.justdial.com/Mumbai/Swayam-Enterprises-Near-Ice-Factory-Dombivli-East/022PXX22-XX22-180211190006-J3V2_BZDET?xid=QWRvbmkgUG91bHRyeSBGZWVkIERpc3RyaWJ1dG9ycw==",
-#     "numbers": "[' +917678092570', ' +919870088716']",
-#     "City": "Mumbai",
-#     "Category": "Cereals & Food Grains"
-#   }
-# ]
-
-####
-
-POST  http://localhost:8070/api/elastic/seller/bulkwrite HTTP/1.1
-content-type: application/json
-
+[
+  {
+    "name": "1 No Meat Shop",
+    "address": "Chandi Das Market, Marconi Avenue, Durgapur Steel Town East, Durgapur - 713205",
+    "City": "Durgapur",
+    "Mobile_1": 919635533745,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Durgapur",
+    "Service_Type": "Wholesalers",
+    "Service_Category": "Meat",
+    "Level_1": 3,
+    "Level_2": "FB19",
+    "Level_3": "L3FB191",
+    "Level_4": "L4FB2615,L4FB2616,L4FB2617,L4FB2618,L4FB2619,L4FB2620,L4FB2621,L4FB2622,L4FB2623,L4FB2624,L4FB2625,L4FB2626,L4FB2627,L4FB2628,L4FB2629,L4FB2630,L4FB2631,L4FB2632,L4FB2633,L4FB2634,L4FB2635,L4FB2636,L4FB2637,L4FB2638,L4FB2639,L4FB2640,L4FB2641,L4FB2642,L4FB2643,L4FB2644,L4FB2645,L4FB2646,L4FB2647,L4FB2648,L4FB2649,L4FB2650,L4FB2651,L4FB2652,L4FB2653,L4FB2654,L4FB2655,L4FB2656,L4FB2657,L4FB2658,L4FB2659,L4FB2660,L4FB2661,L4FB2662,L4FB2663,L4FB2664,L4FB2665,L4FB2666,L4FB2667,L4FB2668,L4FB2669,L4FB2670,L4FB2671,L4FB2672,L4FB2673,L4FB2674,L4FB2675,L4FB2676,L4FB2677,L4FB2678,L4FB2679,L4FB2680,L4FB2681,L4FB2682,L4FB2683,L4FB2684,L4FB2685,L4FB2686,L4FB2687,L4FB2688,L4FB2689,L4FB2690,L4FB2691"
+  },
+  {
+    "name": "1 No Meat Shop",
+    "address": "Chandi Das Market, Marconi Avenue, Durgapur Steel Town East, Durgapur - 713205",
+    "City": "Durgapur",
+    "Mobile_1": 919635533745,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Durgapur",
+    "Service_Type": "Distributors",
+    "Service_Category": "Meat",
+    "Level_1": 3,
+    "Level_2": "FB19",
+    "Level_3": "L3FB191",
+    "Level_4": "L4FB2615,L4FB2616,L4FB2617,L4FB2618,L4FB2619,L4FB2620,L4FB2621,L4FB2622,L4FB2623,L4FB2624,L4FB2625,L4FB2626,L4FB2627,L4FB2628,L4FB2629,L4FB2630,L4FB2631,L4FB2632,L4FB2633,L4FB2634,L4FB2635,L4FB2636,L4FB2637,L4FB2638,L4FB2639,L4FB2640,L4FB2641,L4FB2642,L4FB2643,L4FB2644,L4FB2645,L4FB2646,L4FB2647,L4FB2648,L4FB2649,L4FB2650,L4FB2651,L4FB2652,L4FB2653,L4FB2654,L4FB2655,L4FB2656,L4FB2657,L4FB2658,L4FB2659,L4FB2660,L4FB2661,L4FB2662,L4FB2663,L4FB2664,L4FB2665,L4FB2666,L4FB2667,L4FB2668,L4FB2669,L4FB2670,L4FB2671,L4FB2672,L4FB2673,L4FB2674,L4FB2675,L4FB2676,L4FB2677,L4FB2678,L4FB2679,L4FB2680,L4FB2681,L4FB2682,L4FB2683,L4FB2684,L4FB2685,L4FB2686,L4FB2687,L4FB2688,L4FB2689,L4FB2690,L4FB2691"
+  },
+  {
+    "name": "1 No Meat Shop",
+    "address": "Chandi Das Market, Marconi Avenue, Durgapur Steel Town East, Durgapur - 713205",
+    "City": "Durgapur",
+    "Mobile_1": 919635533745,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Durgapur",
+    "Service_Type": "Exporters",
+    "Service_Category": "Meat",
+    "Level_1": 3,
+    "Level_2": "FB19",
+    "Level_3": "L3FB191",
+    "Level_4": "L4FB2615,L4FB2616,L4FB2617,L4FB2618,L4FB2619,L4FB2620,L4FB2621,L4FB2622,L4FB2623,L4FB2624,L4FB2625,L4FB2626,L4FB2627,L4FB2628,L4FB2629,L4FB2630,L4FB2631,L4FB2632,L4FB2633,L4FB2634,L4FB2635,L4FB2636,L4FB2637,L4FB2638,L4FB2639,L4FB2640,L4FB2641,L4FB2642,L4FB2643,L4FB2644,L4FB2645,L4FB2646,L4FB2647,L4FB2648,L4FB2649,L4FB2650,L4FB2651,L4FB2652,L4FB2653,L4FB2654,L4FB2655,L4FB2656,L4FB2657,L4FB2658,L4FB2659,L4FB2660,L4FB2661,L4FB2662,L4FB2663,L4FB2664,L4FB2665,L4FB2666,L4FB2667,L4FB2668,L4FB2669,L4FB2670,L4FB2671,L4FB2672,L4FB2673,L4FB2674,L4FB2675,L4FB2676,L4FB2677,L4FB2678,L4FB2679,L4FB2680,L4FB2681,L4FB2682,L4FB2683,L4FB2684,L4FB2685,L4FB2686,L4FB2687,L4FB2688,L4FB2689,L4FB2690,L4FB2691"
+  },
+  {
+    "name": "100 Organic Herbal Health &..",
+    "address": "Gurukripa Shop No. 3, B/3, Sector 6, Shanti Nagar, East, Sector 6, Mumbai 401107, . Mumbai, Mira Road, Mira Road, Thane - 401107",
+    "City": "Mumbai",
+    "Mobile_1": 919913935297,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Agartala,Bettiah,Bhimavaram,Giridih,Gudivada,Jorhat,Kadapa,Kavali,Khammam,Kottayam,Mahbubabad,Narasaraopet,Sasaram, Sasaram,Satara,Shivpuri,Siwan,Suryapet,Agra,Ajmer,Amravati,Amroha,Anand,Bahraich,Belgaum,Bhiwandi, Bhiwandi,Bhiwani,Bhopal,Bikaner,Chapra,Chittoor,Coimbatore,Dehradun,Deoghar-Jharkhand,Dhanbad,Dindigul,Firozabad,Ghaziabad HO, Ghaziabad,Gorakhpur,Guntur,Guwahati,Haldia,Hospet,Jabalpur,Jalandhar,Jalgaon,Jamnagar,Jamshedpur,Kharagpur,Kochi, Kochi,Malda,Mangalore,Miraj, Miraj,Moradabad,Morena,Mumbai,Munger,Mysore,Nadiad,Nagpur,Nanded,Nashik,Nellore,Ongole,Panchkula, Panchkula,Rajkot,Ranchi,Rourkela,Saharanpur,Sambhal,Serampore, Serampore,Singrauli,Thane, Thane,Tiruchirappalli,Tirunelveli,Tirupur,Vadodara,Vellore,Vijayawada,Visakhapatnam,Warangal",
+    "Service_Type": "Wholesalers",
+    "Service_Category": "Herbal Food Supplement",
+    "Level_1": "3,29",
+    "Level_2": "FB20,HAP3",
+    "Level_3": "L3FB192,L3FB193",
+    "Level_4": "L4FB2692,L4FB2693,L4FB2694,L4FB2695,L4FB2696,L4FB2697,L4FB2698,L4FB2699,L4FB2700,L4FB2701,L4FB2702,L4FB2703,L4FB2704,L4FB2705,L4FB2706,L4FB2707,L4FB2708,L4FB2709,L4FB2710,L4FB2711,L4FB2712,L4FB2713"
+  },
+  {
+    "name": "100 Organic Herbal Health &..",
+    "address": "Gurukripa Shop No. 3, B/3, Sector 6, Shanti Nagar, East, Sector 6, Mumbai 401107, . Mumbai, Mira Road, Mira Road, Thane - 401107",
+    "City": "Mumbai",
+    "Mobile_1": 919913935297,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Mumbai, Thane",
+    "Service_Type": "Exporters",
+    "Service_Category": "Wheat",
+    "Level_1": 3,
+    "Level_2": "FB1",
+    "Level_3": "L3FB6",
+    "Level_4": "L4FB91,L4FB92,L4FB93,L4FB94,L4FB95,L4FB96,L4FB97,L4FB98,L4FB99,L4FB100,L4FB101,L4FB102"
+  },
+  {
+    "name": "100 Organic Herbal Health &..",
+    "address": "Gurukripa Shop No. 3, B/3, Sector 6, Shanti Nagar, East, Sector 6, Mumbai 401107, . Mumbai, Mira Road, Mira Road, Thane - 401107",
+    "City": "Mumbai",
+    "Mobile_1": 919913935297,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Thane, Mumbai",
+    "Service_Type": "Wholesalers",
+    "Service_Category": "Sugar",
+    "Level_1": 3,
+    "Level_2": "FB1",
+    "Level_3": "L3FB5",
+    "Level_4": "L4FB67,L4FB68,L4FB69,L4FB70,L4FB71,L4FB72,L4FB73,L4FB74,L4FB75,L4FB76,L4FB77,L4FB78,L4FB79,L4FB80,L4FB81,L4FB82,L4FB83,L4FB84,L4FB85,L4FB86,L4FB87,L4FB88,L4FB89,L4FB90"
+  },
+  {
+    "name": "24x7 Food Mall Hotel And Lo..",
+    "address": "Soct Ltd H No 309/5, Wadala Road, Nevasa, Ahmednagar - 414603, Malichinchawada Phata",
+    "City": "Ahmednagar",
+    "Mobile_1": 9.19028e+21,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Ahmednagar",
+    "Service_Type": "Wholesalers",
+    "Service_Category": "Herbal Food Supplement",
+    "Level_1": "3,29",
+    "Level_2": "FB20,HAP3",
+    "Level_3": "L3FB192,L3FB193",
+    "Level_4": "L4FB2692,L4FB2693,L4FB2694,L4FB2695,L4FB2696,L4FB2697,L4FB2698,L4FB2699,L4FB2700,L4FB2701,L4FB2702,L4FB2703,L4FB2704,L4FB2705,L4FB2706,L4FB2707,L4FB2708,L4FB2709,L4FB2710,L4FB2711,L4FB2712,L4FB2713"
+  },
+  {
+    "name": "3 Sister Meat House",
+    "address": "Chaltlang Dawrkawn, Chandmari, Aizawl - 796007, Near Taxi Stand",
+    "City": "Aizawl",
+    "Mobile_1": 919862368599,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Aizawl",
+    "Service_Type": "Exporters",
+    "Service_Category": "Meat",
+    "Level_1": 3,
+    "Level_2": "FB19",
+    "Level_3": "L3FB191",
+    "Level_4": "L4FB2615,L4FB2616,L4FB2617,L4FB2618,L4FB2619,L4FB2620,L4FB2621,L4FB2622,L4FB2623,L4FB2624,L4FB2625,L4FB2626,L4FB2627,L4FB2628,L4FB2629,L4FB2630,L4FB2631,L4FB2632,L4FB2633,L4FB2634,L4FB2635,L4FB2636,L4FB2637,L4FB2638,L4FB2639,L4FB2640,L4FB2641,L4FB2642,L4FB2643,L4FB2644,L4FB2645,L4FB2646,L4FB2647,L4FB2648,L4FB2649,L4FB2650,L4FB2651,L4FB2652,L4FB2653,L4FB2654,L4FB2655,L4FB2656,L4FB2657,L4FB2658,L4FB2659,L4FB2660,L4FB2661,L4FB2662,L4FB2663,L4FB2664,L4FB2665,L4FB2666,L4FB2667,L4FB2668,L4FB2669,L4FB2670,L4FB2671,L4FB2672,L4FB2673,L4FB2674,L4FB2675,L4FB2676,L4FB2677,L4FB2678,L4FB2679,L4FB2680,L4FB2681,L4FB2682,L4FB2683,L4FB2684,L4FB2685,L4FB2686,L4FB2687,L4FB2688,L4FB2689,L4FB2690,L4FB2691"
+  },
+  {
+    "name": "3 Sister Meat House",
+    "address": "Chaltlang Dawrkawn, Chandmari, Aizawl - 796007, Near Taxi Stand",
+    "City": "Aizawl",
+    "Mobile_1": 919862368599,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Aizawl",
+    "Service_Type": "Wholesalers",
+    "Service_Category": "Meat",
+    "Level_1": 3,
+    "Level_2": "FB19",
+    "Level_3": "L3FB191",
+    "Level_4": "L4FB2615,L4FB2616,L4FB2617,L4FB2618,L4FB2619,L4FB2620,L4FB2621,L4FB2622,L4FB2623,L4FB2624,L4FB2625,L4FB2626,L4FB2627,L4FB2628,L4FB2629,L4FB2630,L4FB2631,L4FB2632,L4FB2633,L4FB2634,L4FB2635,L4FB2636,L4FB2637,L4FB2638,L4FB2639,L4FB2640,L4FB2641,L4FB2642,L4FB2643,L4FB2644,L4FB2645,L4FB2646,L4FB2647,L4FB2648,L4FB2649,L4FB2650,L4FB2651,L4FB2652,L4FB2653,L4FB2654,L4FB2655,L4FB2656,L4FB2657,L4FB2658,L4FB2659,L4FB2660,L4FB2661,L4FB2662,L4FB2663,L4FB2664,L4FB2665,L4FB2666,L4FB2667,L4FB2668,L4FB2669,L4FB2670,L4FB2671,L4FB2672,L4FB2673,L4FB2674,L4FB2675,L4FB2676,L4FB2677,L4FB2678,L4FB2679,L4FB2680,L4FB2681,L4FB2682,L4FB2683,L4FB2684,L4FB2685,L4FB2686,L4FB2687,L4FB2688,L4FB2689,L4FB2690,L4FB2691"
+  },
+  {
+    "name": "3 Sister Meat House",
+    "address": "Chaltlang Dawrkawn, Chandmari, Aizawl - 796007, Near Taxi Stand",
+    "City": "Aizawl",
+    "Mobile_1": 919862368599,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Aizawl",
+    "Service_Type": "Distributors",
+    "Service_Category": "Turkey Meat",
+    "Level_1": 3,
+    "Level_2": "FB19",
+    "Level_3": "L3FB191",
+    "Level_4": "L4FB2646"
+  },
+  {
+    "name": "3 Sister Meat House",
+    "address": "Chaltlang Dawrkawn, Chandmari, Aizawl - 796007, Near Taxi Stand",
+    "City": "Aizawl",
+    "Mobile_1": 919862368599,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Aizawl",
+    "Service_Type": "Farmer",
+    "Service_Category": "Meat",
+    "Level_1": 3,
+    "Level_2": "FB19",
+    "Level_3": "L3FB191",
+    "Level_4": "L4FB2615,L4FB2616,L4FB2617,L4FB2618,L4FB2619,L4FB2620,L4FB2621,L4FB2622,L4FB2623,L4FB2624,L4FB2625,L4FB2626,L4FB2627,L4FB2628,L4FB2629,L4FB2630,L4FB2631,L4FB2632,L4FB2633,L4FB2634,L4FB2635,L4FB2636,L4FB2637,L4FB2638,L4FB2639,L4FB2640,L4FB2641,L4FB2642,L4FB2643,L4FB2644,L4FB2645,L4FB2646,L4FB2647,L4FB2648,L4FB2649,L4FB2650,L4FB2651,L4FB2652,L4FB2653,L4FB2654,L4FB2655,L4FB2656,L4FB2657,L4FB2658,L4FB2659,L4FB2660,L4FB2661,L4FB2662,L4FB2663,L4FB2664,L4FB2665,L4FB2666,L4FB2667,L4FB2668,L4FB2669,L4FB2670,L4FB2671,L4FB2672,L4FB2673,L4FB2674,L4FB2675,L4FB2676,L4FB2677,L4FB2678,L4FB2679,L4FB2680,L4FB2681,L4FB2682,L4FB2683,L4FB2684,L4FB2685,L4FB2686,L4FB2687,L4FB2688,L4FB2689,L4FB2690,L4FB2691"
+  },
+  {
+    "name": "3 Sister Meat House",
+    "address": "Chaltlang Dawrkawn, Chandmari, Aizawl - 796007, Near Taxi Stand",
+    "City": "Aizawl",
+    "Mobile_1": 919862368599,
+    "Mobile_2": "",
+    "Mobile_3": "",
+    "Mobile_4": "",
+    "Mobile_5": "",
+    "Service_City": "Aizawl",
+    "Service_Type": "Services",
+    "Service_Category": "Turkey Meat",
+    "Level_1": 3,
+    "Level_2": "FB19",
+    "Level_3": "L3FB191",
+    "Level_4": "L4FB2646"
+  }
+]

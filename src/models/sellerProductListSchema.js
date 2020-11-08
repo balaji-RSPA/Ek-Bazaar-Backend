@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
+// const { Countries, States} = require('../models')
 const Countries = require("./countriesSchema");
 const States = require("./statesSchema");
+const ParentCategory = require('./parentCategorySchema')
+const PrimaryCategory = require('./primaryCategorySchema')
+const SecondaryCategory = require('./secondaryCategorySchema')
+const Products = require('./productsSchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
@@ -58,24 +63,29 @@ const sellerProductSchema = new Schema(
       ref: "sellers",
       default: null,
     },
+    serviceType:{
+      type: String,
+      trim: true,
+      default: null
+    },
     parentCategoryId: {
       type: ObjectId,
-      ref: "sellers",
+      ref: ParentCategory,
       default: null,
     },
     primaryCategoryId: {
       type: ObjectId,
-      ref: "sellers",
+      ref: PrimaryCategory,
       default: null,
     },
     secondaryCategoryId: {
       type: ObjectId,
-      ref: "sellers",
+      ref: SecondaryCategory,
       default: null,
     },
     poductId: {
       type: ObjectId,
-      ref: "sellers",
+      ref: Products,
       default: null,
     },
     productDetails: { productDetailsSchema },

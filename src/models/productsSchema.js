@@ -37,6 +37,10 @@ const productsSchema = new Schema(
       type: ObjectId,
       ref: SecondaryCategory,
       default: null
+    },
+    l1: {
+      type: String,
+      default: true
     }
   },
   {
@@ -44,6 +48,22 @@ const productsSchema = new Schema(
     versionKey: false,
   }
 );
+
+productsSchema.index({
+  name: 1,
+  vendorId: 1
+}, {
+  background: false,
+  // unique: true,
+  partialFilterExpression: {
+    name: {
+      $exists: true
+    },
+    vendorId: {
+      $exists: true
+    }
+  }
+})
 
 const Products = model("products", productsSchema);
 module.exports = Products;

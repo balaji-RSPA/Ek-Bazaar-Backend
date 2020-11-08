@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 const elasticsearch = require('elasticsearch');
 const { env } = process;
 const config = require('./config')
+const { tradedb } = config
 
 function dbConnection () {
 
   let url;
   if (env) {
 
-    url = `mongodb://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`
+    url = `mongodb://${tradedb.user}:${tradedb.password}@${tradedb.host}:${tradedb.port}/${tradedb.database}`
     mongoose.connect(url, {
       useCreateIndex: true,
       useNewUrlParser: true,
