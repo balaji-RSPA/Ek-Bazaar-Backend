@@ -4,6 +4,8 @@ const { env } = process;
 const config = require("./config");
 const { tenderdb } = config;
 const userSchema = require('../src/models/user')
+const sessionSchema = require('../src/models/session')
+const sessionLogSchema = require('../src/models/sessionLog')
 
 const url = `mongodb://${tenderdb.user}:${tenderdb.password}@${tenderdb.host}:${tenderdb.port}/${tenderdb.database}`;
 const options = {
@@ -24,7 +26,11 @@ if(conn.name) {
     console.error(error);
 }
 const userModel = conn.name ? conn.model('users', userSchema) : ''
+const sessionModel = conn.model('sessions', sessionSchema)
+const sessionLogModel = conn.model('sessionLogs', sessionLogSchema)
 module.exports = {
     conn,
-    userModel
+    userModel,
+    sessionModel,
+    sessionLogModel
 }

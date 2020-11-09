@@ -8,6 +8,8 @@ const SellersEstablishment = require("../models/sellerEstablishmentSchema");
 const SelleresProductList = require("../models/sellerProductListSchema");
 const SellersStatutory = require("../models/sellerStatutorySchema");
 const Users = require("../../config/tenderdb").userModel;
+const Sessions = require("../../config/tenderdb").sessionModel;
+const SessionsLogs = require("../../config/tenderdb").sessionLogModel;
 const {
   checkAndAddCity,
   getState,
@@ -48,6 +50,175 @@ module.exports.checkSellerExist = (query) =>
 /**
  * user functions
  */
+module.exports.getAccessToken = (ipAddress) => new Promise((resolve, reject) => {
+  Sessions.find({ipAddress})
+    .sort({_id: -1})
+    .limit(1)
+    .then(doc => {
+      // console.log(doc, 'doc.........')
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+})
+
+module.exports.getSessionLog = (ipAddress) => new Promise((resolve, reject) => {
+  SessionsLogs.find({ipAddress})
+    .sort({_id: -1})
+    .limit(1)
+    .then(doc => {
+      // console.log(doc)
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+})
+
+exports.handleUserSession = (userId, data) => new Promise((resolve, reject) => {
+
+  Sessions.create(data).then((doc) => {
+
+    resolve(doc)
+
+  }).catch(reject)
+
+})
+
+exports.getSessionCount = (userId) => new Promise((resolve, reject) => {
+
+  Sessions.countDocuments({ userId }).then((doc) => {
+
+    if (doc >= 3) {
+
+      Session.findOne({ userId }, ['-_id -token '], { sort: { createdAt: 1 } }, async (err, result) => {
+
+        if (err) {
+
+          reject()
+
+        }
+        const data = {
+          userId: result.userId,
+          userAgent: result.userAgent,
+          // token: result.token,
+          deviceId: result.deviceId,
+          signIn: result.createdAt,
+          ipAddress: result.ipAddress
+        }
+        const swap = new (SessionLog)(data)
+        swap.save((saveErr) => {
+
+          if (!saveErr) {
+
+            result.remove()
+            resolve(swap)
+
+          }
+          reject(saveErr)
+
+        })
+
+      });
+
+
+    }
+
+    resolve(doc)
+
+  }).catch(reject)
+
+})
+
+exports.handleUserLogoutSession = (query) => new Promise((resolve, reject) => {
+
+  Sessions.findOne(query, async (err, result) => {
+
+    if (err) {
+
+      reject(err)
+
+    }
+
+    const data = {
+      userId: result.userId,
+      userAgent: result.userAgent,
+      // token: result.token,
+      deviceId: result.deviceId,
+      signIn: result.createdAt,
+      ipAddress: result.ipAddress
+    }
+    const swap = new (SessionLog)(data)
+    swap.save((saveErr) => {
+
+      if (!saveErr) {
+
+        result.remove()
+        resolve(swap)
+
+      }
+      reject(saveErr)
+
+    })
+
+  })
+
+})
+
+exports.getUserAllSessionDataUpdate = (userId) => new Promise((resolve, reject) => {
+
+  Sessions.find({ userId }, async (err, doc) => {
+
+    if (err) {
+
+      reject(err)
+
+    }
+
+    SessionsLogs.insertMany(doc).then((d) => {
+
+      Sessions.deleteMany({ userId }, (error) => {
+
+        if (!error) {
+
+          console.log(error)
+
+        } else {
+
+          console.log('ok')
+
+        }
+
+      });
+      resolve(d)
+
+    }).catch(reject)
+
+
+  }).catch(reject)
+
+})
+
+
+exports.deleteAllSession = (userId) => new Promise((resolve, reject)=> {
+  
+  Sessions.deleteMany({ userId })
+  .then((doc)=> {
+
+    resolve(doc)
+
+  }).catch(reject)
+
+})
+
+exports.deleteAllSessionLog = (userId) => new Promise((resolve, reject)=> {
+  
+  SessionsLogs.deleteMany({ userId })
+  .then((doc)=> {
+
+    resolve(doc)
+
+  }).catch(reject)
+
+})
+
 module.exports.checkUserExistOrNot = (mobile) =>
   new Promise((resolve, reject) => {
     Users.find({ mobile: mobile })
@@ -93,9 +264,9 @@ module.exports.getUserProfile = (id) =>
       .catch((error) => reject(error));
   });
 
-module.exports.updateUser = (id, data) =>
+module.exports.updateUser = (query, data) =>
   new Promise((resolve, reject) => {
-    Users.findOneAndUpdate({ _id: id }, data, { new: true })
+    Users.findOneAndUpdate(query, data, { new: true })
       .then((doc) => {
         console.log(doc);
         resolve(doc);
@@ -151,7 +322,7 @@ module.exports.getSeller = (id) =>
       .populate("location.state", "name")
       .populate("location.country", "name")
       .then((doc) => {
-        console.log(doc);
+        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));

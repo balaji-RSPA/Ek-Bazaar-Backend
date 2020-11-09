@@ -5,6 +5,7 @@ const user = require("../../controllers/web/userController");
 const auth = require("../../controllers/web/authController");
 const { authenticate } = require("../../middleware/auth");
 
+router.get("/user/access-token", user.getAccessToken)
 router.post("/user/check-user-exist", user.checkUserExistOrNot)
 router.post("/user/send-otp", user.sendOtp)
 router.post("/user/verify-mobile", authenticate, user.verifySellerMobile)
