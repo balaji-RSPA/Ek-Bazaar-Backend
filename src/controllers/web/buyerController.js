@@ -1,8 +1,9 @@
 const camelcaseKeys = require("camelcase-keys");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { buyers } = require("../../modules");
+const { buyers, sellers } = require("../../modules");
 const {
+  postRFP,
   checkBuyerExistOrNot,
   addBuyer,
   getBuyer,
@@ -10,7 +11,88 @@ const {
   getAllBuyers,
   updateBuyerPassword,
 } = buyers;
+const { checkUserExistOrNot, updateUser, addUser } = sellers
 const { createToken } = require("../../utils/utils");
+
+module.exports.createRFP = async(req, res) => {
+  try {
+    
+    console.log(req.body, 'body.........')
+    const {mobile, name, email, location, productDetails} = req.body
+    const user = await checkUserExistOrNot(mobile.mobile)
+    console.log(user, 'user exist re baba')
+    if(user && user.length) {
+      const userData = {
+        name,
+        email,
+      }
+      const user = await updateUser({mobile: mobile.mobile}, userData)
+      const buyerData = {
+        name,
+        email,
+        mobile: mobile.mobile,
+        countryCode: mobile.countryCode,
+        location,
+        userId: user._id
+      }
+      const exist = await checkBuyerExistOrNot({mobile: mobile.mobile})
+      console.log(exist, 'buyer exist re baba')
+      let buyer
+      if(exist && exist.length)
+        buyer = await updateBuyer({userId: user._id},buyerData)
+      else
+        buyer = await addBuyer(buyerData)
+        console.log(buyer, 'buyer updated or created')
+      const rfpData = {
+        buyerId: buyer._id,
+        buyerDetails: {
+          name,
+          email,
+          mobile: mobile.mobile,
+          location
+        },
+        productDetails
+      }
+      const rfp = await postRFP(rfpData)
+      console.log(rfp, 'rfp crteated')
+    } else {
+      const userData = {
+        name,
+        email,
+        mobile: mobile.mobile,
+        countryCode: mobile.countryCode,
+        password: null
+      }
+      const user = await addUser(userData)
+      console.log(user, 'user added......')
+      const buyerData = {
+        name,
+        email,
+        mobile: mobile.mobile,
+        countryCode: mobile.countryCode,
+        location,
+        userId: user._id
+      }
+      const buyer = await addBuyer(buyerData)
+      const rfpData = {
+        buyerId: buyer._id,
+        buyerDetails: {
+          name,
+          email,
+          mobile: mobile.mobile,
+          location
+        },
+        productDetails
+      }
+      const rfp = await postRFP(rfpData)
+      console.log(rfp, 'rfp crteated')
+    }
+    respSuccess(res, "Your requirement has successfully submitted")
+
+  } catch (error) {
+    respError(res, error.message)
+  }
+}
 
 module.exports.sendOtp = async (req, res) => {
   try {
