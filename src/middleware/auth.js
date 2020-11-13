@@ -60,7 +60,7 @@ const removeSession = (token) => new Promise((resolve, reject) => {
 })
 
 const checkRequestTime = (userId, deviceId, token) => new Promise((resolve, reject) => {
-
+  console.log(userId, deviceId, token, 'sssssssssssssssuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt')
   // Session.findOne({ userId, deviceId, token }).then((doc) => {
   Session.aggregate([{
     $match: {
@@ -90,6 +90,7 @@ const checkRequestTime = (userId, deviceId, token) => new Promise((resolve, reje
   }]).then((doc) => {
 
     const data = doc[0]
+    console.log(data, 'ooooopppppppppp', doc)
     const { _id, expired } = data
     if (!expired) {
 
@@ -105,16 +106,19 @@ const checkRequestTime = (userId, deviceId, token) => new Promise((resolve, reje
 
 })
 
-exports.authenticate = async(req, res, next) => {
+exports.authenticate = async (req, res, next) => {
+  console.log(req.headers)
   const token = req.headers.authorization.split('|')[1];
   try {
 
     const decoded = jwt.verify(token, JWTTOKEN);
+    console.log(decoded, '.......................')
     const { deviceId, userId } = decoded;
     req.deviceId = deviceId
     req.userID = userId;
     req.token = token
     const check = await checkRequestTime(userId, deviceId, token);
+    console.log(check, 'check.......................')
     if (check) {
 
       return next();
