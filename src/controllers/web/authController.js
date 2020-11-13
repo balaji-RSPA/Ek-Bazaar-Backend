@@ -27,7 +27,7 @@ const getUserAgent = (userAgent) => {
   };
 };
 
-exports.login = async(req, res) => {
+exports.login = async (req, res) => {
   try {
     const { password, ipAddress, location, mobile } = req.body;
     console.log(password, mobile, '..........')
@@ -45,7 +45,7 @@ exports.login = async(req, res) => {
       const deviceId = machineIdSync();
 
       const userAgent = getUserAgent(req.useragent);
-      const token = createToken(deviceId, {userId: user._id});
+      const token = createToken(deviceId, { userId: user._id });
       const finalData = {
         userAgent,
         userId: user._id,
@@ -54,7 +54,7 @@ exports.login = async(req, res) => {
         ipAddress
       }
 
-      const result1 = await handleUserSession(user._id, finalData);
+      const result1 = await sellers.handleUserSession(user._id, finalData);
       return respSuccess(res, { token, location }, "successfully logged in!");
     }
     return respAuthFailed(res, "Invalid Credentials!");
