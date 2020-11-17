@@ -45,14 +45,14 @@ module.exports.checkSellerExist = (query) =>
         resolve(doc);
       })
       .catch((error) => reject(error));
-});
+  });
 
 /**
  * user functions
  */
 module.exports.getAccessToken = (ipAddress) => new Promise((resolve, reject) => {
-  Sessions.find({ipAddress})
-    .sort({_id: -1})
+  Sessions.find({ ipAddress })
+    .sort({ _id: -1 })
     .limit(1)
     .then(doc => {
       // console.log(doc, 'doc.........')
@@ -62,8 +62,8 @@ module.exports.getAccessToken = (ipAddress) => new Promise((resolve, reject) => 
 })
 
 module.exports.getSessionLog = (ipAddress) => new Promise((resolve, reject) => {
-  SessionsLogs.find({ipAddress})
-    .sort({_id: -1})
+  SessionsLogs.find({ ipAddress })
+    .sort({ _id: -1 })
     .limit(1)
     .then(doc => {
       // console.log(doc)
@@ -88,7 +88,7 @@ exports.getSessionCount = (userId) => new Promise((resolve, reject) => {
 
     if (doc >= 3) {
 
-      Session.findOne({ userId }, ['-_id -token '], { sort: { createdAt: 1 } }, async (err, result) => {
+      Sessions.findOne({ userId }, ['-_id -token '], { sort: { createdAt: 1 } }, async (err, result) => {
 
         if (err) {
 
@@ -103,7 +103,7 @@ exports.getSessionCount = (userId) => new Promise((resolve, reject) => {
           signIn: result.createdAt,
           ipAddress: result.ipAddress
         }
-        const swap = new (SessionLog)(data)
+        const swap = new (SessionsLogs)(data)
         swap.save((saveErr) => {
 
           if (!saveErr) {
@@ -197,25 +197,25 @@ exports.getUserAllSessionDataUpdate = (userId) => new Promise((resolve, reject) 
 })
 
 
-exports.deleteAllSession = (userId) => new Promise((resolve, reject)=> {
-  
+exports.deleteAllSession = (userId) => new Promise((resolve, reject) => {
+
   Sessions.deleteMany({ userId })
-  .then((doc)=> {
+    .then((doc) => {
 
-    resolve(doc)
+      resolve(doc)
 
-  }).catch(reject)
+    }).catch(reject)
 
 })
 
-exports.deleteAllSessionLog = (userId) => new Promise((resolve, reject)=> {
-  
+exports.deleteAllSessionLog = (userId) => new Promise((resolve, reject) => {
+
   SessionsLogs.deleteMany({ userId })
-  .then((doc)=> {
+    .then((doc) => {
 
-    resolve(doc)
+      resolve(doc)
 
-  }).catch(reject)
+    }).catch(reject)
 
 })
 
@@ -235,7 +235,7 @@ module.exports.checkUserExistOrNot = (mobile) =>
         resolve(doc);
       })
       .catch((error) => reject(error));
-});
+  });
 
 module.exports.addUser = (data) =>
   new Promise((resolve, reject) => {
@@ -258,7 +258,7 @@ module.exports.getUserProfile = (id) =>
         // _id: -1,
       })
       .then((doc) => {
-        console.log(doc);
+        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -268,7 +268,7 @@ module.exports.updateUser = (query, data) =>
   new Promise((resolve, reject) => {
     Users.findOneAndUpdate(query, data, { new: true })
       .then((doc) => {
-        console.log(doc);
+        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -278,7 +278,7 @@ module.exports.forgetPassword = (mobile, data) =>
   new Promise((resolve, reject) => {
     Users.findOneAndUpdate({ mobile }, data, { new: true })
       .then((doc) => {
-        console.log(doc);
+        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -301,7 +301,7 @@ module.exports.sellerBulkInser = (data) =>
   new Promise((resolve, reject) => {
     Sellers.insertMany(data)
       .then((doc) => {
-        console.log("doc", doc);
+        // console.log("doc", doc);
         resolve(doc);
       })
       .catch(reject);
@@ -309,9 +309,10 @@ module.exports.sellerBulkInser = (data) =>
 
 module.exports.getSeller = (id) =>
   new Promise((resolve, reject) => {
-    Sellers.find({ userId: id })
-      .select({ _id: -1 })
-      .populate("sellerType")
+    Sellers.findOne({ userId: id })
+      .populate("sellerType.name", "name")
+      .populate("sellerType.cities.city", "name")
+      .populate("sellerType.cities.state", "name region")
       .populate("busenessId")
       .populate("statutoryId")
       .populate("contactId")
@@ -319,8 +320,9 @@ module.exports.getSeller = (id) =>
       .populate("establishmentId")
       .populate("sellerProductId")
       .populate("location.city", "name")
-      .populate("location.state", "name")
+      .populate("location.state", "name region")
       .populate("location.country", "name")
+      .lean()
       .then((doc) => {
         // console.log(doc);
         resolve(doc);
@@ -387,7 +389,7 @@ module.exports.addbusinessDetails = (sellerId, data) =>
       { new: true, upsert: true }
     )
       .then((doc) => {
-        console.log(doc);
+        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -531,14 +533,14 @@ exports.structureSellerData = async (seller) => {
 
   console.log(' working ------------------')
 
-  let sellerType = await checkAndAddSellerType({name : capitalizeFirstLetter(Service_Type)})
+  let sellerType = await checkAndAddSellerType({ name: capitalizeFirstLetter(Service_Type) })
 
-  const sellerExist = await this.checkSellerExist({name})
-  if(sellerExist){
+  const sellerExist = await this.checkSellerExist({ name })
+  if (sellerExist) {
 
     console.log(" Existing Seller --------------")
-    let productData=[]
-    let proData=[]
+    let productData = []
+    let proData = []
     productData = levelFour.map((pro) => ({
       sellerId: sellerExist._id,
       serviceType: sellerType,
@@ -549,34 +551,34 @@ exports.structureSellerData = async (seller) => {
     }))
     proData = await sellerProductsBulkInsert(productData)
     // console.log(serviceCity, ' seller type -----')
-    let _sellerType=[];
+    let _sellerType = [];
     const selType = {
-          name: sellerType,
-          cities:serviceCity.map((cat) => ({
-            city: cat._id,
-            state: cat.state._id || null
-          }))
-        }
+      name: sellerType,
+      cities: serviceCity.map((cat) => ({
+        city: cat._id,
+        state: cat.state._id || null
+      }))
+    }
     // console.log("selType -----------------", selType)
-    if(sellerExist.sellerType.length){
+    if (sellerExist.sellerType.length) {
       _sellerType = sellerExist.sellerType
       _sellerType.push(selType)
-    }else{
+    } else {
       _sellerType.push(selType)
     }
-    
+
     const finalData = {
-      sellerType:_sellerType,
+      sellerType: _sellerType,
       sellerProductId: proData
     }
     // console.log("finalData", _sellerType[1].cities)
 
-  const updateSeller = await this.updateSeller({_id: sellerExist._id},finalData)
-  // console.log("updateSeller +++++++++++++++++", updateSeller)
-    
-  }else{
+    const updateSeller = await this.updateSeller({ _id: sellerExist._id }, finalData)
+    // console.log("updateSeller +++++++++++++++++", updateSeller)
 
-      console.log("New Seller -----------------------------", )
+  } else {
+
+    console.log("New Seller -----------------------------", )
       let addr = address.split(",");
       const pincodeSplit = addr.filter((data) => data.includes("-"));
       const pinData = pincodeSplit[pincodeSplit.length - 1];
@@ -588,92 +590,92 @@ exports.structureSellerData = async (seller) => {
       Level_2 = Level_2.toString().split(",");
       Level_3 = Level_3.toString().split(",");
 
-      // Level_4 = Level_4.split(","); -----------
+    // Level_4 = Level_4.split(","); -----------
 
-      let cityData = City ? await checkAndAddCity({ name: City.trim() }) : null;
-      let stateData =
-        cityData && cityData.state ? await getState(cityData.state) : null;
-      let countryData =
-        stateData && stateData.country ? await getCountry(stateData.country) : null;
-      // let categoryData =
-      //   countryData && Category ? await getPrimaryCat({ name: Category }) : null;
-      let mobile= []
-
-
-      // let serviceCity = Service_City.trim().split(",") ------
-      // serviceCity = await getServiceCity(_.uniq(serviceCity))-----
+    let cityData = City ? await checkAndAddCity({ name: City.trim() }) : null;
+    let stateData =
+      cityData && cityData.state ? await getState(cityData.state) : null;
+    let countryData =
+      stateData && stateData.country ? await getCountry(stateData.country) : null;
+    // let categoryData =
+    //   countryData && Category ? await getPrimaryCat({ name: Category }) : null;
+    let mobile = []
 
 
-      // let sellerType = await checkAndAddSellerType({name : capitalizeFirstLetter(Service_Type)})-----
+    // let serviceCity = Service_City.trim().split(",") ------
+    // serviceCity = await getServiceCity(_.uniq(serviceCity))-----
 
 
-      // const levelOne = await getLevelOneCategoryList(Level_1)
-      // const levelTwo = await getLevelTwoCategoryList(Level_2)
-      // const levelThree = await getLevelThreeCategoryList(Level_3)
+    // let sellerType = await checkAndAddSellerType({name : capitalizeFirstLetter(Service_Type)})-----
 
-      // const levelFour = await getLevelFourCategoryList(Level_4) ------
-      
-      // serviceCity = await checkAndAddSellerType()
 
-      Mobile_1 &&  mobile.push({
-        mobile: Mobile_1
-      })
-      Mobile_2 &&  mobile.push({
-        mobile: Mobile_2
-      })
-      Mobile_3 &&  mobile.push({
-        mobile: Mobile_3
-      })
-      Mobile_4 &&  mobile.push({
-        mobile: Mobile_4
-      })
-      Mobile_5 &&  mobile.push({
-        mobile: Mobile_5
-      })
-      
-      const finalData = {
-        name,
-        mobile,
-        location: {
-          address: completeAddress,
-          pincode,
-          city: (cityData && cityData._id) || null,
-          state: (stateData && stateData._id) || null,
-          country: (countryData && countryData._id) || null,
-        },
-        sellerType:[{
-          name: sellerType,
-          cities:serviceCity.map((cat) => ({
-            city: cat._id,
-            state: cat.state._id || null
-          })),
-        }],
-        source: 'vendor'
+    // const levelOne = await getLevelOneCategoryList(Level_1)
+    // const levelTwo = await getLevelTwoCategoryList(Level_2)
+    // const levelThree = await getLevelThreeCategoryList(Level_3)
+
+    // const levelFour = await getLevelFourCategoryList(Level_4) ------
+
+    // serviceCity = await checkAndAddSellerType()
+
+    Mobile_1 && mobile.push({
+      mobile: Mobile_1
+    })
+    Mobile_2 && mobile.push({
+      mobile: Mobile_2
+    })
+    Mobile_3 && mobile.push({
+      mobile: Mobile_3
+    })
+    Mobile_4 && mobile.push({
+      mobile: Mobile_4
+    })
+    Mobile_5 && mobile.push({
+      mobile: Mobile_5
+    })
+
+    const finalData = {
+      name,
+      mobile,
+      location: {
+        address: completeAddress,
+        pincode,
+        city: (cityData && cityData._id) || null,
+        state: (stateData && stateData._id) || null,
+        country: (countryData && countryData._id) || null,
+      },
+      sellerType: [{
+        name: sellerType,
+        cities: serviceCity.map((cat) => ({
+          city: cat._id,
+          state: cat.state._id || null
+        })),
+      }],
+      source: 'vendor'
+    }
+    const result = await this.addSeller(finalData)
+    let productData = []
+    let proData = []
+
+    if (result) {
+
+      productData = levelFour.map((pro) => ({
+        sellerId: result._id,
+        serviceType: sellerType,
+        parentCategoryId: pro.parentCatId._id,
+        primaryCategoryId: pro.primaryCatId._id,
+        secondaryCategoryId: pro.secondaryId._id,
+        poductId: pro._id,
+      }))
+      proData = await sellerProductsBulkInsert(productData)
+      const upData = {
+        sellerProductId: proData
       }
-      const result = await this.addSeller(finalData)
-      let productData=[]
-      let proData=[]
+      const updateSeller = await this.updateSeller({ _id: result._id }, upData)
 
-      if(result){
-        
-          productData = levelFour.map((pro) => ({
-            sellerId: result._id,
-            serviceType: sellerType,
-            parentCategoryId: pro.parentCatId._id,
-            primaryCategoryId: pro.primaryCatId._id,
-            secondaryCategoryId: pro.secondaryId._id,
-            poductId: pro._id,
-          }))
-          proData = await sellerProductsBulkInsert(productData)
-          const upData = {
-            sellerProductId: proData
-          }
-        const updateSeller = await this.updateSeller({_id:result._id},upData)
-
-      }
+    }
 
   }
-  
+
 
   return 'data updated successfully'
   // console.log("location", finalData)
