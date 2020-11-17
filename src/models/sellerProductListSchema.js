@@ -63,8 +63,8 @@ const sellerProductSchema = new Schema(
       ref: "sellers",
       default: null,
     },
-    serviceType:{
-      type: String,
+    serviceType: {
+      type: ObjectId,
       trim: true,
       default: null
     },
