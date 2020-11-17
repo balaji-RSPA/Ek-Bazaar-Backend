@@ -524,7 +524,8 @@ exports.structureSellerData = async (seller) => {
   name = name.trim()
   let serviceCity = Service_City.trim().split(",")
   serviceCity = await getServiceCity(_.uniq(serviceCity))
-
+  if(typeof Level_4 == "number")
+    Level_4 = `${Level_4}`
   Level_4 = Level_4.split(",");
   const levelFour = await getLevelFourCategoryList(Level_4)
 
@@ -579,7 +580,7 @@ exports.structureSellerData = async (seller) => {
       let addr = address.split(",");
       const pincodeSplit = addr.filter((data) => data.includes("-"));
       const pinData = pincodeSplit[pincodeSplit.length - 1];
-      const pincode = pinData.substring(pinData.indexOf("-") + 1).trim();
+      const pincode = pinData && pinData.substring(pinData.indexOf("-") + 1).trim() || 0;
       addr.splice(addr.indexOf(pinData), 1);
       const completeAddress = addr.join(",");
       
