@@ -23,7 +23,6 @@ module.exports.getSeller = async (req, res) => {
     const { userID } = req;
     const { id } = req.query
     const seller = userID ? await getSeller(userID): await getSellerProfile(id);
-    console.log(seller, ' dinal ressss')
     respSuccess(res, seller);
   } catch (error) {
     respError(res, error.message);
@@ -42,55 +41,102 @@ module.exports.updateSeller = async (req, res) => {
     } = req.body;
     const { userID } = req;
     const user = await getSeller(userID)
-    const sellerID = user[0]._id
+    // console.log(user,"skfdjhgshfd user vaaa")
+    if(!user){
+      throw new Error('Seller not found');
+    }
     let newData = {};
     addProductDetails;
-    switch (req.body) {
-      case businessDetails: {
-        const bsnsDtls = await addbusinessDetails(sellerID, businessDetails);
-        newData.busenessId = bsnsDtls._id;
-        break;
-      }
-      case statutoryDetails: {
+    if(req.body.productDetails){
+      console.log("inside product details")
+        let productsId = [];
+        const prdctDtls = await addProductDetails(req.body.productDetails);
+        console.log(prdctDtls,"dshjhfgs")
+        const seller = await getSeller(id);
+        
+        productsId = seller.productsId;
+        if (productsId.length) productsId.push(prdctDtls._id);
+        else productsId.push(prdctDtls._id);
+        newData.sellerProductId = productsId;
+        await updateSeller({_id: id},newData)
+    }
+    if(req.body.businessDetails){
+      const bsnsDtls = await addbusinessDetails(sellerID, businessDetails);
+      newData.busenessId = bsnsDtls._id;
+    }
+    if(req.body.statutoryDetails){
         const statutoryDtls = await addStatutoryDetails(
           sellerID,
           statutoryDetails
         );
         newData.busenessId = statutoryDtls._id;
-        break;
-      }
-      case contactDetails: {
-        const cntctDtls = await addContactDetails(sellerID, contactDetails);
-        newData.busenessId = cntctDtls._id;
-        break;
-      }
-      case establishmentPhotos: {
+    }
+    if(req.body.contactDetails){
+      const cntctDtls = await addContactDetails(sellerID, contactDetails);
+      newData.busenessId = cntctDtls._id;
+    }
+    if(req.body.establishmentPhotos){
         const estblsmntPhts = await addEstablishmentPhotos(
           sellerID,
           establishmentPhotos
         );
         newData.busenessId = estblsmntPhts._id;
-        break;
-      }
-      case companyProfile: {
+    }
+    if(req.body.companyProfile){
         const cmpnyPrfl = await addCompanyDetails(sellerID, companyProfile);
         newData.busenessId = cmpnyPrfl._id;
-        break;
-      }
-      case productDetails: {
-        let productsId = [];
-        const prdctDtls = await addProductDetails(productDetails);
-        const seller = await getSeller(id);
-        productsId = seller.productsId;
-        if (productsId.length) productsId.push(prdctDtls._id);
-        else productsId.push(prdctDtls._id);
-        newData.sellerProductId = productsId;
-      }
-      default:
-        "";
     }
-    const seller = await updateSeller(id, newData);
-    respSuccess(res, seller);
+
+    // switch (req.body) {
+    //   case businessDetails: {
+    //     const bsnsDtls = await addbusinessDetails(sellerID, businessDetails);
+    //     newData.busenessId = bsnsDtls._id;
+    //     break;
+    //   }
+    //   case statutoryDetails: {
+    //     const statutoryDtls = await addStatutoryDetails(
+    //       sellerID,
+    //       statutoryDetails
+    //     );
+    //     newData.busenessId = statutoryDtls._id;
+    //     break;
+    //   }
+    //   case contactDetails: {
+    //     const cntctDtls = await addContactDetails(sellerID, contactDetails);
+    //     newData.busenessId = cntctDtls._id;
+    //     break;
+    //   }
+    //   case establishmentPhotos: {
+    //     const estblsmntPhts = await addEstablishmentPhotos(
+    //       sellerID,
+    //       establishmentPhotos
+    //     );
+    //     newData.busenessId = estblsmntPhts._id;
+    //     break;
+    //   }
+    //   case companyProfile: {
+    //     const cmpnyPrfl = await addCompanyDetails(sellerID, companyProfile);
+    //     newData.busenessId = cmpnyPrfl._id;
+    //     break;
+    //   }
+    //   case productDetails: {
+    //     console.log("pppppdkhejgguyerwg")
+    //     let productsId = [];
+    //     const prdctDtls = await addProductDetails(productDetails);
+    //     const seller = await getSeller(id);
+        
+    //     productsId = seller.productsId;
+    //     if (productsId.length) productsId.push(prdctDtls._id);
+    //     else productsId.push(prdctDtls._id);
+    //     newData.sellerProductId = productsId;
+    //     await updateSeller({_id: id},newData)
+    //   }
+    //   default:
+    //     console.log("ddddddddddddddddddddHDjhagytafds")
+    //     "";
+    // }
+    // const seller = await updateSeller(id, newData);
+    respSuccess(res);
   } catch (error) {
     respError(res, error.message);
   }

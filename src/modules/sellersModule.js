@@ -324,7 +324,6 @@ module.exports.getSeller = (id) =>
       .populate("location.country", "name")
       .lean()
       .then((doc) => {
-        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -436,20 +435,21 @@ module.exports.addEstablishmentPhotos = (id, data) =>
       })
       .catch((error) => reject(error));
   });
-
-module.exports.addProductDetails = (id, data) =>
+  // module.exports.addProductDetails = (id, data) =>
+module.exports.addProductDetails = (data) =>
   new Promise((resolve, reject) => {
     // SelleresProductList.findOneAndUpdate(
     //   { sellerId },
     //   { $set: data },
     //   { new: true, upsert: true }
     // )
+    console.log(data,"htkjrhgetjr99999999999")
     SelleresProductList.create(data)
       .then((doc) => {
-        console.log(doc);
+        console.log("bjfshgdgf")
         resolve(doc);
       })
-      .catch((error) => reject(error));
+      .catch((error) => reject(error),console.log(error,"error block"));
   });
 
 module.exports.addStatutoryDetails = (sellerId, data) =>

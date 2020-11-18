@@ -19,18 +19,53 @@ const documentSchema = new Schema({
   },
 });
 
+const priceSchema = new Schema({
+  price: {
+    type: String,
+    default: null,
+    trim: true
+  },
+  unit: {
+    type: String,
+    default: null,
+    trim: true
+  }
+})
+
+const minimumOrderQntitySchema = new Schema({
+  quantity: {
+    type: String,
+    default: null,
+    trim: true
+  },
+  unit: {
+    type: String,
+    default: null,
+    trim: true
+  }
+})
+
+const deliveryTimeSchema = new Schema({
+  deliveryTime: {
+    type: String,
+    default: null,
+    trim: true
+  },
+  unit: {
+    type: String,
+    default: null,
+    trim: true
+  }
+})
+
 const productDetailsSchema = new Schema({
   name: {
     type: String,
     trim: true,
   },
-  minmumOrderQty: {
-    type: Number,
-  },
-  deliveryTime: {
-    type: Date,
-    default: null,
-  },
+  price:{priceSchema},
+  minmumOrderQty: {minimumOrderQntitySchema},
+  deliveryTime: {deliveryTimeSchema},
   packagingDetails: {
     type: String,
     trim: true,
