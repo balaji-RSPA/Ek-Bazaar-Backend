@@ -1,12 +1,18 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
 >>>>>>> 4507582f5c65176a049511342f3adbaa786d4885
+=======
+>>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
 {"error":{"code":"MODULE_NOT_FOUND","requireStack":["/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js","/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js","/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/index.js","/home/ashu/Documents/Ekbazar/tradebazaar-backend/app.js"]},"level":"error","message":"uncaughtException: Cannot find module '../../controllers/web/buyerController'\nRequire stack:\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/index.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/app.js\nError: Cannot find module '../../controllers/web/buyerController'\nRequire stack:\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/index.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/app.js\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:966:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:842:27)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js:4:15)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js:3:15)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)","stack":"Error: Cannot find module '../../controllers/web/buyerController'\nRequire stack:\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/index.js\n- /home/ashu/Documents/Ekbazar/tradebazaar-backend/app.js\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:966:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:842:27)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js:4:15)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js:3:15)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)","exception":true,"date":"Mon Oct 26 2020 07:05:06 GMT+0530 (India Standard Time)","process":{"pid":30132,"uid":1000,"gid":1000,"cwd":"/home/ashu/Documents/Ekbazar/tradebazaar-backend","execPath":"/usr/bin/node","version":"v12.18.1","argv":["/usr/bin/node","/home/ashu/Documents/Ekbazar/tradebazaar-backend/app.js"],"memoryUsage":{"rss":70397952,"heapTotal":33607680,"heapUsed":20972424,"external":20406960,"arrayBuffers":18973722}},"os":{"loadavg":[1.1552734375,1.30712890625,1.36279296875],"uptime":11994},"trace":[{"column":15,"file":"internal/modules/cjs/loader.js","function":"Module._resolveFilename","line":966,"method":"_resolveFilename","native":false},{"column":27,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":842,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":1026,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":72,"method":null,"native":false},{"column":15,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js","function":null,"line":4,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":1138,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1158,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":986,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":879,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":1026,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":72,"method":null,"native":false},{"column":15,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js","function":null,"line":3,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":1138,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1158,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":986,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":879,"method":"_load","native":false}],"timestamp":"2020-10-26T01:35:06.855Z"}
 {"error":{},"level":"error","message":"uncaughtException: Route.post() requires a callback function but got a [object Undefined]\nError: Route.post() requires a callback function but got a [object Undefined]\n    at Route.<computed> [as post] (/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/route.js:202:15)\n    at Function.proto.<computed> [as post] (/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/index.js:510:19)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js:6:8)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js:3:15)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)","stack":"Error: Route.post() requires a callback function but got a [object Undefined]\n    at Route.<computed> [as post] (/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/route.js:202:15)\n    at Function.proto.<computed> [as post] (/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/index.js:510:19)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js:6:8)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js:3:15)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)","exception":true,"date":"Mon Oct 26 2020 07:06:17 GMT+0530 (India Standard Time)","process":{"pid":30334,"uid":1000,"gid":1000,"cwd":"/home/ashu/Documents/Ekbazar/tradebazaar-backend","execPath":"/usr/bin/node","version":"v12.18.1","argv":["/usr/bin/node","/home/ashu/Documents/Ekbazar/tradebazaar-backend/app.js"],"memoryUsage":{"rss":70414336,"heapTotal":33607680,"heapUsed":20922768,"external":20423344,"arrayBuffers":18990106}},"os":{"loadavg":[1.84375,1.44384765625,1.40478515625],"uptime":12064},"trace":[{"column":15,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/route.js","function":"Route.<computed> [as post]","line":202,"method":"<computed> [as post]","native":false},{"column":19,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/index.js","function":"Function.proto.<computed> [as post]","line":510,"method":"<computed> [as post]","native":false},{"column":8,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js","function":null,"line":6,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":1138,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1158,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":986,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":879,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":1026,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":72,"method":null,"native":false},{"column":15,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js","function":null,"line":3,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":1138,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1158,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":986,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":879,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":1026,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":72,"method":null,"native":false}],"timestamp":"2020-10-26T01:36:17.256Z"}
 {"error":{},"level":"error","message":"uncaughtException: Route.post() requires a callback function but got a [object Undefined]\nError: Route.post() requires a callback function but got a [object Undefined]\n    at Route.<computed> [as post] (/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/route.js:202:15)\n    at Function.proto.<computed> [as post] (/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/index.js:510:19)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js:6:8)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js:3:15)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)","stack":"Error: Route.post() requires a callback function but got a [object Undefined]\n    at Route.<computed> [as post] (/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/route.js:202:15)\n    at Function.proto.<computed> [as post] (/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/index.js:510:19)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js:6:8)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)\n    at Object.<anonymous> (/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js:3:15)\n    at Module._compile (internal/modules/cjs/loader.js:1138:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1158:10)\n    at Module.load (internal/modules/cjs/loader.js:986:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:879:14)\n    at Module.require (internal/modules/cjs/loader.js:1026:19)\n    at require (internal/modules/cjs/helpers.js:72:18)","exception":true,"date":"Mon Oct 26 2020 07:09:24 GMT+0530 (India Standard Time)","process":{"pid":30853,"uid":1000,"gid":1000,"cwd":"/home/ashu/Documents/Ekbazar/tradebazaar-backend","execPath":"/usr/bin/node","version":"v12.18.1","argv":["/usr/bin/node","/home/ashu/Documents/Ekbazar/tradebazaar-backend/app.js"],"memoryUsage":{"rss":71536640,"heapTotal":33869824,"heapUsed":21041464,"external":20402076,"arrayBuffers":18968838}},"os":{"loadavg":[2.76416015625,2.0185546875,1.640625],"uptime":12251},"trace":[{"column":15,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/route.js","function":"Route.<computed> [as post]","line":202,"method":"<computed> [as post]","native":false},{"column":19,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/node_modules/express/lib/router/index.js","function":"Function.proto.<computed> [as post]","line":510,"method":"<computed> [as post]","native":false},{"column":8,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/buyerRoutes.js","function":null,"line":6,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":1138,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1158,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":986,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":879,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":1026,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":72,"method":null,"native":false},{"column":15,"file":"/home/ashu/Documents/Ekbazar/tradebazaar-backend/src/routes/web/index.js","function":null,"line":3,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":1138,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1158,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":986,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":879,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":1026,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":72,"method":null,"native":false}],"timestamp":"2020-10-26T01:39:24.212Z"}
@@ -338,12 +344,18 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-30T15:33:53.824Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-30T15:34:24.212Z"}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 >>>>>>> 523b5e2cf1ce2bc0bd9535696bf60b352bccf2a8
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-08T06:38:47.480Z"}
 =======
 >>>>>>> 4507582f5c65176a049511342f3adbaa786d4885
+=======
+>>>>>>> 523b5e2cf1ce2bc0bd9535696bf60b352bccf2a8
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-08T06:38:47.480Z"}
+=======
+>>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-31T03:36:43.698Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-31T03:41:36.341Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-10-31T03:44:21.331Z"}
@@ -462,9 +474,12 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-02T09:26:02.683Z"}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> 4507582f5c65176a049511342f3adbaa786d4885
+=======
+>>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-02T09:28:38.085Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-02T09:39:22.066Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-03T03:18:48.908Z"}
@@ -516,6 +531,7 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-03T12:37:38.516Z"}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-04T22:17:53.017Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-04T22:21:29.665Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-04T22:26:37.519Z"}
@@ -562,6 +578,8 @@
 >>>>>>> 1c4cab166d016fce52588677f89e90b0b312855c
 =======
 >>>>>>> 4507582f5c65176a049511342f3adbaa786d4885
+=======
+>>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-05T04:52:14.011Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-05T04:55:47.022Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-05T04:56:43.490Z"}
@@ -600,6 +618,7 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-06T03:25:36.899Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-06T04:27:21.949Z"}
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 9be10ecf4d5168c8b392ddce2b8de37e93274c91
 <<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-06T04:31:11.812Z"}
@@ -612,6 +631,8 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-07T11:25:38.579Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-07T11:26:19.302Z"}
 =======
+=======
+>>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
 >>>>>>> staging
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-06T04:29:22.612Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-06T04:29:43.623Z"}
@@ -1076,8 +1097,16 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-09T03:11:50.131Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-09T03:20:00.062Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-09T03:21:30.549Z"}
+<<<<<<< HEAD
 >>>>>>> 4507582f5c65176a049511342f3adbaa786d4885
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-09T07:33:06.974Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T18:10:47.725Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T19:28:56.231Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T19:33:14.397Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T22:23:03.660Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T22:44:37.910Z"}
+>>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
 =======
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-13T09:00:05.894Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-13T09:01:50.398Z"}
@@ -1113,6 +1142,7 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-13T13:47:33.308Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-13T13:49:34.133Z"}
 >>>>>>> d90e8a6d92281a6c37d7ea4c8b29c4604f921afe
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-13T14:06:33.907Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-13T14:06:54.457Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-16T13:25:36.156Z"}
@@ -1120,3 +1150,6 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-16T13:36:44.854Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-17T08:18:26.726Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-17T08:18:50.822Z"}
+=======
+>>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T08:02:55.161Z"}
