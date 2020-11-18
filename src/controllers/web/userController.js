@@ -184,7 +184,6 @@ module.exports.getUserProfile = async (req, res) => {
 module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
-    console.log(userID, '...........................')
     const { name, email, business, location, type, sellerType } = req.body;
     console.log(req.body, 'llllllllllllllllllllllllllll')
     const userData = {
@@ -217,10 +216,10 @@ module.exports.updateUser = async (req, res) => {
 
     // console.log(user, "user.....");
     // console.log(buyer, "buyer.....");
-    // console.log(seller, "seller.....");
+    console.log(seller, "seller.....");
     if (business) {
       const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
-      // console.log(bsnsDtls, 'sellers bsns dtls')
+      console.log(bsnsDtls, 'sellers bsns dtls')
 
       const _seller = await updateSeller({ userId: userID }, {
         busenessId: bsnsDtls._id,
@@ -234,9 +233,9 @@ module.exports.updateUser = async (req, res) => {
     seller = await getSeller(userID)
     console.log(seller, 'updated seller...........')
     if (user && buyer && seller) {
-      respSuccess(res, { seller, buyer }, "registreation completed");
+      respSuccess(res, { seller, buyer }, "registration completed");
     } else {
-      respError(res, "registeration failed");
+      respError(res, "registration failed");
     }
   } catch (error) {
     respError(res, error.message);

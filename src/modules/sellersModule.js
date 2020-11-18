@@ -145,7 +145,7 @@ exports.handleUserLogoutSession = (query) => new Promise((resolve, reject) => {
       signIn: result.createdAt,
       ipAddress: result.ipAddress
     }
-    const swap = new (SessionLog)(data)
+    const swap = new (SessionsLogs)(data)
     swap.save((saveErr) => {
 
       if (!saveErr) {
