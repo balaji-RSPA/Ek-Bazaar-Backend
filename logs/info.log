@@ -957,3 +957,37 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-07T10:12:10.323Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-17T09:33:04.256Z"}
 >>>>>>> ramesh
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T09:49:05.950Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:45:12.636Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:45:29.250Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:46:30.868Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:47:02.318Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:49:28.847Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:49:57.632Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:50:07.349Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:51:57.782Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:52:07.291Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:52:16.213Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T10:52:39.903Z"}
+{"error":{"errno":-2,"code":"ENOENT","syscall":"open","path":"../../../files/F&B.json"},"level":"error","message":"uncaughtException: ENOENT: no such file or directory, open '../../../files/F&B.json'\nError: ENOENT: no such file or directory, open '../../../files/F&B.json'","stack":"Error: ENOENT: no such file or directory, open '../../../files/F&B.json'","exception":true,"date":"Tue Nov 17 2020 16:22:44 GMT+0530 (India Standard Time)","process":{"pid":14404,"uid":1000,"gid":1000,"cwd":"/home/active47/Documents/tradebazaar-backend","execPath":"/usr/bin/node","version":"v12.19.1","argv":["/usr/bin/node","/home/active47/Documents/tradebazaar-backend/app.js"],"memoryUsage":{"rss":491892736,"heapTotal":450215936,"heapUsed":416066040,"external":19757837,"arrayBuffers":18279742}},"os":{"loadavg":[0.7,0.93,1.25],"uptime":9715},"trace":[],"timestamp":"2020-11-17T10:52:44.634Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T11:15:15.143Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T15:17:18.277Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T15:19:05.365Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T15:20:24.287Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T15:21:39.157Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-17T15:22:19.989Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T06:01:25.941Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T06:01:37.654Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T06:01:43.810Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T06:02:40.488Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T06:02:40.496Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T06:03:28.868Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T06:03:28.870Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T06:03:44.161Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T06:04:33.443Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T06:05:33.918Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T06:11:31.790Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T06:11:31.806Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T06:12:13.946Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T07:39:36.626Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T08:22:58.190Z"}
