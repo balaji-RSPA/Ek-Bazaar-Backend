@@ -121,6 +121,7 @@ module.exports.sellerBulkInsert = async (req, res) => {
       // bulkData.push(result)
 
     }
+    console.log("data upload completed")
     // await sellerBulkInser(bulkData);
     console.log("upload completed")
     respSuccess(res, result)
