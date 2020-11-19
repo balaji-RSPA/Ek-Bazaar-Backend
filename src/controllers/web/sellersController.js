@@ -1,6 +1,7 @@
 const camelcaseKeys = require("camelcase-keys");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
+
 const { sellers } = require("../../modules");
 const {
   updateSeller,
@@ -22,7 +23,7 @@ module.exports.getSeller = async (req, res) => {
   try {
     const { userID } = req;
     const { id } = req.query
-    const seller = userID ? await getSeller(userID): await getSellerProfile(id);
+    const seller = userID ? await getSeller(userID) : await getSellerProfile(id);
     console.log(seller, ' dinal ressss')
     respSuccess(res, seller);
   } catch (error) {
@@ -118,16 +119,17 @@ module.exports.sellerBulkInsert = async (req, res) => {
       // const result = await inserSeller(seller)
       result = await structureSellerData(seller)
       // bulkData.push(result)
-      
+
     }
     console.log("data upload completed")
     // await sellerBulkInser(bulkData);
+    console.log("upload completed")
     respSuccess(res, result)
-   
+
   } catch (error) {
 
     respError(res, error.message);
-    
+
   }
 
 }

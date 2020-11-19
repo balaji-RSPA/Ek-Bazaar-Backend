@@ -165,14 +165,15 @@ module.exports.addUser = async (req, res) => {
 module.exports.getUserProfile = async (req, res) => {
   try {
     const { userID } = req;
-    // const user = await getUserProfile(userID)
+    const user = await getUserProfile(userID)
+    console.log(user, '.....user')
     console.log(userID, 'userID......')
     const seller = await getSeller(userID);
     const buyer = await getBuyer(userID);
     const userData = {
-      // user,
-      seller,
-      buyer,
+      user: user && user.length && user[0] || [],
+      seller: seller && seller.length && seller[0] || [],
+      buyer: buyer && buyer.length && buyer[0] || [],
     };
     // const buyer = await getBuyer(userID)
     respSuccess(res, userData);

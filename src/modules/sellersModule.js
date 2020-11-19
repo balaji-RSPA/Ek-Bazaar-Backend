@@ -526,7 +526,7 @@ exports.structureSellerData = async (seller) => {
   name = name.trim()
   let serviceCity = Service_City.trim().split(",")
   serviceCity = await getServiceCity(_.uniq(serviceCity))
-  if(typeof Level_4 == "number")
+  if (typeof Level_4 === "number")
     Level_4 = `${Level_4}`
   Level_4 = Level_4.split(",");
   const levelFour = await getLevelFourCategoryList(Level_4)
@@ -578,17 +578,21 @@ exports.structureSellerData = async (seller) => {
 
   } else {
 
-    console.log("New Seller -----------------------------", )
-      let addr = address.split(",");
-      const pincodeSplit = addr.filter((data) => data.includes("-"));
-      const pinData = pincodeSplit[pincodeSplit.length - 1];
-      const pincode = pinData && pinData.substring(pinData.indexOf("-") + 1).trim() || 0;
-      addr.splice(addr.indexOf(pinData), 1);
-      const completeAddress = addr.join(",");
-      
-      Level_1 = Level_1.toString().split(",");
-      Level_2 = Level_2.toString().split(",");
-      Level_3 = Level_3.toString().split(",");
+    console.log("New Seller -----------------------------")
+    console.log(address, '>>>>>>')
+    let addr = address.split(",");
+    console.log(addr, "??????")
+    const pincodeSplit = addr.filter((data) => data.includes("-"));
+    console.log(pincodeSplit, "========")
+    const pinData = pincodeSplit[pincodeSplit.length - 1];
+    console.log(pinData, "+++++++")
+    const pincode = pinData ? pinData.substring(pinData.indexOf("-") + 1).trim() : 0;
+    addr.splice(addr.indexOf(pinData), 1);
+    const completeAddress = addr.join(",");
+
+    Level_1 = Level_1.toString().split(",");
+    Level_2 = Level_2.toString().split(",");
+    Level_3 = Level_3.toString().split(",");
 
     // Level_4 = Level_4.split(","); -----------
 
