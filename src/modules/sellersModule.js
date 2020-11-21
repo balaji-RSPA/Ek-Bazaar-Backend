@@ -145,7 +145,7 @@ exports.handleUserLogoutSession = (query) => new Promise((resolve, reject) => {
       signIn: result.createdAt,
       ipAddress: result.ipAddress
     }
-    const swap = new (SessionLog)(data)
+    const swap = new (SessionsLogs)(data)
     swap.save((saveErr) => {
 
       if (!saveErr) {
@@ -248,7 +248,7 @@ module.exports.addUser = (data) =>
 
 module.exports.getUserProfile = (id) =>
   new Promise((resolve, reject) => {
-    Users.find({ _id: id })
+    Users.findOne({ _id: id })
       .select({
         name: 1,
         email: 1,
@@ -318,7 +318,10 @@ module.exports.getSeller = (id) =>
       .populate("contactId")
       .populate("comapanyId")
       .populate("establishmentId")
-      .populate("sellerProductId")
+      .populate({
+        path: "sellerProductId",
+        model: "sellerProducts"
+      })
       .populate("location.city", "name")
       .populate("location.state", "name region")
       .populate("location.country", "name")
@@ -372,7 +375,7 @@ module.exports.getAllSellers = () =>
 
 module.exports.updateSeller = (query, data) =>
   new Promise((resolve, reject) => {
-    Sellers.findOneAndUpdate(query, data, { new: true })
+    Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
         console.log(doc);
         resolve(doc);
@@ -422,7 +425,7 @@ module.exports.addContactDetails = (sellerId, data) =>
       .catch((error) => reject(error));
   });
 
-module.exports.addEstablishmentPhotos = (id, data) =>
+module.exports.addEstablishmentPhotos = (sellerId,data) =>
   new Promise((resolve, reject) => {
     SellersEstablishment.findOneAndUpdate(
       { sellerId },
@@ -526,7 +529,8 @@ exports.structureSellerData = async (seller) => {
   name = name.trim()
   let serviceCity = Service_City.trim().split(",")
   serviceCity = await getServiceCity(_.uniq(serviceCity))
-
+  if (typeof Level_4 === "number")
+    Level_4 = `${Level_4}`
   Level_4 = Level_4.split(",");
   const levelFour = await getLevelFourCategoryList(Level_4)
 
@@ -578,10 +582,14 @@ exports.structureSellerData = async (seller) => {
   } else {
 
     console.log("New Seller -----------------------------")
+    console.log(address, '>>>>>>')
     let addr = address.split(",");
+    console.log(addr, "??????")
     const pincodeSplit = addr.filter((data) => data.includes("-"));
+    console.log(pincodeSplit, "========")
     const pinData = pincodeSplit[pincodeSplit.length - 1];
-    const pincode = pinData.substring(pinData.indexOf("-") + 1).trim();
+    console.log(pinData, "+++++++")
+    const pincode = pinData ? pinData.substring(pinData.indexOf("-") + 1).trim() : 0;
     addr.splice(addr.indexOf(pinData), 1);
     const completeAddress = addr.join(",");
 

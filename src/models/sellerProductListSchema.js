@@ -19,53 +19,47 @@ const documentSchema = new Schema({
   },
 });
 
-const priceSchema = new Schema({
-  price: {
-    type: String,
-    default: null,
-    trim: true
-  },
-  unit: {
-    type: String,
-    default: null,
-    trim: true
-  }
-})
-
-const minimumOrderQntitySchema = new Schema({
-  quantity: {
-    type: String,
-    default: null,
-    trim: true
-  },
-  unit: {
-    type: String,
-    default: null,
-    trim: true
-  }
-})
-
-const deliveryTimeSchema = new Schema({
-  deliveryTime: {
-    type: String,
-    default: null,
-    trim: true
-  },
-  unit: {
-    type: String,
-    default: null,
-    trim: true
-  }
-})
-
 const productDetailsSchema = new Schema({
   name: {
     type: String,
     trim: true,
   },
-  price:{priceSchema},
-  minmumOrderQty: {minimumOrderQntitySchema},
-  deliveryTime: {deliveryTimeSchema},
+  price: {
+    price: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    unit: {
+      type: String,
+      trim: true,
+      default: null
+    }
+  },
+  minmumOrderQty: {
+    quantity: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    unit: {
+      type: String,
+      trim: true,
+      default: null
+    }
+  },
+  deliveryTime: {
+    deliveryTime: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    unit: {
+      type: String,
+      trim: true,
+      default: null
+    }
+  },
   packagingDetails: {
     type: String,
     trim: true,
@@ -85,7 +79,7 @@ const productDetailsSchema = new Schema({
     trim: true,
   },
   inStock: {
-    type: String,
+    type: Boolean,
     trim: true,
   },
   document: { documentSchema },
@@ -98,8 +92,8 @@ const sellerProductSchema = new Schema(
       ref: "sellers",
       default: null,
     },
-    serviceType:{
-      type: String,
+    serviceType: {
+      type: ObjectId,
       trim: true,
       default: null
     },
@@ -123,7 +117,7 @@ const sellerProductSchema = new Schema(
       ref: Products,
       default: null,
     },
-    productDetails: { productDetailsSchema },
+    productDetails: productDetailsSchema,
   },
   {
     timestamps: true,
