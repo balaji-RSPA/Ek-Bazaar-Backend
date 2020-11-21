@@ -178,45 +178,62 @@ module.exports.getUserProfile = async (req, res) => {
 };
 
 module.exports.updateUser = async (req, res) => {
+  console.log("updating user======================================dgkd;jgi")
   try {
     const { userID } = req;
-    const { name, email, business, location, type, sellerType } = req.body;
-    console.log(req.body, "8888888888888")
+    const _buyer = req.body.buyer || {}
+    console.log(_buyer, "_buyer//.....")
+    console.log(req.body, "req.body..........................")
+    let { name, email, business, location, type, sellerType } = req.body;
+    console.log(name, email, business, location, type, sellerType, "8888888888888")
     const userData = {
       name,
-      city: location.city,
-      email: email || null,
+      city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
+      email: _buyer && _buyer.email || email || null,
     };
+    console.log(userData,"0000000000000000000000000000000000000000000000000")
     const buyerData = {
       name,
       email,
       location,
-      userId: userID
+      userId: userID,
+      ..._buyer
     };
-    let serviceType = [{
+    console.log(buyerData, "buyerData.......................")
+    let _seller = await getSeller(userID)
+    
+    let serviceType = _seller && _seller.sellerType || []
+    // if(!buyer)
+    //let serviceType
+     serviceType = [{
       name: sellerType,
       cities: [{
         city: location.city,
         state: location.state
       }]
     }]
-    console.log(serviceType, '')
+    console.log(serviceType, 'serviceType.............................')
     const sellerData = {
       name,
       email: email || null,
       location,
-      sellerType: serviceType,
-      userId: userID
+      sellerType: serviceType ,
+      userId: userID,
+      ..._buyer
     };
+    console.log(sellerData, 'sellerData............................')
     const user = await updateUser({ _id: userID }, userData);
+    console.log(user,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
     let seller = await updateSeller({ userId: userID }, sellerData);
-    const buyer = await updateBuyer({ userId: userID }, buyerData);
+    console.log(seller,"ssssssssssssssssssssssssssssssss")
+    buyer = await updateBuyer({ userId: userID }, buyerData);
 
     console.log(user, "user.....");
     console.log(buyer, "buyer.....");
     console.log(seller, "seller.....");
     if (business) {
       const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
+      console.log(bsnsDtls, "..../////////////")
       const _seller = await updateSeller({ userId: userID }, {
         busenessId: bsnsDtls._id,
       });

@@ -318,7 +318,10 @@ module.exports.getSeller = (id) =>
       .populate("contactId")
       .populate("comapanyId")
       .populate("establishmentId")
-      .populate("sellerProductId")
+      .populate({
+        path: "sellerProductId",
+        model: "sellerProducts"
+      })
       .populate("location.city", "name")
       .populate("location.state", "name region")
       .populate("location.country", "name")
@@ -423,7 +426,7 @@ module.exports.addContactDetails = (sellerId, data) =>
       .catch((error) => reject(error));
   });
 
-module.exports.addEstablishmentPhotos = (id, data) =>
+module.exports.addEstablishmentPhotos = (sellerId,data) =>
   new Promise((resolve, reject) => {
     SellersEstablishment.findOneAndUpdate(
       { sellerId },
