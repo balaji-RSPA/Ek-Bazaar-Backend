@@ -248,7 +248,7 @@ module.exports.addUser = (data) =>
 
 module.exports.getUserProfile = (id) =>
   new Promise((resolve, reject) => {
-    Users.find({ _id: id })
+    Users.findOne({ _id: id })
       .select({
         name: 1,
         email: 1,

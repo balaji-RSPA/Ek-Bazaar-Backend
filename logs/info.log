@@ -2009,3 +2009,36 @@
 =======
 >>>>>>> d90e8a6d92281a6c37d7ea4c8b29c4604f921afe
 >>>>>>> 60cffd1543bf26c532c2d5784c916acc71949408
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T14:01:36.918Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T14:01:36.920Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T14:01:56.281Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T14:03:48.366Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T14:14:54.913Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T14:14:54.927Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T14:15:34.365Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T14:15:34.373Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-18T14:15:59.397Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-18T14:15:59.404Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T04:36:31.715Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T04:52:58.999Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T04:52:59.006Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T05:10:38.766Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T05:10:38.775Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T06:53:58.392Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T06:53:58.393Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T06:56:52.876Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T06:56:52.892Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T06:59:31.904Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T06:59:31.912Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T07:00:50.152Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T07:00:50.165Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T07:01:46.716Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T07:01:46.721Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T07:02:52.523Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T07:02:52.534Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T07:04:25.251Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T07:04:25.257Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T07:04:53.533Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-19T07:05:39.804Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2020-11-19T07:05:39.805Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-21T05:58:18.767Z"}
