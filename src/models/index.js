@@ -15,6 +15,7 @@ const SellerContact = require('./sellerContactsSchema')
 const SellerCompany = require('./sellerCompanySchema')
 const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema')
+// const Users = require('./user')
 
 module.exports = {
     Cities,
@@ -33,5 +34,6 @@ module.exports = {
     SellerContact,
     SellerCompany,
     SellerProducts,
-    SellerTypes
+    SellerTypes,
+    // Users
 }

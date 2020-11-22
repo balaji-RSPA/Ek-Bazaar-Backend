@@ -1,16 +1,23 @@
 const express = require("express");
 const { Router } = express;
 const router = Router();
+const csvToJson = require('convert-csv-to-json')
+const fs = require('fs')
+const path = require('path')
 const seller = require("../../controllers/web/sellersController");
-const auth = require("../../controllers/web/authController");
-const { sellerAuthenticate } = require("../../middleware/auth");
+const { authenticate } = require("../../middleware/auth");
 
-router.post("/seller", seller.addSeller);
-router.get("/seller", sellerAuthenticate, seller.getSeller);
-router.put("/seller", sellerAuthenticate, seller.updateSeller);
+router.post("/seller/bulkInsert", seller.sellerBulkInsert);
+
+router.get("/seller", /* sellerAuthenticate, */ seller.getSeller);
+router.put("/seller", authenticate, seller.updateSeller);
 router.get("/sellers", seller.getAllSellers);
-router.post("/seller/update-seller-password", seller.updateSellerPassword);
-
-router.post("/seller/login", auth.sellerLogin);
+router.get("/convert", function (req, res) {
+    console.log(path.join(__dirname, "../../../"))
+    const fileInputName = path.join(__dirname, "../../../", "files", "F&B.csv");
+    const fileOutputName = path.join("../../../", "files", "F&B.json");
+    csvToJson.generateJsonFileFromCsv(fileInputName, fileOutputName);
+    res.send(path.join("../../../", "files", "F&B.csv"))
+})
 
 module.exports = router;
