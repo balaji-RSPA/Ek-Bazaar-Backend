@@ -439,20 +439,19 @@ module.exports.addEstablishmentPhotos = (sellerId,data) =>
       .catch((error) => reject(error));
   });
   // module.exports.addProductDetails = (id, data) =>
-module.exports.addProductDetails = (data) =>
+module.exports.addProductDetails = (id,data) =>
   new Promise((resolve, reject) => {
     // SelleresProductList.findOneAndUpdate(
     //   { sellerId },
     //   { $set: data },
     //   { new: true, upsert: true }
     // )
-    console.log(data,"htkjrhgetjr99999999999")
     SelleresProductList.create(data)
       .then((doc) => {
-        console.log("bjfshgdgf")
+        console.log("inside then")
         resolve(doc);
       })
-      .catch((error) => reject(error),console.log(error,"error block"));
+      .catch((error) => reject(error));
   });
 
 module.exports.addStatutoryDetails = (sellerId, data) =>
