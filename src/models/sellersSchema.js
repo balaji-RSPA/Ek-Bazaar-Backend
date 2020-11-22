@@ -145,12 +145,17 @@ const sellersSchema = new Schema(
     statutoryId: {
       type: ObjectId,
       ref: SellerStatutory,
-      ref: SellerCompany,
+      // ref: SellerCompany,
       default: null
     },
     establishmentId: {
       type: ObjectId,
       ref: SellerEstablishment,
+      default: null
+    },
+    sellerCompanyId: {
+      type: ObjectId,
+      ref: SellerCompany,
       default: null
     },
     sellerProductId:{

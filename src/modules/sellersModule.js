@@ -248,7 +248,7 @@ module.exports.addUser = (data) =>
 
 module.exports.getUserProfile = (id) =>
   new Promise((resolve, reject) => {
-    Users.find({ _id: id })
+    Users.findOne({ _id: id })
       .select({
         name: 1,
         email: 1,
@@ -373,7 +373,7 @@ module.exports.getAllSellers = () =>
 
 module.exports.updateSeller = (query, data) =>
   new Promise((resolve, reject) => {
-    Sellers.findOneAndUpdate(query, data, { new: true })
+    Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
         console.log(doc);
         resolve(doc);

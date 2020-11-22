@@ -32,7 +32,7 @@ module.exports.addBuyer = (data) =>
 
 module.exports.getBuyer = (id) =>
   new Promise((resolve, reject) => {
-    Buyers.find({ userId: id })
+    Buyers.findOne({ userId: id })
       .then((doc) => {
         // console.log(doc);
         resolve(doc);
@@ -42,7 +42,7 @@ module.exports.getBuyer = (id) =>
 
 module.exports.updateBuyer = (query, data) =>
   new Promise((resolve, reject) => {
-    Buyers.findOneAndUpdate(query, data, { new: true })
+    Buyers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
         console.log(doc);
         resolve(doc);

@@ -135,7 +135,6 @@ module.exports.addUser = async (req, res) => {
     // const _seller = await updateSeller(seller._id, {
     //   busenessId: bsnsDtls._id,
     // });
-    console.log(seller, "seller........", buyer);
     if (seller && buyer) {
       const deviceId = machineIdSync();
       const userAgent = getUserAgent(req.useragent)
@@ -149,7 +148,6 @@ module.exports.addUser = async (req, res) => {
       }
 
       const result1 = await handleUserSession(seller.userId, finalData)
-      console.log(result1, 'gggggggggoooooooooooooooooooooo')
       return respSuccess(
         res,
         { token, buyer, seller },
@@ -166,16 +164,14 @@ module.exports.getUserProfile = async (req, res) => {
   try {
     const { userID } = req;
     const user = await getUserProfile(userID)
-    console.log(user, '.....user')
-    console.log(userID, 'userID......')
     const seller = await getSeller(userID);
     const buyer = await getBuyer(userID);
+    console.log(user, seller, buyer)
     const userData = {
-      user: user && user.length && user[0] || [],
-      seller: seller && seller.length && seller[0] || [],
-      buyer: buyer && buyer.length && buyer[0] || [],
+      user,
+      seller,
+      buyer
     };
-    // const buyer = await getBuyer(userID)
     respSuccess(res, userData);
   } catch (error) {
     respError(res, error.message);
@@ -186,7 +182,7 @@ module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
     const { name, email, business, location, type, sellerType } = req.body;
-    console.log(req.body, 'llllllllllllllllllllllllllll')
+    console.log(req.body, "8888888888888")
     const userData = {
       name,
       city: location.city,
@@ -196,6 +192,7 @@ module.exports.updateUser = async (req, res) => {
       name,
       email,
       location,
+      userId: userID
     };
     let serviceType = [{
       name: sellerType,
@@ -209,30 +206,23 @@ module.exports.updateUser = async (req, res) => {
       name,
       email: email || null,
       location,
-      sellerType: serviceType
+      sellerType: serviceType,
+      userId: userID
     };
     const user = await updateUser({ _id: userID }, userData);
     let seller = await updateSeller({ userId: userID }, sellerData);
     const buyer = await updateBuyer({ userId: userID }, buyerData);
 
-    // console.log(user, "user.....");
-    // console.log(buyer, "buyer.....");
+    console.log(user, "user.....");
+    console.log(buyer, "buyer.....");
     console.log(seller, "seller.....");
     if (business) {
       const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
-      console.log(bsnsDtls, 'sellers bsns dtls')
-
       const _seller = await updateSeller({ userId: userID }, {
         busenessId: bsnsDtls._id,
-        // sellerType: serviceType
       });
-      // console.log(user, ".....user");
-      // console.log(buyer, "....buyer");
-      // console.log(_seller, "....seller");
-
     }
     seller = await getSeller(userID)
-    console.log(seller, 'updated seller...........')
     if (user && buyer && seller) {
       respSuccess(res, { seller, buyer }, "registration completed");
     } else {
