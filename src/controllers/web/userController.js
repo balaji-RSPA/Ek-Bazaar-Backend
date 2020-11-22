@@ -165,11 +165,13 @@ module.exports.getUserProfile = async (req, res) => {
     const { userID } = req;
     const user = await getUserProfile(userID)
     const seller = await getSeller(userID);
+    console.log(seller, ":;;;;;;;;;;;;;;;;;")
     const buyer = await getBuyer(userID);
+    console.log(buyer, "...............yyyyyyyyyyy")
     const userData = {
       user,
       seller,
-      buyer
+      buyer,
     };
     respSuccess(res, userData);
   } catch (error) {
@@ -246,7 +248,9 @@ module.exports.forgetPassword = async (req, res) => {
 module.exports.updateNewPassword = async (req, res) => {
   try {
     let { password } = req.body;
+    console.log(req.body, "password..................")
     password = encodePassword(password);
+    console.log(password, "kkkkkkkkkkkkkkkoooooooo")
     const { userID } = req;
     const user = await updateUser(userID, { password });
     respSuccess(res, user, "Password Updated Successfully");
