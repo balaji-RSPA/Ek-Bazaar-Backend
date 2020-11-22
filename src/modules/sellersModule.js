@@ -145,7 +145,7 @@ exports.handleUserLogoutSession = (query) => new Promise((resolve, reject) => {
       signIn: result.createdAt,
       ipAddress: result.ipAddress
     }
-    const swap = new (SessionLog)(data)
+    const swap = new (SessionsLogs)(data)
     swap.save((saveErr) => {
 
       if (!saveErr) {
@@ -373,7 +373,7 @@ module.exports.getAllSellers = () =>
 
 module.exports.updateSeller = (query, data) =>
   new Promise((resolve, reject) => {
-    Sellers.findOneAndUpdate(query, data, { new: true })
+    Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
         console.log(doc);
         resolve(doc);

@@ -25,7 +25,7 @@ const sellerStatutorySchema = new Schema(
       ref: "sellers",
       default: null,
     },
-    comapany: {
+    company: {
       type: { companySchema },
     },
     CinNumber: {
