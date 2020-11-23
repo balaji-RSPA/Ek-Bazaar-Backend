@@ -62,13 +62,14 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
-    const { mobile } = req.body;
+    const { mobile, reset } = req.body;
     console.log(req.body);
     const seller = await checkUserExistOrNot(mobile);
     console.log(seller, "seller.....");
-    if (seller && seller.length) {
+    if (seller && seller.length && !reset) {
       return respError(res, "A seller with this number already exist");
     }
+    if(reset && !seller || !seller.length) return respError(res, "No User found with this number");
     const otp = 1234;
     return respSuccess(res, { otp });
   } catch (error) {
