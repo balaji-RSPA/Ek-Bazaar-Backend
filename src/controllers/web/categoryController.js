@@ -1,4 +1,4 @@
-const { 
+const {
     getAllCategories,
     addParentCategory,
     addParentCategories,
@@ -25,8 +25,9 @@ const {
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
+const { query } = require('winston');
 
-module.exports.addSellerType = async(req, res) => {
+module.exports.addSellerType = async (req, res) => {
     try {
         const reqData = req.body
         const result = await addSellerType(reqData)
@@ -36,7 +37,7 @@ module.exports.addSellerType = async(req, res) => {
     }
 }
 
-module.exports.getAllSellerTypes = async(req, res) => {
+module.exports.getAllSellerTypes = async (req, res) => {
     try {
         const result = await getAllSellerTypes()
         respSuccess(res, result)
@@ -52,18 +53,24 @@ module.exports.getAllCategories = async (req, res) => {
         let qery = {
             status: true
         }
-        if(reqQuery.status){
+        if (reqQuery.status) {
             qery = {
                 status: reqQuery.status
             }
         }
+        // query = {
+        //     ...query,
+        //     _id: {
+        //         $in: ["5f9a60b98420b75666d810d6", "5f9a60b98420b75666d810d8", "5f9a60b98420b75666d810e2", "5f9a60b98420b75666d810e8"]
+        //     }
+        // }
         const result = await getAllCategories(qery)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -76,11 +83,11 @@ module.exports.addParentCategories = async (req, res) => {
         const reqData = req.body
         const result = await addParentCategories(reqData)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -92,11 +99,11 @@ module.exports.addParentCategory = async (req, res) => {
         const reqData = req.body
         const result = await addParentCategory(reqData)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -107,17 +114,17 @@ module.exports.getParentCategory = async (req, res) => {
 
         const id = req.params.id;
         const reqQuery = camelcaseKeys(req.query)
-        const query ={
+        const query = {
             id,
-            search:reqQuery.search
+            search: reqQuery.search
         }
         const result = await getParentCategory(query)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -128,7 +135,7 @@ module.exports.addPrimaryCategories = async (req, res) => {
     try {
 
         const reqData = req.body
-        let bulkData =[]
+        let bulkData = []
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
             const query = {
@@ -141,19 +148,19 @@ module.exports.addPrimaryCategories = async (req, res) => {
                 parentCatId: parentCat._id
             }
             const result = await addPrimaryCategory(primaryData)
-            const updateData= {
+            const updateData = {
                 primaryCategotyId: parentCat.primaryCategotyId.concat(result._id)
             }
             await updateParentCategory(parentCat._id, updateData)
             // bulkData.push(primaryData)
-            
+
         }
         respSuccess(res, 'Uploaded Successfully')
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -166,16 +173,16 @@ module.exports.addPrimaryCategory = async (req, res) => {
         const parentCatId = req.body.parentCatId
         const parentData = await getParentCategory(parentCatId)
         const result = await addPrimaryCategory(reqData)
-        const primarydata= {
+        const primarydata = {
             primaryCategotyId: parentData.primaryCategotyId.concat(result._id)
         }
         await updateParentCategory(parentCatId, primarydata)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -187,11 +194,11 @@ module.exports.getPrimaryCategory = async (req, res) => {
         const id = req.params.id;
         const result = await getPrimaryCategory(id)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -215,20 +222,20 @@ module.exports.addSecondaryCategories = async (req, res) => {
                 primaryCatId: parentCat._id
             }
             const result = await addSecondaryCategory(secData)
-            const updateData= {
+            const updateData = {
                 secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
             }
-            console.log(index, '------', element.primaryCatId, '---',element.l1, 'Count-----')
+            console.log(index, '------', element.primaryCatId, '---', element.l1, 'Count-----')
             await updatePrimaryCategory(parentCat._id, updateData)
-            
+
         }
         console.log('COmpleted +++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -242,16 +249,16 @@ module.exports.addSecondaryCategory = async (req, res) => {
         const primaryData = await getPrimaryCategory(primaryCatId)
 
         const result = await addSecondaryCategory(reqData)
-        const formData= {
+        const formData = {
             secondaryCategotyId: primaryData.secondaryCategotyId.concat(result._id)
         }
         await updatePrimaryCategory(primaryCatId, formData)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -263,11 +270,11 @@ module.exports.getSecondaryCategory = async (req, res) => {
         const id = req.params.id;
         const result = await getSecondaryCategory(id)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -286,27 +293,27 @@ module.exports.addBulkProducts = async (req, res) => {
                 vendorId: element.secondaryId.toString()
             }
             const parentCat = await getSecondaryCat(query)
-            if(parentCat){
+            if (parentCat) {
                 const productData = {
                     ...element,
                     secondaryId: parentCat._id
                 }
                 const result = await addProductCategory(productData)
-                const updateData= {
+                const updateData = {
                     productId: parentCat.productId.concat(result._id)
                 }
                 console.log(index, "COunt----", element.l1, element.vendorId)
                 await updateSecondaryCategory(parentCat._id, updateData)
             }
-            
+
         }
         console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -320,16 +327,16 @@ module.exports.addProduct = async (req, res) => {
         const secData = await getSecondaryCategory(secCatId)
 
         const result = await addProductCategory(reqData)
-        const formData= {
+        const formData = {
             productId: secData.productId.concat(result._id)
         }
         await updateSecondaryCategory(secCatId, formData)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -341,11 +348,11 @@ module.exports.getProduct = async (req, res) => {
         const id = req.params.id;
         const result = await getProductCategory(id)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -357,11 +364,11 @@ module.exports.getAllProducts = async (req, res) => {
         console.log("reqQuery Product ---------", reqQuery)
         const result = await getAllProducts(reqQuery)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
@@ -373,11 +380,11 @@ module.exports.getRelatedCategories = async (req, res) => {
         console.log("module.exports.getRelatedCategories -> id", id)
         const result = await getPrimaryCategory(id)
         respSuccess(res, result)
-        
+
     } catch (error) {
 
         respError(error)
-        
+
     }
 
 }
