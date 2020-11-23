@@ -318,13 +318,15 @@ module.exports.getSeller = (id) =>
       .populate("contactId")
       .populate("comapanyId")
       .populate("establishmentId")
-      .populate("sellerProductId")
+      .populate({
+        path: "sellerProductId",
+        model: "sellerProducts"
+      })
       .populate("location.city", "name")
       .populate("location.state", "name region")
       .populate("location.country", "name")
       .lean()
       .then((doc) => {
-        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -423,7 +425,7 @@ module.exports.addContactDetails = (sellerId, data) =>
       .catch((error) => reject(error));
   });
 
-module.exports.addEstablishmentPhotos = (id, data) =>
+module.exports.addEstablishmentPhotos = (sellerId,data) =>
   new Promise((resolve, reject) => {
     SellersEstablishment.findOneAndUpdate(
       { sellerId },
@@ -436,8 +438,8 @@ module.exports.addEstablishmentPhotos = (id, data) =>
       })
       .catch((error) => reject(error));
   });
-
-module.exports.addProductDetails = (id, data) =>
+  // module.exports.addProductDetails = (id, data) =>
+module.exports.addProductDetails = (id,data) =>
   new Promise((resolve, reject) => {
     // SelleresProductList.findOneAndUpdate(
     //   { sellerId },
@@ -446,7 +448,7 @@ module.exports.addProductDetails = (id, data) =>
     // )
     SelleresProductList.create(data)
       .then((doc) => {
-        console.log(doc);
+        console.log("inside then")
         resolve(doc);
       })
       .catch((error) => reject(error));
