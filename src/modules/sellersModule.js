@@ -427,7 +427,6 @@ module.exports.addProductDetails = (id, data) =>
         .catch((error) => reject(error))
     }
   })
-
 module.exports.addStatutoryDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
     SellersStatutory.findOneAndUpdate(
