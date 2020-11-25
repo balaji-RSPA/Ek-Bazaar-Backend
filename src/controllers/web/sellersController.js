@@ -42,11 +42,12 @@ module.exports.updateSeller = async (req, res) => {
       establishmentPhotos,
       companyProfile,
       productDetails,
+      notifications
     } = req.body;
-    console.log(req.body, "sdsdfsfsfsfsdfffffff");
     const { userID } = req;
+    console.log(userID, "userID...................")
     const user = await getSeller(userID);
-    console.log(user, "..........//////");
+    console.log(user, ">>>>>>>>>>>>>.")
     const sellerID = user._id;
     let newData = {};
     let seller
@@ -83,15 +84,27 @@ module.exports.updateSeller = async (req, res) => {
     }
     if (productDetails) {
       let productsId = [];
-      const prdctDtls = await addProductDetails(productDetails);
-      const seller = await getSeller(id);
-      productsId = seller.productsId;
-      if (productsId.length) productsId.push(prdctDtls._id);
-      else productsId.push(prdctDtls._id);
+
+      console.log(productDetails, "productDetails.......")
+      const prdctDtls = await addProductDetails(null, productDetails);
+      console.log(prdctDtls, "prdctDtls....................")
+      // const seller = await getSeller(id);
+      
+      productsId = user.sellerProductId;
+      console.log(productsId, "productsId........................")
+      if (productsId && productsId.length) {
+        productsId.push(prdctDtls._id);
+      } 
+      else {
+        productsId = []
+        productsId.push(prdctDtls._id);
+      }
+      console.log(productsId)
       newData.sellerProductId = productsId;
+      seller = await updateSeller({ _id: sellerID }, newData);
     }
 
-    console.log(newData, " .........00000000000");
+    console.log(seller, " .........00000000000");
     // const seller = await updateSeller({ _id: sellerID }, newData);
     respSuccess(res, seller, "Profile updated successfully");
   } catch (error) {

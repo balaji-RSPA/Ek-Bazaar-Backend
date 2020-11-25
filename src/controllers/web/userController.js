@@ -57,11 +57,20 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
+<<<<<<< HEAD
     const { mobile } = req.body;
     const seller = await checkUserExistOrNot(mobile);
     if (seller && seller.length) {
+=======
+    const { mobile, reset } = req.body;
+    console.log(req.body);
+    const seller = await checkUserExistOrNot(mobile);
+    console.log(seller, "seller.....");
+    if (seller && seller.length && !reset) {
+>>>>>>> 67bbb9bfe7049e32ccb9d17d1e368b9ac73bf216
       return respError(res, "A seller with this number already exist");
     }
+    if(reset && !seller || !seller.length) return respError(res, "No User found with this number");
     const otp = 1234;
     return respSuccess(res, { otp });
   } catch (error) {
@@ -160,7 +169,7 @@ module.exports.getUserProfile = async (req, res) => {
     const userData = {
       user,
       seller,
-      buyer,
+      buyer
     };
     respSuccess(res, userData);
   } catch (error) {
@@ -169,40 +178,66 @@ module.exports.getUserProfile = async (req, res) => {
 };
 
 module.exports.updateUser = async (req, res) => {
+  console.log("updating user======================================dgkd;jgi")
   try {
     const { userID } = req;
+<<<<<<< HEAD
     const { name, email, business, location, type, sellerType } = req.body;
+=======
+    const _buyer = req.body.buyer || {}
+    console.log(_buyer, "_buyer//.....")
+    console.log(req.body, "req.body..........................")
+    let { name, email, business, location, type, sellerType } = req.body;
+    console.log(name, email, business, location, type, sellerType, "8888888888888")
+>>>>>>> 67bbb9bfe7049e32ccb9d17d1e368b9ac73bf216
     const userData = {
       name,
-      city: location.city,
-      email: email || null,
+      city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
+      email: _buyer && _buyer.email || email || null,
     };
+    console.log(userData,"0000000000000000000000000000000000000000000000000")
     const buyerData = {
       name,
       email,
       location,
-      userId: userID
+      userId: userID,
+      ..._buyer
     };
-    let serviceType = [{
+    console.log(buyerData, "buyerData.......................")
+    let _seller = await getSeller(userID)
+    
+    let serviceType = _seller && _seller.sellerType || []
+    // if(!buyer)
+    //let serviceType
+     serviceType = [{
       name: sellerType,
       cities: [{
         city: location.city,
         state: location.state
       }]
     }]
+<<<<<<< HEAD
+=======
+    console.log(serviceType, 'serviceType.............................')
+>>>>>>> 67bbb9bfe7049e32ccb9d17d1e368b9ac73bf216
     const sellerData = {
       name,
       email: email || null,
       location,
-      sellerType: serviceType,
-      userId: userID
+      sellerType: serviceType ,
+      userId: userID,
+      ..._buyer
     };
+    console.log(sellerData, 'sellerData............................')
     const user = await updateUser({ _id: userID }, userData);
+    console.log(user,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
     let seller = await updateSeller({ userId: userID }, sellerData);
-    const buyer = await updateBuyer({ userId: userID }, buyerData);
+    console.log(seller,"ssssssssssssssssssssssssssssssss")
+    buyer = await updateBuyer({ userId: userID }, buyerData);
 
     if (business) {
       const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
+      console.log(bsnsDtls, "..../////////////")
       const _seller = await updateSeller({ userId: userID }, {
         busenessId: bsnsDtls._id,
       });
