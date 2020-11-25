@@ -250,8 +250,9 @@ exports.searchFromElastic = (query, range) =>
     const body = {
       size: limit || 10,
       from: skip || 0,
-      query/* ,
+      query,/* ,
       highlight, */
+      // sort: { "mobile.mobile": "desc" }
     };
     const searchQuery = {
       index: INDEXNAME,
@@ -266,6 +267,7 @@ exports.searchFromElastic = (query, range) =>
           count,
         ]);
       })
+      .catch(error => reject(error))
   })
 
 exports.getCounts = (query) =>

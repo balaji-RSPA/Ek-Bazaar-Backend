@@ -22,6 +22,12 @@ const {
     getSecondaryCat,
     getPrimaryCat,
     getAllProducts,
+    deleteSellers,
+    deletel3,
+    deletel4,
+    getAllSecondaryCategories,
+    getProducts,
+    getPrimaryCategories
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
@@ -114,6 +120,7 @@ module.exports.getParentCategory = async (req, res) => {
 
         const id = req.params.id;
         const reqQuery = camelcaseKeys(req.query)
+        console.log(reqQuery, "111111111111111111111111111111111111111111111", req.params)
         const query = {
             id,
             search: reqQuery.search
@@ -357,6 +364,28 @@ module.exports.getProduct = async (req, res) => {
 
 }
 
+module.exports.getPrimaryCat = async (req, res) => {
+    try {
+        const reqQuery = camelcaseKeys(req.query);
+        let { skip, limit } = reqQuery
+        skip = skip && parseInt(skip) || 0
+        limit = limit && parseInt(limit) || 10
+        console.log(reqQuery, "jkjdfkjdgfjkdfgjknd", req.query)
+
+        const query = {
+            _id: reqQuery.primaryId,
+            skip,
+            limit
+        }
+        const primaryCatyegory = await getPrimaryCategories(query)
+        console.log(primaryCatyegory, "???????????????????????????")
+        respSuccess(res, primaryCatyegory)
+
+    } catch (error) {
+        respError(error)
+    }
+}
+
 module.exports.getAllProducts = async (req, res) => {
 
     try {
@@ -387,5 +416,81 @@ module.exports.getRelatedCategories = async (req, res) => {
 
     }
 
+}
+
+module.exports.deleteSellers = async (req, res) => {
+    try {
+        const data = req.body
+        const query = {
+            name: {
+                $in: data.map(d => d.name)
+            }
+        }
+        console.log(query, "query......................")
+        const sellers = await deleteSellers(query)
+        console.log(sellers, "user deleted")
+        respSuccess(res, sellers, `sellers deleted successfully`)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.deletel4 = async (req, res) => {
+    try {
+        const data = req.body
+        const query = {
+            vendorId: {
+                $in: data.map(d => d.vendorId)
+            }
+        }
+        console.log(query, "query......................")
+        const l4 = await deletel4(query)
+        console.log(l4, "products deleted")
+        respSuccess(res, l4, `l4 deleted successfully`)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.deletel3 = async (req, res) => {
+    try {
+        const data = req.body
+        const query = {
+            vendorId: {
+                $in: data.map(d => d.vendorId)
+            }
+        }
+        console.log(query, "query......................")
+        const l3 = await deletel3(query)
+        console.log(l3, "secondary category deleted")
+        respSuccess(res, l3, ` l3 deleted successfully`)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.getAllSecondaryCategories = async (req, res) => {
+    try {
+        const secondaryCategories = await getAllSecondaryCategories()
+        respSuccess(res, secondaryCategories)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.getProducts = async (req, res) => {
+    try {
+        const query = {
+            _id: {
+                $in: ["5fbd291f834cab3f38524105", "5fbd291f834cab3f38524106", "5fbd291f834cab3f38524107", "5fbd291f834cab3f38524108",
+                    "5fbd291f834cab3f38524109", "5fbd291f834cab3f3852410a", "5fbd291f834cab3f3852410b", "5fbd291f834cab3f3852410c", "5fbd291f834cab3f3852410d",
+                    "5fbd2920834cab3f3852410e"]
+            }
+        }
+        const products = await getProducts(query)
+        respSuccess(res, products)
+    } catch (error) {
+        respError(error)
+    }
 }
 
