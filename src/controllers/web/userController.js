@@ -21,20 +21,16 @@ const { getBuyer, addBuyer, updateBuyer } = buyers;
 
 module.exports.getAccessToken = async (req, res) => {
   try {
-    console.log(req.ip, "ip...", req.query, "query");
     const { ipAddress } = req.query;
     const deviceId = machineIdSync();
-    console.log(deviceId, "deviceId......");
     const session = await getAccessToken(ipAddress);
     const sessionLog = await getSessionLog(ipAddress);
-    console.log(session, "session", sessionLog, "session Log");
     if (session.length && sessionLog.length === 0) {
       respSuccess(res, { token: session[0].token });
     } else if (session.length && sessionLog.length) {
 
       const condition =
         new Date(session[0].requestedAt) > new Date(sessionLog[0].signOut);
-      console.log("condition.....", condition);
       if (condition) {
         return respSuccess(res, { token: session[0].token });
       } else {
@@ -48,7 +44,6 @@ module.exports.getAccessToken = async (req, res) => {
 
 module.exports.checkUserExistOrNot = async (req, res) => {
   try {
-    console.log(req.body);
     const { mobile } = req.body;
     const seller = await checkUserExistOrNot(mobile);
     if (seller) {
@@ -63,9 +58,7 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile } = req.body;
-    console.log(req.body);
     const seller = await checkUserExistOrNot(mobile);
-    console.log(seller, "seller.....");
     if (seller && seller.length) {
       return respError(res, "A seller with this number already exist");
     }
@@ -106,7 +99,6 @@ module.exports.addUser = async (req, res) => {
   try {
     const { password, mobile, ipAddress } = req.body;
     req.body.password = encodePassword(password);
-    console.log(req.body, "00000-------");
     const tenderUser = {
       countryCode: mobile.countryCode,
       mobile: mobile.mobile,
@@ -115,7 +107,6 @@ module.exports.addUser = async (req, res) => {
     };
     const user = await addUser(tenderUser);
 
-    console.log(user, "user....");
     req.body.userId = user._id;
     const buyerData = {
       countryCode: mobile.countryCode,
@@ -165,9 +156,7 @@ module.exports.getUserProfile = async (req, res) => {
     const { userID } = req;
     const user = await getUserProfile(userID)
     const seller = await getSeller(userID);
-    console.log(seller, ":;;;;;;;;;;;;;;;;;")
     const buyer = await getBuyer(userID);
-    console.log(buyer, "...............yyyyyyyyyyy")
     const userData = {
       user,
       seller,
@@ -183,7 +172,6 @@ module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
     const { name, email, business, location, type, sellerType } = req.body;
-    console.log(req.body, "8888888888888")
     const userData = {
       name,
       city: location.city,
@@ -202,7 +190,6 @@ module.exports.updateUser = async (req, res) => {
         state: location.state
       }]
     }]
-    console.log(serviceType, '')
     const sellerData = {
       name,
       email: email || null,
@@ -214,9 +201,6 @@ module.exports.updateUser = async (req, res) => {
     let seller = await updateSeller({ userId: userID }, sellerData);
     const buyer = await updateBuyer({ userId: userID }, buyerData);
 
-    console.log(user, "user.....");
-    console.log(buyer, "buyer.....");
-    console.log(seller, "seller.....");
     if (business) {
       const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
       const _seller = await updateSeller({ userId: userID }, {
@@ -248,9 +232,7 @@ module.exports.forgetPassword = async (req, res) => {
 module.exports.updateNewPassword = async (req, res) => {
   try {
     let { password } = req.body;
-    console.log(req.body, "password..................")
     password = encodePassword(password);
-    console.log(password, "kkkkkkkkkkkkkkkoooooooo")
     const { userID } = req;
     const user = await updateUser(userID, { password });
     respSuccess(res, user, "Password Updated Successfully");
@@ -272,7 +254,6 @@ module.exports.updateNewPassword = async (req, res) => {
 
 //     const timestamp = dt.getTime()
 //     const newTimestamp = timestamp - 12000000
-//     console.log(timestamp, newTimestamp)
 //     dt = new Date(newTimestamp)
 //     date = `${dt.getUTCDate()}`
 //     month = `${dt.getUTCMonth()+1}`
@@ -284,6 +265,4 @@ module.exports.updateNewPassword = async (req, res) => {
 
 //     const startTime = `${year}-${month.length === 1 ? `0${month}` : month}-${date.length === 1 ? `0${date}` : date} ${hours.length === 1 ? `0${hours}` : hours}:${minutes.length === 1 ? `0${minutes}` : minutes}:${seconds.length === 1 ? `0${seconds}` : seconds}.${milisecs}Z`
 
-//     console.log(new Date(1604851339126).toUTCString(), new Date().getTime())
 
-//     console.log(currentTime, 'currentTime........', startTime, 'startTime.....')

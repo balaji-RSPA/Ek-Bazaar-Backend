@@ -1,0 +1,974 @@
+###
+# POST http://localhost:8070/api/addSecondaryCategories HTTP/1.1
+# content-type: application/json
+
+POST http://localhost:8070/api/l3_delete HTTP/1.1
+content-type: application/json
+
+[
+  {
+    "vendorId": "L3FB1",
+    "primaryCatId": "FB1",
+    "name": "Rice"
+  },
+  {
+    "vendorId": "L3FB2",
+    "primaryCatId": "FB21",
+    "name": "Basmati Rice"
+  },
+  {
+    "vendorId": "L3FB3",
+    "primaryCatId": "FB22",
+    "name": "Wheat Flour"
+  },
+  {
+    "vendorId": "L3FB4",
+    "primaryCatId": "FB21",
+    "name": "Pulses"
+  },
+  {
+    "vendorId": "L3FB5",
+    "primaryCatId": "FB22",
+    "name": "Sugar"
+  },
+  {
+    "vendorId": "L3FB6",
+    "primaryCatId": "FB1",
+    "name": "Wheat"
+  },
+  {
+    "vendorId": "L3FB7",
+    "primaryCatId": "FB21",
+    "name": "Food Grains"
+  },
+  {
+    "vendorId": "L3FB8",
+    "primaryCatId": "FB21",
+    "name": "Non Basmati Rice"
+  },
+  {
+    "vendorId": "L3FB9",
+    "primaryCatId": "FB22",
+    "name": "Flours"
+  },
+  {
+    "vendorId": "L3FB10",
+    "primaryCatId": "FB21",
+    "name": "Brown Rice"
+  },
+  {
+    "vendorId": "L3FB11",
+    "primaryCatId": "FB22",
+    "name": "Gud Jaggery"
+  },
+  {
+    "vendorId": "L3FB12",
+    "primaryCatId": "FB21",
+    "name": "Chane"
+  },
+  {
+    "vendorId": "L3FB13",
+    "primaryCatId": "FB21",
+    "name": "Rajma"
+  },
+  {
+    "vendorId": "L3FB14",
+    "primaryCatId": "FB2",
+    "name": "Food Colors"
+  },
+  {
+    "vendorId": "L3FB15",
+    "primaryCatId": "FB2",
+    "name": "Food Flavour"
+  },
+  {
+    "vendorId": "L3FB16",
+    "primaryCatId": "FB2",
+    "name": "Vinegar"
+  },
+  {
+    "vendorId": "L3FB17",
+    "primaryCatId": "FB2",
+    "name": "Antioxidants"
+  },
+  {
+    "vendorId": "L3FB18",
+    "primaryCatId": "FB2",
+    "name": "Food Grade Chemical"
+  },
+  {
+    "vendorId": "L3FB19",
+    "primaryCatId": "FB2",
+    "name": "Starch Powder"
+  },
+  {
+    "vendorId": "L3FB20",
+    "primaryCatId": "FB2",
+    "name": "Sweetener"
+  },
+  {
+    "vendorId": "L3FB21",
+    "primaryCatId": "FB2",
+    "name": "Bakery & Confectionery Flavors"
+  },
+  {
+    "vendorId": "L3FB22",
+    "primaryCatId": "FB2",
+    "name": "Food Additive"
+  },
+  {
+    "vendorId": "L3FB23",
+    "primaryCatId": "FB2",
+    "name": "Fruit Flavor"
+  },
+  {
+    "vendorId": "L3FB24",
+    "primaryCatId": "FB2",
+    "name": "Food Enzymes"
+  },
+  {
+    "vendorId": "L3FB25",
+    "primaryCatId": "FB2",
+    "name": "Food Preservative"
+  },
+  {
+    "vendorId": "L3FB26",
+    "primaryCatId": "FB2",
+    "name": "Invert Sugar Syrup"
+  },
+  {
+    "vendorId": "L3FB27",
+    "primaryCatId": "FB2",
+    "name": "Beverage Flavors"
+  },
+  {
+    "vendorId": "L3FB28",
+    "primaryCatId": "FB2",
+    "name": "Dry Powder Flavours"
+  },
+  {
+    "vendorId": "L3FB29",
+    "primaryCatId": "FB2",
+    "name": "Natural Sweetener"
+  },
+  {
+    "vendorId": "L3FB30",
+    "primaryCatId": "FB2",
+    "name": "Food Emulsifiers"
+  },
+  {
+    "vendorId": "L3FB31",
+    "primaryCatId": "FB2",
+    "name": "Artificial Sweetener"
+  },
+  {
+    "vendorId": "L3FB32",
+    "primaryCatId": "FB2",
+    "name": "Dairy Flavors"
+  },
+  {
+    "vendorId": "L3FB33",
+    "primaryCatId": "FB2",
+    "name": "Spice Flavour"
+  },
+  {
+    "vendorId": "L3FB34",
+    "primaryCatId": "FB2",
+    "name": "Food Acidulant"
+  },
+  {
+    "vendorId": "L3FB35",
+    "primaryCatId": "FB2",
+    "name": "Savory Flavors"
+  },
+  {
+    "vendorId": "L3FB36",
+    "primaryCatId": "FB2",
+    "name": "Dough Conditioners"
+  },
+  {
+    "vendorId": "L3FB37",
+    "primaryCatId": "FB2",
+    "name": "Anti Caking Agents"
+  },
+  {
+    "vendorId": "L3FB38",
+    "primaryCatId": "FB2",
+    "name": "Food Stabilizer"
+  },
+  {
+    "vendorId": "L3FB39",
+    "primaryCatId": "FB2",
+    "name": "Aroma Flavour"
+  },
+  {
+    "vendorId": "L3FB40",
+    "primaryCatId": "FB2",
+    "name": "Dessert Flavor"
+  },
+  {
+    "vendorId": "L3FB41",
+    "primaryCatId": "FB3",
+    "name": "Masala"
+  },
+  {
+    "vendorId": "L3FB42",
+    "primaryCatId": "FB3",
+    "name": "Chilli Powder"
+  },
+  {
+    "vendorId": "L3FB43",
+    "primaryCatId": "FB3",
+    "name": "Turmeric"
+  },
+  {
+    "vendorId": "L3FB44",
+    "primaryCatId": "FB3",
+    "name": "Masala Powder"
+  },
+  {
+    "vendorId": "L3FB45",
+    "primaryCatId": "FB3",
+    "name": "Whole Spices"
+  },
+  {
+    "vendorId": "L3FB46",
+    "primaryCatId": "FB3",
+    "name": "Saffron"
+  },
+  {
+    "vendorId": "L3FB47",
+    "primaryCatId": "FB3",
+    "name": "Edible Salt"
+  },
+  {
+    "vendorId": "L3FB48",
+    "primaryCatId": "FB3",
+    "name": "Dried Chillies"
+  },
+  {
+    "vendorId": "L3FB49",
+    "primaryCatId": "FB3",
+    "name": "Vegetable Powders"
+  },
+  {
+    "vendorId": "L3FB50",
+    "primaryCatId": "FB3",
+    "name": "Masala Mix"
+  },
+  {
+    "vendorId": "L3FB51",
+    "primaryCatId": "FB3",
+    "name": "Cooking Paste"
+  },
+  {
+    "vendorId": "L3FB52",
+    "primaryCatId": "FB3",
+    "name": "Seed Spices"
+  },
+  {
+    "vendorId": "L3FB53",
+    "primaryCatId": "FB4",
+    "name": "Cake"
+  },
+  {
+    "vendorId": "L3FB54",
+    "primaryCatId": "FB4",
+    "name": "Bakery Products"
+  },
+  {
+    "vendorId": "L3FB55",
+    "primaryCatId": "FB4",
+    "name": "Bread & Buns"
+  },
+  {
+    "vendorId": "L3FB56",
+    "primaryCatId": "FB4",
+    "name": "Candy & Jelly"
+  },
+  {
+    "vendorId": "L3FB57",
+    "primaryCatId": "FB4",
+    "name": "Rusk Toast"
+  },
+  {
+    "vendorId": "L3FB58",
+    "primaryCatId": "FB4",
+    "name": "Pastry"
+  },
+  {
+    "vendorId": "L3FB59",
+    "primaryCatId": "FB4",
+    "name": "Muffin & Cupcakes"
+  },
+  {
+    "vendorId": "L3FB60",
+    "primaryCatId": "FB4",
+    "name": "Ice Cream Raw Materials"
+  },
+  {
+    "vendorId": "L3FB61",
+    "primaryCatId": "FB4",
+    "name": "Pies"
+  },
+  {
+    "vendorId": "L3FB62",
+    "primaryCatId": "FB4",
+    "name": "Confectionery Ingredients"
+  },
+  {
+    "vendorId": "L3FB63",
+    "primaryCatId": "FB4",
+    "name": "Bakery Sweets"
+  },
+  {
+    "vendorId": "L3FB64",
+    "primaryCatId": "FB4",
+    "name": "Chocolate Snacks"
+  },
+  {
+    "vendorId": "L3FB65",
+    "primaryCatId": "FB5",
+    "name": "Milk"
+  },
+  {
+    "vendorId": "L3FB66",
+    "primaryCatId": "FB5",
+    "name": "Pure Ghee"
+  },
+  {
+    "vendorId": "L3FB67",
+    "primaryCatId": "FB5",
+    "name": "Ice Cream"
+  },
+  {
+    "vendorId": "L3FB68",
+    "primaryCatId": "FB5",
+    "name": "Paneer"
+  },
+  {
+    "vendorId": "L3FB69",
+    "primaryCatId": "FB5",
+    "name": "Curd"
+  },
+  {
+    "vendorId": "L3FB70",
+    "primaryCatId": "FB5",
+    "name": "Dairy Products"
+  },
+  {
+    "vendorId": "L3FB71",
+    "primaryCatId": "FB5",
+    "name": "Butter"
+  },
+  {
+    "vendorId": "L3FB72",
+    "primaryCatId": "FB5",
+    "name": "Milk Powder"
+  },
+  {
+    "vendorId": "L3FB73",
+    "primaryCatId": "FB5",
+    "name": "Flavoured Milk"
+  },
+  {
+    "vendorId": "L3FB74",
+    "primaryCatId": "FB5",
+    "name": "Cheese"
+  },
+  {
+    "vendorId": "L3FB75",
+    "primaryCatId": "FB5",
+    "name": "Milk Proteins"
+  },
+  {
+    "vendorId": "L3FB76",
+    "primaryCatId": "FB5",
+    "name": "Imported Cheese"
+  },
+  {
+    "vendorId": "L3FB77",
+    "primaryCatId": "FB5",
+    "name": "Dairy Ingredients"
+  },
+  {
+    "vendorId": "L3FB78",
+    "primaryCatId": "FB6",
+    "name": "Snack Foods"
+  },
+  {
+    "vendorId": "L3FB79",
+    "primaryCatId": "FB6",
+    "name": "Namkeen"
+  },
+  {
+    "vendorId": "L3FB80",
+    "primaryCatId": "FB6",
+    "name": "Papad"
+  },
+  {
+    "vendorId": "L3FB81",
+    "primaryCatId": "FB6",
+    "name": "Chips"
+  },
+  {
+    "vendorId": "L3FB82",
+    "primaryCatId": "FB6",
+    "name": "Sev and Bhujia"
+  },
+  {
+    "vendorId": "L3FB83",
+    "primaryCatId": "FB6",
+    "name": "Khakhra"
+  },
+  {
+    "vendorId": "L3FB84",
+    "primaryCatId": "FB6",
+    "name": "Fryums"
+  },
+  {
+    "vendorId": "L3FB85",
+    "primaryCatId": "FB6",
+    "name": "Healthy Food Snacks"
+  },
+  {
+    "vendorId": "L3FB86",
+    "primaryCatId": "FB6",
+    "name": "Roasted Snack"
+  },
+  {
+    "vendorId": "L3FB87",
+    "primaryCatId": "FB6",
+    "name": "Veg Snacks"
+  },
+  {
+    "vendorId": "L3FB88",
+    "primaryCatId": "FB6",
+    "name": "Nut Snack and Popcorn"
+  },
+  {
+    "vendorId": "L3FB89",
+    "primaryCatId": "FB6",
+    "name": "Non Veg Snack"
+  },
+  {
+    "vendorId": "L3FB90",
+    "primaryCatId": "FB7",
+    "name": "Fruit Juice"
+  },
+  {
+    "vendorId": "L3FB91",
+    "primaryCatId": "FB7",
+    "name": "Fruit Drinks"
+  },
+  {
+    "vendorId": "L3FB92",
+    "primaryCatId": "FB7",
+    "name": "Drinking Water"
+  },
+  {
+    "vendorId": "L3FB93",
+    "primaryCatId": "FB7",
+    "name": "Beverages Mixes"
+  },
+  {
+    "vendorId": "L3FB94",
+    "primaryCatId": "FB7",
+    "name": "Fruit Syrups"
+  },
+  {
+    "vendorId": "L3FB95",
+    "primaryCatId": "FB7",
+    "name": "Fruit Beverage"
+  },
+  {
+    "vendorId": "L3FB96",
+    "primaryCatId": "FB7",
+    "name": "Fruit Squashes"
+  },
+  {
+    "vendorId": "L3FB97",
+    "primaryCatId": "FB7",
+    "name": "Instant Drink Mix"
+  },
+  {
+    "vendorId": "L3FB98",
+    "primaryCatId": "FB7",
+    "name": "Fruit Concentrate"
+  },
+  {
+    "vendorId": "L3FB99",
+    "primaryCatId": "FB7",
+    "name": "Vegetable Juices"
+  },
+  {
+    "vendorId": "L3FB100",
+    "primaryCatId": "FB7",
+    "name": "Carbonated Drinks"
+  },
+  {
+    "vendorId": "L3FB101",
+    "primaryCatId": "FB8",
+    "name": "Fresh Vegetables"
+  },
+  {
+    "vendorId": "L3FB102",
+    "primaryCatId": "FB8",
+    "name": "Onion"
+  },
+  {
+    "vendorId": "L3FB103",
+    "primaryCatId": "FB8",
+    "name": "Mushroom"
+  },
+  {
+    "vendorId": "L3FB104",
+    "primaryCatId": "FB8",
+    "name": "Chilli"
+  },
+  {
+    "vendorId": "L3FB105",
+    "primaryCatId": "FB8",
+    "name": "Dried Vegetables"
+  },
+  {
+    "vendorId": "L3FB106",
+    "primaryCatId": "FB8",
+    "name": "Frozen Vegetables"
+  },
+  {
+    "vendorId": "L3FB107",
+    "primaryCatId": "FB8",
+    "name": "Beans"
+  },
+  {
+    "vendorId": "L3FB108",
+    "primaryCatId": "FB8",
+    "name": "Dehydrated Vegetable"
+  },
+  {
+    "vendorId": "L3FB109",
+    "primaryCatId": "FB8",
+    "name": "Root Vegetables"
+  },
+  {
+    "vendorId": "L3FB110",
+    "primaryCatId": "FB8",
+    "name": "Exotic Vegetables"
+  },
+  {
+    "vendorId": "L3FB111",
+    "primaryCatId": "FB8",
+    "name": "Vegetable Granule"
+  },
+  {
+    "vendorId": "L3FB112",
+    "primaryCatId": "FB8",
+    "name": "Vegetable & Herb Flakes"
+  },
+  {
+    "vendorId": "L3FB113",
+    "primaryCatId": "FB9",
+    "name": "Tea"
+  },
+  {
+    "vendorId": "L3FB114",
+    "primaryCatId": "FB9",
+    "name": "Green Tea"
+  },
+  {
+    "vendorId": "L3FB115",
+    "primaryCatId": "FB9",
+    "name": "Coffee"
+  },
+  {
+    "vendorId": "L3FB116",
+    "primaryCatId": "FB9",
+    "name": "Black Tea"
+  },
+  {
+    "vendorId": "L3FB117",
+    "primaryCatId": "FB9",
+    "name": "Herbal Tea"
+  },
+  {
+    "vendorId": "L3FB118",
+    "primaryCatId": "FB9",
+    "name": "Flavored Tea"
+  },
+  {
+    "vendorId": "L3FB119",
+    "primaryCatId": "FB9",
+    "name": "Coffee Beans"
+  },
+  {
+    "vendorId": "L3FB120",
+    "primaryCatId": "FB9",
+    "name": "Coffee Powder"
+  },
+  {
+    "vendorId": "L3FB121",
+    "primaryCatId": "FB9",
+    "name": "Ice Tea"
+  },
+  {
+    "vendorId": "L3FB122",
+    "primaryCatId": "FB9",
+    "name": "Fruit Tea"
+  },
+  {
+    "vendorId": "L3FB123",
+    "primaryCatId": "FB9",
+    "name": "Flower Tea"
+  },
+  {
+    "vendorId": "L3FB124",
+    "primaryCatId": "FB9",
+    "name": "Coffee Substitutes"
+  },
+  {
+    "vendorId": "L3FB125",
+    "primaryCatId": "FB10",
+    "name": "Biscuit"
+  },
+  {
+    "vendorId": "L3FB126",
+    "primaryCatId": "FB10",
+    "name": "Chocolate"
+  },
+  {
+    "vendorId": "L3FB127",
+    "primaryCatId": "FB10",
+    "name": "Cookies"
+  },
+  {
+    "vendorId": "L3FB128",
+    "primaryCatId": "FB11",
+    "name": "Ready to Eat Food"
+  },
+  {
+    "vendorId": "L3FB129",
+    "primaryCatId": "FB11",
+    "name": "Pasta & Soups"
+  },
+  {
+    "vendorId": "L3FB130",
+    "primaryCatId": "FB11",
+    "name": "Frozen Food"
+  },
+  {
+    "vendorId": "L3FB131",
+    "primaryCatId": "FB11",
+    "name": "Instant Mixes"
+  },
+  {
+    "vendorId": "L3FB132",
+    "primaryCatId": "FB11",
+    "name": "Noodles Pasta & Instant Food"
+  },
+  {
+    "vendorId": "L3FB133",
+    "primaryCatId": "FB11",
+    "name": "Breakfast Cereals"
+  },
+  {
+    "vendorId": "L3FB134",
+    "primaryCatId": "FB11",
+    "name": "Canned Food"
+  },
+  {
+    "vendorId": "L3FB135",
+    "primaryCatId": "FB11",
+    "name": "Noodles & Vermicelli"
+  },
+  {
+    "vendorId": "L3FB136",
+    "primaryCatId": "FB12",
+    "name": "Fresh Fruits"
+  },
+  {
+    "vendorId": "L3FB137",
+    "primaryCatId": "FB12",
+    "name": "Mangoes"
+  },
+  {
+    "vendorId": "L3FB138",
+    "primaryCatId": "FB12",
+    "name": "Coconut"
+  },
+  {
+    "vendorId": "L3FB139",
+    "primaryCatId": "FB12",
+    "name": "Apple"
+  },
+  {
+    "vendorId": "L3FB140",
+    "primaryCatId": "FB12",
+    "name": "Fruit Pulp"
+  },
+  {
+    "vendorId": "L3FB141",
+    "primaryCatId": "FB12",
+    "name": "Fruit Powder"
+  },
+  {
+    "vendorId": "L3FB142",
+    "primaryCatId": "FB12",
+    "name": "Frozen Fruits"
+  },
+  {
+    "vendorId": "L3FB143",
+    "primaryCatId": "FB12",
+    "name": "Citrus Fruits"
+  },
+  {
+    "vendorId": "L3FB144",
+    "primaryCatId": "FB12",
+    "name": "Berries"
+  },
+  {
+    "vendorId": "L3FB145",
+    "primaryCatId": "FB12",
+    "name": "Tropical Fruits"
+  },
+  {
+    "vendorId": "L3FB146",
+    "primaryCatId": "FB12",
+    "name": "Preserved Fruits"
+  },
+  {
+    "vendorId": "L3FB147",
+    "primaryCatId": "FB13",
+    "name": "Mustard Oil"
+  },
+  {
+    "vendorId": "L3FB148",
+    "primaryCatId": "FB13",
+    "name": "Palm Oil"
+  },
+  {
+    "vendorId": "L3FB149",
+    "primaryCatId": "FB13",
+    "name": "Sunflower Oil"
+  },
+  {
+    "vendorId": "L3FB150",
+    "primaryCatId": "FB13",
+    "name": "Refined Oil"
+  },
+  {
+    "vendorId": "L3FB151",
+    "primaryCatId": "FB13",
+    "name": "Cooking Oil"
+  },
+  {
+    "vendorId": "L3FB152",
+    "primaryCatId": "FB13",
+    "name": "Groundnut Oil"
+  },
+  {
+    "vendorId": "L3FB153",
+    "primaryCatId": "FB13",
+    "name": "Coconut Oil"
+  },
+  {
+    "vendorId": "L3FB154",
+    "primaryCatId": "FB13",
+    "name": "Edible Oil"
+  },
+  {
+    "vendorId": "L3FB155",
+    "primaryCatId": "FB13",
+    "name": "Olive Oil"
+  },
+  {
+    "vendorId": "L3FB156",
+    "primaryCatId": "FB13",
+    "name": "Castor Oil"
+  },
+  {
+    "vendorId": "L3FB157",
+    "primaryCatId": "FB13",
+    "name": "Fish Oil"
+  },
+  {
+    "vendorId": "L3FB158",
+    "primaryCatId": "FB13",
+    "name": "Carrier Oil"
+  },
+  {
+    "vendorId": "L3FB159",
+    "primaryCatId": "FB13",
+    "name": "Nut Oils"
+  },
+  {
+    "vendorId": "L3FB160",
+    "primaryCatId": "FB14",
+    "name": "Pickles"
+  },
+  {
+    "vendorId": "L3FB161",
+    "primaryCatId": "FB14",
+    "name": "Sauces"
+  },
+  {
+    "vendorId": "L3FB162",
+    "primaryCatId": "FB14",
+    "name": "Chutney"
+  },
+  {
+    "vendorId": "L3FB163",
+    "primaryCatId": "FB14",
+    "name": "Jam"
+  },
+  {
+    "vendorId": "L3FB164",
+    "primaryCatId": "FB15",
+    "name": "Organic Vegetable"
+  },
+  {
+    "vendorId": "L3FB165",
+    "primaryCatId": "FB15",
+    "name": "Organic Pulses"
+  },
+  {
+    "vendorId": "L3FB166",
+    "primaryCatId": "FB15",
+    "name": "Organic Food Grains"
+  },
+  {
+    "vendorId": "L3FB167",
+    "primaryCatId": "FB15",
+    "name": "Organic Sugar"
+  },
+  {
+    "vendorId": "L3FB168",
+    "primaryCatId": "FB15",
+    "name": "Organic Flour"
+  },
+  {
+    "vendorId": "L3FB169",
+    "primaryCatId": "FB15",
+    "name": "Organic Spices"
+  },
+  {
+    "vendorId": "L3FB170",
+    "primaryCatId": "FB15",
+    "name": "Organic Oils"
+  },
+  {
+    "vendorId": "L3FB171",
+    "primaryCatId": "FB16",
+    "name": "Sweets"
+  },
+  {
+    "vendorId": "L3FB172",
+    "primaryCatId": "FB16",
+    "name": "Milk Sweets"
+  },
+  {
+    "vendorId": "L3FB173",
+    "primaryCatId": "FB16",
+    "name": "Laddu"
+  },
+  {
+    "vendorId": "L3FB174",
+    "primaryCatId": "FB16",
+    "name": "Barfi"
+  },
+  {
+    "vendorId": "L3FB175",
+    "primaryCatId": "FB16",
+    "name": "Soan Papdi"
+  },
+  {
+    "vendorId": "L3FB176",
+    "primaryCatId": "FB16",
+    "name": "Chikki"
+  },
+  {
+    "vendorId": "L3FB177",
+    "primaryCatId": "FB16",
+    "name": "Peda"
+  },
+  {
+    "vendorId": "L3FB178",
+    "primaryCatId": "FB16",
+    "name": "Gazak"
+  },
+  {
+    "vendorId": "L3FB179",
+    "primaryCatId": "FB16",
+    "name": "Halwa"
+  },
+  {
+    "vendorId": "L3FB180",
+    "primaryCatId": "FB16",
+    "name": "Kaju Sweets"
+  },
+  {
+    "vendorId": "L3FB181",
+    "primaryCatId": "FB17",
+    "name": "Fresh Fish"
+  },
+  {
+    "vendorId": "L3FB182",
+    "primaryCatId": "FB17",
+    "name": "Seafood"
+  },
+  {
+    "vendorId": "L3FB183",
+    "primaryCatId": "FB17",
+    "name": "Fish Fillet"
+  },
+  {
+    "vendorId": "L3FB184",
+    "primaryCatId": "FB18",
+    "name": "Cashew Nuts (Kaju)"
+  },
+  {
+    "vendorId": "L3FB185",
+    "primaryCatId": "FB18",
+    "name": "Almond"
+  },
+  {
+    "vendorId": "L3FB186",
+    "primaryCatId": "FB18",
+    "name": "Dry Fruits and Nuts"
+  },
+  {
+    "vendorId": "L3FB187",
+    "primaryCatId": "FB18",
+    "name": "Walnut"
+  },
+  {
+    "vendorId": "L3FB188",
+    "primaryCatId": "FB18",
+    "name": "Dry Dates"
+  },
+  {
+    "vendorId": "L3FB189",
+    "primaryCatId": "FB18",
+    "name": "Raisins"
+  },
+  {
+    "vendorId": "L3FB190",
+    "primaryCatId": "FB19",
+    "name": "Egg"
+  },
+  {
+    "vendorId": "L3FB191",
+    "primaryCatId": "FB19",
+    "name": "Meat"
+  },
+  {
+    "vendorId": "L3FB192",
+    "primaryCatId": "FB20",
+    "name": "Herbal Juice"
+  },
+  {
+    "vendorId": "L3FB193",
+    "primaryCatId": "FB20",
+    "name": "Ayurvedic Juice"
+  }
+]

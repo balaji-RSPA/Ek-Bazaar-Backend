@@ -5,6 +5,7 @@ const {
   SecondaryCategory,
   Products,
   SellerTypes,
+  Sellers
 } = require("../models");
 
 module.exports.addSellerType = (data, id) =>
@@ -134,6 +135,24 @@ module.exports.getParentCat = (query) =>
       })
       .catch(reject);
   });
+
+module.exports.deleteSellers = query => new Promise((resolve, reject) => {
+  Sellers.deleteMany(query)
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
+module.exports.deletel3 = query => new Promise((resolve, reject) => {
+  SecondaryCategory.deleteMany(query)
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
+module.exports.deletel4 = query => new Promise((resolve, reject) => {
+  Products.deleteMany(query)
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
 
 module.exports.getParentCategory = (reqQuery) =>
   new Promise((resolve, reject) => {
@@ -346,7 +365,27 @@ exports.getAllSecondaryCategory = () =>
       .catch((error) => reject(error));
   });
 
+exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
+  SecondaryCategory.find({})
+    .limit(4)
+    .populate("productId")
+    .then((doc) => {
+      console.log(doc, "//////////////////////???????????>>>>>>>>>>>>>>>>>>>>>>>>>>>.")
+      resolve(doc)
+    })
+    .catch((error) => reject(error));
+})
+
 // Products
+
+module.exports.getProducts = () => new Promise((resolve, reject) => {
+  Products.find({})
+    .limit(10)
+    .then((doc) => {
+      resolve(doc);
+    })
+    .catch(reject);
+})
 
 module.exports.addProductCategories = (data) =>
   new Promise((resolve, reject) => {
@@ -416,6 +455,7 @@ exports.getCatId = (query, id) =>
           },
         })
         .then((doc) => {
+          console.log(doc, "???????????????????????????????????????????????????????")
           resolve(doc && id ? doc.secondaryId.primaryCatId._id : doc);
         })
         .catch(reject);
