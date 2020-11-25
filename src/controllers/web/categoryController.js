@@ -26,7 +26,8 @@ const {
     deletel3,
     deletel4,
     getAllSecondaryCategories,
-    getProducts
+    getProducts,
+    getPrimaryCategories
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
@@ -119,6 +120,7 @@ module.exports.getParentCategory = async (req, res) => {
 
         const id = req.params.id;
         const reqQuery = camelcaseKeys(req.query)
+        console.log(reqQuery, "111111111111111111111111111111111111111111111", req.params)
         const query = {
             id,
             search: reqQuery.search
@@ -362,6 +364,28 @@ module.exports.getProduct = async (req, res) => {
 
 }
 
+module.exports.getPrimaryCat = async (req, res) => {
+    try {
+        const reqQuery = camelcaseKeys(req.query);
+        let { skip, limit } = reqQuery
+        skip = skip && parseInt(skip) || 0
+        limit = limit && parseInt(limit) || 10
+        console.log(reqQuery, "jkjdfkjdgfjkdfgjknd", req.query)
+
+        const query = {
+            _id: reqQuery.primaryId,
+            skip,
+            limit
+        }
+        const primaryCatyegory = await getPrimaryCategories(query)
+        console.log(primaryCatyegory, "???????????????????????????")
+        respSuccess(res, primaryCatyegory)
+
+    } catch (error) {
+        respError(error)
+    }
+}
+
 module.exports.getAllProducts = async (req, res) => {
 
     try {
@@ -447,7 +471,6 @@ module.exports.deletel3 = async (req, res) => {
 
 module.exports.getAllSecondaryCategories = async (req, res) => {
     try {
-        console.log(req.body, "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
         const secondaryCategories = await getAllSecondaryCategories()
         respSuccess(res, secondaryCategories)
     } catch (error) {
@@ -457,8 +480,14 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
 
 module.exports.getProducts = async (req, res) => {
     try {
-        console.log(req.body, "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
-        const products = await getProducts()
+        const query = {
+            _id: {
+                $in: ["5fbd291f834cab3f38524105", "5fbd291f834cab3f38524106", "5fbd291f834cab3f38524107", "5fbd291f834cab3f38524108",
+                    "5fbd291f834cab3f38524109", "5fbd291f834cab3f3852410a", "5fbd291f834cab3f3852410b", "5fbd291f834cab3f3852410c", "5fbd291f834cab3f3852410d",
+                    "5fbd2920834cab3f3852410e"]
+            }
+        }
+        const products = await getProducts(query)
         respSuccess(res, products)
     } catch (error) {
         respError(error)
