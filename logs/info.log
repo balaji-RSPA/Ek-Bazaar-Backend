@@ -2163,6 +2163,7 @@
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-24T18:33:10.355Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-24T18:34:42.155Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2020-11-24T19:22:42.938Z"}
+<<<<<<< HEAD
 {"message":"Listening:8060","level":"info","timestamp":"2020-11-24T19:27:17.255Z"}
 {"message":"Listening:8060","level":"info","timestamp":"2020-11-24T19:33:04.756Z"}
 {"message":"Listening:8060","level":"info","timestamp":"2020-11-24T19:39:29.046Z"}
@@ -2219,3 +2220,9 @@
 {"message":"Listening:8060","level":"info","timestamp":"2020-11-25T11:21:05.822Z"}
 {"message":"Listening:8060","level":"info","timestamp":"2020-11-25T11:21:25.001Z"}
 {"message":"Listening:8060","level":"info","timestamp":"2020-11-25T11:25:19.871Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-24T21:08:39.327Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-24T21:15:11.845Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-24T21:16:28.406Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2020-11-24T21:21:59.018Z"}
+>>>>>>> 4e9efe74484c210ec8fe4cf95ed7497b33fa2624
