@@ -348,7 +348,6 @@ module.exports.updateSeller = (query, data) =>
   new Promise((resolve, reject) => {
     Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
-        console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -667,7 +666,7 @@ exports.structureSellerData = async (seller) => {
 
 module.exports.getSellerVal = (id) =>
   new Promise((resolve, reject) => {
-    Sellers.findOne({ userId: id })
+    Sellers.findOne({ _id: id })
       .lean()
       .then((doc) => {
         resolve(doc)

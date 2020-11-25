@@ -46,16 +46,13 @@ module.exports.updateSeller = async (req, res) => {
       notifications,
     } = req.body
     const { userID } = req
-    console.log(userID, 'userID...................')
     const user = await getSeller(userID)
-    console.log(user, '>>>>>>>>>>>>>.')
     const sellerID = user._id
     let newData = {}
     let seller
     // addProductDetails;
     if (businessDetails) {
       const bsnsDtls = await addbusinessDetails(sellerID, businessDetails)
-      console.log(bsnsDtls, ';;;;;;;;')
       newData.busenessId = bsnsDtls._id
       seller = await updateSeller({ _id: sellerID }, newData)
     }
@@ -64,7 +61,6 @@ module.exports.updateSeller = async (req, res) => {
         sellerID,
         statutoryDetails,
       )
-      console.log(statutoryDtls, ':::::::::')
       newData.statutoryId = statutoryDtls._id
       seller = await updateSeller({ _id: sellerID }, newData)
     }
@@ -105,13 +101,16 @@ module.exports.updateSeller = async (req, res) => {
         (prdctDtls._id &&
           productsId.length === 0 &&
           productDetails._id === null) ||
-        productDetails._id === undefined
+          productDetails._id === undefined
       ) {
         productsId = []
         productsId.push(prdctDtls._id)
       }
       newData.sellerProductId = productsId
       seller = await updateSeller({ _id: sellerID }, newData)
+    }
+    if(notifications){
+      seller = await updateSeller({ _id: sellerID },{notifications : notifications})
     }
 
     // console.log(seller, ' .........00000000000')
@@ -155,14 +154,14 @@ module.exports.deleteSellerProduct = async (req, res) => {
   try {
     let result
     let sellerProduct = await deleteSellerProduct(req.body.id)
-    let findSeller = await getSellerVal(sellerProduct.userID)
+    let findSeller = await getSellerVal(sellerProduct.sellerId)
     if (findSeller) {
       let index =
         findSeller.sellerProductId &&
         findSeller.sellerProductId.indexOf(req.body.id)
       if (index > -1) {
         findSeller.sellerProductId = findSeller.sellerProductId.splice(index, 1)
-        await updateSeller({ _id: sellerProduct.userID }, findSeller)
+        await updateSeller({ _id: sellerProduct.sellerId }, findSeller)
       }
     }
     respSuccess(res, result)
