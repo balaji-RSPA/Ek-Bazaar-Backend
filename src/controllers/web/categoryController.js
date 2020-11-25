@@ -22,6 +22,11 @@ const {
     getSecondaryCat,
     getPrimaryCat,
     getAllProducts,
+    deleteSellers,
+    deletel3,
+    deletel4,
+    getAllSecondaryCategories,
+    getProducts
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
@@ -387,5 +392,76 @@ module.exports.getRelatedCategories = async (req, res) => {
 
     }
 
+}
+
+module.exports.deleteSellers = async (req, res) => {
+    try {
+        const data = req.body
+        const query = {
+            name: {
+                $in: data.map(d => d.name)
+            }
+        }
+        console.log(query, "query......................")
+        const sellers = await deleteSellers(query)
+        console.log(sellers, "user deleted")
+        respSuccess(res, sellers, `sellers deleted successfully`)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.deletel4 = async (req, res) => {
+    try {
+        const data = req.body
+        const query = {
+            vendorId: {
+                $in: data.map(d => d.vendorId)
+            }
+        }
+        console.log(query, "query......................")
+        const l4 = await deletel4(query)
+        console.log(l4, "products deleted")
+        respSuccess(res, l4, `l4 deleted successfully`)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.deletel3 = async (req, res) => {
+    try {
+        const data = req.body
+        const query = {
+            vendorId: {
+                $in: data.map(d => d.vendorId)
+            }
+        }
+        console.log(query, "query......................")
+        const l3 = await deletel3(query)
+        console.log(l3, "secondary category deleted")
+        respSuccess(res, l3, ` l3 deleted successfully`)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.getAllSecondaryCategories = async (req, res) => {
+    try {
+        console.log(req.body, "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
+        const secondaryCategories = await getAllSecondaryCategories()
+        respSuccess(res, secondaryCategories)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.getProducts = async (req, res) => {
+    try {
+        console.log(req.body, "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
+        const products = await getProducts()
+        respSuccess(res, products)
+    } catch (error) {
+        respError(error)
+    }
 }
 

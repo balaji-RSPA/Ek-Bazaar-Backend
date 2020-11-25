@@ -63,7 +63,7 @@ module.exports.updateSeller = async (req, res) => {
         sellerID,
         statutoryDetails
       );
-        console.log(statutoryDtls, ':::::::::')
+      console.log(statutoryDtls, ':::::::::')
       newData.statutoryId = statutoryDtls._id;
       seller = await updateSeller({ _id: sellerID }, newData);
     }
@@ -124,6 +124,7 @@ module.exports.getAllSellers = async (req, res) => {
 module.exports.sellerBulkInsert = async (req, res) => {
   try {
     const reqData = req.body;
+    console.log("loki.................................")
     let bulkData = [];
     let result;
     for (let index = 0; index < reqData.length; index++) {

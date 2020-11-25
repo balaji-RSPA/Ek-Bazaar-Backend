@@ -101,12 +101,14 @@ module.exports.serachSeller = async (req, res) => {
         state,
         product
       }
+      console.log(product, ".......................")
       const result = await sellerSearch(reqQuery);
       console.log(result, ".............///////")
       const { query, catId } = result;
       const seller = await searchFromElastic(query, range);
-      console.log(seller, "seller.....................")
+      // console.log(seller, "seller.....................")
       const primaryCatId = await getCatId({ productId: product[0].id }, "_id");
+      console.log(primaryCatId, ".............");
       const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
       const resp = {
         total: seller[1],
@@ -116,6 +118,7 @@ module.exports.serachSeller = async (req, res) => {
         city,
         state
       };
+      console.log(resp, "//////////////////////")
       return respSuccess(res, resp);
     }
 
