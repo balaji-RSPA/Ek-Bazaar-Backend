@@ -19,7 +19,7 @@ module.exports.createRFP = async(req, res) => {
     
     console.log(req.body, 'body.........')
     const {mobile, name, email, location, productDetails} = req.body
-    const user = await checkUserExistOrNot(mobile.mobile)
+    const user = await checkUserExistOrNot({mobile: mobile.mobile})
     console.log(user, 'user exist re baba')
     if(user && user.length) {
       const userData = {

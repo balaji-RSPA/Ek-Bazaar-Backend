@@ -31,7 +31,7 @@ exports.login = async (req, res) => {
   try {
     const { password, ipAddress, location, mobile } = req.body;
     console.log(password, mobile, '..........')
-    let user = await sellers.checkUserExistOrNot(mobile);
+    let user = await sellers.checkUserExistOrNot({mobile});
     user = user[0]
     console.log(user, 'user......')
     if (!user) {

@@ -3,6 +3,7 @@ const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
 const { sellers, buyers } = require("../../modules");
+const bcrypt = require("bcrypt");
 const {
   handleUserSession,
   getAccessToken,
@@ -50,7 +51,7 @@ module.exports.checkUserExistOrNot = async (req, res) => {
   try {
     console.log(req.body);
     const { mobile } = req.body;
-    const seller = await checkUserExistOrNot(mobile);
+    const seller = await checkUserExistOrNot({mobile});
     if (seller) {
       respSuccess(res);
     }
@@ -62,13 +63,12 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
-    const { mobile } = req.body;
-    console.log(req.body);
-    const seller = await checkUserExistOrNot(mobile);
-    console.log(seller, "seller.....");
-    if (seller && seller.length) {
+    const { mobile, reset } = req.body;
+    const seller = await checkUserExistOrNot({mobile});
+    if (seller && seller.length && !reset) {
       return respError(res, "A seller with this number already exist");
     }
+    if(reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
     const otp = 1234;
     return respSuccess(res, { otp });
   } catch (error) {
@@ -165,7 +165,9 @@ module.exports.getUserProfile = async (req, res) => {
     const { userID } = req;
     const user = await getUserProfile(userID)
     const seller = await getSeller(userID);
+    console.log(seller, ":;;;;;;;;;;;;;;;;;")
     const buyer = await getBuyer(userID);
+    console.log(buyer, "...............yyyyyyyyyyy")
     const userData = {
       user,
       seller,
@@ -255,10 +257,17 @@ module.exports.forgetPassword = async (req, res) => {
 
 module.exports.updateNewPassword = async (req, res) => {
   try {
-    let { password } = req.body;
+    let { password, currentPassword } = req.body;
     password = encodePassword(password);
     const { userID } = req;
-    const user = await updateUser(userID, { password });
+    let findUser = await checkUserExistOrNot({_id: userID});
+    
+    const curntPwd = findUser && findUser.length && findUser[0].password
+    const comparePass = await bcrypt.compare(currentPassword, curntPwd);
+    if(!comparePass) {
+      return respError(res, "Current pasword is not correct")
+    }
+    const user = await updateUser({_id: userID}, { password });
     respSuccess(res, user, "Password Updated Successfully");
   } catch (error) {
     respError(res, error.message);

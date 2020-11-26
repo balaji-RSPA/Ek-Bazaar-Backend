@@ -187,9 +187,9 @@ exports.deleteAllSessionLog = (userId) =>
       .catch(reject)
   })
 
-module.exports.checkUserExistOrNot = (mobile) =>
+module.exports.checkUserExistOrNot = (query) =>
   new Promise((resolve, reject) => {
-    Users.find({ mobile: mobile })
+    Users.find(query)
       .select({
         name: 1,
         email: 1,
