@@ -137,6 +137,7 @@ module.exports.serachSeller = async (req, res) => {
     console.log(result, "result..................");
     const { query, catId } = result;
     const seller = await searchFromElastic(query, range);
+    console.log(seller, "............////////////")
     const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
     // console.log(" qurty result------", relatedCat)
     const resp = {

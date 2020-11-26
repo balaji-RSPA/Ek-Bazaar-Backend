@@ -18,6 +18,7 @@ router.get("/getParentCategory/:id", category.getParentCategory);
 router.post("/addPrimaryCategories", category.addPrimaryCategories);
 router.post("/addPrimaryCategory", category.addPrimaryCategory);
 router.get("/getPrimaryCategory/:id", category.getPrimaryCategory);
+router.get("/primary-category", category.getPrimaryCat)
 
 // Secondary Categories
 router.post("/addSecondaryCategories", category.addSecondaryCategories);
