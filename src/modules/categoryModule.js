@@ -5,8 +5,10 @@ const {
   SecondaryCategory,
   Products,
   SellerTypes,
-  Sellers
+  Sellers,
+  SellerProducts
 } = require("../models");
+const { searchProducts } = require("./sellerProductModule");
 
 module.exports.addSellerType = (data, id) =>
   new Promise((resolve, reject) => {
@@ -155,7 +157,7 @@ module.exports.deletel4 = query => new Promise((resolve, reject) => {
 })
 
 module.exports.getParentCategory = (reqQuery) =>
-  new Promise((resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     const skip = parseInt(reqQuery.skip) || 0;
     const limit = parseInt(reqQuery.limit) || 1000;
     const search = reqQuery.search || "";
@@ -301,6 +303,23 @@ exports.getAllPrimaryCategory = () =>
       .catch((error) => reject(error));
   });
 
+module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) => {
+  console.log(query, "vande matram ..................................")
+  PrimaryCategory.findOne({ _id: query._id })
+    .limit(query.limit)
+    .skip(query.skip)
+    .populate("secondaryCategotyId")
+    .populate({
+      path: "secondaryCategotyId",
+      populate: {
+        path: "productId",
+        model: "products"
+      }
+    })
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
 // Secondary Category
 
 module.exports.addSecondaryCategories = (data) =>
@@ -368,9 +387,9 @@ exports.getAllSecondaryCategory = () =>
 exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
   SecondaryCategory.find({})
     .limit(4)
+    .sort({ _id: -1 })
     .populate("productId")
     .then((doc) => {
-      console.log(doc, "//////////////////////???????????>>>>>>>>>>>>>>>>>>>>>>>>>>>.")
       resolve(doc)
     })
     .catch((error) => reject(error));
@@ -378,9 +397,11 @@ exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
 
 // Products
 
-module.exports.getProducts = () => new Promise((resolve, reject) => {
-  Products.find({})
-    .limit(10)
+module.exports.getProducts = (query) => new Promise((resolve, reject) => {
+  console.log(query, "queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
+  Products.find(query)
+    // .limit(10)
+    .sort({ _id: -1 })
     .then((doc) => {
       resolve(doc);
     })
