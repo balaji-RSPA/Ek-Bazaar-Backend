@@ -5,7 +5,10 @@ const {
   SecondaryCategory,
   Products,
   SellerTypes,
+  Sellers,
+  SellerProducts
 } = require("../models");
+const { searchProducts } = require("./sellerProductModule");
 
 module.exports.addSellerType = (data, id) =>
   new Promise((resolve, reject) => {
@@ -135,8 +138,26 @@ module.exports.getParentCat = (query) =>
       .catch(reject);
   });
 
+module.exports.deleteSellers = query => new Promise((resolve, reject) => {
+  Sellers.deleteMany(query)
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
+module.exports.deletel3 = query => new Promise((resolve, reject) => {
+  SecondaryCategory.deleteMany(query)
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
+module.exports.deletel4 = query => new Promise((resolve, reject) => {
+  Products.deleteMany(query)
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
 module.exports.getParentCategory = (reqQuery) =>
-  new Promise((resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     const skip = parseInt(reqQuery.skip) || 0;
     const limit = parseInt(reqQuery.limit) || 1000;
     const search = reqQuery.search || "";
@@ -282,6 +303,23 @@ exports.getAllPrimaryCategory = () =>
       .catch((error) => reject(error));
   });
 
+module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) => {
+  console.log(query, "vande matram ..................................")
+  PrimaryCategory.findOne({ _id: query._id })
+    .limit(query.limit)
+    .skip(query.skip)
+    .populate("secondaryCategotyId")
+    .populate({
+      path: "secondaryCategotyId",
+      populate: {
+        path: "productId",
+        model: "products"
+      }
+    })
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
 // Secondary Category
 
 module.exports.addSecondaryCategories = (data) =>
@@ -346,7 +384,29 @@ exports.getAllSecondaryCategory = () =>
       .catch((error) => reject(error));
   });
 
+exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
+  SecondaryCategory.find({})
+    .limit(4)
+    .sort({ _id: -1 })
+    .populate("productId")
+    .then((doc) => {
+      resolve(doc)
+    })
+    .catch((error) => reject(error));
+})
+
 // Products
+
+module.exports.getProducts = (query) => new Promise((resolve, reject) => {
+  console.log(query, "queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
+  Products.find(query)
+    // .limit(10)
+    .sort({ _id: -1 })
+    .then((doc) => {
+      resolve(doc);
+    })
+    .catch(reject);
+})
 
 module.exports.addProductCategories = (data) =>
   new Promise((resolve, reject) => {
@@ -416,6 +476,7 @@ exports.getCatId = (query, id) =>
           },
         })
         .then((doc) => {
+          console.log(doc, "???????????????????????????????????????????????????????")
           resolve(doc && id ? doc.secondaryId.primaryCatId._id : doc);
         })
         .catch(reject);

@@ -14,19 +14,16 @@ const {
 const { checkUserExistOrNot, updateUser, addUser } = sellers
 const { createToken } = require("../../utils/utils");
 
-module.exports.createRFP = async(req, res) => {
+module.exports.createRFP = async (req, res) => {
   try {
-    
-    console.log(req.body, 'body.........')
     const {mobile, name, email, location, productDetails} = req.body
     const user = await checkUserExistOrNot({mobile: mobile.mobile})
-    console.log(user, 'user exist re baba')
     if(user && user.length) {
       const userData = {
         name,
         email,
       }
-      const user = await updateUser({mobile: mobile.mobile}, userData)
+      const user = await updateUser({ mobile: mobile.mobile }, userData)
       const buyerData = {
         name,
         email,
@@ -35,14 +32,12 @@ module.exports.createRFP = async(req, res) => {
         location,
         userId: user._id
       }
-      const exist = await checkBuyerExistOrNot({mobile: mobile.mobile})
-      console.log(exist, 'buyer exist re baba')
+      const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
       let buyer
-      if(exist && exist.length)
-        buyer = await updateBuyer({userId: user._id},buyerData)
+      if (exist && exist.length)
+        buyer = await updateBuyer({ userId: user._id }, buyerData)
       else
         buyer = await addBuyer(buyerData)
-        console.log(buyer, 'buyer updated or created')
       const rfpData = {
         buyerId: buyer._id,
         buyerDetails: {
@@ -54,7 +49,6 @@ module.exports.createRFP = async(req, res) => {
         productDetails
       }
       const rfp = await postRFP(rfpData)
-      console.log(rfp, 'rfp crteated')
     } else {
       const userData = {
         name,
@@ -64,7 +58,6 @@ module.exports.createRFP = async(req, res) => {
         password: null
       }
       const user = await addUser(userData)
-      console.log(user, 'user added......')
       const buyerData = {
         name,
         email,
@@ -85,7 +78,6 @@ module.exports.createRFP = async(req, res) => {
         productDetails
       }
       const rfp = await postRFP(rfpData)
-      console.log(rfp, 'rfp crteated')
     }
     respSuccess(res, "Your requirement has successfully submitted")
 

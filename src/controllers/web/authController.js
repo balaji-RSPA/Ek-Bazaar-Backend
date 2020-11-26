@@ -33,12 +33,12 @@ exports.login = async (req, res) => {
     console.log(password, mobile, '..........')
     let user = await sellers.checkUserExistOrNot({mobile});
     user = user[0]
-    console.log(user, 'user......')
+    // console.log(user, 'user......')
     if (!user) {
       return respAuthFailed(res, "User not found");
     }
     const result = await bcrypt.compare(password, user.password);
-    console.log(user, 'user......', result)
+    // console.log(user, 'user......', result)
     if (result) {
       const sessionCount = await sellers.getSessionCount(user._id);
 
