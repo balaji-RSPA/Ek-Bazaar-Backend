@@ -399,8 +399,9 @@ exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
 
 module.exports.getProducts = (query) => new Promise((resolve, reject) => {
   console.log(query, "queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
-  Products.find(query)
-    // .limit(10)
+
+  Products.find(query.search || query)
+    .limit(query.limit || 10)
     .sort({ _id: -1 })
     .then((doc) => {
       resolve(doc);

@@ -31,7 +31,7 @@ const {
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const { respSuccess, respError } = require('../../utils/respHadler');
-const { query } = require('winston');
+const { query, createLogger } = require('winston');
 
 module.exports.addSellerType = async (req, res) => {
     try {
@@ -480,14 +480,25 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
 
 module.exports.getProducts = async (req, res) => {
     try {
-        const query = {
-            _id: {
-                $in: ["5fbd291f834cab3f38524105", "5fbd291f834cab3f38524106", "5fbd291f834cab3f38524107", "5fbd291f834cab3f38524108",
-                    "5fbd291f834cab3f38524109", "5fbd291f834cab3f3852410a", "5fbd291f834cab3f3852410b", "5fbd291f834cab3f3852410c", "5fbd291f834cab3f3852410d",
-                    "5fbd2920834cab3f3852410e"]
+        console.log(req.query, "??????????????????????????????????????/", req.params)
+        const {limit} = req.query
+        let query = ""
+        if(limit) {
+            query = {
+                search: {},
+                limit: parseInt(limit)
+            }
+        } else {
+            query = {
+                _id: {
+                    $in: ["5fbd291f834cab3f38524105", "5fbd291f834cab3f38524106", "5fbd291f834cab3f38524107", "5fbd291f834cab3f38524108",
+                        "5fbd291f834cab3f38524109", "5fbd291f834cab3f3852410a", "5fbd291f834cab3f3852410b", "5fbd291f834cab3f3852410c", "5fbd291f834cab3f3852410d",
+                        "5fbd2920834cab3f3852410e"]
+                }
             }
         }
         const products = await getProducts(query)
+        
         respSuccess(res, products)
     } catch (error) {
         respError(error)
