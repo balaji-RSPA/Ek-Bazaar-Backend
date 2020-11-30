@@ -682,3 +682,16 @@ module.exports.deleteSellerProduct = (data) =>
       })
       .catch(reject)
   })
+/**
+ * 
+ * Bulk insert seller
+ * */
+module.exports.addSellerProduct = (data) =>
+new Promise ((resolve,reject) => {
+  SelleresProductList.insertMany(data)
+  .then ((doc)=>{
+    resolve(doc)
+  })
+  .catch(reject)
+})
+

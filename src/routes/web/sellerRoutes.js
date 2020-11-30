@@ -13,6 +13,7 @@ router.get('/seller', /* sellerAuthenticate, */ seller.getSeller)
 router.put('/seller', authenticate, seller.updateSeller)
 router.get('/sellers', seller.getAllSellers)
 
-router.post('/sellerproduct/delete', seller.deleteSellerProduct) // authenticate,
+router.post('/sellerproduct/delete', seller.deleteSellerProduct)//,authenticate
+router.post('/sellerproduct/add', seller.addSellerProduct) //,authenticate,
 
 module.exports = router

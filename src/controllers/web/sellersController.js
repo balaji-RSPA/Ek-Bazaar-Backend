@@ -20,6 +20,7 @@ const {
   structureSellerData,
   deleteSellerProduct,
   getSellerVal,
+  addSellerProduct
 } = sellers
 
 module.exports.getSeller = async (req, res) => {
@@ -167,5 +168,19 @@ module.exports.deleteSellerProduct = async (req, res) => {
     respSuccess(res, result)
   } catch (error) {
     respError(res, error.message)
+  }
+}
+module.exports.addSellerProduct = async(req,res)=>{
+  try {
+    // sellerProductId
+    let result 
+    let productId = [];
+    result = await addSellerProduct(req.body.productDetails)
+    result && result.forEach(element => {
+      productId.push(element._id);
+    });
+    respSuccess(res,result)
+  }catch(error){
+    respError(res,error.message)
   }
 }

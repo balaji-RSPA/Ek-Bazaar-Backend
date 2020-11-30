@@ -30,8 +30,14 @@ const {
     getPrimaryCategories
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
-const { respSuccess, respError } = require('../../utils/respHadler');
-const { query, createLogger } = require('winston');
+const {
+    respSuccess,
+    respError
+} = require('../../utils/respHadler');
+const {
+    query,
+    createLogger
+} = require('winston');
 
 module.exports.addSellerType = async (req, res) => {
     try {
@@ -367,7 +373,10 @@ module.exports.getProduct = async (req, res) => {
 module.exports.getPrimaryCat = async (req, res) => {
     try {
         const reqQuery = camelcaseKeys(req.query);
-        let { skip, limit } = reqQuery
+        let {
+            skip,
+            limit
+        } = reqQuery
         skip = skip && parseInt(skip) || 0
         limit = limit && parseInt(limit) || 10
         console.log(reqQuery, "jkjdfkjdgfjkdfgjknd", req.query)
@@ -481,27 +490,33 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
 module.exports.getProducts = async (req, res) => {
     try {
         console.log(req.query, "??????????????????????????????????????/", req.params)
-        const {limit} = req.query
+        const {
+            limit
+        } = req.query
         let query = ""
-        if(limit) {
+        if (limit) {
             query = {
                 search: {},
                 limit: parseInt(limit)
             }
         } else {
             query = {
-                _id: {
-                    $in: ["5fbd291f834cab3f38524105", "5fbd291f834cab3f38524106", "5fbd291f834cab3f38524107", "5fbd291f834cab3f38524108",
-                        "5fbd291f834cab3f38524109", "5fbd291f834cab3f3852410a", "5fbd291f834cab3f3852410b", "5fbd291f834cab3f3852410c", "5fbd291f834cab3f3852410d",
-                        "5fbd2920834cab3f3852410e"]
+                $match: {
+                    _id: {
+                        $in: ["5fbd291f834cab3f38524105", "5fbd291f834cab3f38524106", "5fbd291f834cab3f38524107", "5fbd291f834cab3f38524108",
+                            "5fbd291f834cab3f38524109", "5fbd291f834cab3f3852410a", "5fbd291f834cab3f3852410b", "5fbd291f834cab3f3852410c", "5fbd291f834cab3f3852410d",
+                            "5fbd2920834cab3f3852410e"
+                        ]
+                    }
                 }
             }
         }
+        console.log("🚀 ~ file: categoryController.js ~ line 497 ~ module.exports.getProducts= ~ query", query)
+
         const products = await getProducts(query)
-        
+
         respSuccess(res, products)
     } catch (error) {
         respError(error)
     }
 }
-
