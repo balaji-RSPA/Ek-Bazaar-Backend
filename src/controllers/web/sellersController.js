@@ -175,11 +175,15 @@ module.exports.addSellerProduct = async(req,res)=>{
     // sellerProductId
     let result 
     let productId = [];
-    result = await addSellerProduct(req.body.productDetails)
-    result && result.forEach(element => {
-      productId.push(element._id);
-    });
-    respSuccess(res,result)
+    const user = await getSeller(req.body[0].sellerId)
+    console.log(user,"===========dsgjdgjdsgjjdsg===========")
+    // result = await addSellerProduct(req.body)
+    // let sellerId = result && result[0].sellerId
+    // result && result.forEach(element => {
+    //   productId.push(element._id);
+    // });
+    // seller = await updateSeller({ _id: sellerId }, data)
+    // respSuccess(res,result,"Successfully added product")
   }catch(error){
     respError(res,error.message)
   }

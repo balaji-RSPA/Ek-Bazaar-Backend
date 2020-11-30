@@ -397,8 +397,6 @@ exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
 // Products
 
 module.exports.getProducts = (query) => new Promise((resolve, reject) => {
-  console.log(query, "queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
-
   // Products.find(query.search || query)
   //   .limit(query.limit || 10)
   //   .sort({ _id: -1 })
@@ -407,7 +405,6 @@ module.exports.getProducts = (query) => new Promise((resolve, reject) => {
   //   })
   //   .catch(reject);
   Products.aggregate([
-    // query,
     {
       $lookup: {
         from: SecondaryCategory.collection.name,
