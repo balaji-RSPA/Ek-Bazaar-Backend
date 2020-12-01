@@ -57,17 +57,11 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
-<<<<<<< HEAD
-    const { mobile } = req.body;
-    const seller = await checkUserExistOrNot(mobile);
-    if (seller && seller.length) {
-=======
     const { mobile, reset } = req.body;
     console.log(req.body);
     const seller = await checkUserExistOrNot(mobile);
     console.log(seller, "seller.....");
     if (seller && seller.length && !reset) {
->>>>>>> 67bbb9bfe7049e32ccb9d17d1e368b9ac73bf216
       return respError(res, "A seller with this number already exist");
     }
     if(reset && !seller || !seller.length) return respError(res, "No User found with this number");
@@ -181,15 +175,11 @@ module.exports.updateUser = async (req, res) => {
   console.log("updating user======================================dgkd;jgi")
   try {
     const { userID } = req;
-<<<<<<< HEAD
-    const { name, email, business, location, type, sellerType } = req.body;
-=======
     const _buyer = req.body.buyer || {}
     console.log(_buyer, "_buyer//.....")
     console.log(req.body, "req.body..........................")
     let { name, email, business, location, type, sellerType } = req.body;
     console.log(name, email, business, location, type, sellerType, "8888888888888")
->>>>>>> 67bbb9bfe7049e32ccb9d17d1e368b9ac73bf216
     const userData = {
       name,
       city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
@@ -216,10 +206,7 @@ module.exports.updateUser = async (req, res) => {
         state: location.state
       }]
     }]
-<<<<<<< HEAD
-=======
     console.log(serviceType, 'serviceType.............................')
->>>>>>> 67bbb9bfe7049e32ccb9d17d1e368b9ac73bf216
     const sellerData = {
       name,
       email: email || null,
