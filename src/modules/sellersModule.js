@@ -27,6 +27,7 @@ const {
 } = require('../modules/categoryModule')
 const { sellerProductsBulkInsert } = require('./sellerProductModule')
 const { capitalizeFirstLetter } = require('../utils/helpers')
+const { PrimaryCategory, SecondaryCategory, ParentCategory } = require('../models')
 
 // module.exports.checkSellerExistOrNot = (mobile) =>
 //   new Promise((resolve, reject) => {
@@ -274,7 +275,8 @@ module.exports.sellerBulkInser = (data) =>
       })
       .catch(reject)
   })
-
+  // populate : {path: ("primaryCategoryId")},
+  // populate : {path: ("secondaryCategoryId")},
 module.exports.getSeller = (id) =>
   new Promise((resolve, reject) => {
     Sellers.findOne({ userId: id })
@@ -287,12 +289,39 @@ module.exports.getSeller = (id) =>
       .populate('contactId')
       .populate('comapanyId')
       .populate('establishmentId')
+
       .populate({
         path: 'sellerProductId',
         model: 'sellerProducts',
-        populate: {
-          path: 'productDetails.regionOfOrigin',
+        populate : {
+          path:"parentCategoryId",
+          model: ParentCategory.collection.name
         },
+        // populate: {
+        //   path: 'productDetails.regionOfOrigin',
+        // },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerProducts',
+        populate : {
+          path:"primaryCategoryId",
+          model: PrimaryCategory.collection.name
+        },
+        // populate: {
+        //   path: 'productDetails.regionOfOrigin',
+        // },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerProducts',
+        populate : {
+          path:"secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+        // populate: {
+        //   path: 'productDetails.regionOfOrigin',
+        // },
       })
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
@@ -314,7 +343,7 @@ exports.getSellerProfile = (id) =>
       .populate('contactId')
       .populate('comapanyId')
       .populate('establishmentId')
-      .populate('sellerProductId')
+      // .populate({path: 'sellerProductId', model : ""})
       .populate('location.city', 'name')
       .populate('location.state', 'name')
       .populate('location.country', 'name')
@@ -688,10 +717,12 @@ module.exports.deleteSellerProduct = (data) =>
  * */
 module.exports.addSellerProduct = (data) =>
 new Promise ((resolve,reject) => {
-  SelleresProductList.insertMany(data)
-  .then ((doc)=>{
-    resolve(doc)
+  SelleresProductList.insertMany(data, function(err, doc) {
+    if(err) reject(err)
+    else {
+      const idArray = doc && doc.length && doc.map(d => d._id)
+      resolve(idArray)
+    }
   })
-  .catch(reject)
 })
 

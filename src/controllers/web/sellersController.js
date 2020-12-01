@@ -3,6 +3,7 @@ const { machineIdSync } = require('node-machine-id')
 const { respSuccess, respError } = require('../../utils/respHadler')
 
 const { sellers } = require('../../modules')
+const { find } = require('lodash')
 
 const {
   updateSeller,
@@ -172,18 +173,21 @@ module.exports.deleteSellerProduct = async (req, res) => {
 }
 module.exports.addSellerProduct = async(req,res)=>{
   try {
-    // sellerProductId
     let result 
     let productId = [];
-    const user = await getSeller(req.body[0].sellerId)
-    console.log(user,"===========dsgjdgjdsgjjdsg===========")
-    // result = await addSellerProduct(req.body)
-    // let sellerId = result && result[0].sellerId
-    // result && result.forEach(element => {
-    //   productId.push(element._id);
-    // });
-    // seller = await updateSeller({ _id: sellerId }, data)
-    // respSuccess(res,result,"Successfully added product")
+    console.log(req.body,"======pao fhewjf===========wfew======")
+    let sellerId = req.body && req.body[0].sellerId
+    console.log("🚀 ~ file: sellersController.js ~ line 180 ~ module.exports.addSellerProduct=async ~ sellerId", sellerId)
+    const findSeller = await getSellerProfile(sellerId)
+    console.log("🚀 ~ file: sellersController.js ~ line 181 ~ module.exports.addSellerProduct=async ~ findSeller", findSeller)
+    result = await addSellerProduct(req.body)
+    if(findSeller && findSeller.length){
+      findSeller[0].sellerProductId = findSeller[0].sellerProductId.concat(result);
+    }
+    // console.log("🚀 ~ file: sellersController.js ~ line 185 ~ module.exports.addSellerProduct=async ~ findSeller", findSeller)
+    seller = await updateSeller({ _id: sellerId }, findSeller[0])
+    respSuccess(res,seller,"Successfully added product")
+    console.log("🚀 ~ file: sellersController.js ~ line 189 ~ module.exports.addSellerProduct=async ~ seller", seller)
   }catch(error){
     respError(res,error.message)
   }
