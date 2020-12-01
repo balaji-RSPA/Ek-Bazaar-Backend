@@ -99,10 +99,6 @@ module.exports.getAllCategories = (query) =>
         },
       })
       .then((doc) => {
-        console.log(
-          doc,
-          "hararararahsdjasfgjhdsghfskdsjirfhsjdnfjsdkfhksdl.fnhkjdfhljkdnjghdlfjkgnjkdfhjgndkjgjdgk"
-        );
         resolve(doc);
       })
       .catch(reject);
@@ -398,7 +394,6 @@ exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
 // Products
 
 module.exports.getProducts = (query) => new Promise((resolve, reject) => {
-  console.log(query, "queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
   Products.find(query)
     // .limit(10)
     .sort({ _id: -1 })
@@ -476,7 +471,6 @@ exports.getCatId = (query, id) =>
           },
         })
         .then((doc) => {
-          console.log(doc, "???????????????????????????????????????????????????????")
           resolve(doc && id ? doc.secondaryId.primaryCatId._id : doc);
         })
         .catch(reject);
@@ -487,14 +481,12 @@ exports.getCatId = (query, id) =>
           model: PrimaryCategory,
         })
         .then((doc) => {
-          console.log("doc ssssssss", doc);
           resolve(doc && id ? doc.primaryCatId._id : doc);
         })
         .catch(reject);
     } else if (query.primaryId) {
       PrimaryCategory.findOne({ _id: query.primaryId })
         .then((doc) => {
-          console.log("doc ppppppp", doc);
           resolve(doc && id ? doc._id : doc);
         })
         .catch(reject);
@@ -554,6 +546,13 @@ exports.getAllProductsToSearch = () =>
       .then((doc) => resolve(doc))
       .catch((error) => reject(error));
   });
+
+exports.getProductByName = (query) => new Promise((resolve, reject) => {
+  Products.findOne(query)
+    // .limit(1)
+    .then((doc) => resolve(doc))
+    .catch((error) => reject(error));
+})
 
 exports.getLevelOneCategoryList = (list) =>
   new Promise((resolve, reject) => {
