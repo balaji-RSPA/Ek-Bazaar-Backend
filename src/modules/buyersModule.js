@@ -1,8 +1,18 @@
-const { Buyers } = require("../models");
+const { Buyers, RFP } = require("../models");
 
-module.exports.checkBuyerExistOrNot = (mobile) =>
+module.exports.postRFP = (data) => new Promise((resolve, reject) => {
+  RFP.create(data)
+    .then(doc => {
+      console.log(doc)
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+
+})
+
+module.exports.checkBuyerExistOrNot = (query) =>
   new Promise((resolve, reject) => {
-    Buyers.find({ mobile })
+    Buyers.find(query)
       .then((doc) => {
         console.log(doc);
         resolve(doc);
@@ -22,17 +32,17 @@ module.exports.addBuyer = (data) =>
 
 module.exports.getBuyer = (id) =>
   new Promise((resolve, reject) => {
-    Buyers.find({ userId: id })
+    Buyers.findOne({ userId: id })
       .then((doc) => {
-        console.log(doc);
+        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
   });
 
-module.exports.updateBuyer = (id, data) =>
+module.exports.updateBuyer = (query, data) =>
   new Promise((resolve, reject) => {
-    Buyers.findOneAndUpdate({ userId: id }, data, { new: true })
+    Buyers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
         console.log(doc);
         resolve(doc);

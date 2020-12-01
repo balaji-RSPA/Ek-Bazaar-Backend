@@ -9,12 +9,12 @@ const productDetails = new Schema({
   name: {
     type: String,
     trim: true,
-    required: true,
+    // required: true,
   },
   quantity: {
     type: String,
     trim: true,
-    required: true,
+    // required: true,
   },
   weight: {
     type: String,
@@ -26,17 +26,17 @@ const location = new Schema({
   city: {
     type: String,
     trim: true,
-    required: true,
+    // required: true,
   },
   state: {
     type: String,
     trim: true,
-    required: true,
+    // required: true,
   },
   country: {
     type: String,
     trim: true,
-    required: true,
+    // required: true,
   },
 });
 
@@ -44,17 +44,17 @@ const buyerDetails = new Schema({
   name: {
     type: String,
     trim: true,
-    required: true,
+    // required: true,
   },
   email: {
     type: String,
     trim: true,
-    required: true,
+    // required: true,
   },
   mobile: {
     type: String,
     trim: true,
-    required: true,
+    // required: true,
   },
   location: {
     type: { location },
@@ -67,12 +67,12 @@ const rfpSchema = new Schema(
     sellerId: {
       type: [ObjectId],
       ref: Seller,
-      required: true,
+      // required: true,
     },
     buyerId: {
       type: ObjectId,
       ref: 'buyers',
-      required: true,
+      // required: true,
     },
     buyerDetails: {
       type: { buyerDetails },
@@ -81,7 +81,7 @@ const rfpSchema = new Schema(
     productId: {
       type: ObjectId,
       ref: Product,
-      required: true,
+      // required: true,
     },
     productDetails: {
       type: { productDetails },

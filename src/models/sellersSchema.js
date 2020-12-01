@@ -14,6 +14,25 @@ const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema');
 const { identity } = require("lodash");
 
+const notificationSchema = new Schema({
+  businessInquiries: {
+    type: String,
+    trim: true
+  },
+  buyLeads: {
+    type: String,
+    trim: true
+  },
+  newOfferings: {
+    type: String,
+    trim: true
+  },
+  promotionalCommunication: {
+    type: String,
+    trim: true
+  }
+})
+
 const location = new Schema({
   city: {
     type: ObjectId,
@@ -145,12 +164,17 @@ const sellersSchema = new Schema(
     statutoryId: {
       type: ObjectId,
       ref: SellerStatutory,
-      ref: SellerCompany,
+      // ref: SellerCompany,
       default: null
     },
     establishmentId: {
       type: ObjectId,
       ref: SellerEstablishment,
+      default: null
+    },
+    sellerCompanyId: {
+      type: ObjectId,
+      ref: SellerCompany,
       default: null
     },
     sellerProductId:{
@@ -163,6 +187,7 @@ const sellersSchema = new Schema(
     //   ref: 'primaryCategory',
     //   default: null
     // },
+    sellerNotifications:{notificationSchema},
     website: {
       type: String,
       default: null,

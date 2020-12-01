@@ -24,12 +24,41 @@ const productDetailsSchema = new Schema({
     type: String,
     trim: true,
   },
+  price: {
+    price: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    unit: {
+      type: String,
+      trim: true,
+      default: null
+    }
+  },
   minmumOrderQty: {
-    type: Number,
+    quantity: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    unit: {
+      type: String,
+      trim: true,
+      default: null
+    }
   },
   deliveryTime: {
-    type: Date,
-    default: null,
+    deliveryTime: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    unit: {
+      type: String,
+      trim: true,
+      default: null
+    }
   },
   packagingDetails: {
     type: String,
@@ -50,7 +79,7 @@ const productDetailsSchema = new Schema({
     trim: true,
   },
   inStock: {
-    type: String,
+    type: Boolean,
     trim: true,
   },
   document: { documentSchema },
@@ -63,8 +92,8 @@ const sellerProductSchema = new Schema(
       ref: "sellers",
       default: null,
     },
-    serviceType:{
-      type: String,
+    serviceType: {
+      type: ObjectId,
       trim: true,
       default: null
     },
@@ -88,7 +117,7 @@ const sellerProductSchema = new Schema(
       ref: Products,
       default: null,
     },
-    productDetails: { productDetailsSchema },
+    productDetails: productDetailsSchema,
   },
   {
     timestamps: true,
