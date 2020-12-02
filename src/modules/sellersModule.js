@@ -341,11 +341,20 @@ exports.getSellerProfile = (id) =>
       .populate("contactId")
       .populate("comapanyId")
       .populate("establishmentId")
-      .populate("sellerProductId")
+      .populate({
+        path: "sellerProductId",
+        model: "sellerproducts",
+        populate: {
+          path: "primaryCategoryId",
+          model: "primarycategories"
+        }
+      })
+      // .populate("sellerProductId")
       .populate("location.city", "name")
       .populate("location.state", "name")
       .populate("location.country", "name")
       .then((doc) => {
+        console.log("🚀 ~ file: sellersModule.js ~ line 353 ~ .then ~ doc", doc)
         resolve(doc);
       })
       .catch((error) => reject(error));
