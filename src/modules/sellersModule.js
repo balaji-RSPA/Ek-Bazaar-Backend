@@ -275,8 +275,8 @@ module.exports.sellerBulkInser = (data) =>
       })
       .catch(reject)
   })
-  // populate : {path: ("primaryCategoryId")},
-  // populate : {path: ("secondaryCategoryId")},
+// populate : {path: ("primaryCategoryId")},
+// populate : {path: ("secondaryCategoryId")},
 module.exports.getSeller = (id) =>
   new Promise((resolve, reject) => {
     Sellers.findOne({ userId: id })
@@ -293,24 +293,24 @@ module.exports.getSeller = (id) =>
       .populate({
         path: 'sellerProductId',
         model: 'sellerProducts',
-        populate : {
-          path:"parentCategoryId",
+        populate: {
+          path: "parentCategoryId",
           model: ParentCategory.collection.name
         },
       })
       .populate({
         path: 'sellerProductId',
         model: 'sellerProducts',
-        populate : {
-          path:"primaryCategoryId",
+        populate: {
+          path: "primaryCategoryId",
           model: PrimaryCategory.collection.name
         },
       })
       .populate({
         path: 'sellerProductId',
         model: 'sellerProducts',
-        populate : {
-          path:"secondaryCategoryId",
+        populate: {
+          path: "secondaryCategoryId",
           model: SecondaryCategory.collection.name
         },
       })
@@ -334,19 +334,27 @@ module.exports.getSeller = (id) =>
 exports.getSellerProfile = (id) =>
   new Promise((resolve, reject) => {
     Sellers.find({ _id: id })
-      .populate('primaryCatId')
-      .populate('sellerType')
-      .populate('busenessId')
-      .populate('statutoryId')
-      .populate('contactId')
-      .populate('comapanyId')
-      .populate('establishmentId')
-      // .populate({path: 'sellerProductId', model : ""})
-      .populate('location.city', 'name')
-      .populate('location.state', 'name')
-      .populate('location.country', 'name')
+      .populate("primaryCatId")
+      .populate("sellerType")
+      .populate("busenessId")
+      .populate("statutoryId")
+      .populate("contactId")
+      .populate("comapanyId")
+      .populate("establishmentId")
+      .populate({
+        path: "sellerProductId",
+        model: "sellerproducts",
+        populate: {
+          path: "primaryCategoryId",
+          model: "primarycategories"
+        }
+      })
+      // .populate("sellerProductId")
+      .populate("location.city", "name")
+      .populate("location.state", "name")
+      .populate("location.country", "name")
       .then((doc) => {
-        resolve(doc)
+        resolve(doc);
       })
       .catch((error) => reject(error))
   })
@@ -714,13 +722,13 @@ module.exports.deleteSellerProduct = (data) =>
  * Bulk insert seller
  * */
 module.exports.addSellerProduct = (data) =>
-new Promise ((resolve,reject) => {
-  SelleresProductList.insertMany(data, function(err, doc) {
-    if(err) reject(err)
-    else {
-      const idArray = doc && doc.length && doc.map(d => d._id)
-      resolve(idArray)
-    }
+  new Promise((resolve, reject) => {
+    SelleresProductList.insertMany(data, function (err, doc) {
+      if (err) reject(err)
+      else {
+        const idArray = doc && doc.length && doc.map(d => d._id)
+        resolve(idArray)
+      }
+    })
   })
-})
 

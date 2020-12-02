@@ -5,7 +5,7 @@ const { ObjectId } = Types;
 const City = require("./citiesSchema");
 const State = require("./statesSchema");
 const Country = require("./countriesSchema");
-const SellerBusiness =require('./sellerBusinessSchema')
+const SellerBusiness = require('./sellerBusinessSchema')
 const SellerStatutory = require('./sellerStatutorySchema')
 // const SellerContact =require('./sellerContactsSchema')
 const SellerCompany = require('./sellerCompanySchema')
@@ -63,29 +63,29 @@ const location = new Schema({
 });
 
 const mobile = new Schema({
-      mobile: {
-        type: String,
-        trim: true
-      },
-      countryCode: {
-        type: String,
-        trim: true,
-        default: null
-      }
-    })
-const serviceSchema =  new Schema({
+  mobile: {
+    type: String,
+    trim: true
+  },
+  countryCode: {
+    type: String,
+    trim: true,
+    default: null
+  }
+})
+const serviceSchema = new Schema({
   name: {
     type: ObjectId,
-    ref:SellerTypes,
+    ref: SellerTypes,
     default: null
   },
   cities: [{
-    city:{
+    city: {
       type: ObjectId,
       ref: City,
       default: null
     },
-    state:{
+    state: {
       type: ObjectId,
       ref: State,
       default: null
@@ -177,9 +177,9 @@ const sellersSchema = new Schema(
       ref: SellerCompany,
       default: null
     },
-    sellerProductId:{
+    sellerProductId: {
       type: [ObjectId],
-      ref: SellerProducts,
+      ref: "sellerproducts",
       default: null
     },
     // primaryCatId:{
