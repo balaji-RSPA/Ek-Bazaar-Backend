@@ -137,10 +137,9 @@ exports.sellerSearch = async (reqQuery) => {
     const { searchProductsBy } = reqQuery
     const keywordMatch = []
     if (searchProductsBy.serviceType) {
-      console.log(searchProductsBy.serviceType.id, "bullshit............")
       keywordMatch.push({
         "match": {
-          "sellerType.name._id": searchProductsBy.serviceType.id,
+          "sellerProductId.serviceType._id": searchProductsBy.serviceType.id,
         }
       })
     }
@@ -158,16 +157,14 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
     }
-    if (searchProductsBy.product && searchProductsBy.product.length) {
-      const productIds = searchProductsBy.product.map(product => product.id)
-      console.log(productIds)
+    if (searchProductsBy.product) {
       keywordMatch.push({
-        "terms": {
-          "sellerProductId.poductId._id": productIds,
+        "match_phrase": {
+          "sellerProductId.poductId.name": searchProductsBy.product
         }
       })
-      query.bool.must.push(...keywordMatch)
     }
+    query.bool.must = keywordMatch
   }
 
   if (productId) {
