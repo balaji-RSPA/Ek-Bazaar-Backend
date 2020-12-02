@@ -32,7 +32,7 @@ exports.login = async (req, res) => {
     const { password, ipAddress, location, mobile } = req.body;
     let user = await sellers.checkUserExistOrNot(mobile);
     user = user[0]
-    // console.log(user, 'user......')
+    console.log(user, 'user......')
     if (!user) {
       return respAuthFailed(res, "User not found");
     }
