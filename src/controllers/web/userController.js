@@ -3,6 +3,7 @@ const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
 const { sellers, buyers } = require("../../modules");
+const bcrypt = require("bcrypt");
 const {
   handleUserSession,
   getAccessToken,
@@ -45,7 +46,7 @@ module.exports.getAccessToken = async (req, res) => {
 module.exports.checkUserExistOrNot = async (req, res) => {
   try {
     const { mobile } = req.body;
-    const seller = await checkUserExistOrNot(mobile);
+    const seller = await checkUserExistOrNot({ mobile });
     if (seller) {
       respSuccess(res);
     }
@@ -57,11 +58,12 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
-    const { mobile } = req.body;
-    const seller = await checkUserExistOrNot(mobile);
-    if (seller && seller.length) {
+    const { mobile, reset } = req.body;
+    const seller = await checkUserExistOrNot({ mobile });
+    if (seller && seller.length && !reset) {
       return respError(res, "A seller with this number already exist");
     }
+    if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
     const otp = 1234;
     return respSuccess(res, { otp });
   } catch (error) {
@@ -160,7 +162,7 @@ module.exports.getUserProfile = async (req, res) => {
     const userData = {
       user,
       seller,
-      buyer,
+      buyer
     };
     respSuccess(res, userData);
   } catch (error) {
@@ -171,23 +173,32 @@ module.exports.getUserProfile = async (req, res) => {
 module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
-    const { name, email, business, location, type, sellerType } = req.body;
-    const userData = {
-      name,
-      city: location.city,
-      email: email || null,
+    // const { name, email, business, location, type, sellerType } = req.body;
+    const _buyer = req.body.buyer || {}
+    let { name, email, business, location, type, sellerType } = req.body;
+
+    let userData = {
+      name: _buyer && _buyer.name || name,
+      city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
+      email: _buyer && _buyer.email || email || null,
     };
-    const buyerData = {
+    let buyerData = {
       name,
       email,
       location,
-      userId: userID
+      userId: userID,
+      ..._buyer
     };
-    let serviceType = [{
+
+    let _seller = await getSeller(userID)
+    let serviceType = _seller && _seller.sellerType || []
+    // if(!buyer)
+    //let serviceType
+    serviceType = [{
       name: sellerType,
       cities: [{
-        city: location.city,
-        state: location.state
+        city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
+        state: _buyer && _buyer.location && _buyer.location.city || location.city || null,
       }]
     }]
     const sellerData = {
@@ -195,11 +206,18 @@ module.exports.updateUser = async (req, res) => {
       email: email || null,
       location,
       sellerType: serviceType,
-      userId: userID
+      userId: userID,
+      ..._buyer
     };
     const user = await updateUser({ _id: userID }, userData);
+    delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);
-    const buyer = await updateBuyer({ userId: userID }, buyerData);
+    if (_buyer && _buyer.mobile) {
+      buyerData.mobile = _buyer.mobile[0].mobile;
+      buyerData.countryCode = _buyer.mobile[0].countryCode;
+    }
+    delete buyerData._id;
+    buyer = await updateBuyer({ userId: userID }, buyerData);
 
     if (business) {
       const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
@@ -231,10 +249,17 @@ module.exports.forgetPassword = async (req, res) => {
 
 module.exports.updateNewPassword = async (req, res) => {
   try {
-    let { password } = req.body;
+    let { password, currentPassword } = req.body;
     password = encodePassword(password);
     const { userID } = req;
-    const user = await updateUser(userID, { password });
+    let findUser = await checkUserExistOrNot({ _id: userID });
+
+    const curntPwd = findUser && findUser.length && findUser[0].password
+    const comparePass = await bcrypt.compare(currentPassword, curntPwd);
+    if (!comparePass) {
+      return respError(res, "Current pasword is not correct")
+    }
+    const user = await updateUser({ _id: userID }, { password });
     respSuccess(res, user, "Password Updated Successfully");
   } catch (error) {
     respError(res, error.message);
