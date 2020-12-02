@@ -30,7 +30,8 @@ const getUserAgent = (userAgent) => {
 exports.login = async (req, res) => {
   try {
     const { password, ipAddress, location, mobile } = req.body;
-    let user = await sellers.checkUserExistOrNot(mobile);
+    console.log(password, mobile, '..........')
+    let user = await sellers.checkUserExistOrNot({mobile});
     user = user[0]
     // console.log(user, 'user......')
     if (!user) {

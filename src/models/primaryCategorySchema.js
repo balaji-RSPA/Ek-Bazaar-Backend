@@ -51,5 +51,5 @@ const primaryCatSchema = new Schema(
   }
 );
 
-const PrimaryCategory = model("primaryCategory", primaryCatSchema);
+const PrimaryCategory = model("primarycategories", primaryCatSchema);
 module.exports = PrimaryCategory;
