@@ -404,7 +404,8 @@ module.exports.getProducts = (query) => new Promise((resolve, reject) => {
   //     resolve(doc);
   //   })
   //   .catch(reject);
-  Products.aggregate([
+
+  let params = [
     {
       $lookup: {
         from: SecondaryCategory.collection.name,
@@ -453,7 +454,18 @@ module.exports.getProducts = (query) => new Promise((resolve, reject) => {
         "parentCatId.name": 1,
       },
     },
-  ])
+  ]
+  if(query.search){
+    params.unshift({
+      $match: {
+        name: {
+          $regex: `${query.search}`,
+          $options: "i",
+        },
+      },
+    })
+  }
+  Products.aggregate(params)
     .limit(query.limit || 10)
     .sort({
       _id: -1

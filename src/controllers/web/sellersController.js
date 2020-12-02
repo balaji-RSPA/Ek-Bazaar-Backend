@@ -1,9 +1,10 @@
 const camelcaseKeys = require('camelcase-keys')
 const { machineIdSync } = require('node-machine-id')
 const { respSuccess, respError } = require('../../utils/respHadler')
+const mongoose = require('mongoose');
 
 const { sellers } = require('../../modules')
-const { find } = require('lodash')
+const  _ = require('lodash')
 
 const {
   updateSeller,
@@ -158,15 +159,14 @@ module.exports.deleteSellerProduct = async (req, res) => {
     let sellerProduct = await deleteSellerProduct(req.body.id)
     let findSeller = await getSellerVal(sellerProduct.sellerId)
     if (findSeller) {
-      let index =
-        findSeller.sellerProductId &&
-        findSeller.sellerProductId.indexOf(req.body.id)
-      if (index > -1) {
-        findSeller.sellerProductId = findSeller.sellerProductId.splice(index, 1)
-        await updateSeller({ _id: sellerProduct.sellerId }, findSeller)
+      let objVal = mongoose.Types.ObjectId(req.body.id);
+      let arrVal = _.findIndex(findSeller.sellerProductId, objVal);
+      if (arrVal > -1) {
+        findSeller.sellerProductId.splice(arrVal, 1)
+        result = await updateSeller({ _id: sellerProduct.sellerId }, findSeller)
       }
     }
-    respSuccess(res, result)
+    respSuccess(res, result,"Product successfully deleted")
   } catch (error) {
     respError(res, error.message)
   }
@@ -174,20 +174,14 @@ module.exports.deleteSellerProduct = async (req, res) => {
 module.exports.addSellerProduct = async(req,res)=>{
   try {
     let result 
-    let productId = [];
-    console.log(req.body,"======pao fhewjf===========wfew======")
     let sellerId = req.body && req.body[0].sellerId
-    console.log("🚀 ~ file: sellersController.js ~ line 180 ~ module.exports.addSellerProduct=async ~ sellerId", sellerId)
     const findSeller = await getSellerProfile(sellerId)
-    console.log("🚀 ~ file: sellersController.js ~ line 181 ~ module.exports.addSellerProduct=async ~ findSeller", findSeller)
     result = await addSellerProduct(req.body)
     if(findSeller && findSeller.length){
       findSeller[0].sellerProductId = findSeller[0].sellerProductId.concat(result);
     }
-    // console.log("🚀 ~ file: sellersController.js ~ line 185 ~ module.exports.addSellerProduct=async ~ findSeller", findSeller)
     seller = await updateSeller({ _id: sellerId }, findSeller[0])
     respSuccess(res,seller,"Successfully added product")
-    console.log("🚀 ~ file: sellersController.js ~ line 189 ~ module.exports.addSellerProduct=async ~ seller", seller)
   }catch(error){
     respError(res,error.message)
   }

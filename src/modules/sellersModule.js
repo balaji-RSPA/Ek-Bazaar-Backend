@@ -297,9 +297,6 @@ module.exports.getSeller = (id) =>
           path:"parentCategoryId",
           model: ParentCategory.collection.name
         },
-        // populate: {
-        //   path: 'productDetails.regionOfOrigin',
-        // },
       })
       .populate({
         path: 'sellerProductId',
@@ -308,9 +305,6 @@ module.exports.getSeller = (id) =>
           path:"primaryCategoryId",
           model: PrimaryCategory.collection.name
         },
-        // populate: {
-        //   path: 'productDetails.regionOfOrigin',
-        // },
       })
       .populate({
         path: 'sellerProductId',
@@ -319,9 +313,13 @@ module.exports.getSeller = (id) =>
           path:"secondaryCategoryId",
           model: SecondaryCategory.collection.name
         },
-        // populate: {
-        //   path: 'productDetails.regionOfOrigin',
-        // },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerProducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
       })
       .populate('location.city', 'name')
       .populate('location.state', 'name region')

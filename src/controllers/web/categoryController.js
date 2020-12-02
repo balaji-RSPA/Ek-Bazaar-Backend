@@ -489,14 +489,16 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
 
 module.exports.getProducts = async (req, res) => {
     try {
-        console.log(req.query, "??????????????????????????????????????/", req.params)
+        console.log(req.query.limit,"======",req.query.search, "??????????????????????????????????????/", req.params)
         const {
-            limit
+            limit,
+            search
         } = req.query
         let query = ""
-        if (limit) {
+        if (limit || search) {
+            console.log("inside")
             query = {
-                search: {},
+                search: search,
                 limit: parseInt(limit)
             }
         } else {
@@ -511,10 +513,7 @@ module.exports.getProducts = async (req, res) => {
                 }
             }
         }
-        console.log("🚀 ~ file: categoryController.js ~ line 497 ~ module.exports.getProducts= ~ query", query)
-
         const products = await getProducts(query)
-
         respSuccess(res, products)
     } catch (error) {
         respError(error)
