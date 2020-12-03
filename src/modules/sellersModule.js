@@ -292,7 +292,7 @@ module.exports.getSeller = (id) =>
 
       .populate({
         path: 'sellerProductId',
-        model: 'sellerProducts',
+        model: 'sellerproducts',
         populate: {
           path: "parentCategoryId",
           model: ParentCategory.collection.name
@@ -300,7 +300,7 @@ module.exports.getSeller = (id) =>
       })
       .populate({
         path: 'sellerProductId',
-        model: 'sellerProducts',
+        model: 'sellerproducts',
         populate: {
           path: "primaryCategoryId",
           model: PrimaryCategory.collection.name
@@ -308,7 +308,7 @@ module.exports.getSeller = (id) =>
       })
       .populate({
         path: 'sellerProductId',
-        model: 'sellerProducts',
+        model: 'sellerproducts',
         populate: {
           path: "secondaryCategoryId",
           model: SecondaryCategory.collection.name
@@ -316,10 +316,15 @@ module.exports.getSeller = (id) =>
       })
       .populate({
         path: 'sellerProductId',
-        model: 'sellerProducts',
+        model: 'sellerproducts',
         populate: {
           path: 'productDetails.regionOfOrigin',
         },
+          match: {
+            'productDetails.inStock': {
+                $eq: false
+            }
+        }
       })
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
@@ -382,6 +387,51 @@ module.exports.getAllSellers = () =>
 module.exports.updateSeller = (query, data) =>
   new Promise((resolve, reject) => {
     Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
+      .populate('sellerProductId.')
+      .populate('sellerType.name', 'name')
+      .populate('sellerType.cities.city', 'name')
+      .populate('sellerType.cities.state', 'name region')
+      .populate('busenessId')
+      .populate('statutoryId')
+      .populate('contactId')
+      .populate('comapanyId')
+      .populate('establishmentId')
+
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "parentCategoryId",
+          model: ParentCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          model: PrimaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+      })
+      .populate('location.city', 'name')
+      .populate('location.state', 'name region')
+      .populate('location.country', 'name')
+      .lean()
       .then((doc) => {
         resolve(doc)
       })
@@ -719,7 +769,7 @@ module.exports.deleteSellerProduct = (data) =>
   })
 /**
  * 
- * Bulk insert seller
+ * Multiple insert seller Product
  * */
 module.exports.addSellerProduct = (data) =>
   new Promise((resolve, reject) => {

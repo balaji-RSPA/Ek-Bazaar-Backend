@@ -469,7 +469,6 @@ module.exports.deletel3 = async (req, res) => {
                 $in: data.map(d => d.vendorId)
             }
         }
-        console.log(query, "query......................")
         const l3 = await deletel3(query)
         console.log(l3, "secondary category deleted")
         respSuccess(res, l3, ` l3 deleted successfully`)
@@ -496,7 +495,6 @@ module.exports.getProducts = async (req, res) => {
         } = req.query
         let query = ""
         if (limit || search) {
-            console.log("inside")
             query = {
                 search: search,
                 limit: parseInt(limit)
