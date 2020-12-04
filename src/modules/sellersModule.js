@@ -277,8 +277,31 @@ module.exports.sellerBulkInser = (data) =>
   })
 // populate : {path: ("primaryCategoryId")},
 // populate : {path: ("secondaryCategoryId")},
-module.exports.getSeller = (id) =>
+module.exports.getSeller = (id,chkStock) =>
   new Promise((resolve, reject) => {
+    let matchVal = null
+    if(chkStock === true || chkStock === false){
+      matchVal = {
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+        match: {
+          'productDetails.inStock': {
+              $eq: chkStock
+          }
+      }
+      }
+    }else{
+      matchVal = {
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        }
+      }
+    }
     Sellers.findOne({ userId: id })
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
@@ -314,18 +337,7 @@ module.exports.getSeller = (id) =>
           model: SecondaryCategory.collection.name
         },
       })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: 'productDetails.regionOfOrigin',
-        },
-          match: {
-            'productDetails.inStock': {
-                $eq: false
-            }
-        }
-      })
+      .populate(matchVal)
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')

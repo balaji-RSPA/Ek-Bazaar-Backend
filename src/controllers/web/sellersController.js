@@ -174,14 +174,25 @@ module.exports.deleteSellerProduct = async (req, res) => {
 module.exports.addSellerProduct = async(req,res)=>{
   try {
     let result 
-    let sellerId = req.body && req.body[0].sellerId
-    const findSeller = await getSellerProfile(sellerId)
-    result = await addSellerProduct(req.body)
-    if(findSeller && findSeller.length){
-      findSeller[0].sellerProductId = findSeller[0].sellerProductId.concat(result);
+    let sellerId = req.body && req.body[0] && req.body[0].sellerId
+    if(sellerId){
+      const findSeller = await getSellerProfile(sellerId)
+      result = await addSellerProduct(req.body)
+      if(findSeller && findSeller.length){
+        findSeller[0].sellerProductId = findSeller[0].sellerProductId.concat(result);
+      }
+      seller = await updateSeller({ _id: sellerId }, findSeller[0])
+      respSuccess(res,seller,"Successfully added product")
     }
-    seller = await updateSeller({ _id: sellerId }, findSeller[0])
-    respSuccess(res,seller,"Successfully added product")
+  }catch(error){
+    respError(res,error.message)
+  }
+}
+module.exports.updateSellerProduct = async(req,res)=>{
+  const {id,inStock} = req.body
+  try {
+    let result = await addProductDetails(id, {"productDetails.inStock" : inStock})
+      respSuccess(res,result,"Successfully updated")
   }catch(error){
     respError(res,error.message)
   }
