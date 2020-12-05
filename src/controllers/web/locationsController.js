@@ -10,7 +10,7 @@ const {
 
 module.exports.getAllCities = async (req, res) => {
   try {
-    console.log(req.query)
+    // console.log(req.query)
     const cities = await getAllCities(req.query);
     respSuccess(res, cities);
   } catch (error) {

@@ -28,6 +28,7 @@ const {
 const { sellerProductsBulkInsert } = require('./sellerProductModule')
 const { capitalizeFirstLetter } = require('../utils/helpers')
 const { PrimaryCategory, SecondaryCategory, ParentCategory } = require('../models')
+const { updateESDoc } = require('./elasticSearchModule')
 
 // module.exports.checkSellerExistOrNot = (mobile) =>
 //   new Promise((resolve, reject) => {
@@ -430,7 +431,7 @@ module.exports.getAllSellers = () =>
       .catch((error) => reject(error))
   })
 
-module.exports.updateSeller = (query, data) =>
+module.exports.updateSeller = (query, data, elastic) =>
   new Promise((resolve, reject) => {
     Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .populate('sellerProductId.')
@@ -478,7 +479,17 @@ module.exports.updateSeller = (query, data) =>
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
       .lean()
-      .then((doc) => {
+      .then(async (doc) => {
+
+        if (doc && elastic) {
+          // const tenderDoc = JSON.parse(JSON.stringify(doc));
+          const esData = JSON.parse(JSON.stringify(doc));
+          delete esData._id; // ES will not support _id in the doc. so, deleted
+          console.log("🚀 ~ file: sellersModule.js ~ line 453 ~ .then ~ esData", esData)
+          // console.log(esData, ' elastic')
+          await updateESDoc(doc._id, esData); // and updated to ES
+        }
+
         resolve(doc)
       })
       .catch((error) => reject(error))
