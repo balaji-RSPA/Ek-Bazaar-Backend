@@ -45,5 +45,5 @@ const parentCatSchema = new Schema(
   }
 );
 
-const ParentCategory = model("parentCategory", parentCatSchema);
+const ParentCategory = model("parentcategories", parentCatSchema);
 module.exports = ParentCategory;

@@ -30,8 +30,14 @@ const {
     getPrimaryCategories
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
-const { respSuccess, respError } = require('../../utils/respHadler');
-const { query } = require('winston');
+const {
+    respSuccess,
+    respError
+} = require('../../utils/respHadler');
+const {
+    query,
+    createLogger
+} = require('winston');
 
 module.exports.addSellerType = async (req, res) => {
     try {
@@ -367,7 +373,10 @@ module.exports.getProduct = async (req, res) => {
 module.exports.getPrimaryCat = async (req, res) => {
     try {
         const reqQuery = camelcaseKeys(req.query);
-        let { skip, limit } = reqQuery
+        let {
+            skip,
+            limit
+        } = reqQuery
         skip = skip && parseInt(skip) || 0
         limit = limit && parseInt(limit) || 10
         console.log(reqQuery, "jkjdfkjdgfjkdfgjknd", req.query)
@@ -390,7 +399,7 @@ module.exports.getAllProducts = async (req, res) => {
 
     try {
         const reqQuery = req.query
-        console.log("reqQuery Product ---------", reqQuery)
+        // console.log("reqQuery Product ---------", reqQuery)
         const result = await getAllProducts(reqQuery)
         respSuccess(res, result)
 
@@ -460,7 +469,6 @@ module.exports.deletel3 = async (req, res) => {
                 $in: data.map(d => d.vendorId)
             }
         }
-        console.log(query, "query......................")
         const l3 = await deletel3(query)
         console.log(l3, "secondary category deleted")
         respSuccess(res, l3, ` l3 deleted successfully`)
@@ -480,11 +488,27 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
 
 module.exports.getProducts = async (req, res) => {
     try {
-        const query = {
-            _id: {
-                $in: ["5fbd291f834cab3f38524105", "5fbd291f834cab3f38524106", "5fbd291f834cab3f38524107", "5fbd291f834cab3f38524108",
-                    "5fbd291f834cab3f38524109", "5fbd291f834cab3f3852410a", "5fbd291f834cab3f3852410b", "5fbd291f834cab3f3852410c", "5fbd291f834cab3f3852410d",
-                    "5fbd2920834cab3f3852410e"]
+        console.log(req.query.limit,"======",req.query.search, "??????????????????????????????????????/", req.params)
+        const {
+            limit,
+            search
+        } = req.query
+        let query = ""
+        if (limit || search) {
+            query = {
+                search: search,
+                limit: parseInt(limit)
+            }
+        } else {
+            query = {
+                $match: {
+                    _id: {
+                        $in: ["5fbd291f834cab3f38524105", "5fbd291f834cab3f38524106", "5fbd291f834cab3f38524107", "5fbd291f834cab3f38524108",
+                            "5fbd291f834cab3f38524109", "5fbd291f834cab3f3852410a", "5fbd291f834cab3f3852410b", "5fbd291f834cab3f3852410c", "5fbd291f834cab3f3852410d",
+                            "5fbd2920834cab3f3852410e"
+                        ]
+                    }
+                }
             }
         }
         const products = await getProducts(query)
@@ -493,4 +517,3 @@ module.exports.getProducts = async (req, res) => {
         respError(error)
     }
 }
-
