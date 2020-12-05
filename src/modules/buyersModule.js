@@ -40,11 +40,10 @@ module.exports.getBuyer = (id) =>
       .catch((error) => reject(error));
   });
 
-module.exports.updateBuyer = (query, data) =>
+module.exports.updateBuyer = (query, data) => 
   new Promise((resolve, reject) => {
     Buyers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
-        console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));

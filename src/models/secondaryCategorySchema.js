@@ -71,5 +71,5 @@ secondaryCatSchema.index({
   }
 })
 
-const SecondaryCategory = model("secondaryCategory", secondaryCatSchema);
+const SecondaryCategory = model("secondarycategories", secondaryCatSchema);
 module.exports = SecondaryCategory;

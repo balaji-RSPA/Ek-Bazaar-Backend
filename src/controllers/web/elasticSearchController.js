@@ -11,6 +11,7 @@ const {
   getAllPrimaryCategory,
   getAllSecondaryCategory,
   getAllProductsToSearch,
+  getProductByName
 } = category;
 const { getAllCities, getAllStates } = location;
 module.exports.addSellerBulkIndex = async (req, res) => {
@@ -25,20 +26,28 @@ module.exports.addSellerBulkIndex = async (req, res) => {
 module.exports.serachSeller = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query);
-    console.log(reqQuery, "????????????????????????????????????/");
     const secCat = await getSecondaryCategory(reqQuery.secondaryId);
-    console.log(secCat, "secCat.................");
     if (secCat) {
       const product = await getProductCategoryBySecCat({ name: secCat.name });
-      console.log(product, "product.......");
       reqQuery.secondaryId =
         (product && product.secondaryId) || reqQuery.secondaryId;
     }
 
     if (reqQuery.keyword) {
+      const { keyword, skip, limit } = reqQuery
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 38 ~ module.exports.serachSeller= ~ limit", limit)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 38 ~ module.exports.serachSeller= ~ skip", skip)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 38 ~ module.exports.serachSeller= ~ keyword", keyword)
+
+      let newKeyword = keyword.toLowerCase().split(" ");
+
+      newKeyword = newKeyword.map(word => {
+        return word.replace(word[0], word[0].toUpperCase())
+      })
+
       const range = {
-        skip: parseInt(reqQuery.skip),
-        limit: parseInt(reqQuery.limit),
+        skip: parseInt(skip),
+        limit: parseInt(limit),
       };
       let serviceTypes = await getAllSellerTypes();
       serviceTypes = serviceTypes.map((type) => ({
@@ -49,21 +58,13 @@ module.exports.serachSeller = async (req, res) => {
       cities = cities.map((city) => ({ name: city.name, id: city._id }));
       let states = await getAllStates();
       states = states.map((state) => ({ name: state.name, id: state._id }));
-      let l2 = await getAllPrimaryCategory();
-      l2 = l2.map((primecat) => ({ name: primecat.name, id: primecat._id }));
-      let l3 = await getAllSecondaryCategory();
-      l3 = l3.map((seccat) => ({ name: seccat.name, id: seccat._id }));
-      let products = await getAllProductsToSearch();
-      products = products.map((product) => ({
-        name: product.name,
-        id: product._id,
-      }));
-      let newKeyword = reqQuery.keyword.split(" ");
-      console.log("newKeyword", products);
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 54 ~ serviceTypes=serviceTypes.map ~ serviceTypes", serviceTypes)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 59 ~ module.exports.serachSeller= ~ cities", cities)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 69 ~ module.exports.serachSeller= ~ states", states)
+
       let serviceType = "",
         city = "",
-        state = "",
-        product = "";
+        state = ""
       for (let i = 0; i < newKeyword.length; i++) {
         let _keyword =
           newKeyword[i].charAt(0).toUpperCase() + newKeyword[i].slice(1);
@@ -77,38 +78,25 @@ module.exports.serachSeller = async (req, res) => {
         if (index !== -1) city = cities[index];
         index = states.findIndex((state) => state.name == _keyword);
         if (index !== -1) state = states[index];
-
-        /* products */
-        let productsArray = products.filter((product) =>
-          product.name.includes(_keyword)
-        );
-        if (productsArray && productsArray.length) product = productsArray;
-        if (!productsArray && !productsArray.length) {
-          productsArray = l3.filter((seccat) => seccat.name.includes(_keyword));
-          if (productsArray && productsArray.length) product = productsArray;
-        }
-        if (!productsArray && !productsArray.length) {
-          productsArray = l2.filter((primcat) =>
-            primcat.name.includes(_keyword)
-          );
-          if (productsArray && productsArray.length) product = productsArray;
-        }
       }
-      // console.log(serviceType, city, state, product, "fuck it all.......");
+      newKeyword = newKeyword.join(" ");
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 83 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
+      let productSearchKeyword = newKeyword.replace(city.name, "")
+      productSearchKeyword = productSearchKeyword.replace(state.name, "")
+      productSearchKeyword = productSearchKeyword.replace(serviceType.name, "")
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 89 ~ module.exports.serachSeller= ~ productSearchKeyword", productSearchKeyword)
+
       reqQuery.searchProductsBy = {
         serviceType,
         city,
         state,
-        product
+        product: productSearchKeyword.trim()
       }
-      // console.log(product, ".......................")
       const result = await sellerSearch(reqQuery);
-      // console.log(result, ".............///////")
       const { query, catId } = result;
       const seller = await searchFromElastic(query, range);
-      // console.log(seller, "seller.....................")
-      const primaryCatId = await getCatId({ productId: product[0].id }, "_id");
-      console.log(primaryCatId, ".............");
+      const product = await getProductByName({ name: productSearchKeyword.trim() })
+      const primaryCatId = await getCatId({ productId: product._id }, "_id");
       const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
       const resp = {
         total: seller[1],
@@ -118,11 +106,9 @@ module.exports.serachSeller = async (req, res) => {
         city,
         state
       };
-      // console.log(resp, "//////////////////////")
       return respSuccess(res, resp);
     }
 
-    console.log("module.exports.serachSeller -> reqQuery", reqQuery);
 
     const range = {
       skip: parseInt(reqQuery.skip),
@@ -132,14 +118,10 @@ module.exports.serachSeller = async (req, res) => {
     //     _id: reqQuery.productId
     // }
     const primaryCatId = await getCatId(reqQuery, "_id");
-    // console.log("primaryCatId", primaryCatId);
     const result = await sellerSearch(reqQuery);
-    // console.log(result, "result..................");
     const { query, catId } = result;
     const seller = await searchFromElastic(query, range);
-    // console.log(seller, "............////////////")
     const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
-    // console.log(" qurty result------", relatedCat)
     const resp = {
       total: seller[1],
       data: seller[0],
