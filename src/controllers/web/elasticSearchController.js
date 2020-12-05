@@ -93,7 +93,6 @@ module.exports.serachSeller = async (req, res) => {
         product: productSearchKeyword.trim()
       }
       const result = await sellerSearch(reqQuery);
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 96 ~ module.exports.serachSeller= ~ result", result)
       const { query, catId } = result;
       const seller = await searchFromElastic(query, range);
       const product = await getProductByName({ name: productSearchKeyword.trim() })
