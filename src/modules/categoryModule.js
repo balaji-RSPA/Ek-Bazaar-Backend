@@ -71,8 +71,6 @@ module.exports.getAllSellerTypes = () =>
   });
 module.exports.getAllCategories = (query) =>
   new Promise((resolve, reject) => {
-    console.log(query, "........aaaa");
-
     ParentCategory.find({
       _id: {
         $in: [
