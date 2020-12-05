@@ -176,7 +176,7 @@ module.exports.updateUser = async (req, res) => {
     // const { name, email, business, location, type, sellerType } = req.body;
     const _buyer = req.body.buyer || {}
     let { name, email, business, location, type, sellerType } = req.body;
-
+    
     let userData = {
       name: _buyer && _buyer.name || name,
       city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
@@ -189,7 +189,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
-
+    
     let _seller = await getSeller(userID)
     let serviceType = _seller && _seller.sellerType || []
     // if(!buyer)
@@ -209,6 +209,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
+    console.log("req.body.buyer",userData,buyerData, sellerData)
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);
