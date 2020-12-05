@@ -292,7 +292,7 @@ module.exports.getSeller = (id) =>
 
       .populate({
         path: 'sellerProductId',
-        model: 'sellerProducts',
+        model: 'sellerproducts',
         populate: {
           path: "parentCategoryId",
           model: ParentCategory.collection.name
@@ -300,7 +300,7 @@ module.exports.getSeller = (id) =>
       })
       .populate({
         path: 'sellerProductId',
-        model: 'sellerProducts',
+        model: 'sellerproducts',
         populate: {
           path: "primaryCategoryId",
           model: PrimaryCategory.collection.name
@@ -308,7 +308,7 @@ module.exports.getSeller = (id) =>
       })
       .populate({
         path: 'sellerProductId',
-        model: 'sellerProducts',
+        model: 'sellerproducts',
         populate: {
           path: "secondaryCategoryId",
           model: SecondaryCategory.collection.name
@@ -316,7 +316,7 @@ module.exports.getSeller = (id) =>
       })
       .populate({
         path: 'sellerProductId',
-        model: 'sellerProducts',
+        model: 'sellerproducts',
         populate: {
           path: 'productDetails.regionOfOrigin',
         },
