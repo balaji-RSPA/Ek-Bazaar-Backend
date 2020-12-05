@@ -1,7 +1,7 @@
 const camelcaseKeys = require("camelcase-keys");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { buyers, sellers } = require("../../modules");
+const { buyers, sellers, category, elastic } = require("../../modules");
 const {
   postRFP,
   checkBuyerExistOrNot,
@@ -11,6 +11,8 @@ const {
   getAllBuyers,
   updateBuyerPassword,
 } = buyers;
+const { getProductByName } = category
+const { sellerSearch, searchFromElastic } = elastic
 const { checkUserExistOrNot, updateUser, addUser } = sellers
 const { createToken } = require("../../utils/utils");
 
@@ -18,68 +20,84 @@ module.exports.createRFP = async (req, res) => {
   try {
     const {mobile, name, email, location, productDetails} = req.body
     const user = await checkUserExistOrNot({mobile: mobile.mobile})
-    console.log("~ user", user)
-    // if(user && user.length) {
-    //   const userData = {
-    //     name,
-    //     email,
-    //   }
-    //   const user = await updateUser({ mobile: mobile.mobile }, userData)
-    //   const buyerData = {
-    //     name,
-    //     email,
-    //     mobile: mobile.mobile,
-    //     countryCode: mobile.countryCode,
-    //     location,
-    //     userId: user._id
-    //   }
-    //   const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
-    //   let buyer
-    //   if (exist && exist.length)
-    //     buyer = await updateBuyer({ userId: user._id }, buyerData)
-    //   else
-    //     buyer = await addBuyer(buyerData)
-    //   const rfpData = {
-    //     buyerId: buyer._id,
-    //     buyerDetails: {
-    //       name,
-    //       email,
-    //       mobile: mobile.mobile,
-    //       location
-    //     },
-    //     productDetails
-    //   }
-    //   const rfp = await postRFP(rfpData)
-    // } else {
-    //   const userData = {
-    //     name,
-    //     email,
-    //     mobile: mobile.mobile,
-    //     countryCode: mobile.countryCode,
-    //     password: null
-    //   }
-    //   const user = await addUser(userData)
-    //   const buyerData = {
-    //     name,
-    //     email,
-    //     mobile: mobile.mobile,
-    //     countryCode: mobile.countryCode,
-    //     location,
-    //     userId: user._id
-    //   }
-    //   const buyer = await addBuyer(buyerData)
-    //   const rfpData = {
-    //     buyerId: buyer._id,
-    //     buyerDetails: {
-    //       name,
-    //       email,
-    //       mobile: mobile.mobile,
-    //       location
-    //     },
-    //     productDetails
-    //   }
-    //   const rfp = await postRFP(rfpData)
-    // }
+    console.log("~ user", user, productDetails)
+    if(user && user.length) {
+      const range = {
+        skip: 0,
+        limit: 5,
+      };
+      const productResult = await getProductByName({name: productDetails.name})
+      const searchQuery = await sellerSearch({productId: productResult._id})
+      const { query } = searchQuery;
+      const seller = await searchFromElastic(query, range);
+      const resp = {
+        total: seller[1],
+        data: seller[0],
+      };
+      seller[0].map((sell) => {
+        console.log(sell._source.email, '---------')
+      })
+      console.log("productResult", resp)
+      // const userData = {
+      //   name,
+      //   email,
+      // }
+      // const user = await updateUser({ mobile: mobile.mobile }, userData)
+      // const buyerData = {
+      //   name,
+      //   email,
+      //   mobile: mobile.mobile,
+      //   countryCode: mobile.countryCode,
+      //   location,
+      //   userId: user._id
+      // }
+      // const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
+      // let buyer
+      // if (exist && exist.length)
+      //   buyer = await updateBuyer({ userId: user._id }, buyerData)
+      // else
+      //   buyer = await addBuyer(buyerData)
+      // const rfpData = {
+      //   buyerId: buyer._id,
+      //   buyerDetails: {
+      //     name,
+      //     email,
+      //     mobile: mobile.mobile,
+      //     location
+      //   },
+      //   productDetails
+      // }
+      // const rfp = await postRFP(rfpData)
+    } else {
+      // const userData = {
+      //   name,
+      //   email,
+      //   mobile: mobile.mobile,
+      //   countryCode: mobile.countryCode,
+      //   password: null
+      // }
+      // const user = await addUser(userData)
+      // const buyerData = {
+      //   name,
+      //   email,
+      //   mobile: mobile.mobile,
+      //   countryCode: mobile.countryCode,
+      //   location,
+      //   userId: user._id
+      // }
+      // const buyer = await addBuyer(buyerData)
+      // const rfpData = {
+      //   buyerId: buyer._id,
+      //   buyerDetails: {
+      //     name,
+      //     email,
+      //     mobile: mobile.mobile,
+      //     location
+      //   },
+      //   productDetails
+      // }
+      // const rfp = await postRFP(rfpData)
+    }
     // respSuccess(res, "Your requirement has successfully submitted")
 
   } catch (error) {
