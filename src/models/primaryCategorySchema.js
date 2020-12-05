@@ -32,7 +32,7 @@ const primaryCatSchema = new Schema(
     },
     secondaryCategotyId: [{
       type: ObjectId,
-      ref: 'secondaryCategory',
+      ref: 'secondarycategories',
       default: null
     }],
     parentCatId: {

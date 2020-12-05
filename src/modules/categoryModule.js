@@ -618,7 +618,22 @@ exports.getAllProductsToSearch = () =>
   });
 
 exports.getProductByName = (query) => new Promise((resolve, reject) => {
-  Products.findOne(query)
+  console.log("🚀 ~ file: categoryModule.js ~ line 623 ~ exports.getProductByName= ~ query", query)
+  Products.find(query)
+    // .limit(1)
+    .then((doc) => resolve(doc))
+    .catch((error) => reject(error));
+})
+
+exports.getSecondaryCategoryByName = (query) => new Promise((resolve, reject) => {
+  SecondaryCategory.find(query)
+    // .limit(1)
+    .then((doc) => resolve(doc))
+    .catch((error) => reject(error));
+})
+
+exports.getPrimaryCategoryByName = (query) => new Promise((resolve, reject) => {
+  PrimaryCategory.find(query)
     // .limit(1)
     .then((doc) => resolve(doc))
     .catch((error) => reject(error));
