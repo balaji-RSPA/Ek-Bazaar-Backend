@@ -49,21 +49,21 @@ module.exports.checkAndAddSellerType = (query) =>
 
 module.exports.getAllSellerTypes = () =>
   new Promise((resolve, reject) => {
-    const query = {
-      _id: {
-        $in: [
-          "5f97ace6b9a4b5524568716b",
-          "5fa4fac96eb907267c7d15ce",
-          "5fa5506e0524f35f355955f2",
-          "5fa61d53520fd81fba4a1d6d",
-          "5fb39af634d3932a93e10025",
-          "5fb397c072e59028f0d17e32",
-          "5fb46f021135863cd3c66664",
-          "5fb5f268805ec7db145b4e58"
-        ],
-      },
-    };
-    SellerTypes.find(query)
+    // const query = {
+    //   _id: {
+    //     $in: [
+    //       "5f97ace6b9a4b5524568716b",
+    //       "5fa4fac96eb907267c7d15ce",
+    //       "5fa5506e0524f35f355955f2",
+    //       "5fa61d53520fd81fba4a1d6d",
+    //       "5fb39af634d3932a93e10025",
+    //       "5fb397c072e59028f0d17e32",
+    //       "5fb46f021135863cd3c66664",
+    //       "5fb5f268805ec7db145b4e58"
+    //     ],
+    //   },
+    // };
+    SellerTypes.find({})
       .then((doc) => {
         resolve(doc);
       })
@@ -99,10 +99,10 @@ module.exports.getAllCategories = (query) =>
         },
       })
       .then((doc) => {
-        console.log(
-          doc,
-          "hararararahsdjasfgjhdsghfskdsjirfhsjdnfjsdkfhksdl.fnhkjdfhljkdnjghdlfjkgnjkdfhjgndkjgjdgk"
-        );
+        // console.log(
+        //   doc,
+        //   "hararararahsdjasfgjhdsghfskdsjirfhsjdnfjsdkfhksdl.fnhkjdfhljkdnjghdlfjkgnjkdfhjgndkjgjdgk"
+        // );
         resolve(doc);
       })
       .catch(reject);
@@ -398,7 +398,7 @@ exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
 // Products
 
 module.exports.getProducts = (query) => new Promise((resolve, reject) => {
-  console.log(query, "queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
+  // console.log(query, "queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
   Products.find(query)
     // .limit(10)
     .sort({ _id: -1 })

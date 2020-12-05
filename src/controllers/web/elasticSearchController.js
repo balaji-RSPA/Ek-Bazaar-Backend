@@ -101,9 +101,9 @@ module.exports.serachSeller = async (req, res) => {
         state,
         product
       }
-      console.log(product, ".......................")
+      // console.log(product, ".......................")
       const result = await sellerSearch(reqQuery);
-      console.log(result, ".............///////")
+      // console.log(result, ".............///////")
       const { query, catId } = result;
       const seller = await searchFromElastic(query, range);
       // console.log(seller, "seller.....................")
@@ -118,7 +118,7 @@ module.exports.serachSeller = async (req, res) => {
         city,
         state
       };
-      console.log(resp, "//////////////////////")
+      // console.log(resp, "//////////////////////")
       return respSuccess(res, resp);
     }
 
@@ -132,12 +132,12 @@ module.exports.serachSeller = async (req, res) => {
     //     _id: reqQuery.productId
     // }
     const primaryCatId = await getCatId(reqQuery, "_id");
-    console.log("primaryCatId", primaryCatId);
+    // console.log("primaryCatId", primaryCatId);
     const result = await sellerSearch(reqQuery);
-    console.log(result, "result..................");
+    // console.log(result, "result..................");
     const { query, catId } = result;
     const seller = await searchFromElastic(query, range);
-    console.log(seller, "............////////////")
+    // console.log(seller, "............////////////")
     const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
     // console.log(" qurty result------", relatedCat)
     const resp = {
