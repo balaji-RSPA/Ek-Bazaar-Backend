@@ -379,16 +379,50 @@ exports.getSellerProfile = (id) =>
 module.exports.getAllSellers = () =>
   new Promise((resolve, reject) => {
     Sellers.find({})
-      .populate('sellerType')
-      .populate('busenessId')
-      .populate('statutoryId')
-      .populate('contactId')
-      .populate('comapanyId')
-      .populate('establishmentId')
-      .populate('sellerProductId')
-      .populate('location.city', 'name')
-      .populate('location.state', 'name')
-      .populate('location.country', 'name')
+    .populate('sellerProductId.')
+    .populate('sellerType.name', 'name')
+    .populate('sellerType.cities.city', 'name')
+    .populate('sellerType.cities.state', 'name region')
+    .populate('busenessId')
+    .populate('statutoryId')
+    .populate('contactId')
+    .populate('comapanyId')
+    .populate('establishmentId')
+
+    .populate({
+      path: 'sellerProductId',
+      model: 'sellerproducts',
+      populate: {
+        path: "parentCategoryId",
+        model: ParentCategory.collection.name
+      },
+    })
+    .populate({
+      path: 'sellerProductId',
+      model: 'sellerproducts',
+      populate: {
+        path: "primaryCategoryId",
+        model: PrimaryCategory.collection.name
+      },
+    })
+    .populate({
+      path: 'sellerProductId',
+      model: 'sellerproducts',
+      populate: {
+        path: "secondaryCategoryId",
+        model: SecondaryCategory.collection.name
+      },
+    })
+    .populate({
+      path: 'sellerProductId',
+      model: 'sellerproducts',
+      populate: {
+        path: 'productDetails.regionOfOrigin',
+      },
+    })
+    .populate('location.city', 'name')
+    .populate('location.state', 'name region')
+    .populate('location.country', 'name')
       .then((doc) => {
         console.log(doc)
         resolve(doc)
@@ -509,7 +543,7 @@ module.exports.addEstablishmentPhotos = (sellerId, data) =>
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
     if (id) {
-      SelleresProductList.findOneAndUpdate({ _id: id }, { $set: data })
+      SelleresProductList.findOneAndUpdate({ _id: id }, { $set: data },{ new: true })
         .then((doc) => {
           resolve(doc)
         })
