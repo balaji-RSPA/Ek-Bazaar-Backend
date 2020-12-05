@@ -18,68 +18,69 @@ module.exports.createRFP = async (req, res) => {
   try {
     const {mobile, name, email, location, productDetails} = req.body
     const user = await checkUserExistOrNot({mobile: mobile.mobile})
-    if(user && user.length) {
-      const userData = {
-        name,
-        email,
-      }
-      const user = await updateUser({ mobile: mobile.mobile }, userData)
-      const buyerData = {
-        name,
-        email,
-        mobile: mobile.mobile,
-        countryCode: mobile.countryCode,
-        location,
-        userId: user._id
-      }
-      const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
-      let buyer
-      if (exist && exist.length)
-        buyer = await updateBuyer({ userId: user._id }, buyerData)
-      else
-        buyer = await addBuyer(buyerData)
-      const rfpData = {
-        buyerId: buyer._id,
-        buyerDetails: {
-          name,
-          email,
-          mobile: mobile.mobile,
-          location
-        },
-        productDetails
-      }
-      const rfp = await postRFP(rfpData)
-    } else {
-      const userData = {
-        name,
-        email,
-        mobile: mobile.mobile,
-        countryCode: mobile.countryCode,
-        password: null
-      }
-      const user = await addUser(userData)
-      const buyerData = {
-        name,
-        email,
-        mobile: mobile.mobile,
-        countryCode: mobile.countryCode,
-        location,
-        userId: user._id
-      }
-      const buyer = await addBuyer(buyerData)
-      const rfpData = {
-        buyerId: buyer._id,
-        buyerDetails: {
-          name,
-          email,
-          mobile: mobile.mobile,
-          location
-        },
-        productDetails
-      }
-      const rfp = await postRFP(rfpData)
-    }
-    respSuccess(res, "Your requirement has successfully submitted")
+    console.log("~ user", user)
+    // if(user && user.length) {
+    //   const userData = {
+    //     name,
+    //     email,
+    //   }
+    //   const user = await updateUser({ mobile: mobile.mobile }, userData)
+    //   const buyerData = {
+    //     name,
+    //     email,
+    //     mobile: mobile.mobile,
+    //     countryCode: mobile.countryCode,
+    //     location,
+    //     userId: user._id
+    //   }
+    //   const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
+    //   let buyer
+    //   if (exist && exist.length)
+    //     buyer = await updateBuyer({ userId: user._id }, buyerData)
+    //   else
+    //     buyer = await addBuyer(buyerData)
+    //   const rfpData = {
+    //     buyerId: buyer._id,
+    //     buyerDetails: {
+    //       name,
+    //       email,
+    //       mobile: mobile.mobile,
+    //       location
+    //     },
+    //     productDetails
+    //   }
+    //   const rfp = await postRFP(rfpData)
+    // } else {
+    //   const userData = {
+    //     name,
+    //     email,
+    //     mobile: mobile.mobile,
+    //     countryCode: mobile.countryCode,
+    //     password: null
+    //   }
+    //   const user = await addUser(userData)
+    //   const buyerData = {
+    //     name,
+    //     email,
+    //     mobile: mobile.mobile,
+    //     countryCode: mobile.countryCode,
+    //     location,
+    //     userId: user._id
+    //   }
+    //   const buyer = await addBuyer(buyerData)
+    //   const rfpData = {
+    //     buyerId: buyer._id,
+    //     buyerDetails: {
+    //       name,
+    //       email,
+    //       mobile: mobile.mobile,
+    //       location
+    //     },
+    //     productDetails
+    //   }
+    //   const rfp = await postRFP(rfpData)
+    // }
+    // respSuccess(res, "Your requirement has successfully submitted")
 
   } catch (error) {
     respError(res, error.message)
