@@ -16,10 +16,9 @@ const { createToken } = require("../../utils/utils");
 
 module.exports.createRFP = async (req, res) => {
   try {
-
-    const { mobile, name, email, location, productDetails } = req.body
-    const user = await checkUserExistOrNot(mobile.mobile)
-    if (user && user.length) {
+    const {mobile, name, email, location, productDetails} = req.body
+    const user = await checkUserExistOrNot({mobile: mobile.mobile})
+    if(user && user.length) {
       const userData = {
         name,
         email,

@@ -29,7 +29,7 @@ module.exports.addSellerBulkIndex = async () => {
         .populate("sellerType.cities.state", "name region")
         .populate({
           path: 'sellerProductId',
-          model: 'sellerProducts',
+          model: 'sellerproducts',
           select: 'sellerId serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId',
           populate: [
             {
@@ -39,15 +39,15 @@ module.exports.addSellerBulkIndex = async () => {
             },
             {
               path: 'parentCategoryId',
-              model: 'parentCategory',
+              model: 'parentcategories',
               select: 'name'
             }, {
               path: 'primaryCategoryId',
-              model: 'primaryCategory',
+              model: 'primarycategories',
               select: 'name'
             }, {
               path: 'secondaryCategoryId',
-              model: 'secondaryCategory',
+              model: 'secondarycategories',
               select: 'name'
             }, {
               path: 'poductId',
@@ -136,11 +136,11 @@ exports.sellerSearch = async (reqQuery) => {
   if (keyword) {
     const { searchProductsBy } = reqQuery
     const keywordMatch = []
+    const productMatch = []
     if (searchProductsBy.serviceType) {
-      console.log(searchProductsBy.serviceType.id, "bullshit............")
       keywordMatch.push({
         "match": {
-          "sellerType.name._id": searchProductsBy.serviceType.id,
+          "sellerProductId.serviceType._id": searchProductsBy.serviceType.id,
         }
       })
     }
@@ -158,16 +158,25 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
     }
-    if (searchProductsBy.product && searchProductsBy.product.length) {
-      const productIds = searchProductsBy.product.map(product => product.id)
-      console.log(productIds)
-      keywordMatch.push({
-        "terms": {
-          "sellerProductId.poductId._id": productIds,
+    if (searchProductsBy.product) {
+      productMatch.push({
+        "match_phrase": {
+          "sellerProductId.poductId.name": searchProductsBy.product
         }
       })
-      query.bool.must.push(...keywordMatch)
+      productMatch.push({
+        "match_phrase": {
+          "sellerProductId.secondaryCategoryId.name": searchProductsBy.product
+        }
+      })
+      productMatch.push({
+        "match_phrase": {
+          "sellerProductId.primaryCategoryId.name": searchProductsBy.product
+        }
+      })
     }
+    query.bool.must = keywordMatch
+    query.bool.should = productMatch
   }
 
   if (productId) {

@@ -3,6 +3,7 @@ const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
 const { sellers, buyers } = require("../../modules");
+const bcrypt = require("bcrypt");
 const {
   handleUserSession,
   getAccessToken,
@@ -45,7 +46,7 @@ module.exports.getAccessToken = async (req, res) => {
 module.exports.checkUserExistOrNot = async (req, res) => {
   try {
     const { mobile } = req.body;
-    const seller = await checkUserExistOrNot(mobile);
+    const seller = await checkUserExistOrNot({ mobile });
     if (seller) {
       respSuccess(res);
     }
@@ -58,13 +59,10 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile, reset } = req.body;
-    console.log(req.body);
-    const seller = await checkUserExistOrNot(mobile);
-    console.log(seller, "seller.....");
+    const seller = await checkUserExistOrNot({ mobile });
     if (seller && seller.length && !reset) {
       return respError(res, "A seller with this number already exist");
     }
-    console.log(seller, ".......///////")
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
     const otp = 1234;
     return respSuccess(res, { otp });
@@ -173,41 +171,36 @@ module.exports.getUserProfile = async (req, res) => {
 };
 
 module.exports.updateUser = async (req, res) => {
-  console.log("updating user======================================dgkd;jgi")
   try {
     const { userID } = req;
+    // const { name, email, business, location, type, sellerType } = req.body;
     const _buyer = req.body.buyer || {}
-    console.log(_buyer, "_buyer//.....")
-    console.log(req.body, "req.body..........................")
     let { name, email, business, location, type, sellerType } = req.body;
-    console.log(name, email, business, location, type, sellerType, "8888888888888")
-    const userData = {
-      name,
+
+    let userData = {
+      name: _buyer && _buyer.name || name,
       city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
       email: _buyer && _buyer.email || email || null,
     };
-    console.log(userData, "0000000000000000000000000000000000000000000000000")
-    const buyerData = {
+    let buyerData = {
       name,
       email,
       location,
       userId: userID,
       ..._buyer
     };
-    console.log(buyerData, "buyerData.......................")
-    let _seller = await getSeller(userID)
 
+    let _seller = await getSeller(userID)
     let serviceType = _seller && _seller.sellerType || []
     // if(!buyer)
     //let serviceType
     serviceType = [{
       name: sellerType,
       cities: [{
-        city: location.city,
-        state: location.state
+        city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
+        state: _buyer && _buyer.location && _buyer.location.city || location.city || null,
       }]
     }]
-    console.log(serviceType, 'serviceType.............................')
     const sellerData = {
       name,
       email: email || null,
@@ -216,16 +209,18 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
-    console.log(sellerData, 'sellerData............................')
     const user = await updateUser({ _id: userID }, userData);
-    console.log(user, "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
+    delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);
-    console.log(seller, "ssssssssssssssssssssssssssssssss")
+    if (_buyer && _buyer.mobile) {
+      buyerData.mobile = _buyer.mobile[0].mobile;
+      buyerData.countryCode = _buyer.mobile[0].countryCode;
+    }
+    delete buyerData._id;
     buyer = await updateBuyer({ userId: userID }, buyerData);
 
     if (business) {
       const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
-      console.log(bsnsDtls, "..../////////////")
       const _seller = await updateSeller({ userId: userID }, {
         busenessId: bsnsDtls._id,
       });
@@ -254,10 +249,17 @@ module.exports.forgetPassword = async (req, res) => {
 
 module.exports.updateNewPassword = async (req, res) => {
   try {
-    let { password } = req.body;
+    let { password, currentPassword } = req.body;
     password = encodePassword(password);
     const { userID } = req;
-    const user = await updateUser(userID, { password });
+    let findUser = await checkUserExistOrNot({ _id: userID });
+
+    const curntPwd = findUser && findUser.length && findUser[0].password
+    const comparePass = await bcrypt.compare(currentPassword, curntPwd);
+    if (!comparePass) {
+      return respError(res, "Current pasword is not correct")
+    }
+    const user = await updateUser({ _id: userID }, { password });
     respSuccess(res, user, "Password Updated Successfully");
   } catch (error) {
     respError(res, error.message);

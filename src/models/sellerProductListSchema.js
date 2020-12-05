@@ -125,5 +125,5 @@ const sellerProductSchema = new Schema(
   }
 );
 
-const SellerProducts = model("sellerProducts", sellerProductSchema);
+const SellerProducts = model("sellerproducts", sellerProductSchema);
 module.exports = SellerProducts;
