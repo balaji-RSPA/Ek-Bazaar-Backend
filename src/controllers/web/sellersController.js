@@ -191,8 +191,9 @@ module.exports.addSellerProduct = async(req,res)=>{
 module.exports.updateSellerProduct = async(req,res)=>{
   const {id,inStock} = req.body
   try {
-    let result = await addProductDetails(id, {"productDetails.inStock" : inStock})
-      respSuccess(res,result,"Successfully updated")
+    let updateDetail = await addProductDetails(id, {"productDetails.inStock" : inStock})
+    let seller = await getSellerProfile(updateDetail.sellerId)
+    respSuccess(res,seller,"Successfully updated")
   }catch(error){
     respError(res,error.message)
   }
