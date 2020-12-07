@@ -358,15 +358,31 @@ exports.getSellerProfile = (id) =>
       .populate("contactId")
       .populate("comapanyId")
       .populate("establishmentId")
+
       .populate({
-        path: "sellerProductId",
-        model: "sellerproducts",
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "parentCategoryId",
+          model: ParentCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
         populate: {
           path: "primaryCategoryId",
-          model: "primarycategories"
-        }
+          model: PrimaryCategory.collection.name
+        },
       })
-      // .populate("sellerProductId")
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+      })
       .populate("location.city", "name")
       .populate("location.state", "name")
       .populate("location.country", "name")
