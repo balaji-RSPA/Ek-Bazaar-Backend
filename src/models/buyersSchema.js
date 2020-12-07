@@ -7,6 +7,21 @@ const State = require("./statesSchema");
 const Country = require("./countriesSchema");
 const RFP = require("./rfpSchema");
 
+const notificationSchema = new Schema({
+  sellerLeads: {
+    type: String,
+    trim: true
+  },
+  newOfferings: {
+    type: String,
+    trim: true
+  },
+  promotionalCommunication: {
+    type: String,
+    trim: true
+  }
+})
+
 const location = new Schema({
   city: {
     type: ObjectId,
@@ -21,20 +36,25 @@ const location = new Schema({
   country: {
     type: ObjectId,
     ref: Country,
-    required: true,
+    // required: true,
   },
 });
 
 const buyerSchema = new Schema(
   {
+    userId: {
+      type: ObjectId,
+      required: true
+    },
     name: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     email: {
       type: String,
-      required: true,
+      default: null,
+      // required: true,
       trim: true,
     },
     countryCode: {
@@ -47,15 +67,26 @@ const buyerSchema = new Schema(
       required: true,
       trim: true,
     },
-    password: {
-      type: String,
-      required: true,
-      trim: true,
+    // password: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    // },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+      // required: true
+    },
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+      // required: true
     },
     location: {
       type: { location },
       trim: true,
     },
+    buyerNotifications:{notificationSchema},
     rfpId: {
       type: [ObjectId],
       ref: RFP,

@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
+const elasticsearch = require('elasticsearch');
 const { env } = process;
 const config = require('./config')
+const { tradedb } = config
 
 function dbConnection () {
 
   let url;
   if (env) {
 
-    url = `mongodb://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`
+    url = `mongodb://${tradedb.user}:${tradedb.password}@${tradedb.host}:${tradedb.port}/${tradedb.database}`
     mongoose.connect(url, {
       useCreateIndex: true,
       useNewUrlParser: true,
@@ -33,7 +35,53 @@ function dbConnection () {
 
 };
 
+// function elasticSearchConnect() {
+  let host = 'localhost:9200'
+  if (env) {
+
+    if(env.NODE_ENV === 'staging' || env.NODE_ENV === 'development'){
+
+        host = 'tradebazaarapi.tech-active.com:5085'
+
+    }else if (env.NODE_ENV === 'production') {
+
+      host = 'tradebazaarapi.tech-active.com:5085'
+
+    }
+
+  }
+
+  const es = () => new elasticsearch.Client({
+    host,
+    log: 'error'
+  });
+
+  const esClient = es();
+
+  esClient.ping({
+    requestTimeout: 10000
+  }, (err) => {
+
+    if (err) {
+
+      console.log(err)
+      console.error('elasticsearch cluster is down!');
+
+    } else {
+
+      console.log('Everything is ok with elasticsearch');
+
+    }
+
+  })
+  // return esClient
+// }
+
+// module.exports = esClient
+
 module.exports = { 
     mongoose,
-    dbConnection
+    dbConnection,
+    esClient
+    // elasticSearchConnect
 }

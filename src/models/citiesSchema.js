@@ -11,10 +11,10 @@ const citiesSchema = new Schema(
       trim: true,
       required: true,
     },
-    stateId: {
+    state: {
       type: ObjectId,
       ref: State,
-      required: true,
+      // required: true,
     },
     status: {
       type: Boolean,
@@ -26,6 +26,22 @@ const citiesSchema = new Schema(
     versionKey: false,
   }
 );
+
+citiesSchema.index({
+  name: 1,
+  state: 1
+}, {
+  background: false,
+  unique: true,
+  partialFilterExpression: {
+    name: {
+      $exists: true
+    },
+    state: {
+      $exists: true
+    }
+  }
+})
 
 const cities = model('cities', citiesSchema)
 module.exports = cities

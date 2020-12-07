@@ -42,6 +42,10 @@ const secondaryCatSchema = new Schema(
         type: ObjectId,
         ref: PrimaryCategory,
         default: null
+    },
+    l1: {
+      type: String,
+      default: true
     }
     
   },
@@ -51,5 +55,21 @@ const secondaryCatSchema = new Schema(
   }
 );
 
-const SecondaryCategory = model("secondaryCategory", secondaryCatSchema);
+secondaryCatSchema.index({
+  name: 1,
+  vendorId: 1
+}, {
+  background: false,
+  // unique: true,
+  partialFilterExpression: {
+    name: {
+      $exists: true
+    },
+    vendorId: {
+      $exists: true
+    }
+  }
+})
+
+const SecondaryCategory = model("secondarycategories", secondaryCatSchema);
 module.exports = SecondaryCategory;

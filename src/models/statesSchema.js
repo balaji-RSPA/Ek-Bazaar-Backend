@@ -9,7 +9,7 @@ const statesSchema = new Schema({
         trim: true,
         required: true
     },
-    countryId: {
+    country: {
         type: ObjectId,
         ref: Country,
         required: true
@@ -21,6 +21,22 @@ const statesSchema = new Schema({
 }, {
     timestamps: true,
     versionKey: false
+})
+
+statesSchema.index({
+  name: 1,
+  country: 1
+}, {
+  background: false,
+  unique: true,
+  partialFilterExpression: {
+    name: {
+      $exists: true
+    },
+    country: {
+      $exists: true
+    }
+  }
 })
 
 const States = model('states', statesSchema)
