@@ -91,7 +91,7 @@ module.exports.getCity = (query, id) =>
 exports.getAllCities = (reqQuery) =>
   new Promise((resolve, reject) => {
     const skip = parseInt(reqQuery.skip) || 0;
-    const limit = parseInt(reqQuery.limit) || 1000;
+    const limit = parseInt(reqQuery.limit) || 1500;
     const search = reqQuery.search || "";
 
     let { state } = reqQuery;

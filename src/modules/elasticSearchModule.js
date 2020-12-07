@@ -290,4 +290,28 @@ exports.getCounts = (query) =>
       })
       .then(resolve)
       .catch(reject);
-  });
+});
+
+/*
+
+  Update doc
+
+*/
+
+exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
+  const body = {
+    doc,
+  };
+  let id = _id;
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    id = id.toString();
+  }
+
+  const newData = {
+    index: INDEXNAME,
+    id,
+    body,
+  };
+  console.log('elastic updatedd------------------')
+  esClient.update(newData).then(resolve).catch(reject);
+});
