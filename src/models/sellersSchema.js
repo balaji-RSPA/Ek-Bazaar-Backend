@@ -7,7 +7,7 @@ const State = require("./statesSchema");
 const Country = require("./countriesSchema");
 const SellerBusiness = require('./sellerBusinessSchema')
 const SellerStatutory = require('./sellerStatutorySchema')
-// const SellerContact =require('./sellerContactsSchema')
+const SellerContact =require('./sellerContactsSchema')
 const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
@@ -175,6 +175,11 @@ const sellersSchema = new Schema(
     sellerCompanyId: {
       type: ObjectId,
       ref: SellerCompany,
+      default: null
+    },
+    sellerContactId: {
+      type: ObjectId,
+      ref: SellerContact,
       default: null
     },
     sellerProductId: {

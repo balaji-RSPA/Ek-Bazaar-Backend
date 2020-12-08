@@ -176,6 +176,7 @@ module.exports.updateUser = async (req, res) => {
     // const { name, email, business, location, type, sellerType } = req.body;
     const _buyer = req.body.buyer || {}
     let { name, email, business, location, type, sellerType } = req.body;
+    console.log("🚀 ~ file: userController.js ~ line 179 ~ module.exports.updateUser= ~ req.body", req.body)
     
     let userData = {
       name: _buyer && _buyer.name || name,
@@ -209,7 +210,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
-    console.log("req.body.buyer",userData,buyerData, sellerData)
+    // console.log("req.body.buyer",userData,buyerData, sellerData)
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);
@@ -228,9 +229,9 @@ module.exports.updateUser = async (req, res) => {
     }
     seller = await getSeller(userID)
     if (user && buyer && seller) {
-      respSuccess(res, { seller, buyer }, "registreation completed");
+      respSuccess(res, { seller, buyer }, "Updated Seccessfully");
     } else {
-      respError(res, "registeration failed");
+      respError(res, "Failed to update");
     }
   } catch (error) {
     respError(res, error.message);
@@ -253,6 +254,7 @@ module.exports.updateNewPassword = async (req, res) => {
     let { password, currentPassword } = req.body;
     password = encodePassword(password);
     const { userID } = req;
+    // console.log("req.body", req.body, userID)
     let findUser = await checkUserExistOrNot({ _id: userID });
 
     const curntPwd = findUser && findUser.length && findUser[0].password

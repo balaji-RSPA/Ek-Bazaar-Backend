@@ -11,6 +11,8 @@ const Users = require('../../config/tenderdb').userModel
 const Sessions = require('../../config/tenderdb').sessionModel
 const SessionsLogs = require('../../config/tenderdb').sessionLogModel
 const SellerProducts = require('../models/sellerProductListSchema')
+const Cities = require('../models/citiesSchema')
+const States = require('../models/statesSchema')
 const {
   checkAndAddCity,
   getState,
@@ -310,8 +312,19 @@ module.exports.getSeller = (id, chkStock) =>
       .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
-      .populate('contactId')
-      .populate('comapanyId')
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "city",
+          model: Cities
+        },
+        populate: {
+          path: "state",
+          model: States
+        },
+      })
+      .populate('sellerCompanyId')
       .populate('establishmentId')
 
       .populate({
@@ -363,18 +376,34 @@ exports.getSellerProfile = (id) =>
       .populate("sellerType")
       .populate("busenessId")
       .populate("statutoryId")
-      .populate("contactId")
-      .populate("comapanyId")
+      .populate("sellerContactId")
+      .populate("sellerCompanyId")
       .populate("establishmentId")
+
       .populate({
-        path: "sellerProductId",
-        model: "sellerproducts",
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "parentCategoryId",
+          model: ParentCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
         populate: {
           path: "primaryCategoryId",
-          model: "primarycategories"
-        }
+          model: PrimaryCategory.collection.name
+        },
       })
-      // .populate("sellerProductId")
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+      })
       .populate("location.city", "name")
       .populate("location.state", "name")
       .populate("location.country", "name")
@@ -440,6 +469,7 @@ module.exports.getAllSellers = () =>
 
 module.exports.updateSeller = (query, data, elastic) =>
   new Promise((resolve, reject) => {
+    console.log(query, data, ' uodate seller-----')
     Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
@@ -447,8 +477,8 @@ module.exports.updateSeller = (query, data, elastic) =>
       .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
-      .populate('contactId')
-      .populate('comapanyId')
+      .populate('sellerContactId')
+      .populate('sellerCompanyId')
       .populate('establishmentId')
 
       .populate({
@@ -488,14 +518,14 @@ module.exports.updateSeller = (query, data, elastic) =>
       .lean()
       .then(async (doc) => {
 
-        if (doc && elastic) {
-          // const tenderDoc = JSON.parse(JSON.stringify(doc));
-          const esData = JSON.parse(JSON.stringify(doc));
-          delete esData._id; // ES will not support _id in the doc. so, deleted
-          console.log("🚀 ~ file: sellersModule.js ~ line 453 ~ .then ~ esData", esData)
-          // console.log(esData, ' elastic')
-          await updateESDoc(doc._id, esData); // and updated to ES
-        }
+        // if (doc && elastic) {
+        //   // const tenderDoc = JSON.parse(JSON.stringify(doc));
+        //   const esData = JSON.parse(JSON.stringify(doc));
+        //   delete esData._id; // ES will not support _id in the doc. so, deleted
+        //   console.log("🚀 ~ file: sellersModule.js ~ line 453 ~ .then ~ esData", esData)
+        //   // console.log(esData, ' elastic')
+        //   await updateESDoc(doc._id, esData); // and updated to ES
+        // }
 
         resolve(doc)
       })
@@ -532,6 +562,7 @@ module.exports.addCompanyDetails = (sellerId, data) =>
 
 module.exports.addContactDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
+    console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
     SellersContact.findOneAndUpdate(
       { sellerId },
       { $set: data },
