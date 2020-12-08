@@ -7,7 +7,7 @@ const State = require("./statesSchema");
 const Country = require("./countriesSchema");
 const SellerBusiness = require('./sellerBusinessSchema')
 const SellerStatutory = require('./sellerStatutorySchema')
-const SellerContact =require('./sellerContactsSchema')
+const SellerContact = require('./sellerContactsSchema')
 const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
@@ -185,7 +185,7 @@ const sellersSchema = new Schema(
     sellerProductId: {
       type: [ObjectId],
       ref: "sellerproducts",
-      default: null
+      default: []
     },
     // primaryCatId:{
     //   type: ObjectId,
@@ -193,27 +193,27 @@ const sellersSchema = new Schema(
     //   default: null
     // },
     // sellerNotifications:{notificationSchema},
-    notifications:{
-        businessInquiries: {
-          type: String,
-          default: null,
-          trim: true
-        },
-        buyLeads: {
-          type: String,
-          default: null,
-          trim: true
-        },
-        newOfferings: {
-          type: String,
-          default: null,
-          trim: true
-        },
-        promotionalCommunication: {
-          type: String,
-          default: null,
-          trim: true
-        }
+    notifications: {
+      businessInquiries: {
+        type: String,
+        default: null,
+        trim: true
+      },
+      buyLeads: {
+        type: String,
+        default: null,
+        trim: true
+      },
+      newOfferings: {
+        type: String,
+        default: null,
+        trim: true
+      },
+      promotionalCommunication: {
+        type: String,
+        default: null,
+        trim: true
+      }
     },
     website: {
       type: String,

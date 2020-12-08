@@ -33,6 +33,12 @@ router.post("/addProductCategory", category.addProduct);
 router.get("/getProductCategory/:id", category.getProduct);
 router.get("/products", category.getProducts)
 
+//product sub categories
+router.post("/addBulkProductSubcategories", category.addBulkProductSubCategories);
+// router.post("/addProductSubcategories", category.addProduct);
+// router.get("/getProductSubcategories/:id", category.getProduct);
+// router.get("/products-subcategories", category.getProducts)
+
 // Seller Types
 router.post("/sellerType", category.addSellerType);
 router.get("/sellerTypes", category.getAllSellerTypes);

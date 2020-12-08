@@ -17,27 +17,27 @@ const image = new Schema({
 const parentCatSchema = new Schema(
   {
     vendorId: {
-        type: String,
-        trim: true
+      type: String,
+      trim: true
     },
     name: {
-        type: String,
-        trim: true,
-        required: true,
+      type: String,
+      trim: true,
+      required: true,
     },
     status: {
-        type: Boolean,
-        default: true
+      type: Boolean,
+      default: true
     },
-    primaryCategotyId:[{
-        type: ObjectId,
-        ref: PrimaryCategory,
-        default: null
+    primaryCategotyId: [{
+      type: ObjectId,
+      ref: PrimaryCategory,
+      default: []
     }],
     image: {
-        type: { image }
+      type: { image }
     },
-    
+
   },
   {
     timestamps: true,
