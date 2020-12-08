@@ -11,6 +11,8 @@ const Users = require('../../config/tenderdb').userModel
 const Sessions = require('../../config/tenderdb').sessionModel
 const SessionsLogs = require('../../config/tenderdb').sessionLogModel
 const SellerProducts = require('../models/sellerProductListSchema')
+const Cities = require('../models/citiesSchema')
+const States = require('../models/statesSchema')
 const {
   checkAndAddCity,
   getState,
@@ -310,8 +312,19 @@ module.exports.getSeller = (id,chkStock) =>
       .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
-      .populate('contactId')
-      .populate('comapanyId')
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "city",
+          model: Cities
+        },
+        populate: {
+          path: "state",
+          model: States
+        },
+      })
+      .populate('sellerCompanyId')
       .populate('establishmentId')
 
       .populate({
@@ -356,8 +369,8 @@ exports.getSellerProfile = (id) =>
       .populate("sellerType")
       .populate("busenessId")
       .populate("statutoryId")
-      .populate("contactId")
-      .populate("comapanyId")
+      .populate("sellerContactId")
+      .populate("sellerCompanyId")
       .populate("establishmentId")
       .populate({
         path: "sellerProductId",
@@ -383,8 +396,8 @@ module.exports.getAllSellers = () =>
       .populate('sellerType')
       .populate('busenessId')
       .populate('statutoryId')
-      .populate('contactId')
-      .populate('comapanyId')
+      .populate('sellerContactId')
+      .populate('sellerCompanyId')
       .populate('establishmentId')
       .populate('sellerProductId')
       .populate('location.city', 'name')
@@ -399,6 +412,7 @@ module.exports.getAllSellers = () =>
 
 module.exports.updateSeller = (query, data, elastic) =>
   new Promise((resolve, reject) => {
+    console.log(query, data, ' uodate seller-----')
     Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
@@ -406,8 +420,8 @@ module.exports.updateSeller = (query, data, elastic) =>
       .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
-      .populate('contactId')
-      .populate('comapanyId')
+      .populate('sellerContactId')
+      .populate('sellerCompanyId')
       .populate('establishmentId')
 
       .populate({
@@ -491,6 +505,7 @@ module.exports.addCompanyDetails = (sellerId, data) =>
 
 module.exports.addContactDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
+console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
     SellersContact.findOneAndUpdate(
       { sellerId },
       { $set: data },
