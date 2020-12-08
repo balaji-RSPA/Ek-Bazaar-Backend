@@ -477,14 +477,14 @@ module.exports.updateSeller = (query, data, elastic) =>
       .lean()
       .then(async (doc) => {
 
-        if (doc && elastic) {
-          // const tenderDoc = JSON.parse(JSON.stringify(doc));
-          const esData = JSON.parse(JSON.stringify(doc));
-          delete esData._id; // ES will not support _id in the doc. so, deleted
-          console.log("🚀 ~ file: sellersModule.js ~ line 453 ~ .then ~ esData", esData)
-          // console.log(esData, ' elastic')
-          await updateESDoc(doc._id, esData); // and updated to ES
-        }
+        // if (doc && elastic) {
+        //   // const tenderDoc = JSON.parse(JSON.stringify(doc));
+        //   const esData = JSON.parse(JSON.stringify(doc));
+        //   delete esData._id; // ES will not support _id in the doc. so, deleted
+        //   console.log("🚀 ~ file: sellersModule.js ~ line 453 ~ .then ~ esData", esData)
+        //   // console.log(esData, ' elastic')
+        //   await updateESDoc(doc._id, esData); // and updated to ES
+        // }
 
         resolve(doc)
       })
