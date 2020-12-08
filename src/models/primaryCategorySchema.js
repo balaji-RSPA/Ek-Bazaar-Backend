@@ -32,12 +32,12 @@ const primaryCatSchema = new Schema(
     },
     secondaryCategotyId: [{
       type: ObjectId,
-      ref: 'secondarycategories',
-      default: null
+      ref: 'new_secondarycategories',
+      default: []
     }],
     parentCatId: {
       type: ObjectId,
-      ref: 'parentCategory',
+      ref: 'new_parentcategories',
       default: null
     },
     image: {
@@ -51,5 +51,5 @@ const primaryCatSchema = new Schema(
   }
 );
 
-const PrimaryCategory = model("primarycategories", primaryCatSchema);
+const PrimaryCategory = model("new_primarycategories", primaryCatSchema);
 module.exports = PrimaryCategory;

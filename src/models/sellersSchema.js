@@ -179,8 +179,8 @@ const sellersSchema = new Schema(
     },
     sellerProductId: {
       type: [ObjectId],
-      ref: "sellerproducts",
-      default: null
+      ref: "new_sellerproducts",
+      default: []
     },
     // primaryCatId:{
     //   type: ObjectId,
@@ -188,27 +188,27 @@ const sellersSchema = new Schema(
     //   default: null
     // },
     // sellerNotifications:{notificationSchema},
-    notifications:{
-        businessInquiries: {
-          type: String,
-          default: null,
-          trim: true
-        },
-        buyLeads: {
-          type: String,
-          default: null,
-          trim: true
-        },
-        newOfferings: {
-          type: String,
-          default: null,
-          trim: true
-        },
-        promotionalCommunication: {
-          type: String,
-          default: null,
-          trim: true
-        }
+    notifications: {
+      businessInquiries: {
+        type: String,
+        default: null,
+        trim: true
+      },
+      buyLeads: {
+        type: String,
+        default: null,
+        trim: true
+      },
+      newOfferings: {
+        type: String,
+        default: null,
+        trim: true
+      },
+      promotionalCommunication: {
+        type: String,
+        default: null,
+        trim: true
+      }
     },
     website: {
       type: String,
@@ -227,5 +227,5 @@ const sellersSchema = new Schema(
   }
 );
 
-const Seller = model("sellers", sellersSchema);
+const Seller = model("new_sellers", sellersSchema);
 module.exports = Seller;

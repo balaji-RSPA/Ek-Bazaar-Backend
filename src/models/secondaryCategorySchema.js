@@ -18,8 +18,8 @@ const image = new Schema({
 const secondaryCatSchema = new Schema(
   {
     vendorId: {
-        type: String,
-        trim: true
+      type: String,
+      trim: true
     },
     name: {
       type: String,
@@ -27,27 +27,27 @@ const secondaryCatSchema = new Schema(
       required: true,
     },
     status: {
-        type: Boolean,
-        default: true
+      type: Boolean,
+      default: true
     },
-    productId:[{
-        type: ObjectId,
-        ref: "products",
-        default: null
+    productId: [{
+      type: ObjectId,
+      ref: "new_products",
+      default: []
     }],
     image: {
       type: { image }
     },
     primaryCatId: {
-        type: ObjectId,
-        ref: PrimaryCategory,
-        default: null
+      type: ObjectId,
+      ref: PrimaryCategory,
+      default: null
     },
     l1: {
       type: String,
       default: true
     }
-    
+
   },
   {
     timestamps: true,
@@ -71,5 +71,5 @@ secondaryCatSchema.index({
   }
 })
 
-const SecondaryCategory = model("secondarycategories", secondaryCatSchema);
+const SecondaryCategory = model("new_secondarycategories", secondaryCatSchema);
 module.exports = SecondaryCategory;

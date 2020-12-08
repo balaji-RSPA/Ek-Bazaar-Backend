@@ -5,7 +5,8 @@ const States = require("./statesSchema");
 const ParentCategory = require('./parentCategorySchema')
 const PrimaryCategory = require('./primaryCategorySchema')
 const SecondaryCategory = require('./secondaryCategorySchema')
-const Products = require('./productsSchema')
+const Products = require('./productsSchema');
+const ProductsSubCategories = require("./productsSubCategoriesSchema");
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
@@ -89,7 +90,7 @@ const sellerProductSchema = new Schema(
   {
     sellerId: {
       type: ObjectId,
-      ref: "sellers",
+      ref: "new_sellers",
       default: null,
     },
     serviceType: {
@@ -117,6 +118,15 @@ const sellerProductSchema = new Schema(
       ref: Products,
       default: null,
     },
+    productSubcategoryId: [{
+      categoryId: {
+        type: ObjectId,
+        ref: ProductsSubCategories,
+        default: null
+      },
+      productDetails: productDetailsSchema,
+      // default: [],
+    }],
     productDetails: productDetailsSchema,
   },
   {
@@ -125,5 +135,5 @@ const sellerProductSchema = new Schema(
   }
 );
 
-const SellerProducts = model("sellerproducts", sellerProductSchema);
+const SellerProducts = model("new_sellerproducts", sellerProductSchema);
 module.exports = SellerProducts;
