@@ -18,6 +18,44 @@ const documentSchema = new Schema({
     trim: true,
   },
 });
+const imageSchema = new Schema({
+  image1:{
+    name: {
+      type: String,
+    },
+    code: {
+      type: String,
+      trim: true,
+    },
+  },
+  image2 : {
+    name: {
+      type: String,
+    },
+    code: {
+      type: String,
+      trim: true,
+    },
+  },
+  image3:{
+    name: {
+      type: String,
+    },
+    code: {
+      type: String,
+      trim: true,
+    },
+  },
+  image4:{
+    name: {
+      type: String,
+    },
+    code: {
+      type: String,
+      trim: true,
+    },
+  }
+})
 
 const productDetailsSchema = new Schema({
   name: {
@@ -83,6 +121,7 @@ const productDetailsSchema = new Schema({
     trim: true,
   },
   document: { documentSchema },
+  image : imageSchema
 });
 
 const sellerProductSchema = new Schema(
