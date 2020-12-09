@@ -15,6 +15,7 @@ const SellerContact = require('./sellerContactsSchema')
 const SellerCompany = require('./sellerCompanySchema')
 const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema')
+const ProductsSubCategories = require("./productsSubCategoriesSchema")
 // const Users = require('./user')
 
 module.exports = {
@@ -35,5 +36,6 @@ module.exports = {
     SellerCompany,
     SellerProducts,
     SellerTypes,
+    ProductsSubCategories
     // Users
 }

@@ -26,6 +26,7 @@ const {
   getLevelTwoCategoryList,
   getLevelThreeCategoryList,
   getLevelFourCategoryList,
+  getLevelFiveCategoryList
 } = require('../modules/categoryModule')
 const { sellerProductsBulkInsert } = require('./sellerProductModule')
 const { capitalizeFirstLetter } = require('../utils/helpers')
@@ -280,10 +281,10 @@ module.exports.sellerBulkInser = (data) =>
   })
 // populate : {path: ("primaryCategoryId")},
 // populate : {path: ("secondaryCategoryId")},
-module.exports.getSeller = (id,chkStock) =>
+module.exports.getSeller = (id, chkStock) =>
   new Promise((resolve, reject) => {
     let matchVal = null
-    if(chkStock === true || chkStock === false){
+    if (chkStock === true || chkStock === false) {
       matchVal = {
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -292,11 +293,11 @@ module.exports.getSeller = (id,chkStock) =>
         },
         match: {
           'productDetails.inStock': {
-              $eq: chkStock
+            $eq: chkStock
           }
+        }
       }
-      }
-    }else{
+    } else {
       matchVal = {
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -352,6 +353,13 @@ module.exports.getSeller = (id,chkStock) =>
         },
       })
       .populate(matchVal)
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+      })
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
@@ -421,50 +429,50 @@ exports.getSellerProfile = (id) =>
 module.exports.getAllSellers = () =>
   new Promise((resolve, reject) => {
     Sellers.find({})
-    .populate('sellerProductId.')
-    .populate('sellerType.name', 'name')
-    .populate('sellerType.cities.city', 'name')
-    .populate('sellerType.cities.state', 'name region')
-    .populate('busenessId')
-    .populate('statutoryId')
-    .populate('contactId')
-    .populate('comapanyId')
-    .populate('establishmentId')
+      .populate('sellerProductId.')
+      .populate('sellerType.name', 'name')
+      .populate('sellerType.cities.city', 'name')
+      .populate('sellerType.cities.state', 'name region')
+      .populate('busenessId')
+      .populate('statutoryId')
+      .populate('contactId')
+      .populate('comapanyId')
+      .populate('establishmentId')
 
-    .populate({
-      path: 'sellerProductId',
-      model: 'sellerproducts',
-      populate: {
-        path: "parentCategoryId",
-        model: ParentCategory.collection.name
-      },
-    })
-    .populate({
-      path: 'sellerProductId',
-      model: 'sellerproducts',
-      populate: {
-        path: "primaryCategoryId",
-        model: PrimaryCategory.collection.name
-      },
-    })
-    .populate({
-      path: 'sellerProductId',
-      model: 'sellerproducts',
-      populate: {
-        path: "secondaryCategoryId",
-        model: SecondaryCategory.collection.name
-      },
-    })
-    .populate({
-      path: 'sellerProductId',
-      model: 'sellerproducts',
-      populate: {
-        path: 'productDetails.regionOfOrigin',
-      },
-    })
-    .populate('location.city', 'name')
-    .populate('location.state', 'name region')
-    .populate('location.country', 'name')
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "parentCategoryId",
+          model: ParentCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          model: PrimaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+      })
+      .populate('location.city', 'name')
+      .populate('location.state', 'name region')
+      .populate('location.country', 'name')
       .then((doc) => {
         console.log(doc)
         resolve(doc)
@@ -567,7 +575,7 @@ module.exports.addCompanyDetails = (sellerId, data) =>
 
 module.exports.addContactDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
-console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
+    console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
     SellersContact.findOneAndUpdate(
       { sellerId },
       { $set: data },
@@ -597,7 +605,7 @@ module.exports.addEstablishmentPhotos = (sellerId, data) =>
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
     if (id) {
-      SelleresProductList.findOneAndUpdate({ _id: id }, { $set: data },{ new: true })
+      SelleresProductList.findOneAndUpdate({ _id: id }, { $set: data }, { new: true })
         .then((doc) => {
           resolve(doc)
         })
@@ -674,20 +682,38 @@ exports.structureSellerData = async (seller) => {
     Mobile_3,
     Mobile_4,
     Mobile_5,
+    Mobile_6,
+    Mobile_7,
+    Mobile_8,
+    Mobile_9,
+    Mobile_10,
     Service_City,
     Service_Type,
     Level_1,
     Level_2,
     Level_3,
     Level_4,
+    Level_5
   } = seller
 
   name = name.trim()
   let serviceCity = Service_City.trim().split(',')
   serviceCity = await getServiceCity(_.uniq(serviceCity))
+  let levelFour = [], levelFive = []
+  if (Level_5) {
+    if (typeof Level_5 === 'number') Level_5 = `${Level_5}`
+    Level_5 = Level_5.split(',')
+    // console.log("🚀 ~ file: sellersModule.js ~ line 663 ~ exports.structureSellerData= ~ Level_5", Level_5)
+    levelFive = await getLevelFiveCategoryList(Level_5)
+    console.log("🚀 ~ file: sellersModule.js ~ line 677 ~ exports.structureSellerData= ~ levelFive", levelFive)
+  }
+  // else {
   if (typeof Level_4 === 'number') Level_4 = `${Level_4}`
   Level_4 = Level_4.split(',')
-  const levelFour = await getLevelFourCategoryList(Level_4)
+  // console.log("🚀 ~ file: sellersModule.js ~ line 669 ~ exports.structureSellerData= ~ Level_4", Level_4)
+  levelFour = await getLevelFourCategoryList(Level_4)
+  // console.log("🚀 ~ file: sellersModule.js ~ line 678 ~ exports.structureSellerData= ~ levelFour", levelFour)
+  // }
 
   console.log(' working ------------------')
 
@@ -700,6 +726,20 @@ exports.structureSellerData = async (seller) => {
     console.log(' Existing Seller --------------')
     let productData = []
     let proData = []
+    if (levelFive.length) /*{*/
+      levelFive = levelFive.map(cat => ({ categoryId: cat._id, productDetails: {} }))
+    console.log("🚀 ~ file: sellersModule.js ~ line 686 ~ exports.structureSellerData= ~ levelFive.length", levelFive)
+    // productData = levelFive.map(pro => ({
+    //   sellerId: sellerExist._id,
+    //   serviceType: sellerType,
+    //   parentCategoryId: pro.parentCatId._id,
+    //   primaryCategoryId: pro.primaryCatId._id,
+    //   secondaryCategoryId: pro.secondaryId._id,
+    //   poductId: pro.productId._id,
+    //   productSubcategoryId: pro._id
+    // }))
+    // } else {
+    console.log("🚀 ~ file: sellersModule.js ~ line 686 ~ exports.structureSellerData= ~ levelFour.length", levelFour.length)
     productData = levelFour.map((pro) => ({
       sellerId: sellerExist._id,
       serviceType: sellerType,
@@ -707,7 +747,10 @@ exports.structureSellerData = async (seller) => {
       primaryCategoryId: pro.primaryCatId._id,
       secondaryCategoryId: pro.secondaryId._id,
       poductId: pro._id,
+      productSubcategoryId: levelFive
     }))
+    // }
+    console.log("🚀 ~ file: sellersModule.js ~ line 708 ~ exports.structureSellerData= ~ productData", productData)
     proData = await sellerProductsBulkInsert(productData)
     // console.log(serviceCity, ' seller type -----')
     let _sellerType = []
@@ -755,6 +798,7 @@ exports.structureSellerData = async (seller) => {
     Level_1 = Level_1.toString().split(',')
     Level_2 = Level_2.toString().split(',')
     Level_3 = Level_3.toString().split(',')
+    Level_5 = Level_5 && Level_5.toString().split(',') || []
 
     // Level_4 = Level_4.split(","); -----------
 
@@ -802,6 +846,26 @@ exports.structureSellerData = async (seller) => {
       mobile.push({
         mobile: Mobile_5,
       })
+    Mobile_6 &&
+      mobile.push({
+        mobile: Mobile_1,
+      })
+    Mobile_7 &&
+      mobile.push({
+        mobile: Mobile_2,
+      })
+    Mobile_8 &&
+      mobile.push({
+        mobile: Mobile_3,
+      })
+    Mobile_9 &&
+      mobile.push({
+        mobile: Mobile_4,
+      })
+    Mobile_10 &&
+      mobile.push({
+        mobile: Mobile_5,
+      })
 
     const finalData = {
       name,
@@ -829,6 +893,20 @@ exports.structureSellerData = async (seller) => {
     let proData = []
 
     if (result) {
+      if (levelFive.length) /*{*/
+        levelFive = levelFive.map(cat => ({ categoryId: cat._id, productDetails: {} }))
+      console.log("🚀 ~ file: sellersModule.js ~ line 854 ~ exports.structureSellerData= ~ levelFive.length", levelFive.length)
+      // productData = levelFive.map(pro => ({
+      //   sellerId: result._id,
+      //   serviceType: sellerType,
+      //   parentCategoryId: pro.parentCatId._id,
+      //   primaryCategoryId: pro.primaryCatId._id,
+      //   secondaryCategoryId: pro.secondaryId._id,
+      //   poductId: pro.productId._id,
+      //   productSubcategoryId: pro._id
+      // }))
+      // } else {
+      console.log("🚀 ~ file: sellersModule.js ~ line 865 ~ exports.structureSellerData= ~ levelFour.length", levelFour.length)
       productData = levelFour.map((pro) => ({
         sellerId: result._id,
         serviceType: sellerType,
@@ -836,7 +914,10 @@ exports.structureSellerData = async (seller) => {
         primaryCategoryId: pro.primaryCatId._id,
         secondaryCategoryId: pro.secondaryId._id,
         poductId: pro._id,
+        productSubcategoryId: levelFive
       }))
+      // }
+      console.log("🚀 ~ file: sellersModule.js ~ line 875 ~ exports.structureSellerData= ~ productData", productData)
       proData = await sellerProductsBulkInsert(productData)
       const upData = {
         sellerProductId: proData,
