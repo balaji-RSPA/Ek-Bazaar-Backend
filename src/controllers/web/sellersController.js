@@ -49,6 +49,7 @@ module.exports.updateSeller = async (req, res) => {
       notifications,
       deactivateAccount
     } = req.body
+    console.log(establishmentPhotos, ' docccc')
     const { userID } = req
     const user = await getSeller(userID)
     const sellerID = user._id
