@@ -32,12 +32,12 @@ const primaryCatSchema = new Schema(
     },
     secondaryCategotyId: [{
       type: ObjectId,
-      ref: 'secondaryCategory',
-      default: null
+      ref: 'secondarycategories',
+      default: []
     }],
     parentCatId: {
       type: ObjectId,
-      ref: 'parentCategory',
+      ref: 'parentcategories',
       default: null
     },
     image: {
