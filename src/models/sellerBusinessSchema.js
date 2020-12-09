@@ -16,8 +16,7 @@ const sellerBusinessSchema = new Schema(
       trim: true,
     },
     yearOfEstablishment: {
-      type: Date,
-      sparse: true,
+      type: Number,
       default: null,
     },
     promotorName: {
