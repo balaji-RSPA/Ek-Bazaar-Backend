@@ -90,7 +90,7 @@ const sellerProductSchema = new Schema(
   {
     sellerId: {
       type: ObjectId,
-      ref: "new_sellers",
+      ref: "sellers",
       default: null,
     },
     serviceType: {
@@ -135,5 +135,5 @@ const sellerProductSchema = new Schema(
   }
 );
 
-const SellerProducts = model("new_sellerproducts", sellerProductSchema);
+const SellerProducts = model("sellerproducts", sellerProductSchema);
 module.exports = SellerProducts;

@@ -7,7 +7,7 @@ const State = require("./statesSchema");
 const Country = require("./countriesSchema");
 const SellerBusiness = require('./sellerBusinessSchema')
 const SellerStatutory = require('./sellerStatutorySchema')
-// const SellerContact =require('./sellerContactsSchema')
+const SellerContact = require('./sellerContactsSchema')
 const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
@@ -177,9 +177,14 @@ const sellersSchema = new Schema(
       ref: SellerCompany,
       default: null
     },
+    sellerContactId: {
+      type: ObjectId,
+      ref: SellerContact,
+      default: null
+    },
     sellerProductId: {
       type: [ObjectId],
-      ref: "new_sellerproducts",
+      ref: "sellerproducts",
       default: []
     },
     // primaryCatId:{
@@ -227,5 +232,5 @@ const sellersSchema = new Schema(
   }
 );
 
-const Seller = model("new_sellers", sellersSchema);
+const Seller = model("sellers", sellersSchema);
 module.exports = Seller;
