@@ -86,11 +86,23 @@ const buyerSchema = new Schema(
       type: { location },
       trim: true,
     },
-    buyerNotifications:{notificationSchema},
+    notifications:{
+      type: {notificationSchema}
+    },
     rfpId: {
       type: [ObjectId],
       ref: RFP,
-    }
+    },
+    deactivateAccount: {
+      status: {
+        type: Boolean,
+        default: false,
+      },
+      reason: {
+        type: String,
+        default: null,
+      },
+    },
   },
   {
     timestamps: true,

@@ -79,6 +79,8 @@ module.exports.updateSeller = async (req, res) => {
       // newData.busenessId = cntctDtls._id;
     }
     if (establishmentPhotos) {
+
+    console.log(establishmentPhotos, ' es')
       const estblsmntPhts = await addEstablishmentPhotos(
         sellerID,
         establishmentPhotos,

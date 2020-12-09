@@ -29,7 +29,7 @@ const {
 } = require('../modules/categoryModule')
 const { sellerProductsBulkInsert } = require('./sellerProductModule')
 const { capitalizeFirstLetter } = require('../utils/helpers')
-const { PrimaryCategory, SecondaryCategory, ParentCategory } = require('../models')
+const { PrimaryCategory, SecondaryCategory, ParentCategory, SellerContact } = require('../models')
 const { updateESDoc } = require('./elasticSearchModule')
 
 // module.exports.checkSellerExistOrNot = (mobile) =>
@@ -316,13 +316,13 @@ module.exports.getSeller = (id,chkStock) =>
         path: 'sellerContactId',
         model: SellersContact,
         populate: {
-          path: "city",
-          model: Cities
+          path: "location.state",
+          model: States,
         },
         populate: {
-          path: "state",
-          model: States
-        },
+          path: "location.city",
+          model: Cities
+        }
       })
       .populate('sellerCompanyId')
       .populate('establishmentId')
@@ -370,6 +370,18 @@ exports.getSellerProfile = (id) =>
       .populate("busenessId")
       .populate("statutoryId")
       .populate("sellerContactId")
+      // .populate({
+      //   path: 'sellerContactId',
+      //   model: SellerContact,
+      //   populate: {
+      //     path: 'city',
+      //     model: Cities
+      //   },
+      //   populate: {
+      //     path: 'state',
+      //     model: States
+      //   },
+      // })
       .populate("sellerCompanyId")
       .populate("establishmentId")
 
@@ -409,16 +421,50 @@ exports.getSellerProfile = (id) =>
 module.exports.getAllSellers = () =>
   new Promise((resolve, reject) => {
     Sellers.find({})
-      .populate('sellerType')
-      .populate('busenessId')
-      .populate('statutoryId')
-      .populate('sellerContactId')
-      .populate('sellerCompanyId')
-      .populate('establishmentId')
-      .populate('sellerProductId')
-      .populate('location.city', 'name')
-      .populate('location.state', 'name')
-      .populate('location.country', 'name')
+    .populate('sellerProductId.')
+    .populate('sellerType.name', 'name')
+    .populate('sellerType.cities.city', 'name')
+    .populate('sellerType.cities.state', 'name region')
+    .populate('busenessId')
+    .populate('statutoryId')
+    .populate('contactId')
+    .populate('comapanyId')
+    .populate('establishmentId')
+
+    .populate({
+      path: 'sellerProductId',
+      model: 'sellerproducts',
+      populate: {
+        path: "parentCategoryId",
+        model: ParentCategory.collection.name
+      },
+    })
+    .populate({
+      path: 'sellerProductId',
+      model: 'sellerproducts',
+      populate: {
+        path: "primaryCategoryId",
+        model: PrimaryCategory.collection.name
+      },
+    })
+    .populate({
+      path: 'sellerProductId',
+      model: 'sellerproducts',
+      populate: {
+        path: "secondaryCategoryId",
+        model: SecondaryCategory.collection.name
+      },
+    })
+    .populate({
+      path: 'sellerProductId',
+      model: 'sellerproducts',
+      populate: {
+        path: 'productDetails.regionOfOrigin',
+      },
+    })
+    .populate('location.city', 'name')
+    .populate('location.state', 'name region')
+    .populate('location.country', 'name')
       .then((doc) => {
         console.log(doc)
         resolve(doc)
@@ -440,41 +486,41 @@ module.exports.updateSeller = (query, data, elastic) =>
       .populate('sellerCompanyId')
       .populate('establishmentId')
 
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "parentCategoryId",
-          model: ParentCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "primaryCategoryId",
-          model: PrimaryCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "secondaryCategoryId",
-          model: SecondaryCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: 'productDetails.regionOfOrigin',
-        },
-      })
-      .populate('location.city', 'name')
-      .populate('location.state', 'name region')
-      .populate('location.country', 'name')
-      .lean()
+      // .populate({
+      //   path: 'sellerProductId',
+      //   model: 'sellerproducts',
+      //   populate: {
+      //     path: "parentCategoryId",
+      //     model: ParentCategory.collection.name
+      //   },
+      // })
+      // .populate({
+      //   path: 'sellerProductId',
+      //   model: 'sellerproducts',
+      //   populate: {
+      //     path: "primaryCategoryId",
+      //     model: PrimaryCategory.collection.name
+      //   },
+      // })
+      // .populate({
+      //   path: 'sellerProductId',
+      //   model: 'sellerproducts',
+      //   populate: {
+      //     path: "secondaryCategoryId",
+      //     model: SecondaryCategory.collection.name
+      //   },
+      // })
+      // .populate({
+      //   path: 'sellerProductId',
+      //   model: 'sellerproducts',
+      //   populate: {
+      //     path: 'productDetails.regionOfOrigin',
+      //   },
+      // })
+      // .populate('location.city', 'name')
+      // .populate('location.state', 'name region')
+      // .populate('location.country', 'name')
+      // .lean()
       .then(async (doc) => {
 
         // if (doc && elastic) {
