@@ -57,24 +57,31 @@ exports.uploadToDOSpace = async (req) => {
       accessKeyId,
       secretAccessKey
     });
-
     var params = {
-      Body: req.data,
+      Body: req.body,
       Bucket,
       Key: req.Key
     };
 
-    await s3.upload(params, function (err, data) {
-      if (err) {
-        console.log(err, err.stack)
-        return (err)
-      } else {
-        console.log("🚀 ~ file: utils.js ~ line 64 ~ data", data)
-        return data;
-      }
+    new Promise((resolve, reject) => {
+      s3.upload(params, function (err, data) {
+        if (err) reject(err)
+        else {
+          resolve(data)
+        }
+      })
     })
+
+    // let response = await s3.upload(params)
+    // , function (err, data) {
+    //   if (err) {
+    //     return (err)
+    //   } else {
+    //     return data;
+    //   }
+    // })
+    // return response;
   } catch (error) {
-    console.error(error);
     return error
   }
 

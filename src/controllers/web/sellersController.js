@@ -1,6 +1,7 @@
 const camelcaseKeys = require('camelcase-keys')
 const { machineIdSync } = require('node-machine-id')
 const { respSuccess, respError } = require('../../utils/respHadler')
+const {uploadToDOSpace} = require("../../utils/utils")
 const mongoose = require('mongoose');
 
 const { sellers } = require('../../modules')
@@ -204,10 +205,19 @@ module.exports.addSellerProduct = async(req,res)=>{
   }
 }
 module.exports.updateSellerProduct = async(req,res)=>{
-  const {id,inStock} = req.body
+  // const {id,inStock} = req.body
   try {
-    let updateDetail = await addProductDetails(id, {"productDetails.inStock" : inStock})
-    let seller = await getSellerProfile(updateDetail.sellerId)
+    const {body, files } = req
+    const data = {
+      Key: `${body.sellerId}/${body.fileName}`,
+      body:  files.file.data 
+    }
+    let ImageVal = await uploadToDOSpace(data)
+    console.log(ImageVal,"===============imageval")
+    // if(body.id && body.inStock){
+    //   let updateDetail = await addProductDetails(id, {"productDetails.inStock" : inStock})
+    // }else
+    // let seller = await getSellerProfile(updateDetail.sellerId)
     respSuccess(res,seller,"Successfully updated")
   }catch(error){
     respError(res,error.message)
