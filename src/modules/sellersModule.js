@@ -283,6 +283,7 @@ module.exports.sellerBulkInser = (data) =>
 // populate : {path: ("secondaryCategoryId")},
 module.exports.getSeller = (id, chkStock) =>
   new Promise((resolve, reject) => {
+console.log("🚀 ~ file: sellersModule.js ~ line 286 ~ chkStock", chkStock)
     let matchVal = null
     if (chkStock === true || chkStock === false) {
       matchVal = {
@@ -290,12 +291,11 @@ module.exports.getSeller = (id, chkStock) =>
         model: 'sellerproducts',
         populate: {
           path: 'productDetails.regionOfOrigin',
+          match: {
+            'productDetails.inStock': true
+          },
         },
-        match: {
-          'productDetails.inStock': {
-            $eq: chkStock
-          }
-        }
+        
       }
     } else {
       matchVal = {
@@ -306,6 +306,7 @@ module.exports.getSeller = (id, chkStock) =>
         }
       }
     }
+    console.log("🚀 ~ file: sellersModule.js ~ line 302 ~ newPromise ~ matchVal", matchVal)
     Sellers.findOne({ userId: id })
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
@@ -352,7 +353,17 @@ module.exports.getSeller = (id, chkStock) =>
           model: SecondaryCategory.collection.name
         },
       })
-      .populate(matchVal)
+      .populate({
+        path: "sellerProductId",
+        model: 'sellerproducts',
+        populate: {
+          path: "productDetails",
+          match: {
+            'productDetails.inStock': {$eq: true}
+          },
+        }
+        
+      })
       .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -365,6 +376,7 @@ module.exports.getSeller = (id, chkStock) =>
       .populate('location.country', 'name')
       .lean()
       .then((doc) => {
+        console.log("🚀 ~ file: sellersModule.js ~ line 375 ~ .then ~ doc", doc)
         resolve(doc)
       })
       .catch((error) => reject(error))

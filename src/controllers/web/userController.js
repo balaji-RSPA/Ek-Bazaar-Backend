@@ -156,6 +156,7 @@ module.exports.addUser = async (req, res) => {
 module.exports.getUserProfile = async (req, res) => {
   try {
     const { userID } = req;
+    console.log("🚀 ~ file: userController.js ~ line 163 ~ module.exports.getUserProfile= ~ req.body", req.body)
     const user = await getUserProfile(userID)
     const seller = await getSeller(userID,req.body.inStock);
     const buyer = await getBuyer(userID);
