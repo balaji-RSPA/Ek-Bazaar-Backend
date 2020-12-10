@@ -589,41 +589,41 @@ module.exports.updateSeller = (query, data, elastic) =>
       .populate('sellerCompanyId')
       .populate('establishmentId')
 
-      // .populate({
-      //   path: 'sellerProductId',
-      //   model: 'sellerproducts',
-      //   populate: {
-      //     path: "parentCategoryId",
-      //     model: ParentCategory.collection.name
-      //   },
-      // })
-      // .populate({
-      //   path: 'sellerProductId',
-      //   model: 'sellerproducts',
-      //   populate: {
-      //     path: "primaryCategoryId",
-      //     model: PrimaryCategory.collection.name
-      //   },
-      // })
-      // .populate({
-      //   path: 'sellerProductId',
-      //   model: 'sellerproducts',
-      //   populate: {
-      //     path: "secondaryCategoryId",
-      //     model: SecondaryCategory.collection.name
-      //   },
-      // })
-      // .populate({
-      //   path: 'sellerProductId',
-      //   model: 'sellerproducts',
-      //   populate: {
-      //     path: 'productDetails.regionOfOrigin',
-      //   },
-      // })
-      // .populate('location.city', 'name')
-      // .populate('location.state', 'name region')
-      // .populate('location.country', 'name')
-      // .lean()
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "parentCategoryId",
+          model: ParentCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          model: PrimaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+      })
+      .populate('location.city', 'name')
+      .populate('location.state', 'name region')
+      .populate('location.country', 'name')
+      .lean()
       .then(async (doc) => {
 
         // if (doc && elastic) {
