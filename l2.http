@@ -4,113 +4,28 @@ content-type: application/json
 
 [
   {
-    "vendorId": "FB1",
+    "vendorId": "F1",
     "parentId": 3,
     "name": "Staple Food"
   },
   {
-    "vendorId": "FB2",
+    "vendorId": "F2",
     "parentId": 3,
-    "name": "Flavours & Aromatics"
+    "name": "Processed Food"
   },
   {
-    "vendorId": "FB3",
-    "parentId": 3,
-    "name": "Cooking Spices and Masala"
-  },
-  {
-    "vendorId": "FB4",
-    "parentId": 3,
-    "name": "Bakery & Confectionery Products"
-  },
-  {
-    "vendorId": "FB5",
-    "parentId": 3,
-    "name": "Milk & Dairy Products"
-  },
-  {
-    "vendorId": "FB6",
-    "parentId": 3,
-    "name": "Snacks and Namkeen"
-  },
-  {
-    "vendorId": "FB7",
-    "parentId": 3,
-    "name": "Juices, Soups & Soft Drinks"
-  },
-  {
-    "vendorId": "FB8",
-    "parentId": 3,
-    "name": "Fresh, Dried & Preserved Vegetables"
-  },
-  {
-    "vendorId": "FB9",
-    "parentId": 3,
-    "name": "Tea & Coffee"
-  },
-  {
-    "vendorId": "FB10",
-    "parentId": 3,
-    "name": "Chocolates, Biscuits & Cookies"
-  },
-  {
-    "vendorId": "FB11",
-    "parentId": 3,
-    "name": "Ready to Eat & Instant Food Mixes"
-  },
-  {
-    "vendorId": "FB12",
-    "parentId": 3,
-    "name": "Fresh, Dried & Preserved Fruits"
-  },
-  {
-    "vendorId": "FB13",
-    "parentId": 3,
-    "name": "Edible Oil & Allied Products"
-  },
-  {
-    "vendorId": "FB14",
-    "parentId": 3,
-    "name": "Pickles, Jams & Ketchups"
-  },
-  {
-    "vendorId": "FB15",
-    "parentId": 3,
-    "name": "Organic Food Grains & Vegetables"
-  },
-  {
-    "vendorId": "FB16",
-    "parentId": 3,
-    "name": "Indian Sweets & Desserts"
-  },
-  {
-    "vendorId": "FB17",
-    "parentId": 3,
-    "name": "Marine Food Supplies"
-  },
-  {
-    "vendorId": "FB18",
+    "vendorId": "F3",
     "parentId": 3,
     "name": "Dry Fruits & Nuts"
   },
   {
-    "vendorId": "FB19",
+    "vendorId": "F4",
     "parentId": 3,
-    "name": "Meat & Poultry Food"
+    "name": "Juices & Beverages"
   },
   {
-    "vendorId": "FB20",
+    "vendorId": "F5",
     "parentId": 3,
-    "name": "Ayurvedic & Herbal Health Supplement"
-  },
-  {
-    "vendorId": "FB21",
-    "parentId": 3,
-    "name": "Grains"
-  },
-  {
-    "vendorId": "FB22",
-    "parentId": 3,
-    "name": "Other Food Categories"
+    "name": "Biscuits & Confectionery"
   }
 ]

@@ -10,11 +10,11 @@ const sellerCompanySchema = new Schema(
       default: null,
     },
     employeesCount: {
-      type: Number,
+      type: String,
       trim: true,
     },
     anualTurnover: {
-      type: Number,
+      type: String,
       trim: true,
     },
     professionalAssociations: {

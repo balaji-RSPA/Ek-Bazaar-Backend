@@ -130,11 +130,13 @@ exports.sellerSearch = async (reqQuery) => {
       should: [],
       must: [],
       must_not: [],
+      filter: []
     },
   };
 
   if (keyword) {
     const { searchProductsBy } = reqQuery
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 139 ~ exports.sellerSearch= ~ searchProductsBy", searchProductsBy)
     const keywordMatch = []
     const productMatch = []
     if (searchProductsBy.serviceType) {
@@ -159,24 +161,100 @@ exports.sellerSearch = async (reqQuery) => {
       })
     }
     if (searchProductsBy.product) {
+
+      /** product **/
       productMatch.push({
         "match_phrase": {
-          "sellerProductId.poductId.name": searchProductsBy.product
+          "sellerProductId.poductId.name": searchProductsBy.product,
         }
       })
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.poductId.name.keyword": searchProductsBy.product
+      //   }
+      // })
+
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.poductId.name": `* ${searchProductsBy.product}`
+      //   }
+      // })
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.poductId.name": `${searchProductsBy.product} *`
+      //   }
+      // })
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.poductId.name": `* ${searchProductsBy.product} *`
+      //   }
+      // })
+
+      /** seccat **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.secondaryCategoryId.name": searchProductsBy.product
         }
       })
+
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.secondaryCategoryId.name": `* ${searchProductsBy.product}`
+      //   }
+      // })
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.secondaryCategoryId.name": `${searchProductsBy.product} *`
+      //   }
+      // })
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.secondaryCategoryId.name": `* ${searchProductsBy.product} *`
+      //   }
+      // })
+
+      /** primcat **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.primaryCategoryId.name": searchProductsBy.product
         }
       })
+
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.primaryCategoryId.name": `* ${searchProductsBy.product}`
+      //   }
+      // })
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.primaryCategoryId.name": `${searchProductsBy.product} *`
+      //   }
+      // })
+      // productMatch.push({
+      //   "wildcard": {
+      //     "sellerProductId.primaryCategoryId.name": `* ${searchProductsBy.product} *`
+      //   }
+      // })
+
+      /** name */
+      // productMatch.push({
+      //   "match": {
+      //     "name": searchProductsBy.product
+      //   }
+      // })
     }
-    query.bool.must = keywordMatch
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 216 ~ exports.sellerSearch= ~ productMatch", productMatch)
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 226 ~ exports.sellerSearch= ~ keywordMatch", keywordMatch)
+
     query.bool.should = productMatch
+    query.bool["minimum_should_match"] = 1
+    query.bool.must = keywordMatch
+
+    // query.bool.filter.push({
+    //   "bool": {
+    //     "should": productMatch
+    //   }
+    // })
   }
 
   if (productId) {
@@ -212,6 +290,7 @@ exports.sellerSearch = async (reqQuery) => {
   }
 
   if (parentId) {
+
     // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
     const categoryMatch = {
       term: {
@@ -290,7 +369,7 @@ exports.getCounts = (query) =>
       })
       .then(resolve)
       .catch(reject);
-});
+  });
 
 /*
 

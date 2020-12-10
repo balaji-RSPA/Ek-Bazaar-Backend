@@ -11,7 +11,9 @@ const {
   getAllPrimaryCategory,
   getAllSecondaryCategory,
   getAllProductsToSearch,
-  getProductByName
+  getProductByName,
+  getSecondaryCategoryByName,
+  getPrimaryCategoryByName
 } = category;
 const { getAllCities, getAllStates } = location;
 module.exports.addSellerBulkIndex = async (req, res) => {
@@ -65,9 +67,11 @@ module.exports.serachSeller = async (req, res) => {
       let serviceType = "",
         city = "",
         state = ""
+
       for (let i = 0; i < newKeyword.length; i++) {
         let _keyword =
           newKeyword[i].charAt(0).toUpperCase() + newKeyword[i].slice(1);
+        console.log("🚀 ~ file: elasticSearchController.js ~ line 75 ~ module.exports.serachSeller= ~ _keyword", _keyword)
 
         /* matched service_type && state || city */
         let index = serviceTypes.findIndex(
@@ -79,11 +83,16 @@ module.exports.serachSeller = async (req, res) => {
         index = states.findIndex((state) => state.name == _keyword);
         if (index !== -1) state = states[index];
       }
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 68 ~ module.exports.serachSeller= ~ serviceType", serviceType)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 69 ~ module.exports.serachSeller= ~ city", city)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 70 ~ module.exports.serachSeller= ~ state", state)
+
       newKeyword = newKeyword.join(" ");
       console.log("🚀 ~ file: elasticSearchController.js ~ line 83 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
       let productSearchKeyword = newKeyword.replace(city.name, "")
       productSearchKeyword = productSearchKeyword.replace(state.name, "")
       productSearchKeyword = productSearchKeyword.replace(serviceType.name, "")
+      productSearchKeyword = productSearchKeyword.includes(" In ") ? productSearchKeyword.replace(" In ", " ") : productSearchKeyword
       console.log("🚀 ~ file: elasticSearchController.js ~ line 89 ~ module.exports.serachSeller= ~ productSearchKeyword", productSearchKeyword)
 
       reqQuery.searchProductsBy = {
@@ -92,20 +101,38 @@ module.exports.serachSeller = async (req, res) => {
         state,
         product: productSearchKeyword.trim()
       }
+      let reg = new RegExp(`${productSearchKeyword.trim()} `)
       const result = await sellerSearch(reqQuery);
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 96 ~ module.exports.serachSeller= ~ result", result)
       const { query, catId } = result;
       const seller = await searchFromElastic(query, range);
       console.log("🚀 ~ file: elasticSearchController.js ~ line 99 ~ module.exports.serachSeller= ~ seller", seller)
-      // const product = await getProductByName({ name: productSearchKeyword.trim() })
+      // const product = await getProductByName({ name: { $regex: reg, $options: "si" } })
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 101 ~ module.exports.serachSeller= ~ product", product)
-      // const primaryCatId = await getCatId({ productId: product._id }, "_id");
-      // console.log("🚀 ~ file: elasticSearchController.js ~ line 103 ~ module.exports.serachSeller= ~ primaryCatId", primaryCatId)
-      // const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
-      // console.log("🚀 ~ file: elasticSearchController.js ~ line 105 ~ module.exports.serachSeller= ~ relatedCat", relatedCat)
+      // let primaryCatId, relatedCat, secCat, primCat
+
+      // if (product && product.length) {
+      //   primaryCatId = await getCatId({ productId: product[0]._id }, "_id");
+      //   relatedCat = await getRelatedPrimaryCategory(primaryCatId);
+      // } else if (product && !product.length) {
+      //   secCat = await getSecondaryCategoryByName({ name: { $regex: reg, $options: "si" } })
+      //   // console.log("🚀 ~ file: elasticSearchController.js ~ line 111 ~ module.exports.serachSeller= ~ secCat", secCat)
+      //   if (secCat && secCat.length) {
+      //     primaryCatId = secCat[0].primaryCatId
+      //     relatedCat = await getRelatedPrimaryCategory(primaryCatId);
+      //   }
+      // } else if (secCat && !secCat.length) {
+      //   primCat = await getPrimaryCategoryByName({ name: { $regex: reg, $options: "si" } })
+      //   // console.log("🚀 ~ file: elasticSearchController.js ~ line 118 ~ module.exports.serachSeller= ~ primCat", primCat)
+      //   if (primCat) {
+      //     primaryCatId = primCat._id
+      //     relatedCat = await getRelatedPrimaryCategory(primaryCatId);
+      //   }
+      // }
       const resp = {
         total: seller[1],
         data: seller[0],
-        // relatedCat,
+        // relatedCat: relatedCat || [],
         serviceType,
         city,
         state

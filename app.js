@@ -34,9 +34,9 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function (req, res){
-    console.log('Home page')
-    res.send('Hello Babu')
+app.get('/', function (req, res) {
+  console.log('Home page')
+  res.send('Hello Babu')
 })
 
 app.use(router)

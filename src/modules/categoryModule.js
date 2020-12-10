@@ -4,6 +4,7 @@ const {
   ParentCategory,
   SecondaryCategory,
   Products,
+  ProductsSubCategories,
   SellerTypes,
   Sellers,
   SellerProducts
@@ -353,6 +354,15 @@ module.exports.getSecondaryCat = (query) =>
       .catch(reject);
   });
 
+module.exports.getProductCat = (query) =>
+  new Promise((resolve, reject) => {
+    Products.findOne(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });
+
 exports.updateSecondaryCategory = (id, newData) =>
   new Promise((resolve, reject) => {
     SecondaryCategory.findByIdAndUpdate(
@@ -490,6 +500,15 @@ module.exports.addProductCategory = (data) =>
       .catch(reject);
   });
 
+module.exports.addProductSubCategory = (data) =>
+  new Promise((resolve, reject) => {
+    ProductsSubCategories.create(data)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });
+
 module.exports.getProductCategory = (id) =>
   new Promise((resolve, reject) => {
     Products.findById(id)
@@ -618,7 +637,22 @@ exports.getAllProductsToSearch = () =>
   });
 
 exports.getProductByName = (query) => new Promise((resolve, reject) => {
-  Products.findOne(query)
+  console.log("🚀 ~ file: categoryModule.js ~ line 623 ~ exports.getProductByName= ~ query", query)
+  Products.find(query)
+    // .limit(1)
+    .then((doc) => resolve(doc))
+    .catch((error) => reject(error));
+})
+
+exports.getSecondaryCategoryByName = (query) => new Promise((resolve, reject) => {
+  SecondaryCategory.find(query)
+    // .limit(1)
+    .then((doc) => resolve(doc))
+    .catch((error) => reject(error));
+})
+
+exports.getPrimaryCategoryByName = (query) => new Promise((resolve, reject) => {
+  PrimaryCategory.find(query)
     // .limit(1)
     .then((doc) => resolve(doc))
     .catch((error) => reject(error));
@@ -768,3 +802,83 @@ exports.getLevelFourCategoryList = (list) =>
       })
       .catch(reject);
   });
+
+exports.getLevelFiveCategoryList = (list) => new Promise((resolve, reject) => {
+  match = {
+    $match: {
+      vendorId: {
+        $in: list.map((vendorId) => vendorId),
+      },
+    }
+  }
+  const execQuery = ProductsSubCategories.aggregate([
+    match
+    // {
+    //   $lookup: {
+    //     from: Products.collection.name,
+    //     localField: "productId",
+    //     foreignField: "_id",
+    //     as: "productId",
+    //   },
+    // },
+    // {
+    //   $unwind: "$productId"
+    // },
+    // {
+    //   $lookup: {
+    //     from: SecondaryCategory.collection.name,
+    //     localField: "secondaryId",
+    //     foreignField: "_id",
+    //     as: "secondaryId",
+    //   },
+    // },
+    // {
+    //   $unwind: "$secondaryId"
+    // },
+    // {
+    //   $lookup: {
+    //     from: PrimaryCategory.collection.name,
+    //     localField: "secondaryId.primaryCatId",
+    //     foreignField: "_id",
+    //     as: "primaryCatId",
+    //   },
+    // },
+    // {
+    //   $unwind: "$primaryCatId"
+    // },
+    // {
+    //   $lookup: {
+    //     from: ParentCategory.collection.name,
+    //     localField: "primaryCatId.parentCatId",
+    //     foreignField: "_id",
+    //     as: "parentCatId",
+    //   },
+    // },
+    // {
+    //   $unwind: "$parentCatId"
+    // },
+    // {
+    //   $project: {
+    //     _id: 1,
+    //     name: 1,
+    //     vendorId: 1,
+    //     "productId._id": 1,
+    //     "productId.name": 1,
+    //     "productId.vendorId": 1,
+    //     "secondaryId._id": 1,
+    //     "secondaryId.name": 1,
+    //     "secondaryId.vendorId": 1,
+    //     // "secondaryId.primaryCatId": 1,
+    //     "primaryCatId._id": 1,
+    //     "primaryCatId.name": 1,
+    //     "parentCatId._id": 1,
+    //     "parentCatId.name": 1,
+    //   },
+    // },
+  ])
+  execQuery
+    .then((l1) => {
+      resolve(l1);
+    })
+    .catch(reject);
+})

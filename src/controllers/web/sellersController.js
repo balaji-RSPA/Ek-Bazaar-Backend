@@ -47,6 +47,7 @@ module.exports.updateSeller = async (req, res) => {
       companyProfile,
       productDetails,
       notifications,
+      deactivateAccount
     } = req.body
     const { userID } = req
     const user = await getSeller(userID)
@@ -68,7 +69,13 @@ module.exports.updateSeller = async (req, res) => {
       seller = await updateSeller({ _id: sellerID }, newData)
     }
     if (contactDetails) {
+    // console.log(sellerID, "🚀 ~ file: sellersController.js ~ line 51 ~ module.exports.updateSeller= ~ req.body", req.body)
+      contactDetails = {
+        ...contactDetails,
+        sellerId: sellerID
+      }
       const cntctDtls = await addContactDetails(sellerID, contactDetails)
+      seller = await updateSeller({ _id: sellerID }, {sellerContactId: cntctDtls._id })
       // newData.busenessId = cntctDtls._id;
     }
     if (establishmentPhotos) {
@@ -79,8 +86,13 @@ module.exports.updateSeller = async (req, res) => {
       newData.establishmentId = estblsmntPhts._id
     }
     if (companyProfile) {
+      companyProfile = {
+        ...companyProfile,
+        sellerId: sellerID
+      }
       const cmpnyPrfl = await addCompanyDetails(sellerID, companyProfile)
       newData.sellerCompanyId = cmpnyPrfl._id
+      seller = await updateSeller({ _id: sellerID }, { sellerCompanyId: cmpnyPrfl._id })
     }
     if (productDetails) {
       let productsId = []
@@ -114,6 +126,9 @@ module.exports.updateSeller = async (req, res) => {
     }
     if(notifications){
       seller = await updateSeller({ _id: sellerID },{notifications : notifications})
+    }
+    if(deactivateAccount){
+      seller = await updateSeller({ _id: sellerID },{deactivateAccount})
     }
 
     // console.log(seller, ' .........00000000000')
