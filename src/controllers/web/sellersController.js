@@ -208,16 +208,28 @@ module.exports.updateSellerProduct = async(req,res)=>{
   // const {id,inStock} = req.body
   try {
     const {body, files } = req
-    const data = {
-      Key: `${body.sellerId}/${body.fileName}`,
-      body:  files.file.data 
+    let updateDetail
+    if(body.id && body.imageType){
+      const data = {
+        Key: `${body.sellerId}/${body.fileName}`,
+        body:  files.file.data 
+      }
+      let ImageVal = await uploadToDOSpace(data)
+
+      let image = body.imageType;
+      let imageVal = `productDetails.image.${image}`
+      let imageNameLoc = {name : body.fileName, code : ImageVal.Location}
+      let imageDtl = {};
+      imageDtl[imageVal] = imageNameLoc;
+      updateDetail = await addProductDetails(body.id, imageDtl)
     }
-    let ImageVal = await uploadToDOSpace(data)
-    console.log(ImageVal,"===============imageval")
+   if(body.id && (body.inStock === false || body.inStock)){
+    updateDetail = await addProductDetails(body.id, {"productDetails.inStock" : body.inStock})
+   }
     // if(body.id && body.inStock){
-    //   let updateDetail = await addProductDetails(id, {"productDetails.inStock" : inStock})
+    //   
     // }else
-    // let seller = await getSellerProfile(updateDetail.sellerId)
+    let seller = await getSellerProfile(updateDetail.sellerId)
     respSuccess(res,seller,"Successfully updated")
   }catch(error){
     respError(res,error.message)
