@@ -12,7 +12,7 @@ const { createToken } = require("../../utils/utils");
 //   handleUserSession, getSessionCount, handleUserLogoutSession
 // } = require('../../modules/sessionModules')
 
-const { sellers } = require("../../modules");
+const { sellers, buyers } = require("../../modules");
 
 const { JWTTOKEN } = require("../../utils/globalConstants");
 
@@ -29,7 +29,7 @@ const getUserAgent = (userAgent) => {
 
 exports.login = async (req, res) => {
   try {
-    const { password, ipAddress, location, mobile } = req.body;
+    const { password, ipAddress, location, mobile, userType } = req.body;
     console.log(password, mobile, '..........')
     let user = await sellers.checkUserExistOrNot({mobile});
     user = user[0]
@@ -37,6 +37,17 @@ exports.login = async (req, res) => {
     if (!user) {
       return respAuthFailed(res, "User not found");
     }
+    if(userType === 'seller'){
+      const seller = await sellers.getSeller(user._id);
+      if(seller.deactivateAccount && (seller.deactivateAccount.status === true)){
+        return respAuthFailed(res, "Account Deactivated, contact Support team");
+      }
+    }else if (userType === 'buyer'){
+      const buyer = await buyers.getBuyer(user._id);
+      if(buyer.deactivateAccount.status === true)
+        return respAuthFailed(res, "Account Deactivated, contact Support team");
+    }
+
     const result = await bcrypt.compare(password, user.password);
     // console.log(user, 'user......', result)
     if (result) {

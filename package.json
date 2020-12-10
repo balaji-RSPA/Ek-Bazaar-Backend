@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^3.0.0",
+    "aws-sdk": "^2.807.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "camelcase-keys": "^6.2.2",

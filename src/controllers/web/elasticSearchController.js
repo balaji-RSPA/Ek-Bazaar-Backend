@@ -135,7 +135,8 @@ module.exports.serachSeller = async (req, res) => {
         // relatedCat: relatedCat || [],
         serviceType,
         city,
-        state
+        state,
+        productSearchKeyword
       };
       return respSuccess(res, resp);
     }

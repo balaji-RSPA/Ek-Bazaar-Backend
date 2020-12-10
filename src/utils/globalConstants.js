@@ -20,10 +20,11 @@ exports.fromEmail = {
   fromEmailId: "shettenor1995@gmail.com",
 };
 exports.awsKeys = {
-  accessKeyId: "AKIA5NLROODPXVCPRUBT",
-  secretAccessKey: "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",
+  endpoint: 'https://fra1.digitaloceanspaces.com/',
+  accessKeyId: "PO5QFSCFS6QMNDJWMLZB",
+  secretAccessKey: "Rpauq90nYW/tLxagFAGA9F4bWgG3yQ9DObw5UXU0s9OvqOjYt0gJZo",
   region: "us-east-1",
-  Bucket: "ekbazaar-test",
+  Bucket: "trade-images",
 };
 
 exports.moduleTypes = {

@@ -168,9 +168,12 @@ module.exports.getBuyer = async (req, res) => {
 
 module.exports.updateBuyer = async (req, res) => {
   try {
-    const { buyerID } = req;
-    const buyer = await updateBuyer(buyerID, re.body);
-    respSuccess(res, buyer);
+    // const { buyerID } = req;
+    const { userID } = req
+    // const { buyerNotifications } = req.body
+    // console.log(userID,  req.body, ' test------')
+    const buyer = await updateBuyer({ userId: userID }, req.body);
+    respSuccess(res, 'Updated Successfully');
   } catch (error) {
     respError(res, error.message);
   }
