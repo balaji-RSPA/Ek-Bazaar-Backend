@@ -281,11 +281,100 @@ module.exports.sellerBulkInser = (data) =>
   })
 // populate : {path: ("primaryCategoryId")},
 // populate : {path: ("secondaryCategoryId")},
-module.exports.getSeller = (id, chkStock) =>
+// module.exports.getSeller = (id, chkStock) =>
+//   new Promise((resolve, reject) => {
+//     let matchVal = null
+//     if (chkStock === true || chkStock === false) {
+//       matchVal = {
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: 'productDetails.regionOfOrigin',
+//         },
+//         match: {
+//           'productDetails.inStock': {
+//             $eq: chkStock
+//           }
+//         }
+//       }
+//     } else {
+//       matchVal = {
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: 'productDetails.regionOfOrigin',
+//         }
+//       }
+//     }
+//     Sellers.findOne({ userId: id })
+//       .populate('sellerProductId.')
+//       .populate('sellerType.name', 'name')
+//       .populate('sellerType.cities.city', 'name')
+//       .populate('sellerType.cities.state', 'name region')
+//       .populate('busenessId')
+//       .populate('statutoryId')
+//       .populate({
+//         path: 'sellerContactId',
+//         model: SellersContact,
+//         populate: {
+//           path: "city",
+//           model: Cities
+//         },
+//         populate: {
+//           path: "state",
+//           model: States
+//         },
+//       })
+//       .populate('sellerCompanyId')
+//       .populate('establishmentId')
+
+//       .populate({
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: "parentCategoryId",
+//           model: ParentCategory.collection.name
+//         },
+//       })
+//       .populate({
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: "primaryCategoryId",
+//           model: PrimaryCategory.collection.name
+//         },
+//       })
+//       .populate({
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: "secondaryCategoryId",
+//           model: SecondaryCategory.collection.name
+//         },
+//       })
+//       .populate(matchVal)
+//       .populate({
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: 'productDetails.regionOfOrigin',
+//         },
+//       })
+//       .populate('location.city', 'name')
+//       .populate('location.state', 'name region')
+//       .populate('location.country', 'name')
+//       .lean()
+//       .then((doc) => {
+//         resolve(doc)
+//       })
+//       .catch((error) => reject(error))
+//   })
+
+  module.exports.getSeller = (id,chkStock) =>
   new Promise((resolve, reject) => {
 console.log("🚀 ~ file: sellersModule.js ~ line 286 ~ chkStock", chkStock)
     let matchVal = null
-    if (chkStock === true || chkStock === false) {
+    if(chkStock === true || chkStock === false){
       matchVal = {
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -295,9 +384,13 @@ console.log("🚀 ~ file: sellersModule.js ~ line 286 ~ chkStock", chkStock)
             'productDetails.inStock': true
           },
         },
-        
+        match: {
+          'productDetails.inStock': {
+              $eq: chkStock
+          }
       }
-    } else {
+      }
+    }else{
       matchVal = {
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -354,23 +447,13 @@ console.log("🚀 ~ file: sellersModule.js ~ line 286 ~ chkStock", chkStock)
         },
       })
       .populate({
-        path: "sellerProductId",
-        model: 'sellerproducts',
-        populate: {
-          path: "productDetails",
-          match: {
-            'productDetails.inStock': {$eq: true}
-          },
-        }
-        
-      })
-      .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
         populate: {
           path: 'productDetails.regionOfOrigin',
         },
       })
+      .populate(matchVal)
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
