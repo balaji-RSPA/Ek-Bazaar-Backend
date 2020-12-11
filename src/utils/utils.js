@@ -49,34 +49,40 @@ exports.encodePassword = (password) => {
 /**
  * upload to Digital Ocean Space
  */
-exports.uploadToDOSpace = async (req) => {
-  try {
+module.exports.uploadToDOSpace = (req) => {
+  // try {
     const spacesEndpoint = new AWS.Endpoint(endpoint);
     const s3 = new AWS.S3({
       endpoint: spacesEndpoint,
       accessKeyId,
       secretAccessKey
     });
-
     var params = {
-      Body: req.data,
+      Body: req.body,
       Bucket,
-      Key: req.Key
+      Key: req.Key,
+      ACL: 'public-read'
     };
 
-    await s3.upload(params, function (err, data) {
-      if (err) {
-        console.log(err, err.stack)
-        return (err)
-      } else {
-        console.log("🚀 ~ file: utils.js ~ line 64 ~ data", data)
-        return data;
-      }
+    return new Promise((resolve, reject) => {
+      s3.upload(params, function (err, data) {
+        if (err) reject(err)
+        else {
+          resolve(data)
+        }
+      })
     })
-  } catch (error) {
-    console.error(error);
-    return error
-  }
+
+    // s3.upload(params, function (err, data) {
+    //   if (err) {
+    //     return (err)
+    //   } else {
+    //     return data;
+    //   }
+    // })
+  // } catch (error) {
+  //   return error
+  // }
 
 
 }

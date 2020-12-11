@@ -22,7 +22,7 @@ exports.fromEmail = {
 exports.awsKeys = {
   endpoint: 'https://fra1.digitaloceanspaces.com/',
   accessKeyId: "PO5QFSCFS6QMNDJWMLZB",
-  secretAccessKey: "Rpauq90nYW/tLxagFAGA9F4bWgG3yQ9DObw5UXU0s9OvqOjYt0gJZo",
+  secretAccessKey: "tLxagFAGA9F4bWgG3yQ9DObw5UXU0s9OvqOjYt0gJZo",
   region: "us-east-1",
   Bucket: "trade-images",
 };
