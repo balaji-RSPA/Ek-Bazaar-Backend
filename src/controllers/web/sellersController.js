@@ -1,11 +1,20 @@
 const camelcaseKeys = require('camelcase-keys')
-const { machineIdSync } = require('node-machine-id')
-const { respSuccess, respError } = require('../../utils/respHadler')
-const {uploadToDOSpace} = require("../../utils/utils")
+const {
+  machineIdSync
+} = require('node-machine-id')
+const {
+  respSuccess,
+  respError
+} = require('../../utils/respHadler')
+const {
+  uploadToDOSpace
+} = require("../../utils/utils")
 const mongoose = require('mongoose');
 
-const { sellers } = require('../../modules')
-const  _ = require('lodash')
+const {
+  sellers
+} = require('../../modules')
+const _ = require('lodash')
 
 const {
   updateSeller,
@@ -23,13 +32,18 @@ const {
   structureSellerData,
   deleteSellerProduct,
   getSellerVal,
-  addSellerProduct
+  addSellerProduct,
+  findEstablishment
 } = sellers
 
 module.exports.getSeller = async (req, res) => {
   try {
-    const { userID } = req
-    const { id } = req.query
+    const {
+      userID
+    } = req
+    const {
+      id
+    } = req.query
     const seller = userID ? await getSeller(userID) : await getSellerProfile(id)
     console.log(seller, ' dinal ressss')
     respSuccess(res, seller)
@@ -50,8 +64,9 @@ module.exports.updateSeller = async (req, res) => {
       notifications,
       deactivateAccount
     } = req.body
-    console.log(establishmentPhotos, ' docccc')
-    const { userID } = req
+    const {
+      userID
+    } = req
     const user = await getSeller(userID)
     const sellerID = user._id
     let newData = {}
@@ -60,7 +75,9 @@ module.exports.updateSeller = async (req, res) => {
     if (businessDetails) {
       const bsnsDtls = await addbusinessDetails(sellerID, businessDetails)
       newData.busenessId = bsnsDtls._id
-      seller = await updateSeller({ _id: sellerID }, newData)
+      seller = await updateSeller({
+        _id: sellerID
+      }, newData)
     }
     if (statutoryDetails) {
       const statutoryDtls = await addStatutoryDetails(
@@ -68,26 +85,74 @@ module.exports.updateSeller = async (req, res) => {
         statutoryDetails,
       )
       newData.statutoryId = statutoryDtls._id
-      seller = await updateSeller({ _id: sellerID }, newData)
+      seller = await updateSeller({
+        _id: sellerID
+      }, newData)
     }
     if (contactDetails) {
-    // console.log(sellerID, "🚀 ~ file: sellersController.js ~ line 51 ~ module.exports.updateSeller= ~ req.body", req.body)
+      // console.log(sellerID, "🚀 ~ file: sellersController.js ~ line 51 ~ module.exports.updateSeller= ~ req.body", req.body)
       contactDetails = {
         ...contactDetails,
         sellerId: sellerID
       }
       const cntctDtls = await addContactDetails(sellerID, contactDetails)
-      seller = await updateSeller({ _id: sellerID }, {sellerContactId: cntctDtls._id })
+      seller = await updateSeller({
+        _id: sellerID
+      }, {
+        sellerContactId: cntctDtls._id
+      })
       // newData.busenessId = cntctDtls._id;
     }
-    if (establishmentPhotos) {
+    if (req.files && (req.files.image1 || req.files.image2 || req.files.image3 || req.files.image4 || req.files.image5 || req.files.image6)) {
+      // image.substr(image.length-1)
+      let photos = []
+      let values = Object.values(req.files) 
+      for(let i = 0; i<values.length; i++) {
+        const name = values[i].name
+        const _data = values[i].data
+        const data = {
+          Key: `${sellerID}/${name}`,
+          body: _data
+        }
+        const ImageVal = await uploadToDOSpace(data)
+        await photos.push({
+          name: name,
+          code: ImageVal.Location
+        })
+      }
+      let estblsmntPhts
+      if(user.establishmentId){
+        let getEstablishmentPht = await findEstablishment(user.establishmentId)
+        console.log(getEstablishmentPht,"==============sjfshfhjdsjfg")
 
-    console.log(establishmentPhotos, ' es')
-      const estblsmntPhts = await addEstablishmentPhotos(
-        sellerID,
-        establishmentPhotos,
-      )
-      newData.establishmentId = estblsmntPhts._id
+         photos = getEstablishmentPht.photos.length ? [...getEstablishmentPht.photos,...photos] : photos
+         console.log(photos,"//////////////////////////")
+        estblsmntPhts = await addEstablishmentPhotos(
+          sellerID,
+          photos
+        )
+
+      }else{
+        estblsmntPhts = await addEstablishmentPhotos(
+          sellerID,
+          photos
+        )
+        newData.establishmentId = estblsmntPhts._id
+        seller = await updateSeller({
+          _id: sellerID
+        }, newData)
+      }
+      // newData.establishmentId = estblsmntPhts._id
+      // const estblsmntPhts = await addEstablishmentPhotos(
+      //   sellerID,
+      //   photos
+      //   )
+      // const estblsmntPhts = await addEstablishmentPhotos(
+      //   sellerID,
+      //   establishmentPhotos,
+      // )
+      // newData.establishmentId = estblsmntPhts._id
+
     }
     if (companyProfile) {
       companyProfile = {
@@ -96,7 +161,11 @@ module.exports.updateSeller = async (req, res) => {
       }
       const cmpnyPrfl = await addCompanyDetails(sellerID, companyProfile)
       newData.sellerCompanyId = cmpnyPrfl._id
-      seller = await updateSeller({ _id: sellerID }, { sellerCompanyId: cmpnyPrfl._id })
+      seller = await updateSeller({
+        _id: sellerID
+      }, {
+        sellerCompanyId: cmpnyPrfl._id
+      })
     }
     if (productDetails) {
       let productsId = []
@@ -120,19 +189,29 @@ module.exports.updateSeller = async (req, res) => {
         (prdctDtls._id &&
           productsId.length === 0 &&
           productDetails._id === null) ||
-          productDetails._id === undefined
+        productDetails._id === undefined
       ) {
         productsId = []
         productsId.push(prdctDtls._id)
       }
       newData.sellerProductId = productsId
-      seller = await updateSeller({ _id: sellerID }, newData)
+      seller = await updateSeller({
+        _id: sellerID
+      }, newData)
     }
-    if(notifications){
-      seller = await updateSeller({ _id: sellerID },{notifications : notifications})
+    if (notifications) {
+      seller = await updateSeller({
+        _id: sellerID
+      }, {
+        notifications: notifications
+      })
     }
-    if(deactivateAccount){
-      seller = await updateSeller({ _id: sellerID },{deactivateAccount})
+    if (deactivateAccount) {
+      seller = await updateSeller({
+        _id: sellerID
+      }, {
+        deactivateAccount
+      })
     }
 
     // console.log(seller, ' .........00000000000')
@@ -182,59 +261,72 @@ module.exports.deleteSellerProduct = async (req, res) => {
       let arrVal = _.findIndex(findSeller.sellerProductId, objVal);
       if (arrVal > -1) {
         findSeller.sellerProductId.splice(arrVal, 1)
-        result = await updateSeller({ _id: sellerProduct.sellerId }, findSeller)
+        result = await updateSeller({
+          _id: sellerProduct.sellerId
+        }, findSeller)
+
       }
     }
-    respSuccess(res, result,"Product successfully deleted")
+    respSuccess(res, result, "Product successfully deleted")
   } catch (error) {
     respError(res, error.message)
   }
 }
-module.exports.addSellerProduct = async(req,res)=>{
+module.exports.addSellerProduct = async (req, res) => {
   try {
-    let result 
+    let result
     let sellerId = req.body && req.body[0] && req.body[0].sellerId
-    if(sellerId){
+    if (sellerId) {
       const findSeller = await getSellerProfile(sellerId)
       result = await addSellerProduct(req.body)
-      if(findSeller && findSeller.length){
+      if (findSeller && findSeller.length) {
         findSeller[0].sellerProductId = findSeller[0].sellerProductId.concat(result);
       }
-      seller = await updateSeller({ _id: sellerId }, findSeller[0])
-      respSuccess(res,seller,"Successfully added product")
+      seller = await updateSeller({
+        _id: sellerId
+      }, findSeller[0])
+      respSuccess(res, seller, "Successfully added product")
     }
-  }catch(error){
-    respError(res,error.message)
+  } catch (error) {
+    respError(res, error.message)
   }
 }
-module.exports.updateSellerProduct = async(req,res)=>{
+module.exports.updateSellerProduct = async (req, res) => {
   // const {id,inStock} = req.body
   try {
-    const {body, files } = req
+    const {
+      body,
+      files
+    } = req
     let updateDetail
-    if(body.id && body.imageType){
+    if (body.id && body.imageType) {
       const data = {
         Key: `${body.sellerId}/${body.fileName}`,
-        body:  files.file.data 
+        body: files.file.data
       }
       let ImageVal = await uploadToDOSpace(data)
 
       let image = body.imageType;
       let imageVal = `productDetails.image.${image}`
-      let imageNameLoc = {name : body.fileName, code : ImageVal.Location}
+      let imageNameLoc = {
+        name: body.fileName,
+        code: ImageVal.Location
+      }
       let imageDtl = {};
       imageDtl[imageVal] = imageNameLoc;
       updateDetail = await addProductDetails(body.id, imageDtl)
     }
-   if(body.id && (body.inStock === false || body.inStock)){
-    updateDetail = await addProductDetails(body.id, {"productDetails.inStock" : body.inStock})
-   }
+    if (body.id && (body.inStock === false || body.inStock)) {
+      updateDetail = await addProductDetails(body.id, {
+        "productDetails.inStock": body.inStock
+      })
+    }
     // if(body.id && body.inStock){
     //   
     // }else
     let seller = await getSellerProfile(updateDetail.sellerId)
-    respSuccess(res,seller,"Successfully updated")
-  }catch(error){
-    respError(res,error.message)
+    respSuccess(res, seller, "Successfully updated")
+  } catch (error) {
+    respError(res, error.message)
   }
 }
