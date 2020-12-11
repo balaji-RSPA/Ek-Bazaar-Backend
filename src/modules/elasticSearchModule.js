@@ -237,11 +237,14 @@ exports.sellerSearch = async (reqQuery) => {
       // })
 
       /** name */
-      // productMatch.push({
-      //   "match": {
-      //     "name": searchProductsBy.product
-      //   }
-      // })
+      productMatch.push({
+        "match": {
+          "name": {
+            "query": searchProductsBy.product,
+            "minimum_should_match": "100%"
+          }
+        }
+      })
     }
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 216 ~ exports.sellerSearch= ~ productMatch", productMatch)
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 226 ~ exports.sellerSearch= ~ keywordMatch", keywordMatch)
@@ -369,7 +372,7 @@ exports.getCounts = (query) =>
       })
       .then(resolve)
       .catch(reject);
-});
+  });
 
 /*
 

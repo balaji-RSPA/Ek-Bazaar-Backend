@@ -105,7 +105,7 @@ module.exports.serachSeller = async (req, res) => {
       console.log("🚀 ~ file: elasticSearchController.js ~ line 96 ~ module.exports.serachSeller= ~ result", result.should)
       const { query, catId } = result;
       const seller = await searchFromElastic(query, range);
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 99 ~ module.exports.serachSeller= ~ seller", seller)
+      // console.log("🚀 ~ file: elasticSearchController.js ~ line 99 ~ module.exports.serachSeller= ~ seller", seller)
       // const product = await getProductByName({ name: { $regex: reg, $options: "si" } })
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 101 ~ module.exports.serachSeller= ~ product", product)
       // let primaryCatId, relatedCat, secCat, primCat
@@ -137,6 +137,7 @@ module.exports.serachSeller = async (req, res) => {
         state,
         productSearchKeyword
       };
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 140 ~ module.exports.serachSeller= ~ seller[0]", seller[0])
       return respSuccess(res, resp);
     }
 
