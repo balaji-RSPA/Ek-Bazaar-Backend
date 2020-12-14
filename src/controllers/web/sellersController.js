@@ -1,6 +1,7 @@
 const camelcaseKeys = require('camelcase-keys')
 const { machineIdSync } = require('node-machine-id')
 const { respSuccess, respError } = require('../../utils/respHadler')
+const {uploadToDOSpace} = require("../../utils/utils")
 const mongoose = require('mongoose');
 
 const { sellers } = require('../../modules')
@@ -207,9 +208,30 @@ module.exports.addSellerProduct = async(req,res)=>{
   }
 }
 module.exports.updateSellerProduct = async(req,res)=>{
-  const {id,inStock} = req.body
+  // const {id,inStock} = req.body
   try {
-    let updateDetail = await addProductDetails(id, {"productDetails.inStock" : inStock})
+    const {body, files } = req
+    let updateDetail
+    if(body.id && body.imageType){
+      const data = {
+        Key: `${body.sellerId}/${body.fileName}`,
+        body:  files.file.data 
+      }
+      let ImageVal = await uploadToDOSpace(data)
+
+      let image = body.imageType;
+      let imageVal = `productDetails.image.${image}`
+      let imageNameLoc = {name : body.fileName, code : ImageVal.Location}
+      let imageDtl = {};
+      imageDtl[imageVal] = imageNameLoc;
+      updateDetail = await addProductDetails(body.id, imageDtl)
+    }
+   if(body.id && (body.inStock === false || body.inStock)){
+    updateDetail = await addProductDetails(body.id, {"productDetails.inStock" : body.inStock})
+   }
+    // if(body.id && body.inStock){
+    //   
+    // }else
     let seller = await getSellerProfile(updateDetail.sellerId)
     respSuccess(res,seller,"Successfully updated")
   }catch(error){
