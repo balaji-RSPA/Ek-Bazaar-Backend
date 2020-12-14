@@ -13,12 +13,27 @@ const {
 } = buyers;
 const { getProductByName } = category
 const { sellerSearch, searchFromElastic } = elastic
-const { checkUserExistOrNot, updateUser, addUser } = sellers
+const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller } = sellers
 const { createToken } = require("../../utils/utils");
+
+const getUserAgent = (userAgent) => {
+
+  const {
+    browser, version, os, platform, source
+  } = userAgent
+  return {
+    browser,
+    version,
+    os,
+    platform,
+    source
+  }
+
+}
 
 module.exports.createRFP = async (req, res) => {
   try {
-    const {mobile, name, email, location, productDetails} = req.body
+    const {mobile, name, email, location, productDetails, ipAddress} = req.body
     const user = await checkUserExistOrNot({mobile: mobile.mobile})
     console.log("~ user", user, productDetails)
     if(user && user.length) {
@@ -68,6 +83,7 @@ module.exports.createRFP = async (req, res) => {
         productDetails
       }
       const rfp = await postRFP(rfpData)
+      respSuccess(res, "Your requirement has successfully submitted")
     } else {
       const userData = {
         name,
@@ -86,6 +102,17 @@ module.exports.createRFP = async (req, res) => {
         userId: user._id
       }
       const buyer = await addBuyer(buyerData)
+
+       const sellerData = {
+        name,
+        email: email || null,
+        mobile,
+        location,
+        // sellerType: serviceType,
+        userId: user._id,
+      };
+      const seller = await addSeller(sellerData);
+
       const rfpData = {
         buyerId: buyer._id,
         buyerDetails: {
@@ -96,9 +123,24 @@ module.exports.createRFP = async (req, res) => {
         },
         productDetails
       }
-      const rfp = await postRFP(rfpData)
+
+      if (buyer && seller) {
+        const deviceId = machineIdSync();
+        const userAgent = getUserAgent(req.useragent)
+        const token = createToken(deviceId, { userId: buyer.userId });
+        const finalData = {
+          userAgent,
+          userId: buyer.userId,
+          token,
+          deviceId,
+          ipAddress: ipAddress || null
+        }
+
+        const result1 = await handleUserSession(user._id, finalData)
+        const rfp = await postRFP(rfpData)
+        respSuccess(res, { token, buyer, seller }, "Your requirement has successfully submitted.")
+      }
     }
-    respSuccess(res, "Your requirement has successfully submitted")
 
   } catch (error) {
     respError(res, error.message)
