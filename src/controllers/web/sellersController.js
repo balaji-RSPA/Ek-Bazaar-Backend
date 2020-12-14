@@ -53,6 +53,7 @@ module.exports.getSeller = async (req, res) => {
 }
 
 module.exports.updateSeller = async (req, res) => {
+  // console.log(req.body,"===================",req.files)
   try {
     let {
       businessDetails,
@@ -62,7 +63,11 @@ module.exports.updateSeller = async (req, res) => {
       companyProfile,
       productDetails,
       notifications,
-      deactivateAccount
+      deactivateAccount,
+      company,
+      CinNumber,
+      GstNumber,
+      IeCode,
     } = req.body
     const {
       userID
@@ -79,7 +84,32 @@ module.exports.updateSeller = async (req, res) => {
         _id: sellerID
       }, newData)
     }
-    if (statutoryDetails) {
+    //statutoryDetails
+    if (company || CinNumber || GstNumber || IeCode || (req.files && (req.files.multidoc || req.files.gst))) {
+      let statutoryDetails = {
+        company : JSON.parse(company),
+        CinNumber : JSON.parse(CinNumber),
+        GstNumber : JSON.parse(GstNumber),
+        IeCode : JSON.parse(IeCode),
+      }
+      if(req.files && req.files.multidoc){
+        let data = {
+          Key: `${sellerID}/${req.files.multidoc.name}`,
+          body:  req.files.multidoc.data
+        }
+        const multidoc = await uploadToDOSpace(data)
+        statutoryDetails.company.name = req.files.multidoc.name;
+        statutoryDetails.company.code = multidoc.Location;
+      }
+      if(req.files && req.files.gst){
+        let data = {
+          Key: `${sellerID}/${req.files.gst.name}`,
+          body: req.files.gst.data
+        }
+        const gst = await uploadToDOSpace(data)
+        statutoryDetails.GstNumber.name = req.files.gst.name;
+        statutoryDetails.GstNumber.code = gst.Location;
+      }
       const statutoryDtls = await addStatutoryDetails(
         sellerID,
         statutoryDetails,
@@ -123,10 +153,8 @@ module.exports.updateSeller = async (req, res) => {
       let estblsmntPhts
       if(user.establishmentId){
         let getEstablishmentPht = await findEstablishment(user.establishmentId)
-        console.log(getEstablishmentPht,"==============sjfshfhjdsjfg")
 
          photos = getEstablishmentPht.photos.length ? [...getEstablishmentPht.photos,...photos] : photos
-         console.log(photos,"//////////////////////////")
         estblsmntPhts = await addEstablishmentPhotos(
           sellerID,
           photos
@@ -167,7 +195,18 @@ module.exports.updateSeller = async (req, res) => {
         sellerCompanyId: cmpnyPrfl._id
       })
     }
-    if (productDetails) {
+    if (productDetails || (req.files && req.files.document)) {
+
+       productDetails = JSON.parse(productDetails)
+       if(req.files && req.files.document){
+        let data = {
+          Key: `${sellerID}/${req.files.document.name}`,
+          body:  req.files.document.data
+        }
+        const _document = await uploadToDOSpace(data)
+        productDetails.productDetails.document.name = req.files.document.name;
+        productDetails.productDetails.document.code = _document.Location;
+      }
       let productsId = []
       let prdctDtls
       if (productDetails._id !== null) {
