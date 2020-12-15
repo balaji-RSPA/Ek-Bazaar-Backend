@@ -39,19 +39,19 @@ module.exports.addSellerBulkIndex = async () => {
             },
             {
               path: 'parentCategoryId',
-              model: 'parentCategory',
+              model: 'level1',
               select: 'name'
             }, {
               path: 'primaryCategoryId',
-              model: 'primaryCategory',
+              model: 'level2',
               select: 'name'
             }, {
               path: 'secondaryCategoryId',
-              model: 'secondaryCategory',
+              model: 'level3',
               select: 'name'
             }, {
               path: 'poductId',
-              model: 'products',
+              model: 'level4',
               select: 'name'
             }
           ]

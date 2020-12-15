@@ -189,7 +189,7 @@ const sellersSchema = new Schema(
     },
     // primaryCatId:{
     //   type: ObjectId,
-    //   ref: 'primaryCategory',
+    //   ref: 'level2',
     //   default: null
     // },
     // sellerNotifications:{notificationSchema},
