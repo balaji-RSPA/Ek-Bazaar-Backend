@@ -19,41 +19,54 @@ const documentSchema = new Schema({
     trim: true,
   },
 });
+
 const imageSchema = new Schema({
   image1:{
     name: {
       type: String,
+      trim: true,
+      default: null
     },
     code: {
       type: String,
       trim: true,
+      default: null
     },
   },
   image2 : {
     name: {
       type: String,
+      trim: true,
+      default: null
     },
     code: {
       type: String,
       trim: true,
+      default: null
     },
   },
   image3:{
     name: {
       type: String,
+      trim: true,
+      default: null
     },
     code: {
       type: String,
       trim: true,
+      default: null
     },
   },
   image4:{
     name: {
       type: String,
+      trim: true,
+      default: null
     },
     code: {
       type: String,
       trim: true,
+      default: null
     },
   }
 })
@@ -122,7 +135,55 @@ const productDetailsSchema = new Schema({
     trim: true,
   },
   document: { documentSchema },
-  image : imageSchema
+  image : {image1:{
+    name: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    code: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  },
+  image2 : {
+    name: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    code: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  },
+  image3:{
+    name: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    code: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  },
+  image4:{
+    name: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    code: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  }
+}
 });
 
 const sellerProductSchema = new Schema(
