@@ -319,7 +319,8 @@ module.exports.addSellerProduct = async (req, res) => {
       const findSeller = await getSellerProfile(sellerId)
       result = await addSellerProduct(req.body)
       if (findSeller && findSeller.length) {
-        findSeller[0].sellerProductId = findSeller[0].sellerProductId.concat(result);
+        findSeller[0].sellerProductId = findSeller[0].sellerProductId && findSeller[0].sellerProductId.length !== 0 ? [...result,...findSeller[0].sellerProductId]:result;
+        // findSeller[0].sellerProductId.concat(result)
       }
       seller = await updateSeller({
         _id: sellerId

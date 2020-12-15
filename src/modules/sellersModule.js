@@ -622,7 +622,6 @@ module.exports.getAllSellers = () =>
 
 module.exports.updateSeller = (query, data, elastic) =>
   new Promise((resolve, reject) => {
-    console.log(query, data, ' uodate seller-----')
     Sellers.findOneAndUpdate(query, data, {
         new: true,
         upsert: true
