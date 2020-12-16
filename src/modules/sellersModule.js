@@ -496,6 +496,13 @@ module.exports.getSeller = (id, chkStock) =>
           path: 'productDetails.regionOfOrigin',
         },
       })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
       .populate(matchVal)
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
@@ -610,6 +617,13 @@ module.exports.getAllSellers = () =>
           path: 'productDetails.regionOfOrigin',
         },
       })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
@@ -665,6 +679,13 @@ module.exports.updateSeller = (query, data, elastic) =>
         model: 'sellerproducts',
         populate: {
           path: 'productDetails.regionOfOrigin',
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
         },
       })
       .populate('location.city', 'name')

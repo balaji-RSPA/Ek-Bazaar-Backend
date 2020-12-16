@@ -114,8 +114,16 @@ const productDetailsSchema = new Schema({
     }
   },
   packagingDetails: {
-    type: String,
-    trim: true,
+    packagingDetail: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    packagingUnit: {
+      type: String,
+      trim: true,
+      default: null
+    }
   },
   countryOfOrigin: {
     type: ObjectId,
