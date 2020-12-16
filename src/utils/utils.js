@@ -63,7 +63,6 @@ module.exports.uploadToDOSpace = (req) => {
       Key: req.Key,
       ACL: 'public-read'
     };
-
     return new Promise((resolve, reject) => {
       s3.upload(params, function (err, data) {
         if (err) reject(err)
