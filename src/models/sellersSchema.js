@@ -147,7 +147,12 @@ const sellersSchema = new Schema(
       },
     },
     // Array Object
-    sellerType: [serviceSchema],
+    // sellerType: [serviceSchema],
+    sellerType: {
+      type: [ObjectId],
+      ref: SellerTypes,
+      default: []
+    },
     // Array Object
     // serviceCity:[
     //   {

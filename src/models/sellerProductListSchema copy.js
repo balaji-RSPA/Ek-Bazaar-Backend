@@ -7,7 +7,6 @@ const PrimaryCategory = require('./primaryCategorySchema')
 const SecondaryCategory = require('./secondaryCategorySchema')
 const Products = require('./productsSchema');
 const ProductsSubCategories = require("./productsSubCategoriesSchema");
-const City = require('./citiesSchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
@@ -21,56 +20,56 @@ const documentSchema = new Schema({
   },
 });
 
-// const imageSchema = new Schema({
-//   image1:{
-//     name: {
-//       type: String,
-//       trim: true,
-//       default: null
-//     },
-//     code: {
-//       type: String,
-//       trim: true,
-//       default: null
-//     },
-//   },
-//   image2 : {
-//     name: {
-//       type: String,
-//       trim: true,
-//       default: null
-//     },
-//     code: {
-//       type: String,
-//       trim: true,
-//       default: null
-//     },
-//   },
-//   image3:{
-//     name: {
-//       type: String,
-//       trim: true,
-//       default: null
-//     },
-//     code: {
-//       type: String,
-//       trim: true,
-//       default: null
-//     },
-//   },
-//   image4:{
-//     name: {
-//       type: String,
-//       trim: true,
-//       default: null
-//     },
-//     code: {
-//       type: String,
-//       trim: true,
-//       default: null
-//     },
-//   }
-// })
+const imageSchema = new Schema({
+  image1:{
+    name: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    code: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  },
+  image2 : {
+    name: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    code: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  },
+  image3:{
+    name: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    code: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  },
+  image4:{
+    name: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    code: {
+      type: String,
+      trim: true,
+      default: null
+    },
+  }
+})
 
 const productDetailsSchema = new Schema({
   name: {
@@ -187,19 +186,6 @@ const productDetailsSchema = new Schema({
 }
 });
 
-const serviceCitiesSchema = new Schema({
-    city: {
-      type: ObjectId,
-      ref: City,
-      default: null
-    },
-    state: {
-      type: ObjectId,
-      ref: States,
-      default: null
-    }
-})
-
 const sellerProductSchema = new Schema(
   {
     sellerId: {
@@ -207,44 +193,41 @@ const sellerProductSchema = new Schema(
       ref: "sellers",
       default: null,
     },
-    userId: {
-      type: ObjectId,
-      default: null,
-    },
     serviceType: {
       type: ObjectId,
       trim: true,
       default: null
     },
-    parentCategoryId: [{ // level 1
+    parentCategoryId: {
       type: ObjectId,
       ref: ParentCategory,
       default: null,
-    }],
-    primaryCategoryId: [{ // level 2 
+    },
+    primaryCategoryId: {
       type: ObjectId,
       ref: PrimaryCategory,
       default: null,
-    }],
-    secondaryCategoryId: [{ // level 3
+    },
+    secondaryCategoryId: {
       type: ObjectId,
       ref: SecondaryCategory,
       default: null,
-    }],
-    poductId: [{ // level 4
+    },
+    poductId: {
       type: ObjectId,
       ref: Products,
       default: null,
+    },
+    productSubcategoryId: [{
+      categoryId: {
+        type: ObjectId,
+        ref: ProductsSubCategories,
+        default: null
+      },
+      productDetails: productDetailsSchema,
+      // default: [],
     }],
-    productSubcategoryId:[{ // level 5
-      type: ObjectId,
-      ref: ProductsSubCategories,
-      default: null
-    }],
-
     productDetails: productDetailsSchema,
-    
-    serviceCity: [serviceCitiesSchema]
   },
   {
     timestamps: true,
