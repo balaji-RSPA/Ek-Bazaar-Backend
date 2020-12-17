@@ -10,7 +10,6 @@ const SellersStatutory = require('../models/sellerStatutorySchema')
 const Users = require('../../config/tenderdb').userModel
 const Sessions = require('../../config/tenderdb').sessionModel
 const SessionsLogs = require('../../config/tenderdb').sessionLogModel
-const SellerProducts = require('../models/sellerProductListSchema')
 const Cities = require('../models/citiesSchema')
 const States = require('../models/statesSchema')
 const {
@@ -1153,7 +1152,7 @@ module.exports.getSellerVal = (id) =>
 
 module.exports.deleteSellerProduct = (data) =>
   new Promise((resolve, reject) => {
-    SellerProducts.findByIdAndDelete({
+    SelleresProductList.findByIdAndDelete({
         _id: data
       })
       .then((doc) => {
@@ -1186,6 +1185,24 @@ new Promise((resolve, reject) => {
       _id: id
     })
     .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
+  /**
+ * 
+ * Get seller product detail
+ * */
+module.exports.getSellerProduct = (query) =>
+new Promise((resolve, reject) => {
+  SelleresProductList.findOne(query)
+  .populate({
+    path: 'productDetails.regionOfOrigin',
+  })
+  .populate({
+    path: 'productDetails.countryOfOrigin',
+  })
+  .then((doc) => {
       resolve(doc)
     })
     .catch(reject)
