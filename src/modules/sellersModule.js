@@ -453,12 +453,16 @@ module.exports.getSeller = (id, chkStock) =>
         path: 'sellerContactId',
         model: SellersContact,
         populate: {
-          path: "location.state",
-          model: States,
-        },
-        populate: {
           path: "location.city",
           model: Cities
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.state",
+          model: States,
         }
       })
       .populate('sellerCompanyId')
@@ -504,11 +508,10 @@ module.exports.getSeller = (id, chkStock) =>
       })
       .populate(matchVal)
       .populate('location.city', 'name')
-      .populate('location.state', 'name region')
+      .populate('location.state', 'name')
       .populate('location.country', 'name')
       .lean()
       .then((doc) => {
-        // console.log("🚀 ~ file: sellersModule.js ~ line 375 ~ .then ~ doc", doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -627,7 +630,6 @@ module.exports.getAllSellers = () =>
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
       .then((doc) => {
-        console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -692,7 +694,6 @@ module.exports.updateSeller = (query, data, elastic) =>
       .populate('location.country', 'name')
       .lean()
       .then(async (doc) => {
-
         // if (doc && elastic) {
         //   // const tenderDoc = JSON.parse(JSON.stringify(doc));
         //   const esData = JSON.parse(JSON.stringify(doc));

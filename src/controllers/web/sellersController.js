@@ -119,7 +119,6 @@ module.exports.updateSeller = async (req, res) => {
       }, newData)
     }
     if (contactDetails) {
-      // console.log(sellerID, "🚀 ~ file: sellersController.js ~ line 51 ~ module.exports.updateSeller= ~ req.body", req.body)
       contactDetails = {
         ...contactDetails,
         sellerId: sellerID
