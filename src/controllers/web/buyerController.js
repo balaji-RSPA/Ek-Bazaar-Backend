@@ -209,6 +209,7 @@ module.exports.getBuyer = async (req, res) => {
 };
 
 module.exports.updateBuyer = async (req, res) => {
+  console.log("update buyer---------------------")
   try {
     // const { buyerID } = req;
     const { userID } = req
