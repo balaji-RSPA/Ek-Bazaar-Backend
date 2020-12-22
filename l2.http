@@ -4,1838 +4,203 @@ content-type: application/json
 
 [
   {
-    "vendorId": "F1",
-    "parentId": 3,
-    "name": "Staple Food"
+    "vendorId": "HMT1",
+    "parentId": 18,
+    "name": "Pliers, Screwdrivers & Hammers"
   },
   {
-    "vendorId": "F2",
-    "parentId": 3,
-    "name": "Processed Food"
+    "vendorId": "HMT2",
+    "parentId": 18,
+    "name": "Machine & Precision Tools"
   },
   {
-    "vendorId": "F3",
-    "parentId": 3,
-    "name": "Dry Fruits & Nuts"
+    "vendorId": "HMT3",
+    "parentId": 18,
+    "name": "Cutting Tools & Milling Cutter"
   },
   {
-    "vendorId": "F4",
-    "parentId": 3,
-    "name": "Juices & Beverages"
+    "vendorId": "HMT4",
+    "parentId": 18,
+    "name": "Gardening and Horticulture Tools"
   },
   {
-    "vendorId": "F5",
-    "parentId": 3,
-    "name": "Biscuits & Confectionery"
+    "vendorId": "HMT5",
+    "parentId": 18,
+    "name": "Hydraulic & Pneumatic Tools"
   },
   {
-    "vendorId": "TY1",
-    "parentId": 21,
-    "name": "Yarns & Threads"
+    "vendorId": "HMT6",
+    "parentId": 18,
+    "name": "Cutting Blades, Knives and Scissors"
   },
   {
-    "vendorId": "TY2",
-    "parentId": 21,
-    "name": "Laces & Accessories"
+    "vendorId": "HMT7",
+    "parentId": 18,
+    "name": "Jewellery Making Tools & Machines"
   },
   {
-    "vendorId": "TY3",
-    "parentId": 21,
-    "name": "Textile Equipment"
+    "vendorId": "HMT8",
+    "parentId": 18,
+    "name": "Woodworking Tools & Machines"
   },
   {
-    "vendorId": "TY4",
-    "parentId": 21,
-    "name": "Industrial Textiles"
+    "vendorId": "HMT9",
+    "parentId": 18,
+    "name": "Buffing, Surface Finishing Machines"
   },
   {
-    "vendorId": "TY5",
-    "parentId": 21,
-    "name": "Tents, Tarpaulins"
+    "vendorId": "HMT10",
+    "parentId": 18,
+    "name": "Shearing, Trimming & Metal Profiling"
   },
   {
-    "vendorId": "TY6",
-    "parentId": 21,
-    "name": "Reflective"
+    "vendorId": "HMT11",
+    "parentId": 18,
+    "name": "Saws, Chainsaws and Saw Blades"
   },
   {
-    "vendorId": "TY7",
-    "parentId": 21,
-    "name": "Embroidered Textiles"
+    "vendorId": "HMT12",
+    "parentId": 18,
+    "name": "Electrical & Electronic Goods Repair"
   },
   {
-    "vendorId": "TY8",
-    "parentId": 21,
-    "name": "Motifs, Badges, Emblems & Lanyards"
+    "vendorId": "HMT13",
+    "parentId": 18,
+    "name": "Marine Tools & Equipments"
   },
   {
-    "vendorId": "TY9",
-    "parentId": 21,
-    "name": "Cufflink, Buttons, Zippers & Buckles"
+    "vendorId": "MM1",
+    "parentId": 17,
+    "name": "Metal & Metal Made Products"
   },
   {
-    "vendorId": "TY10",
-    "parentId": 21,
-    "name": "Textile, Dyeing & Finishing Chemical"
+    "vendorId": "MM2",
+    "parentId": 17,
+    "name": "Minerals and Ores"
   },
   {
-    "vendorId": "TY11",
-    "parentId": 21,
-    "name": "Mosquito, Insect & Bugs Netting"
+    "vendorId": "MM3",
+    "parentId": 17,
+    "name": "Iron & Copper Alloys"
   },
   {
-    "vendorId": "TY12",
-    "parentId": 21,
-    "name": "Embroidery Needles & Accessories"
+    "vendorId": "MM4",
+    "parentId": 17,
+    "name": "Coal, Carbon & Charcoal"
   },
   {
-    "vendorId": "TY13",
-    "parentId": 21,
-    "name": "Jute & Jute Products"
+    "vendorId": "MM5",
+    "parentId": 17,
+    "name": "Copper & Brass Products"
   },
   {
-    "vendorId": "TY14",
-    "parentId": 21,
-    "name": "Umbrellas and Raincoats"
+    "vendorId": "MM6",
+    "parentId": 17,
+    "name": "Ironware, Ironmongery & Iron Artware"
   },
   {
-    "vendorId": "AP1",
-    "parentId": 7,
-    "name": "Fabrics & Dress Materials"
+    "vendorId": "MM7",
+    "parentId": 17,
+    "name": "Mica & Mica Products"
   },
   {
-    "vendorId": "AP2",
-    "parentId": 7,
-    "name": "Ladies Dresses"
+    "vendorId": "MM8",
+    "parentId": 17,
+    "name": "Aluminium and Aluminium Products"
   },
   {
-    "vendorId": "AP3",
-    "parentId": 7,
-    "name": "Industrial Uniforms & Safety Wear"
-  },
-  {
-    "vendorId": "AP4",
-    "parentId": 7,
-    "name": "Sarees & Lehenga"
-  },
-  {
-    "vendorId": "AP5",
-    "parentId": 7,
-    "name": "Men Clothing"
-  },
-  {
-    "vendorId": "AP6",
-    "parentId": 7,
-    "name": "Unisex Clothing"
-  },
-  {
-    "vendorId": "AP7",
-    "parentId": 7,
-    "name": "Kids Dresses"
-  },
-  {
-    "vendorId": "AP8",
-    "parentId": 7,
-    "name": "Winter Wear"
-  },
-  {
-    "vendorId": "AP9",
-    "parentId": 7,
-    "name": "Animal Clothing & Accessories"
-  },
-  {
-    "vendorId": "AP10",
-    "parentId": 7,
-    "name": "Socks, Leggings & Stockings"
-  },
-  {
-    "vendorId": "AP11",
-    "parentId": 7,
-    "name": "Commercial & Academic Uniforms"
-  },
-  {
-    "vendorId": "AP12",
-    "parentId": 7,
-    "name": "Party, Wedding, Western, Formal Wear"
-  },
-  {
-    "vendorId": "AP13",
-    "parentId": 7,
-    "name": "Undergarments & Inner Wear"
-  },
-  {
-    "vendorId": "AP14",
-    "parentId": 7,
-    "name": "Works Shoes & Uniform Shoes"
-  },
-  {
-    "vendorId": "AP15",
-    "parentId": 7,
-    "name": "Cotton, Khadi, Other Fabric Clothing"
-  },
-  {
-    "vendorId": "AP16",
-    "parentId": 7,
-    "name": "Garments & Textiles Job Work"
-  },
-  {
-    "vendorId": "AP17",
-    "parentId": 7,
-    "name": "Infant & Toddlers Clothing"
-  },
-  {
-    "vendorId": "AP18",
-    "parentId": 7,
-    "name": "Leather Jackets and Garments"
-  },
-  {
-    "vendorId": "AP19",
-    "parentId": 7,
-    "name": "Gloves & Mittens"
-  },
-  {
-    "vendorId": "AP20",
-    "parentId": 7,
-    "name": "Embroidered Apparel & Garments"
-  },
-  {
-    "vendorId": "AP21",
-    "parentId": 7,
-    "name": "Pashmina, Silk & Cashmere Shawls"
-  },
-  {
-    "vendorId": "AP22",
-    "parentId": 7,
-    "name": "Printed & Patchwork Clothing"
-  },
-  {
-    "vendorId": "AP23",
-    "parentId": 7,
-    "name": "Sports Wear & Athletic Accessories"
-  },
-  {
-    "vendorId": "AP24",
-    "parentId": 7,
-    "name": "Towels &  Napkins"
-  },
-  {
-    "vendorId": "AP25",
-    "parentId": 7,
-    "name": "Scarves, Shawls, Stoles, Bandanas"
-  },
-  {
-    "vendorId": "AP26",
-    "parentId": 7,
-    "name": "Hats, Caps and Headwears"
-  },
-  {
-    "vendorId": "AP27",
-    "parentId": 7,
-    "name": "Silk Apparel, Clothings & Fabrics"
-  },
-  {
-    "vendorId": "AP28",
-    "parentId": 7,
-    "name": "Neckties, Bow Ties & Tie Accessories"
-  },
-  {
-    "vendorId": "HTF1",
-    "parentId": 24,
-    "name": "Bed Linen & Bedspreads"
-  },
-  {
-    "vendorId": "HTF2",
-    "parentId": 24,
-    "name": "Carpets & Rugs"
-  },
-  {
-    "vendorId": "HTF3",
-    "parentId": 24,
-    "name": "PU Foam, Coir & Jute Mattresses"
-  },
-  {
-    "vendorId": "HTF4",
-    "parentId": 24,
-    "name": "Door Mats & Bath Mats"
-  },
-  {
-    "vendorId": "HTF5",
-    "parentId": 24,
-    "name": "Cushion & Cushion Covers"
-  },
-  {
-    "vendorId": "HTF6",
-    "parentId": 24,
-    "name": "Drapes & Curtains"
-  },
-  {
-    "vendorId": "HTF7",
-    "parentId": 24,
-    "name": "Blankets & Quilts"
-  },
-  {
-    "vendorId": "HTF8",
-    "parentId": 24,
-    "name": "Wallpaper, Blinds And Accessories"
-  },
-  {
-    "vendorId": "HTF9",
-    "parentId": 24,
-    "name": "Tablecloths, Table Linen & Placemats"
-  },
-  {
-    "vendorId": "HTF10",
-    "parentId": 24,
-    "name": "Kitchen Towels and Kitchen Textiles"
-  },
-  {
-    "vendorId": "HTF11",
-    "parentId": 24,
-    "name": "Bath Linen Manufacturers"
-  },
-  {
-    "vendorId": "HTF12",
-    "parentId": 24,
-    "name": "Home Decor Fabric"
-  },
-  {
-    "vendorId": "TNL1",
-    "parentId": 40,
-    "name": "Transport Agents & Bulk Carriers"
-  },
-  {
-    "vendorId": "TNL2",
-    "parentId": 40,
-    "name": "Cargo & Shipping"
-  },
-  {
-    "vendorId": "TNL3",
-    "parentId": 40,
-    "name": "Warehouses and Warehousing Agents"
-  },
-  {
-    "vendorId": "TNL4",
-    "parentId": 40,
-    "name": "Packers & Movers"
-  },
-  {
-    "vendorId": "TNL5",
-    "parentId": 40,
-    "name": "Material Handling Machines & Systems"
-  },
-  {
-    "vendorId": "TNL6",
-    "parentId": 40,
-    "name": "Storage Tanks, Drums & Containers"
-  },
-  {
-    "vendorId": "TNL7",
-    "parentId": 40,
-    "name": "Protective Packing Materials"
-  },
-  {
-    "vendorId": "TNL8",
-    "parentId": 40,
-    "name": "Corrugated Packaging Boxes"
-  },
-  {
-    "vendorId": "DD1",
-    "parentId": 58,
-    "name": "Food/FMCG"
-  },
-  {
-    "vendorId": "DD2",
-    "parentId": 58,
-    "name": "Others"
-  },
-  {
-    "vendorId": "DR1",
-    "parentId": 1,
-    "name": "Common Disease Medicines"
-  },
-  {
-    "vendorId": "DR2",
-    "parentId": 1,
-    "name": "Ayurvedic,Herbal Products & Medicine"
-  },
-  {
-    "vendorId": "DR3",
-    "parentId": 1,
-    "name": "Nutraceuticals & Dietary Supplements"
-  },
-  {
-    "vendorId": "DR4",
-    "parentId": 1,
-    "name": "Anti Infective Drugs & Medicines"
-  },
-  {
-    "vendorId": "DR5",
-    "parentId": 1,
-    "name": "TB, Tumor & Cancer Drugs"
-  },
-  {
-    "vendorId": "DR6",
-    "parentId": 1,
-    "name": "Pharma Ingredients & Raw Materials"
-  },
-  {
-    "vendorId": "DR7",
-    "parentId": 1,
-    "name": "Cardiovascular Drugs & Medication"
-  },
-  {
-    "vendorId": "DR8",
-    "parentId": 1,
-    "name": "Pain Relief Drugs & Pharmaceuticals"
-  },
-  {
-    "vendorId": "DR9",
-    "parentId": 1,
-    "name": "Digestive System Drugs & Medicines"
-  },
-  {
-    "vendorId": "DR10",
-    "parentId": 1,
-    "name": "Healthcare Products & Aids"
-  },
-  {
-    "vendorId": "DR11",
-    "parentId": 1,
-    "name": "Brain & Nervous System Drugs"
-  },
-  {
-    "vendorId": "DR12",
-    "parentId": 1,
-    "name": "Animal Medicines & Health Care"
-  },
-  {
-    "vendorId": "DR13",
-    "parentId": 1,
-    "name": "Generic Drugs & Pharmaceuticals"
-  },
-  {
-    "vendorId": "DR14",
-    "parentId": 1,
-    "name": "Immunization & Vaccination Drugs"
-  },
-  {
-    "vendorId": "DR15",
-    "parentId": 1,
-    "name": "Respiratory System Drugs"
-  },
-  {
-    "vendorId": "DR16",
-    "parentId": 1,
-    "name": "Homeopathic Medicines & Remedies"
-  },
-  {
-    "vendorId": "BC1",
-    "parentId": 6,
-    "name": "Building & Construction Machines"
-  },
-  {
-    "vendorId": "BC2",
-    "parentId": 6,
-    "name": "Doors and Windows"
-  },
-  {
-    "vendorId": "BC3",
-    "parentId": 6,
-    "name": "Paints, Wall Putty & Varnishes"
-  },
-  {
-    "vendorId": "BC4",
-    "parentId": 6,
-    "name": "Wood, Plywood, Veneer & Laminates"
-  },
-  {
-    "vendorId": "BC5",
-    "parentId": 6,
-    "name": "Door & Window, Hinges & Fittings"
-  },
-  {
-    "vendorId": "BC6",
-    "parentId": 6,
-    "name": "Architectural & Civil Engineering"
-  },
-  {
-    "vendorId": "BC7",
-    "parentId": 6,
-    "name": "Building & Real Estate Developers"
-  },
-  {
-    "vendorId": "BC8",
-    "parentId": 6,
-    "name": "Roofing and False ceiling"
-  },
-  {
-    "vendorId": "BC9",
-    "parentId": 6,
-    "name": "Ceramic, Glass and Vitrified Tiles"
-  },
-  {
-    "vendorId": "BC10",
-    "parentId": 6,
-    "name": "Wash Basins, Sanitaryware & Fittings"
-  },
-  {
-    "vendorId": "BC11",
-    "parentId": 6,
-    "name": "Gate, Grilles, Fences & Railings"
-  },
-  {
-    "vendorId": "BC12",
-    "parentId": 6,
-    "name": "Faucets, Water Taps and Bib Cocks"
-  },
-  {
-    "vendorId": "BC13",
-    "parentId": 6,
-    "name": "Prefabricated Houses & Structures"
-  },
-  {
-    "vendorId": "BC14",
-    "parentId": 6,
-    "name": "Cement and Concrete"
-  },
-  {
-    "vendorId": "BC15",
-    "parentId": 6,
-    "name": "Building Panels & Cladding Materials"
-  },
-  {
-    "vendorId": "BC16",
-    "parentId": 6,
-    "name": "Scaffolding Pipes and Fittings"
-  },
-  {
-    "vendorId": "BC17",
-    "parentId": 6,
-    "name": "Staircase, Balusters and Stair Parts"
-  },
-  {
-    "vendorId": "BC18",
-    "parentId": 6,
-    "name": "Bricks & Construction Aggregates"
-  },
-  {
-    "vendorId": "BC19",
-    "parentId": 6,
-    "name": "Door, Window Frame, Panel & Shutters"
-  },
-  {
-    "vendorId": "BC20",
-    "parentId": 6,
-    "name": "Bathroom Fittings & Accessories"
-  },
-  {
-    "vendorId": "BC21",
-    "parentId": 6,
-    "name": "Clamps and Clamping Equipment"
-  },
-  {
-    "vendorId": "BC21",
-    "parentId": 6,
-    "name": "Gazebos, Awnings, Canopies & Sheds"
-  },
-  {
-    "vendorId": "BC23",
-    "parentId": 6,
-    "name": "Real Estate Agent & Property Dealers"
-  },
-  {
-    "vendorId": "BC24",
-    "parentId": 6,
-    "name": "Beams, Purlins, Frames and Girders"
-  },
-  {
-    "vendorId": "BC25",
-    "parentId": 6,
-    "name": "Fountains & Water Features"
-  },
-  {
-    "vendorId": "BC26",
-    "parentId": 6,
-    "name": "Sewerage and Drainage Products"
-  },
-  {
-    "vendorId": "BC27",
-    "parentId": 6,
-    "name": "Curtain and Drapery Hardware"
-  },
-  {
-    "vendorId": "BC28",
-    "parentId": 6,
-    "name": "Hardware: Hooks & Mounts"
-  },
-  {
-    "vendorId": "BC29",
-    "parentId": 6,
-    "name": "Landscape Structure and Designing"
-  },
-  {
-    "vendorId": "BC30",
-    "parentId": 6,
-    "name": "Vinyl, Plastic & Rubber Floor Tiles"
-  },
-  {
-    "vendorId": "BC31",
-    "parentId": 6,
-    "name": "Hardwood Flooring & Wooden Floor Tiles"
-  },
-  {
-    "vendorId": "BC32",
-    "parentId": 6,
-    "name": "Shower Panels & Accessories"
-  },
-  {
-    "vendorId": "BC33",
-    "parentId": 6,
-    "name": "Door Skins, Panels & Profile"
-  },
-  {
-    "vendorId": "BC34",
-    "parentId": 6,
-    "name": "Acoustic Window, Foam & Enclosures"
-  },
-  {
-    "vendorId": "BC35",
-    "parentId": 6,
-    "name": "Geotextile, Geogrids & Pond Liners"
-  },
-  {
-    "vendorId": "BC36",
-    "parentId": 6,
-    "name": "Bath Tubs, Jacuzzi & Hot Tubs"
-  },
-  {
-    "vendorId": "BC37",
-    "parentId": 6,
-    "name": "Granite, Marble, Sandstone & Others"
-  },
-  {
-    "vendorId": "BC38",
-    "parentId": 6,
-    "name": "Door Lock, Electronic Lock & Latches"
-  },
-  {
-    "vendorId": "BC39",
-    "parentId": 6,
-    "name": "FRP Lining, PU & Powder Coatings"
-  },
-  {
-    "vendorId": "BC40",
-    "parentId": 6,
-    "name": "Building Survey & Soil Investigation"
-  },
-  {
-    "vendorId": "BC41",
-    "parentId": 6,
-    "name": "Construction Equipment Rental"
-  },
-  {
-    "vendorId": "BC42",
-    "parentId": 6,
-    "name": "Cobbles, Pebbles & Pavings"
-  },
-  {
-    "vendorId": "BC43",
-    "parentId": 6,
-    "name": "Stone Tiles & Floorings"
-  },
-  {
-    "vendorId": "IS1",
-    "parentId": 5,
-    "name": "Pumps, Pumping Machines & Spares"
-  },
-  {
-    "vendorId": "IS2",
-    "parentId": 5,
-    "name": "Plastic, PVC & PP Products"
-  },
-  {
-    "vendorId": "IS3",
-    "parentId": 5,
-    "name": "Oils, Grease & Lubricants"
-  },
-  {
-    "vendorId": "IS4",
-    "parentId": 5,
-    "name": "Industrial & Engineering Goods"
-  },
-  {
-    "vendorId": "IS5",
-    "parentId": 5,
-    "name": "Filters & Filtration Systems"
-  },
-  {
-    "vendorId": "IS6",
-    "parentId": 5,
-    "name": "Hoses & Hose Fittings"
-  },
-  {
-    "vendorId": "IS7",
-    "parentId": 5,
-    "name": "Storage Tanks, Drums & Containers"
-  },
-  {
-    "vendorId": "IS8",
-    "parentId": 5,
-    "name": "Insulators & Insulation Materials"
-  },
-  {
-    "vendorId": "IS9",
-    "parentId": 5,
-    "name": "Industrial Coolers, Blowers & Fans"
-  },
-  {
-    "vendorId": "IS10",
-    "parentId": 5,
-    "name": "Rubber & Rubber Products"
-  },
-  {
-    "vendorId": "IS11",
-    "parentId": 5,
-    "name": "Carts, Dollies & Trolleys"
-  },
-  {
-    "vendorId": "IS12",
-    "parentId": 5,
-    "name": "Abrasives & Grains"
-  },
-  {
-    "vendorId": "IS13",
-    "parentId": 5,
-    "name": "Stained, Etched & Laminated Glass"
-  },
-  {
-    "vendorId": "IS14",
-    "parentId": 5,
-    "name": "Drilling Bits, Collets and Chucks"
-  },
-  {
-    "vendorId": "IS15",
-    "parentId": 5,
-    "name": "Bar, Neodymium & Permanent Magnets"
-  },
-  {
-    "vendorId": "IS16",
-    "parentId": 5,
-    "name": "Filter Assemblies and Spare Parts"
-  },
-  {
-    "vendorId": "IS17",
-    "parentId": 5,
-    "name": "Separators, Strainers & Purifiers"
-  },
-  {
-    "vendorId": "IS18",
-    "parentId": 5,
-    "name": "Dryers & Evaporators"
-  },
-  {
-    "vendorId": "IS19",
-    "parentId": 5,
-    "name": "Enclosures & Cabinets"
-  },
-  {
-    "vendorId": "IS20",
-    "parentId": 5,
-    "name": "Hydraulic Jacks, Lifts & Winches"
-  },
-  {
-    "vendorId": "IS21",
-    "parentId": 5,
-    "name": "Industrial Belts & V Belts"
-  },
-  {
-    "vendorId": "IS22",
-    "parentId": 5,
-    "name": "PVC, LDPE, HDPE & Plastic Sheets"
-  },
-  {
-    "vendorId": "IS23",
-    "parentId": 5,
-    "name": "Flanges & Flanged Fittings"
-  },
-  {
-    "vendorId": "IS24",
-    "parentId": 5,
-    "name": "Wire Mesh"
-  },
-  {
-    "vendorId": "IS25",
-    "parentId": 5,
-    "name": "Welding, Rods, Electrodes & Wires"
-  },
-  {
-    "vendorId": "IS26",
-    "parentId": 5,
-    "name": "Engineering and Shipping Ropes"
-  },
-  {
-    "vendorId": "IS27",
-    "parentId": 5,
-    "name": "Heavy & Light Duty Casters & Rollers"
-  },
-  {
-    "vendorId": "IS28",
-    "parentId": 5,
-    "name": "Fiber Glass Products"
-  },
-  {
-    "vendorId": "IS29",
-    "parentId": 5,
-    "name": "Industrial Racks & Storage System"
-  },
-  {
-    "vendorId": "IS30",
-    "parentId": 5,
-    "name": "Industrial & Machine Brushes"
-  },
-  {
-    "vendorId": "IS31",
-    "parentId": 5,
-    "name": "Rust & Corrosion Protection Products"
-  },
-  {
-    "vendorId": "IS32",
-    "parentId": 5,
-    "name": "Lubrication Systems and Equipment"
-  },
-  {
-    "vendorId": "IS33",
-    "parentId": 5,
-    "name": "Stamping Tools & Stamping Machine"
-  },
-  {
-    "vendorId": "IS34",
-    "parentId": 5,
-    "name": "Disinfection Equipment & Machines"
-  },
-  {
-    "vendorId": "IS35",
-    "parentId": 5,
-    "name": "3D Printer & Services"
-  },
-  {
-    "vendorId": "IS36",
-    "parentId": 5,
-    "name": "Brushes & Bristles"
-  },
-  {
-    "vendorId": "IS37",
-    "parentId": 5,
-    "name": "Plastic & Rubber Products"
-  },
-  {
-    "vendorId": "IS38",
-    "parentId": 5,
-    "name": "Industrial Valves & Valve Fittings"
-  },
-  {
-    "vendorId": "IS39",
-    "parentId": 5,
-    "name": "Batteries & Charge Storage Devices"
-  },
-  {
-    "vendorId": "IS40",
-    "parentId": 5,
-    "name": "Drills, Grinders, Saws & Power Tools"
-  },
-  {
-    "vendorId": "IS41",
-    "parentId": 5,
-    "name": "Electric Circuit Components & Spares"
-  },
-  {
-    "vendorId": "IS42",
-    "parentId": 5,
-    "name": "Electric Motors and Components"
-  },
-  {
-    "vendorId": "IS43",
-    "parentId": 5,
-    "name": "Metal Pipe & Plumbing Fittings"
-  },
-  {
-    "vendorId": "IS44",
-    "parentId": 5,
-    "name": "Brackets, Holder & Hardware Fittings"
-  },
-  {
-    "vendorId": "IS45",
-    "parentId": 5,
-    "name": "Industrial Air Conditioner & Devices"
-  },
-  {
-    "vendorId": "IS46",
-    "parentId": 5,
-    "name": "Gearbox, Axle, Sprocket & Gear Parts"
-  },
-  {
-    "vendorId": "IS47",
-    "parentId": 5,
-    "name": "Steel & Stainless Steel Products"
-  },
-  {
-    "vendorId": "IS48",
-    "parentId": 5,
-    "name": "Heater, Thermostat & Heating Devices"
-  },
-  {
-    "vendorId": "IS49",
-    "parentId": 5,
-    "name": "Nails, Fasteners, Rivets & Shackles"
-  },
-  {
-    "vendorId": "IS50",
-    "parentId": 5,
-    "name": "Industrial Pipe & Tube Fittings"
-  },
-  {
-    "vendorId": "IS51",
-    "parentId": 5,
-    "name": "Industrial Uniforms & Safety Wear"
-  },
-  {
-    "vendorId": "IS52",
-    "parentId": 5,
-    "name": "Seals, Oil Seals & Industrial Seals"
-  },
-  {
-    "vendorId": "IS53",
-    "parentId": 5,
-    "name": "Ball Bearings and Bearing Assemblies"
-  },
-  {
-    "vendorId": "IS54",
-    "parentId": 5,
-    "name": "Adhesives, Glue and Sealants"
-  },
-  {
-    "vendorId": "IS55",
-    "parentId": 5,
-    "name": "Manufacturing & Assembling Services"
-  },
-  {
-    "vendorId": "IS56",
-    "parentId": 5,
-    "name": "Chisels & Professional Hand Tools"
-  },
-  {
-    "vendorId": "IS57",
-    "parentId": 5,
-    "name": "Steel Bars, Rods, Plates & Sheets"
-  },
-  {
-    "vendorId": "IS58",
-    "parentId": 5,
-    "name": "Steel Pipes and Tubes"
-  },
-  {
-    "vendorId": "IS59",
-    "parentId": 5,
-    "name": "Industrial & Metal Fabrication"
-  },
-  {
-    "vendorId": "IS60",
-    "parentId": 5,
-    "name": "Measurement Gauges & Gauge Fittings"
-  },
-  {
-    "vendorId": "IS61",
-    "parentId": 5,
-    "name": "Metal Finishing & Coating Services"
-  },
-  {
-    "vendorId": "IS62",
-    "parentId": 5,
-    "name": "Fire Fighting & Prevention Products"
-  },
-  {
-    "vendorId": "IS63",
-    "parentId": 5,
-    "name": "Material Testing Labs & Services"
-  },
-  {
-    "vendorId": "IS64",
-    "parentId": 5,
-    "name": "PVC, FRP, HDPE & Other Plastic Pipes"
-  },
-  {
-    "vendorId": "IS65",
-    "parentId": 5,
-    "name": "Elevators & Escalators"
-  },
-  {
-    "vendorId": "IS66",
-    "parentId": 5,
-    "name": "Freezers, Refrigerators & Chillers"
-  },
-  {
-    "vendorId": "IS67",
-    "parentId": 5,
-    "name": "Electric Fittings & Components"
-  },
-  {
-    "vendorId": "IS68",
-    "parentId": 5,
-    "name": "Moulds, Jigs and Casting Dies"
-  },
-  {
-    "vendorId": "IS69",
-    "parentId": 5,
-    "name": "Die Casting & Investment Castings"
-  },
-  {
-    "vendorId": "IS70",
-    "parentId": 5,
-    "name": "PVC, CPVC, HDPE Water Pipe Fittings"
-  },
-  {
-    "vendorId": "IS71",
-    "parentId": 5,
-    "name": "Lifting Hooks, Chains & Clamps"
-  },
-  {
-    "vendorId": "IS72",
-    "parentId": 5,
-    "name": "Air Springs & Compression Springs"
-  },
-  {
-    "vendorId": "IS73",
-    "parentId": 5,
-    "name": "Rubber Gaskets and Gasket Material"
-  },
-  {
-    "vendorId": "IS74",
-    "parentId": 5,
-    "name": "Instrument Calibration & Adjustment"
-  },
-  {
-    "vendorId": "IS75",
-    "parentId": 5,
-    "name": "Boilers & Boiler Parts"
-  },
-  {
-    "vendorId": "IS76",
-    "parentId": 5,
-    "name": "Piston & Crankshaft Assemblies"
-  },
-  {
-    "vendorId": "IS77",
-    "parentId": 5,
-    "name": "Aluminum, Brass, Bronze Pipes"
-  },
-  {
-    "vendorId": "IS78",
-    "parentId": 5,
-    "name": "Electrical Conduits and Fittings"
-  },
-  {
-    "vendorId": "IS79",
-    "parentId": 5,
-    "name": "Metal Scrap & Waste Materials"
-  },
-  {
-    "vendorId": "IS80",
-    "parentId": 5,
-    "name": "Adhesive & Pressure Sensitive Tapes"
-  },
-  {
-    "vendorId": "IS81",
-    "parentId": 5,
-    "name": "Sheet Metal & Turned Components"
-  },
-  {
-    "vendorId": "IS82",
-    "parentId": 5,
-    "name": "Clutch, Clutch Parts & Accessories"
-  },
-  {
-    "vendorId": "IS83",
-    "parentId": 5,
-    "name": "Metal, Security & Safety Detectors"
-  },
-  {
-    "vendorId": "IS84",
-    "parentId": 5,
-    "name": "Product Engineering and Prototyping"
-  },
-  {
-    "vendorId": "IS85",
-    "parentId": 5,
-    "name": "Forgings, Forging Parts & Supplies"
-  },
-  {
-    "vendorId": "IS86",
-    "parentId": 5,
-    "name": "Smoke, Oil & Gas Leak Detectors"
-  },
-  {
-    "vendorId": "IS87",
-    "parentId": 5,
-    "name": "Metal & Plastic Moulding Services"
-  },
-  {
-    "vendorId": "IS88",
-    "parentId": 5,
-    "name": "Welding, Soldering & Brazing Service"
-  },
-  {
-    "vendorId": "IS89",
-    "parentId": 5,
-    "name": "Pipe Elbows, Joints & Couplings"
-  },
-  {
-    "vendorId": "PM1",
-    "parentId": 4,
-    "name": "Machines & Equipments"
-  },
-  {
-    "vendorId": "PM2",
-    "parentId": 4,
-    "name": "Printing Machinery & Equipment"
-  },
-  {
-    "vendorId": "PM3",
-    "parentId": 4,
-    "name": "Milling & Grinding Tools"
-  },
-  {
-    "vendorId": "PM4",
-    "parentId": 4,
-    "name": "Used Machinery & Tools"
-  },
-  {
-    "vendorId": "PM5",
-    "parentId": 4,
-    "name": "Material Handling Machines & Systems"
-  },
-  {
-    "vendorId": "PM6",
-    "parentId": 4,
-    "name": "Conveyor Systems & Components"
-  },
-  {
-    "vendorId": "PM7",
-    "parentId": 4,
-    "name": "Water Treatment & Purification Plant"
-  },
-  {
-    "vendorId": "PM8",
-    "parentId": 4,
-    "name": "Industrial Furnaces & Ovens"
-  },
-  {
-    "vendorId": "PM9",
-    "parentId": 4,
-    "name": "Welding Equipments & Machinery"
-  },
-  {
-    "vendorId": "PM10",
-    "parentId": 4,
-    "name": "Air Compressors, Accessories & Parts"
-  },
-  {
-    "vendorId": "PM11",
-    "parentId": 4,
-    "name": "Food Processing Plants & Machinery"
-  },
-  {
-    "vendorId": "PM12",
-    "parentId": 4,
-    "name": "Hydraulic & Pneumatic Machines"
-  },
-  {
-    "vendorId": "PM13",
-    "parentId": 4,
-    "name": "Chemical Reactors and Process Tanks"
-  },
-  {
-    "vendorId": "PM14",
-    "parentId": 4,
-    "name": "Pollution Control Devices & Machines"
-  },
-  {
-    "vendorId": "PM15",
-    "parentId": 4,
-    "name": "Cutting Machines & Equipment"
-  },
-  {
-    "vendorId": "PM16",
-    "parentId": 4,
-    "name": "Apparel & Textile Machinery"
-  },
-  {
-    "vendorId": "PM17",
-    "parentId": 4,
-    "name": "Drilling & Boring Equipment"
-  },
-  {
-    "vendorId": "PM18",
-    "parentId": 4,
-    "name": "CNC Machines & Lathe Machine"
-  },
-  {
-    "vendorId": "PM19",
-    "parentId": 4,
-    "name": "Sewing,Knitting & Embroidery Machine"
-  },
-  {
-    "vendorId": "PM20",
-    "parentId": 4,
-    "name": "Fast Food & Beverages Machinery"
-  },
-  {
-    "vendorId": "PM21",
-    "parentId": 4,
-    "name": "Chemical Plants & Machinery"
-  },
-  {
-    "vendorId": "PM22",
-    "parentId": 4,
-    "name": "Cooling Tower, Heat Exchanger, Parts"
-  },
-  {
-    "vendorId": "PM23",
-    "parentId": 4,
-    "name": "Surface Coating & Paint Equipment"
-  },
-  {
-    "vendorId": "PM24",
-    "parentId": 4,
-    "name": "Bakery & Dairy Machinery"
-  },
-  {
-    "vendorId": "PM25",
-    "parentId": 4,
-    "name": "Food Grains & Nut Processing Machine"
-  },
-  {
-    "vendorId": "PM26",
-    "parentId": 4,
-    "name": "Plastic Work & Processing Machines"
-  },
-  {
-    "vendorId": "PM27",
-    "parentId": 4,
-    "name": "Oxygen & Nitrogen Gas Plants"
-  },
-  {
-    "vendorId": "PM28",
-    "parentId": 4,
-    "name": "Casting, Moulding & Forging Machines"
-  },
-  {
-    "vendorId": "PM29",
-    "parentId": 4,
-    "name": "Bending & Metalwork Machines"
-  },
-  {
-    "vendorId": "PM30",
-    "parentId": 4,
-    "name": "Crusher, Shredder & Presses"
-  },
-  {
-    "vendorId": "PM31",
-    "parentId": 4,
-    "name": "Wire Drawing & Cabling Machines"
-  },
-  {
-    "vendorId": "PM32",
-    "parentId": 4,
-    "name": "Pharmaceutical Machinery & Equipment"
-  },
-  {
-    "vendorId": "PM33",
-    "parentId": 4,
-    "name": "Vending Machines & Dispensers"
-  },
-  {
-    "vendorId": "PM34",
-    "parentId": 4,
-    "name": "Paper Work & Making Machine"
-  },
-  {
-    "vendorId": "PM35",
-    "parentId": 4,
-    "name": "Fruit & Vegetable Processing Machine"
-  },
-  {
-    "vendorId": "PM36",
-    "parentId": 4,
-    "name": "Industrial Mixers & Homogenizers"
-  },
-  {
-    "vendorId": "PM37",
-    "parentId": 4,
-    "name": "Binding and Pressing Machines"
-  },
-  {
-    "vendorId": "PM38",
-    "parentId": 4,
-    "name": "Oil Mill & Oil Extraction Machinery"
-  },
-  {
-    "vendorId": "PM39",
-    "parentId": 4,
-    "name": "Extraction Plants and Extruders"
-  },
-  {
-    "vendorId": "PM40",
-    "parentId": 4,
-    "name": "Rubber, Rubber Processing Machinery"
-  },
-  {
-    "vendorId": "PM41",
-    "parentId": 4,
-    "name": "Meat & Seafood Processing Equipments"
-  },
-  {
-    "vendorId": "PM42",
-    "parentId": 4,
-    "name": "Testing & Measuring Equipments"
-  },
-  {
-    "vendorId": "PM43",
-    "parentId": 4,
-    "name": "Cranes, Forklift & Lifting Machines"
-  },
-  {
-    "vendorId": "PM44",
-    "parentId": 4,
-    "name": "Instrumentation & Control Equipments"
-  },
-  {
-    "vendorId": "PM45",
-    "parentId": 4,
-    "name": "Farming Tools, Equipment & Machines"
-  },
-  {
-    "vendorId": "PM46",
-    "parentId": 4,
-    "name": "Repair & Maintenance Services"
-  },
-  {
-    "vendorId": "PM47",
-    "parentId": 4,
-    "name": "Cleaning Machines & Equipments"
-  },
-  {
-    "vendorId": "PM48",
-    "parentId": 4,
-    "name": "Excavator and Earth Moving Machinery"
-  },
-  {
-    "vendorId": "PM49",
-    "parentId": 4,
-    "name": "Strapping & Sealing Machines"
-  },
-  {
-    "vendorId": "PM50",
-    "parentId": 4,
-    "name": "Plant Design & Installation Services"
-  },
-  {
-    "vendorId": "PM51",
-    "parentId": 4,
-    "name": "Packaging & Lamination Machinery"
-  },
-  {
-    "vendorId": "PM52",
-    "parentId": 4,
-    "name": "Turnkey Consultants & Solutions"
-  },
-  {
-    "vendorId": "PM53",
-    "parentId": 4,
-    "name": "Waste Management & Control Services"
-  },
-  {
-    "vendorId": "PM54",
-    "parentId": 4,
-    "name": "CAD CAM Design & Consultancy"
-  },
-  {
-    "vendorId": "CD1",
-    "parentId": 10,
-    "name": "Industrial Chemicals & Supplies"
-  },
-  {
-    "vendorId": "CD2",
-    "parentId": 10,
-    "name": "Chemical Reagents & Catalysts"
-  },
-  {
-    "vendorId": "CD3",
-    "parentId": 10,
-    "name": "Dyes & Color Additives"
-  },
-  {
-    "vendorId": "CD4",
-    "parentId": 10,
-    "name": "Insecticides and Pesticides"
-  },
-  {
-    "vendorId": "CD5",
-    "parentId": 10,
-    "name": "Natural and Synthetic Resins"
-  },
-  {
-    "vendorId": "CD6",
-    "parentId": 10,
-    "name": "PET Granules & Plastic Raw Material"
-  },
-  {
-    "vendorId": "CD7",
-    "parentId": 10,
-    "name": "FRP Lining, PU & Powder Coatings"
-  },
-  {
-    "vendorId": "CD8",
-    "parentId": 10,
-    "name": "Textile, Dyeing & Finishing Chemical"
-  },
-  {
-    "vendorId": "CD9",
-    "parentId": 10,
-    "name": "Organic and Inorganic Solvents"
-  },
-  {
-    "vendorId": "CD10",
-    "parentId": 10,
-    "name": "Natural, Industrial & Medical Gases"
-  },
-  {
-    "vendorId": "CD11",
-    "parentId": 10,
-    "name": "Petroleum and Petrochemical Products"
-  },
-  {
-    "vendorId": "CD12",
-    "parentId": 10,
-    "name": "Flavours & Aromatics"
-  },
-  {
-    "vendorId": "CD13",
-    "parentId": 10,
-    "name": "Adhesives, Glue and Sealants"
-  },
-  {
-    "vendorId": "CD14",
-    "parentId": 10,
-    "name": "Fertilizers and Soil Additives"
-  },
-  {
-    "vendorId": "AF1",
-    "parentId": 15,
-    "name": "Farming Tools, Equipment & Machines"
-  },
-  {
-    "vendorId": "AF2",
-    "parentId": 15,
-    "name": "Fresh Flowers, Plants & Trees"
-  },
-  {
-    "vendorId": "AF3",
-    "parentId": 15,
-    "name": "Seeds and Plant Saplings"
-  },
-  {
-    "vendorId": "AF4",
-    "parentId": 15,
-    "name": "Tractor, Tractor Parts & Assemblies"
-  },
-  {
-    "vendorId": "AF5",
-    "parentId": 15,
-    "name": "Bird Food, Poultry & Animal Food"
-  },
-  {
-    "vendorId": "AF6",
-    "parentId": 15,
-    "name": "Irrigation and Harvesting Machines"
-  },
-  {
-    "vendorId": "AF7",
-    "parentId": 15,
-    "name": "Fertilizers and Soil Additives"
-  },
-  {
-    "vendorId": "AF8",
-    "parentId": 15,
-    "name": "Coir and Agro Products"
-  },
-  {
-    "vendorId": "AF9",
-    "parentId": 15,
-    "name": "Farming and Pet Animals"
-  },
-  {
-    "vendorId": "AF10",
-    "parentId": 15,
-    "name": "Flower Pots, Wall & Garden Planters"
-  },
-  {
-    "vendorId": "HD1",
-    "parentId": 19,
-    "name": "Gifts, Crafts & Artifacts"
-  },
-  {
-    "vendorId": "HD2",
-    "parentId": 19,
-    "name": "God & Goddess Statues"
-  },
-  {
-    "vendorId": "HD3",
-    "parentId": 19,
-    "name": "Statues & Sculptures"
-  },
-  {
-    "vendorId": "HD4",
-    "parentId": 19,
-    "name": "Bamboo and Wooden Handicrafts"
-  },
-  {
-    "vendorId": "HD5",
-    "parentId": 19,
-    "name": "Corporate & Business Gifts"
-  },
-  {
-    "vendorId": "HD6",
-    "parentId": 19,
-    "name": "Abstract & Contemporary Paintings"
-  },
-  {
-    "vendorId": "HD7",
-    "parentId": 19,
-    "name": "Party Decorations & Supplies"
-  },
-  {
-    "vendorId": "HD8",
-    "parentId": 19,
-    "name": "Brass, Copper & Metal Handicrafts"
-  },
-  {
-    "vendorId": "HD9",
-    "parentId": 19,
-    "name": "Antique Coins, Stamps & Collectibles"
-  },
-  {
-    "vendorId": "HD10",
-    "parentId": 19,
-    "name": "Ceramic & Clay Decoratives"
-  },
-  {
-    "vendorId": "HD11",
-    "parentId": 19,
-    "name": "Awards & Trophies"
-  },
-  {
-    "vendorId": "HD12",
-    "parentId": 19,
-    "name": "Medieval Swords & Armours"
-  },
-  {
-    "vendorId": "HD13",
-    "parentId": 19,
-    "name": "Greeting & Invitation Cards"
-  },
-  {
-    "vendorId": "HD14",
-    "parentId": 19,
-    "name": "Bone and Shell Handicrafts"
-  },
-  {
-    "vendorId": "HD15",
-    "parentId": 19,
-    "name": "Christmas Gifts & Decoratives"
-  },
-  {
-    "vendorId": "HD16",
-    "parentId": 19,
-    "name": "Flags & Related Accessories"
-  },
-  {
-    "vendorId": "HD17",
-    "parentId": 19,
-    "name": "Jute Handicrafts & Jute Products"
-  },
-  {
-    "vendorId": "HD18",
-    "parentId": 19,
-    "name": "Clocks and Watches"
-  },
-  {
-    "vendorId": "HD19",
-    "parentId": 19,
-    "name": "Decorative Light, Lamp & Lamp Shades"
-  },
-  {
-    "vendorId": "HD20",
-    "parentId": 19,
-    "name": "Fresh Flowers, Plants & Trees"
-  },
-  {
-    "vendorId": "HD21",
-    "parentId": 19,
-    "name": "Glass, Gem Stone, Wood & Other Beads"
-  },
-  {
-    "vendorId": "HD22",
-    "parentId": 19,
-    "name": "Mirrors and Glassware"
-  },
-  {
-    "vendorId": "HD23",
-    "parentId": 19,
-    "name": "Marble & Stone Artifacts"
-  },
-  {
-    "vendorId": "HD24",
-    "parentId": 19,
-    "name": "Fashion & Designer Bags"
-  },
-  {
-    "vendorId": "HD25",
-    "parentId": 19,
-    "name": "Keychains & Bottle Openers"
-  },
-  {
-    "vendorId": "HD26",
-    "parentId": 19,
-    "name": "Cotton, Jute & Canvas Bags"
-  },
-  {
-    "vendorId": "HD27",
-    "parentId": 19,
-    "name": "Photo Frames & Picture Frames"
-  },
-  {
-    "vendorId": "HD28",
-    "parentId": 19,
-    "name": "Artificial & Decorative Candles"
-  },
-  {
-    "vendorId": "HD29",
-    "parentId": 19,
-    "name": "Lantern, Chandeliers & Hanging Lamps"
-  },
-  {
-    "vendorId": "HD30",
-    "parentId": 19,
-    "name": "Candle Stands & Candelabra"
-  },
-  {
-    "vendorId": "HD31",
-    "parentId": 19,
-    "name": "Aqua Culture, Aquarium & Supplies"
-  },
-  {
-    "vendorId": "HD32",
-    "parentId": 19,
-    "name": "Garden & Landscaping Products"
-  },
-  {
-    "vendorId": "HD33",
-    "parentId": 19,
-    "name": "Flower Pots, Wall & Garden Planters"
-  },
-  {
-    "vendorId": "HD34",
-    "parentId": 19,
-    "name": "Wall & Door Hangings"
-  },
-  {
-    "vendorId": "HD35",
-    "parentId": 19,
-    "name": "Flower Pots & Vases"
-  },
-  {
-    "vendorId": "HD36",
-    "parentId": 19,
-    "name": "Artificial Plants & Foliage"
-  },
-  {
-    "vendorId": "HD37",
-    "parentId": 19,
-    "name": "Painters & Painting Service Provider"
-  },
-  {
-    "vendorId": "PPP1",
-    "parentId": 33,
-    "name": "Paper & Paper Made Products"
-  },
-  {
-    "vendorId": "PPP2",
-    "parentId": 33,
-    "name": "Paper Bags, Gifts & Paper Products"
-  },
-  {
-    "vendorId": "PPP3",
-    "parentId": 33,
-    "name": "Handmade Paper & Products"
-  },
-  {
-    "vendorId": "PPP4",
-    "parentId": 33,
-    "name": "Printing & Binding Services"
-  },
-  {
-    "vendorId": "PPP5",
-    "parentId": 33,
-    "name": "Office Stationery & Calculator"
-  },
-  {
-    "vendorId": "PPP6",
-    "parentId": 33,
+    "vendorId": "PMG1",
+    "parentId": 9,
     "name": "Barcode, Stickers & Luggage Tags"
   },
   {
-    "vendorId": "PPP7",
-    "parentId": 33,
-    "name": "Greeting & Invitation Cards"
+    "vendorId": "PMG2",
+    "parentId": 9,
+    "name": "Food Packaging Materials & Supplies"
   },
   {
-    "vendorId": "MGS1",
-    "parentId": 36,
-    "name": "Granite, Marble, Sandstone & Others"
+    "vendorId": "PMG3",
+    "parentId": 9,
+    "name": "Labels: Adhesive, Fabric & Metal"
   },
   {
-    "vendorId": "MGS2",
-    "parentId": 36,
-    "name": "Marble & Stone Artifacts"
+    "vendorId": "PMG4",
+    "parentId": 9,
+    "name": "Packaging Films & Foils"
   },
   {
-    "vendorId": "MGS3",
-    "parentId": 36,
-    "name": "Cobbles, Pebbles & Pavings"
+    "vendorId": "PMG5",
+    "parentId": 9,
+    "name": "Crates, Trays and Pallets"
   },
   {
-    "vendorId": "MGS4",
-    "parentId": 36,
-    "name": "Stone Tiles & Floorings"
+    "vendorId": "PMG6",
+    "parentId": 9,
+    "name": "Packaging Caps & Seals"
   },
   {
-    "vendorId": "MGS5",
-    "parentId": 36,
-    "name": "Statues & Sculptures"
+    "vendorId": "PMG7",
+    "parentId": 9,
+    "name": "Filling Machines & Plants"
   },
   {
-    "vendorId": "LPS1",
-    "parentId": 52,
-    "name": "Leather Goods & Accessories"
+    "vendorId": "PMG8",
+    "parentId": 9,
+    "name": "Packaging, Laminated & Zip Bags"
   },
   {
-    "vendorId": "LPS2",
-    "parentId": 52,
-    "name": "Raw and Processed Leather"
+    "vendorId": "PMG9",
+    "parentId": 9,
+    "name": "Plastic Containers & Bottles"
   },
   {
-    "vendorId": "LPS3",
-    "parentId": 52,
-    "name": "Men, Women & Kids Footwear"
+    "vendorId": "PMG10",
+    "parentId": 9,
+    "name": "Protective Packing Materials"
   },
   {
-    "vendorId": "LPS4",
-    "parentId": 52,
-    "name": "Animal Clothing & Accessories"
+    "vendorId": "PMG11",
+    "parentId": 9,
+    "name": "Packaging Pouches & Envelopes"
   },
   {
-    "vendorId": "LPS5",
-    "parentId": 52,
-    "name": "Wallets & Purses"
+    "vendorId": "PMG12",
+    "parentId": 9,
+    "name": "Form Fill & Seal Machines"
   },
   {
-    "vendorId": "LPS6",
-    "parentId": 52,
-    "name": "Fashion & Leather Belts"
+    "vendorId": "PMG13",
+    "parentId": 9,
+    "name": "Marking and Stamping Machines"
   },
   {
-    "vendorId": "LPS7",
-    "parentId": 52,
-    "name": "Leather Jackets and Garments"
+    "vendorId": "PMG14",
+    "parentId": 9,
+    "name": "Bulk Bags & Sacks"
   },
   {
-    "vendorId": "LPS8",
-    "parentId": 52,
-    "name": "Briefcase, Portfolio & Laptop Bags"
+    "vendorId": "PMG15",
+    "parentId": 9,
+    "name": "Aluminium,Tin Can & Metal Containers"
   },
   {
-    "vendorId": "EC1",
-    "parentId": 54,
-    "name": "Electric Circuit Components & Spares"
+    "vendorId": "PMG16",
+    "parentId": 9,
+    "name": "Corrugated Packaging Boxes"
   },
   {
-    "vendorId": "EC2",
-    "parentId": 54,
-    "name": "Sensors & Transducers"
+    "vendorId": "PMG17",
+    "parentId": 9,
+    "name": "Wrapping & Banding Machines"
   },
   {
-    "vendorId": "EC3",
-    "parentId": 54,
-    "name": "Instrumentation & Control Equipments"
+    "vendorId": "PMG18",
+    "parentId": 9,
+    "name": "Packing Straps, Clips & Supplies"
   },
   {
-    "vendorId": "EC4",
-    "parentId": 54,
-    "name": "Resistors & Other Passive Devices"
-  },
-  {
-    "vendorId": "EC5",
-    "parentId": 54,
-    "name": "Electric Fittings & Components"
-  },
-  {
-    "vendorId": "EC6",
-    "parentId": 54,
-    "name": "Electrical & Electronic Connectors"
-  },
-  {
-    "vendorId": "EC7",
-    "parentId": 54,
-    "name": "Diodes & Electronic Active Devices"
-  },
-  {
-    "vendorId": "EC8",
-    "parentId": 54,
-    "name": "Process Control Systems & Equipments"
-  },
-  {
-    "vendorId": "EC9",
-    "parentId": 54,
-    "name": "Optical, Laser Instruments & Devices"
-  },
-  {
-    "vendorId": "EC10",
-    "parentId": 54,
-    "name": "Voltage & Power Stabilizers"
-  },
-  {
-    "vendorId": "EC11",
-    "parentId": 54,
-    "name": "GPS and Navigation Devices"
-  },
-  {
-    "vendorId": "EC12",
-    "parentId": 54,
-    "name": "PCB Modules and Circuit Boards"
-  },
-  {
-    "vendorId": "EC13",
-    "parentId": 54,
-    "name": "Soldering Machines and Accesories"
-  },
-  {
-    "vendorId": "EC14",
-    "parentId": 54,
-    "name": "Electrical and Electronic Gadgets"
-  },
-  {
-    "vendorId": "EC15",
-    "parentId": 54,
-    "name": "Relays and Contactors"
+    "vendorId": "PMG19",
+    "parentId": 9,
+    "name": "Product Packing & Labelling Services"
   }
 ]
