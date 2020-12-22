@@ -88,7 +88,7 @@ module.exports.getAllCategories = (query) =>
           "5fddf6051a15802b97645210",
           "5fddf6051a15802b9764520e",
           "5fddf6051a15802b9764520f"
-          
+
         ],
       },
     })

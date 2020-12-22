@@ -142,8 +142,9 @@ exports.bulkStoreInElastic = (foundDoc) =>
   });
 
 exports.sellerSearch = async (reqQuery) => {
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -169,7 +170,7 @@ exports.sellerSearch = async (reqQuery) => {
     if (searchProductsBy.city) {
       keywordMatch.push({
         "match": {
-          "sellerProductId.city._id": searchProductsBy.city.id,
+          "sellerProductId.serviceCity.city._id": searchProductsBy.city.id,
         }
       })
     }
@@ -265,11 +266,14 @@ exports.sellerSearch = async (reqQuery) => {
       // })
 
       /** name */
-      // productMatch.push({
-      //   "match": {
-      //     "name": searchProductsBy.product
-      //   }
-      // })
+      productMatch.push({
+        "match": {
+          "name": {
+            "query": searchProductsBy.product,
+            "minimum_should_match": "100%"
+          }
+        }
+      })
     }
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 216 ~ exports.sellerSearch= ~ productMatch", productMatch)
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 226 ~ exports.sellerSearch= ~ keywordMatch", keywordMatch)
@@ -292,6 +296,16 @@ exports.sellerSearch = async (reqQuery) => {
       match: {
         "sellerProductId.poductId._id": productId,
       },
+    };
+
+    query.bool.must.push(categoryMatch);
+  }
+
+  if (serviceType) {
+    const categoryMatch = {
+      "match": {
+        "sellerProductId.serviceType._id": serviceType,
+      }
     };
 
     query.bool.must.push(categoryMatch);
