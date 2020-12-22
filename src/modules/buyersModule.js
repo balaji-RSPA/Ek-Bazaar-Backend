@@ -44,7 +44,6 @@ module.exports.updateBuyer = (query, data) =>
   new Promise((resolve, reject) => {
     Buyers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
-        console.log("🚀 ~ file: buyersModule.js ~ line 47 ~ .then ~ doc", doc)
         resolve(doc);
       })
       .catch((error) => reject(error));
