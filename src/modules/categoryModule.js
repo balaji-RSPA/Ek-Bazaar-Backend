@@ -371,6 +371,13 @@ module.exports.getProductCat = (query) =>
       .catch(reject);
   });
 
+module.exports.getProductSubcategory = (query) =>
+  new Promise((resolve, reject) => {
+    ProductsSubCategories.findOne(query)
+      .then(doc => resolve(doc))
+      .catch(error => reject(error))
+  })
+
 exports.updateSecondaryCategory = (id, newData) =>
   new Promise((resolve, reject) => {
     SecondaryCategory.findByIdAndUpdate(
