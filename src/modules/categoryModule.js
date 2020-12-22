@@ -307,7 +307,7 @@ module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) =
       path: "secondaryCategotyId",
       populate: {
         path: "productId",
-        model: "products"
+        model: "new_products"
       }
     })
     .then(doc => resolve(doc))

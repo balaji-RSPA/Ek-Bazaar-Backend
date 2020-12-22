@@ -29,7 +29,7 @@ module.exports.addSellerBulkIndex = async () => {
         .populate("sellerType.cities.state", "name region")
         .populate({
           path: 'sellerProductId',
-          model: 'sellerProducts',
+          model: 'sellerproducts',
           select: 'sellerId serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId',
           populate: [
             {
@@ -39,15 +39,15 @@ module.exports.addSellerBulkIndex = async () => {
             },
             {
               path: 'parentCategoryId',
-              model: 'parentCategory',
+              model: 'parentcategories',
               select: 'name'
             }, {
               path: 'primaryCategoryId',
-              model: 'primaryCategory',
+              model: 'primarycategories',
               select: 'name'
             }, {
               path: 'secondaryCategoryId',
-              model: 'secondaryCategory',
+              model: 'secondarycategories',
               select: 'name'
             }, {
               path: 'poductId',
@@ -122,8 +122,9 @@ exports.bulkStoreInElastic = (foundDoc) =>
   });
 
 exports.sellerSearch = async (reqQuery) => {
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -267,6 +268,16 @@ exports.sellerSearch = async (reqQuery) => {
       match: {
         "sellerProductId.poductId._id": productId,
       },
+    };
+
+    query.bool.must.push(categoryMatch);
+  }
+
+  if (serviceType) {
+    const categoryMatch = {
+      "match": {
+        "sellerProductId.serviceType._id": serviceType,
+      }
     };
 
     query.bool.must.push(categoryMatch);

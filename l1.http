@@ -4,7 +4,75 @@ content-type: application/json
 
 [
   {
+    "vendorId": 1,
+    "name": "Medicine,Pharma & Drugs"
+  },
+  {
     "vendorId": 3,
     "name": "Food"
+  },
+  {
+    "vendorId": 4,
+    "name": "Machinery,Industrial Equipment & Plants"
+  },
+  {
+    "vendorId": 5,
+    "name": "Industrial Consumables & Spares"
+  },
+  {
+    "vendorId": 6,
+    "name": "Building Equipment & Material"
+  },
+  {
+    "vendorId": 10,
+    "name": "Dyes & Chemicals"
+  },
+  {
+    "vendorId": 15,
+    "name": "Farming & Agriculture"
+  },
+  {
+    "vendorId": 19,
+    "name": "Handicrafts"
+  },
+  {
+    "vendorId": 21,
+    "name": "Textiles & Fabrics"
+  },
+  {
+    "vendorId": 33,
+    "name": "Paper Products"
+  },
+  {
+    "vendorId": 36,
+    "name": "Marble, Granite & Others"
+  },
+  {
+    "vendorId": 52,
+    "name": "Leather"
+  },
+  {
+    "vendorId": 54,
+    "name": "Electronics Components"
+  },
+  {
+    "vendorId": 7,
+    "name": "Garments"
+  },
+  {
+    "vendorId": 40,
+    "name": "Transportation & Warehousing"
+  },
+  {
+    "vendorId": 24,
+    "name": "Home Use Textiles"
+  },
+  {
+    "vendorId": 57,
+    "name": "Importers & Exporters"
+  },
+  {
+    "vendorId": 58,
+    "name": "Dealers & Distributors"
   }
 ]

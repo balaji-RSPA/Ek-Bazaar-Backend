@@ -71,5 +71,5 @@ productsSchema.index({
   }
 })
 
-const Products = model("products", productsSchema);
+const Products = model("new_products", productsSchema);
 module.exports = Products;

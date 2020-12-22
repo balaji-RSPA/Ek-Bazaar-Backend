@@ -41,7 +41,7 @@ const productsSubCategoriesSchema = new Schema(
         },
         productId: {
             type: ObjectId,
-            ref: "products",
+            ref: "new_products",
             default: null
         },
         l1: {
