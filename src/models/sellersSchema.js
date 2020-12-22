@@ -118,9 +118,9 @@ const sellersSchema = new Schema(
     },
     email: {
       type: String,
+      trim: true,
       default: null,
       // required: true,
-      trim: true,
     },
     isEmailVerified: {
       type: Boolean,
