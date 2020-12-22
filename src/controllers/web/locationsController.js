@@ -42,8 +42,7 @@ module.exports.createState = async (req, res) => {
 module.exports.getAllCountries = async (req, res) => {
   try {
     const countries = await getAllCountries();
-    console.log(countries, "countries......");
-    res.send(countries);
+    respSuccess(res, countries);
   } catch (error) {
     res.send(error.message);
   }

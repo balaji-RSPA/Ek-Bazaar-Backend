@@ -16,7 +16,7 @@ if (global.environment === "production") {
       user: "tradeapi",
       password: "Oyljeabr6Orc",
       database: "tradeapi",
-      server_port: "8080",
+      server_port: "8070",
     },
     tenderdb: {
       host: "139.59.46.227",

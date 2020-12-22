@@ -156,7 +156,6 @@ module.exports.addUser = async (req, res) => {
 module.exports.getUserProfile = async (req, res) => {
   try {
     const { userID } = req;
-    console.log("🚀 ~ file: userController.js ~ line 163 ~ module.exports.getUserProfile= ~ req.body", req.body)
     const user = await getUserProfile(userID)
     const seller = await getSeller(userID,req.body.inStock);
     const buyer = await getBuyer(userID);
@@ -174,10 +173,8 @@ module.exports.getUserProfile = async (req, res) => {
 module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
-    // const { name, email, business, location, type, sellerType } = req.body;
     const _buyer = req.body.buyer || {}
     let { name, email, business, location, type, sellerType } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 179 ~ module.exports.updateUser= ~ req.body", req.body)
     
     let userData = {
       name: _buyer && _buyer.name || name,
@@ -211,7 +208,6 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
-    // console.log("req.body.buyer",userData,buyerData, sellerData)
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);

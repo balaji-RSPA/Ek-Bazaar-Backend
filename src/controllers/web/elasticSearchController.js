@@ -28,6 +28,7 @@ module.exports.addSellerBulkIndex = async (req, res) => {
 module.exports.serachSeller = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query);
+    console.log("🚀 ~ file: elasticSearchController.js ~ line 33 ~ module.exports.serachSeller= ~ req.query", req.query)
     const secCat = await getSecondaryCategory(reqQuery.secondaryId);
     if (secCat) {
       const product = await getProductCategoryBySecCat({ name: secCat.name });
