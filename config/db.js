@@ -4,7 +4,7 @@ const { env } = process;
 const config = require('./config')
 const { tradedb } = config
 
-function dbConnection () {
+function dbConnection() {
 
   let url;
   if (env) {
@@ -36,52 +36,53 @@ function dbConnection () {
 };
 
 // function elasticSearchConnect() {
-  let host = 'localhost:9200'
-  if (env) {
+let host = 'localhost:9200'
+if (env) {
 
-    if(env.NODE_ENV === 'staging' || env.NODE_ENV === 'development'){
+  if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
-        host = 'tradebazaarapi.tech-active.com:5085'
+    host = 'tradebazaarapi.tech-active.com:5085'
 
-    }else if (env.NODE_ENV === 'production') {
+  } else if (env.NODE_ENV === 'production') {
 
-      host = 'tradebazaarapi.tech-active.com:5085'
-
-    }
+    host = 'tradebazaarapi.tech-active.com:5085'
 
   }
 
-  const es = () => new elasticsearch.Client({
-    host,
-    log: 'error'
-  });
+}
 
-  const esClient = es();
+const es = () => new elasticsearch.Client({
+  host,
+  log: 'error',
+  sniffOnStart: true,
+});
 
-  esClient.ping({
-    requestTimeout: 10000
-  }, (err) => {
+const esClient = es();
 
-    if (err) {
+esClient.ping({
+  requestTimeout: 10000
+}, (err) => {
 
-      console.log(err)
-      console.error('elasticsearch cluster is down!');
+  if (err) {
 
-    } else {
+    console.log(err)
+    console.error('elasticsearch cluster is down!');
 
-      console.log('Everything is ok with elasticsearch');
+  } else {
 
-    }
+    console.log('Everything is ok with elasticsearch');
 
-  })
-  // return esClient
+  }
+
+})
+// return esClient
 // }
 
 // module.exports = esClient
 
-module.exports = { 
-    mongoose,
-    dbConnection,
-    esClient
-    // elasticSearchConnect
+module.exports = {
+  mongoose,
+  dbConnection,
+  esClient
+  // elasticSearchConnect
 }

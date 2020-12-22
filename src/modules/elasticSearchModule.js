@@ -9,7 +9,7 @@ module.exports.addSellerBulkIndex = async () => {
 
   try {
     const data = await Sellers.estimatedDocumentCount(); // Getting total seller count
-    const limit = 1000; // Limited for 1000
+    const limit = 100; // Limited for 1000
     const ratio = data / limit;
     let skip = 0;
     let successCounter = 0;
@@ -25,17 +25,17 @@ module.exports.addSellerBulkIndex = async () => {
         .populate("location.country", "name")
         .populate("location.city", "name")
         .populate("sellerType.name", "name")
-        .populate("sellerType.cities.city", "name")
-        .populate("sellerType.cities.state", "name region")
+        // .populate("sellerType.cities.city", "name")
+        // .populate("sellerType.cities.state", "name region")
         .populate({
           path: 'sellerProductId',
-          model: 'sellerProducts',
-          select: 'sellerId serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId',
+          model: 'sellerproducts',
+          select: 'sellerId serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId productSubcategoryId serviceCity',
           populate: [
             {
               path: 'serviceType',
               model: 'sellerTypes',
-              select: 'name',
+              select: 'name ',
             },
             {
               path: 'parentCategoryId',
@@ -53,7 +53,27 @@ module.exports.addSellerBulkIndex = async () => {
               path: 'poductId',
               model: 'level4',
               select: 'name'
-            }
+            },
+            {
+              path: 'productSubcategoryId',
+              model: 'level5',
+              select: 'name'
+            },
+            {
+              path: 'serviceCity.city',
+              model: 'cities',
+              select: 'name'
+            },
+            {
+              path: 'serviceCity.state',
+              model: 'states',
+              select: 'name'
+            },
+            {
+              path: 'serviceCity.country',
+              model: 'countries',
+              select: 'name'
+            },
           ]
         })
         .lean();
@@ -149,20 +169,28 @@ exports.sellerSearch = async (reqQuery) => {
     if (searchProductsBy.city) {
       keywordMatch.push({
         "match": {
-          "sellerType.cities.city._id": searchProductsBy.city.id,
+          "sellerProductId.city._id": searchProductsBy.city.id,
         }
       })
     }
     if (searchProductsBy.state) {
       keywordMatch.push({
         match: {
-          "sellerType.cities.state._id": searchProductsBy.state.id,
+          "sellerProductId.state._id": searchProductsBy.state.id,
         }
       })
     }
     if (searchProductsBy.product) {
 
-      /** product **/
+      /** level 5 **/
+      productMatch.push({
+        "match_phrase": {
+          "sellerProductId.productSubcategoryId.name": searchProductsBy.product,
+        }
+      })
+
+
+      /** level 4 **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.poductId.name": searchProductsBy.product,
@@ -190,7 +218,7 @@ exports.sellerSearch = async (reqQuery) => {
       //   }
       // })
 
-      /** seccat **/
+      /** level 3 **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.secondaryCategoryId.name": searchProductsBy.product
@@ -213,7 +241,7 @@ exports.sellerSearch = async (reqQuery) => {
       //   }
       // })
 
-      /** primcat **/
+      /** level 2 **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.primaryCategoryId.name": searchProductsBy.product
@@ -369,7 +397,7 @@ exports.getCounts = (query) =>
       })
       .then(resolve)
       .catch(reject);
-});
+  });
 
 /*
 
