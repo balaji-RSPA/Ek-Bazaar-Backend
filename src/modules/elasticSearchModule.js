@@ -122,8 +122,9 @@ exports.bulkStoreInElastic = (foundDoc) =>
   });
 
 exports.sellerSearch = async (reqQuery) => {
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -267,6 +268,16 @@ exports.sellerSearch = async (reqQuery) => {
       match: {
         "sellerProductId.poductId._id": productId,
       },
+    };
+
+    query.bool.must.push(categoryMatch);
+  }
+
+  if (serviceType) {
+    const categoryMatch = {
+      "match": {
+        "sellerProductId.serviceType._id": serviceType,
+      }
     };
 
     query.bool.must.push(categoryMatch);

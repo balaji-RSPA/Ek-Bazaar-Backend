@@ -20,7 +20,10 @@ const sellerEstablishmentSchema = new Schema(
       ref: "sellers",
       default: null,
     },
-    photos: [imageSchema],
+    photos: {
+      type: [imageSchema],
+      default: []
+    },
   },
   {
     timestamps: true,

@@ -13,6 +13,7 @@ const { ObjectId } = Types;
 const documentSchema = new Schema({
   name: {
     type: String,
+    trim: true,
   },
   code: {
     type: String,
@@ -134,7 +135,7 @@ const productDetailsSchema = new Schema({
     type: Boolean,
     trim: true,
   },
-  document: { documentSchema },
+  document:documentSchema,
   image : {image1:{
     name: {
       type: String,
