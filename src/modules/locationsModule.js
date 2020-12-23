@@ -91,7 +91,7 @@ module.exports.getCity = (query, id) =>
 exports.getAllCities = (reqQuery) =>
   new Promise((resolve, reject) => {
     const skip = parseInt(reqQuery.skip) || 0;
-    const limit = parseInt(reqQuery.limit) || 1500;
+    const limit = parseInt(reqQuery.limit) || 2000;
     const search = reqQuery.search || "";
 
     let { state } = reqQuery;
@@ -161,6 +161,7 @@ exports.getAllCities = (reqQuery) =>
 
 module.exports.checkAndAddCity = (query) =>
   new Promise((resolve, reject) => {
+    console.log(query, ' eeee')
     this.getCity(query)
       .then((doc) => {
         if (doc) {
@@ -210,3 +211,37 @@ module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) 
       })
       .catch(reject);
 })
+
+module.exports.checkState = (query) =>
+  new Promise((resolve, reject) => {
+    States.findOne(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => reject(error.message));
+  });
+
+module.exports.updateCity = (query,data) =>
+  new Promise((resolve, reject) => {
+    // console.log(query,data, ' tyui')
+    Cities.findOneAndUpdate(query, data, { new: true, upsert: true })
+      .then((doc) => {
+        // console.log("🚀 ~ file: locationsModule.js ~ line 229 ~ .then ~ doc", doc)
+        resolve(doc);
+      })
+      .catch((error) => {
+        console.log(error, ' ghjk')
+        reject(error);
+      });
+  });
+  
+module.exports.updateState = (query,data) =>
+  new Promise((resolve, reject) => {
+    States.findOneAndUpdate(query, data, { new: true, upsert: true })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
