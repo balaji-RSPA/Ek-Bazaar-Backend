@@ -12,7 +12,8 @@ const {
 const mongoose = require('mongoose');
 
 const {
-  sellers
+  sellers,
+  location
 } = require('../../modules')
 const _ = require('lodash')
 
@@ -36,6 +37,7 @@ const {
   findEstablishment,
   getSellerProduct
 } = sellers
+const { getFilteredCities } = location;
 
 module.exports.getSeller = async (req, res) => {
   try {
@@ -438,6 +440,20 @@ module.exports.getSellerProduct = async (req, res) => {
     const { sellerProductId } = req.body
     let sellerProduct = await getSellerProduct({ _id: sellerProductId })
     respSuccess(res, sellerProduct)
+  } catch (error) {
+    respError(res, error.message)
+  }
+}
+
+module.exports.getFilteredCities = async (req, res) => {
+  try {
+    const { stateId } = req.body
+    let filteredCities = await getFilteredCities({ state: stateId})
+      filteredCities = filteredCities.map((val) =>({
+        label:val.name,
+        value:val._id
+      }))
+    respSuccess(res, filteredCities)
   } catch (error) {
     respError(res, error.message)
   }
