@@ -449,6 +449,10 @@ module.exports.getFilteredCities = async (req, res) => {
   try {
     const { stateId } = req.body
     let filteredCities = await getFilteredCities({ state: stateId})
+      filteredCities = filteredCities.map((val) =>({
+        label:val.name,
+        value:val._id
+      }))
     respSuccess(res, filteredCities)
   } catch (error) {
     respError(res, error.message)

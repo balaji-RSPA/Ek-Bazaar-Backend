@@ -27,16 +27,16 @@ const serviceCitySchema = new Schema({
     ref: Cities,
     default: null,
   },
+  country:{
+    type: ObjectId,
+    ref: Countries,
+    default: null,
+  },
   state:{
     type: ObjectId,
     ref: States,
     default: null,
   },
-  country:{
-    type: ObjectId,
-    ref: Countries,
-    default: null,
-  }
 })
 
 const imageSchema = new Schema({
