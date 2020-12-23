@@ -206,6 +206,11 @@ const serviceCitiesSchema = new Schema({
       type: ObjectId,
       ref: States,
       default: null
+    },
+    country: {
+      type: ObjectId,
+      ref: Countries,
+      default: null
     }
 })
 
