@@ -177,7 +177,7 @@ exports.sellerSearch = async (reqQuery) => {
     if (searchProductsBy.state) {
       keywordMatch.push({
         match: {
-          "sellerProductId.state._id": searchProductsBy.state.id,
+          "sellerProductId.serviceCity.state._id": searchProductsBy.state.id,
         }
       })
     }

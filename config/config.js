@@ -11,11 +11,11 @@ if (global.environment === "production") {
 } else {
   config = {
     tradedb: {
-      host: "tradebazaarapi.tech-active.com",
+      host: "tradedb.ekbazaar.com",
       port: "5006",
-      user: "tradeapi",
-      password: "Oyljeabr6Orc",
-      database: "tradeapi",
+      user: "trade",
+      password: "jiarkerc9Om",
+      database: "trade",
       server_port: "8070",
     },
     tenderdb: {

@@ -4,15 +4,11 @@ content-type: application/json
 
 [
   {
-    "vendorId": 18,
-    "name": "Machine Tools"
+    "vendorId": 14,
+    "name": "Automobiles"
   },
   {
-    "vendorId": 17,
-    "name": "Metals & Minerals"
-  },
-  {
-    "vendorId": 9,
-    "name": "Packaging"
+    "vendorId": 23,
+    "name": "Cosmetics"
   }
 ]

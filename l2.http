@@ -4,203 +4,163 @@ content-type: application/json
 
 [
   {
-    "vendorId": "HMT1",
-    "parentId": 18,
-    "name": "Pliers, Screwdrivers & Hammers"
+    "vendorId": "APS1",
+    "parentId": 14,
+    "name": "Automobile Interiors & Accessories"
   },
   {
-    "vendorId": "HMT2",
-    "parentId": 18,
-    "name": "Machine & Precision Tools"
+    "vendorId": "APS2",
+    "parentId": 14,
+    "name": "Automobile Body Coach Building"
   },
   {
-    "vendorId": "HMT3",
-    "parentId": 18,
-    "name": "Cutting Tools & Milling Cutter"
+    "vendorId": "APS3",
+    "parentId": 14,
+    "name": "Tyre, Tube & Flaps"
   },
   {
-    "vendorId": "HMT4",
-    "parentId": 18,
-    "name": "Gardening and Horticulture Tools"
+    "vendorId": "APS4",
+    "parentId": 14,
+    "name": "Commercial Vehicles & Three Wheelers"
   },
   {
-    "vendorId": "HMT5",
-    "parentId": 18,
-    "name": "Hydraulic & Pneumatic Tools"
+    "vendorId": "APS5",
+    "parentId": 14,
+    "name": "Automotive Repair Tools & Equipments"
   },
   {
-    "vendorId": "HMT6",
-    "parentId": 18,
-    "name": "Cutting Blades, Knives and Scissors"
+    "vendorId": "APS6",
+    "parentId": 14,
+    "name": "Automobile Fittings & Components"
   },
   {
-    "vendorId": "HMT7",
-    "parentId": 18,
-    "name": "Jewellery Making Tools & Machines"
+    "vendorId": "APS7",
+    "parentId": 14,
+    "name": "Automobile Electrical Components"
   },
   {
-    "vendorId": "HMT8",
-    "parentId": 18,
-    "name": "Woodworking Tools & Machines"
+    "vendorId": "APS8",
+    "parentId": 14,
+    "name": "Brakes & Braking Systems"
   },
   {
-    "vendorId": "HMT9",
-    "parentId": 18,
-    "name": "Buffing, Surface Finishing Machines"
+    "vendorId": "APS9",
+    "parentId": 14,
+    "name": "Off Road & Earth Moving Vehicles"
   },
   {
-    "vendorId": "HMT10",
-    "parentId": 18,
-    "name": "Shearing, Trimming & Metal Profiling"
+    "vendorId": "APS10",
+    "parentId": 14,
+    "name": "Engine & Engine Spare Parts"
   },
   {
-    "vendorId": "HMT11",
-    "parentId": 18,
-    "name": "Saws, Chainsaws and Saw Blades"
+    "vendorId": "APS11",
+    "parentId": 14,
+    "name": "Automotive Lights and Lighting Parts"
   },
   {
-    "vendorId": "HMT12",
-    "parentId": 18,
-    "name": "Electrical & Electronic Goods Repair"
+    "vendorId": "APS12",
+    "parentId": 14,
+    "name": "Motorcycles and Cars"
   },
   {
-    "vendorId": "HMT13",
-    "parentId": 18,
-    "name": "Marine Tools & Equipments"
+    "vendorId": "APS13",
+    "parentId": 14,
+    "name": "Fuel Injection System & Assemblies"
   },
   {
-    "vendorId": "MM1",
-    "parentId": 17,
-    "name": "Metal & Metal Made Products"
+    "vendorId": "APS14",
+    "parentId": 14,
+    "name": "Radiators & Accessories"
   },
   {
-    "vendorId": "MM2",
-    "parentId": 17,
-    "name": "Minerals and Ores"
+    "vendorId": "APS15",
+    "parentId": 14,
+    "name": "Steering Parts & Components"
   },
   {
-    "vendorId": "MM3",
-    "parentId": 17,
-    "name": "Iron & Copper Alloys"
+    "vendorId": "APS16",
+    "parentId": 14,
+    "name": "Suspension System & Components"
   },
   {
-    "vendorId": "MM4",
-    "parentId": 17,
-    "name": "Coal, Carbon & Charcoal"
+    "vendorId": "APS17",
+    "parentId": 14,
+    "name": "Air Intakes, Exhaust Systems & Parts"
   },
   {
-    "vendorId": "MM5",
-    "parentId": 17,
-    "name": "Copper & Brass Products"
+    "vendorId": "APS18",
+    "parentId": 14,
+    "name": "Tractor, Tractor Parts & Assemblies"
   },
   {
-    "vendorId": "MM6",
-    "parentId": 17,
-    "name": "Ironware, Ironmongery & Iron Artware"
+    "vendorId": "APS19",
+    "parentId": 14,
+    "name": "Automobile Repairing and Maintenance"
   },
   {
-    "vendorId": "MM7",
-    "parentId": 17,
-    "name": "Mica & Mica Products"
+    "vendorId": "APS20",
+    "parentId": 14,
+    "name": "Power Transmission Tools & Couplings"
   },
   {
-    "vendorId": "MM8",
-    "parentId": 17,
-    "name": "Aluminium and Aluminium Products"
+    "vendorId": "CP1",
+    "parentId": 23,
+    "name": "Cosmetics, Hair & Beauty Products"
   },
   {
-    "vendorId": "PMG1",
-    "parentId": 9,
-    "name": "Barcode, Stickers & Luggage Tags"
+    "vendorId": "CP2",
+    "parentId": 23,
+    "name": "Hand Sanitizers & Personal Hygiene"
   },
   {
-    "vendorId": "PMG2",
-    "parentId": 9,
-    "name": "Food Packaging Materials & Supplies"
+    "vendorId": "CP3",
+    "parentId": 23,
+    "name": "Salon, Spa Kits & Equipments"
   },
   {
-    "vendorId": "PMG3",
-    "parentId": 9,
-    "name": "Labels: Adhesive, Fabric & Metal"
+    "vendorId": "CP4",
+    "parentId": 23,
+    "name": "Essential & Aromatic Oils"
   },
   {
-    "vendorId": "PMG4",
-    "parentId": 9,
-    "name": "Packaging Films & Foils"
+    "vendorId": "CP5",
+    "parentId": 23,
+    "name": "Ayurvedic, Herbal Oils and Cosmetics"
   },
   {
-    "vendorId": "PMG5",
-    "parentId": 9,
-    "name": "Crates, Trays and Pallets"
+    "vendorId": "CP6",
+    "parentId": 23,
+    "name": "Child and Baby Care Products"
   },
   {
-    "vendorId": "PMG6",
-    "parentId": 9,
-    "name": "Packaging Caps & Seals"
+    "vendorId": "CP7",
+    "parentId": 23,
+    "name": "Massage Equipments & Spa Devices"
   },
   {
-    "vendorId": "PMG7",
-    "parentId": 9,
-    "name": "Filling Machines & Plants"
+    "vendorId": "CP8",
+    "parentId": 23,
+    "name": "Soaps, Detergent Powder & Cakes"
   },
   {
-    "vendorId": "PMG8",
-    "parentId": 9,
-    "name": "Packaging, Laminated & Zip Bags"
+    "vendorId": "CP9",
+    "parentId": 23,
+    "name": "Bindi & Body Beautification Products"
   },
   {
-    "vendorId": "PMG9",
-    "parentId": 9,
-    "name": "Plastic Containers & Bottles"
+    "vendorId": "CP10",
+    "parentId": 23,
+    "name": "Perfume and Fragrances"
   },
   {
-    "vendorId": "PMG10",
-    "parentId": 9,
-    "name": "Protective Packing Materials"
+    "vendorId": "CP11",
+    "parentId": 23,
+    "name": "Fitness Clubs and Beauty Parlours"
   },
   {
-    "vendorId": "PMG11",
-    "parentId": 9,
-    "name": "Packaging Pouches & Envelopes"
-  },
-  {
-    "vendorId": "PMG12",
-    "parentId": 9,
-    "name": "Form Fill & Seal Machines"
-  },
-  {
-    "vendorId": "PMG13",
-    "parentId": 9,
-    "name": "Marking and Stamping Machines"
-  },
-  {
-    "vendorId": "PMG14",
-    "parentId": 9,
-    "name": "Bulk Bags & Sacks"
-  },
-  {
-    "vendorId": "PMG15",
-    "parentId": 9,
-    "name": "Aluminium,Tin Can & Metal Containers"
-  },
-  {
-    "vendorId": "PMG16",
-    "parentId": 9,
-    "name": "Corrugated Packaging Boxes"
-  },
-  {
-    "vendorId": "PMG17",
-    "parentId": 9,
-    "name": "Wrapping & Banding Machines"
-  },
-  {
-    "vendorId": "PMG18",
-    "parentId": 9,
-    "name": "Packing Straps, Clips & Supplies"
-  },
-  {
-    "vendorId": "PMG19",
-    "parentId": 9,
-    "name": "Product Packing & Labelling Services"
+    "vendorId": "CP12",
+    "parentId": 23,
+    "name": "Natural & Herbal Henna"
   }
 ]

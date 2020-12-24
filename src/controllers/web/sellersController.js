@@ -390,7 +390,7 @@ module.exports.addSellerProduct = async (req, res) => {
       respSuccess(res, seller, "Successfully added product")
     }
   } catch (error) {
-    respError(res, error.message)
+    respError(res, "Seller not found or something went wrong")
   }
 }
 module.exports.updateSellerProduct = async (req, res) => {
