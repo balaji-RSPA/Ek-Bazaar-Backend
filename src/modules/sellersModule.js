@@ -779,7 +779,6 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
       })
       .catch((error) => reject(error))
   })
-// module.exports.addProductDetails = (id, data) =>
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
     if (id) {
@@ -1198,10 +1197,13 @@ module.exports.getSellerProduct = (query) =>
 new Promise((resolve, reject) => {
   SelleresProductList.findOne(query)
   .populate({
-    path: 'productDetails.regionOfOrigin',
+    path : 'serviceCity.city'
   })
   .populate({
-    path: 'productDetails.countryOfOrigin',
+    path : 'serviceCity.country'
+  })
+  .populate({
+    path : 'serviceCity.state'
   })
   .then((doc) => {
       resolve(doc)

@@ -7,6 +7,7 @@ const PrimaryCategory = require('./primaryCategorySchema')
 const SecondaryCategory = require('./secondaryCategorySchema')
 const Products = require('./productsSchema');
 const ProductsSubCategories = require("./productsSubCategoriesSchema");
+const Cities  = require("./citiesSchema");
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
@@ -19,6 +20,24 @@ const documentSchema = new Schema({
     trim: true,
   },
 });
+
+const serviceCitySchema = new Schema({
+  city:  {
+    type: ObjectId,
+    ref: Cities,
+    default: null,
+  },
+  country:{
+    type: ObjectId,
+    ref: Countries,
+    default: null,
+  },
+  state:{
+    type: ObjectId,
+    ref: States,
+    default: null,
+  },
+})
 
 const imageSchema = new Schema({
   image1:{
@@ -116,16 +135,16 @@ const productDetailsSchema = new Schema({
     type: String,
     trim: true,
   },
-  countryOfOrigin: {
-    type: ObjectId,
-    ref: Countries,
-    default: null,
-  },
-  regionOfOrigin: {
-    type: ObjectId,
-    ref: States,
-    default: null,
-  },
+  // countryOfOrigin: {
+  //   type: ObjectId,
+  //   ref: Countries,
+  //   default: null,
+  // },
+  // regionOfOrigin: {
+  //   type: ObjectId,
+  //   ref: States,
+  //   default: null,
+  // },
   productDescription: {
     type: String,
     trim: true,
@@ -228,6 +247,7 @@ const sellerProductSchema = new Schema(
       // default: [],
     }],
     productDetails: productDetailsSchema,
+    serviceCity : [serviceCitySchema],
   },
   {
     timestamps: true,
