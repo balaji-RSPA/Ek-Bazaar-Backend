@@ -10,7 +10,6 @@ const SellersStatutory = require('../models/sellerStatutorySchema')
 const Users = require('../../config/tenderdb').userModel
 const Sessions = require('../../config/tenderdb').sessionModel
 const SessionsLogs = require('../../config/tenderdb').sessionLogModel
-const SellerProducts = require('../models/sellerProductListSchema')
 const Cities = require('../models/citiesSchema')
 const States = require('../models/statesSchema')
 const {
@@ -454,12 +453,16 @@ module.exports.getSeller = (id, chkStock) =>
         path: 'sellerContactId',
         model: SellersContact,
         populate: {
-          path: "location.state",
-          model: States,
-        },
-        populate: {
           path: "location.city",
           model: Cities
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.state",
+          model: States,
         }
       })
       .populate('sellerCompanyId')
@@ -496,13 +499,19 @@ module.exports.getSeller = (id, chkStock) =>
           path: 'productDetails.regionOfOrigin',
         },
       })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
       .populate(matchVal)
       .populate('location.city', 'name')
-      .populate('location.state', 'name region')
+      .populate('location.state', 'name')
       .populate('location.country', 'name')
       .lean()
       .then((doc) => {
-        // console.log("🚀 ~ file: sellersModule.js ~ line 375 ~ .then ~ doc", doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -610,11 +619,17 @@ module.exports.getAllSellers = () =>
           path: 'productDetails.regionOfOrigin',
         },
       })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
       .then((doc) => {
-        console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -667,12 +682,18 @@ module.exports.updateSeller = (query, data, elastic) =>
           path: 'productDetails.regionOfOrigin',
         },
       })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
       .lean()
       .then(async (doc) => {
-
         // if (doc && elastic) {
         //   // const tenderDoc = JSON.parse(JSON.stringify(doc));
         //   const esData = JSON.parse(JSON.stringify(doc));
@@ -1132,7 +1153,7 @@ module.exports.getSellerVal = (id) =>
 
 module.exports.deleteSellerProduct = (data) =>
   new Promise((resolve, reject) => {
-    SellerProducts.findByIdAndDelete({
+    SelleresProductList.findByIdAndDelete({
       _id: data
     })
       .then((doc) => {
@@ -1164,6 +1185,24 @@ module.exports.findEstablishment = (id) =>
     SellersEstablishment.findOne({
       _id: id
     })
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+/**
+* 
+* Get seller product detail
+* */
+module.exports.getSellerProduct = (query) =>
+  new Promise((resolve, reject) => {
+    SelleresProductList.findOne(query)
+      .populate({
+        path: 'productDetails.regionOfOrigin',
+      })
+      .populate({
+        path: 'productDetails.countryOfOrigin',
+      })
       .then((doc) => {
         resolve(doc)
       })

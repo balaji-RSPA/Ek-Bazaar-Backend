@@ -31,6 +31,7 @@
     "logger": "0.0.1",
     "moment": "^2.29.1",
     "mongoose": "^5.10.9",
+    "node-cron": "^2.0.3",
     "node-machine-id": "^1.1.12",
     "nodemon": "^2.0.6",
     "winston": "^3.3.3"

@@ -53,9 +53,9 @@ const buyerSchema = new Schema(
     },
     email: {
       type: String,
+      trim: true,
       default: null,
       // required: true,
-      trim: true,
     },
     countryCode: {
       type: String,

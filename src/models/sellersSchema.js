@@ -118,9 +118,9 @@ const sellersSchema = new Schema(
     },
     email: {
       type: String,
+      trim: true,
       default: null,
       // required: true,
-      trim: true,
     },
     isEmailVerified: {
       type: Boolean,
@@ -147,7 +147,12 @@ const sellersSchema = new Schema(
       },
     },
     // Array Object
-    sellerType: [serviceSchema],
+    // sellerType: [serviceSchema],
+    sellerType: {
+      type: [ObjectId],
+      ref: SellerTypes,
+      default: []
+    },
     // Array Object
     // serviceCity:[
     //   {
@@ -189,7 +194,7 @@ const sellersSchema = new Schema(
     },
     // primaryCatId:{
     //   type: ObjectId,
-    //   ref: 'primaryCategory',
+    //   ref: 'level2',
     //   default: null
     // },
     // sellerNotifications:{notificationSchema},

@@ -41,7 +41,7 @@ const productsSubCategoriesSchema = new Schema(
         },
         productId: {
             type: ObjectId,
-            ref: "products",
+            ref: "level4",
             default: null
         },
         l1: {
@@ -71,5 +71,5 @@ productsSubCategoriesSchema.index({
     }
 })
 
-const ProductsSubCategories = model("productssubcategories", productsSubCategoriesSchema);
+const ProductsSubCategories = model("level5", productsSubCategoriesSchema);
 module.exports = ProductsSubCategories;
