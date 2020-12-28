@@ -575,9 +575,11 @@ exports.getSellerProfile = (id) =>
       .catch((error) => reject(error))
   })
 
-module.exports.getAllSellers = () =>
+module.exports.getAllSellers = (skip,limit) =>
   new Promise((resolve, reject) => {
     Sellers.find({})
+      .skip(skip)
+      .limit(limit)
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
       .populate('sellerType.cities.city', 'name')
