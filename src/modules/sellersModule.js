@@ -575,9 +575,11 @@ exports.getSellerProfile = (id) =>
       .catch((error) => reject(error))
   })
 
-module.exports.getAllSellers = () =>
+module.exports.getAllSellers = (skip, limit) =>
   new Promise((resolve, reject) => {
     Sellers.find({})
+      .skip(skip)
+      .limit(limit)
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
       .populate('sellerType.cities.city', 'name')
@@ -779,7 +781,6 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
       })
       .catch((error) => reject(error))
   })
-// module.exports.addProductDetails = (id, data) =>
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
     if (id) {
@@ -1198,13 +1199,15 @@ module.exports.getSellerProduct = (query) =>
   new Promise((resolve, reject) => {
     SelleresProductList.findOne(query)
       .populate({
-        path: 'productDetails.regionOfOrigin',
+        path: 'serviceCity.city'
       })
       .populate({
-        path: 'productDetails.countryOfOrigin',
+        path: 'serviceCity.country'
       })
-      .then((doc) => {
-        resolve(doc)
+      .populate({
+        path: 'serviceCity.state'
       })
-      .catch(reject)
+      .then(doc => resolve(doc))
+      .catch(error => reject(error))
   })
+

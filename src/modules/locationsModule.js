@@ -210,3 +210,15 @@ module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) 
       })
       .catch(reject);
 })
+
+/*get filtered cities*/
+module.exports.getFilteredCities = (query) =>
+new Promise((resolve, reject) => {
+  Cities.find(query)
+    .then((doc) => {
+      resolve(doc);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+});
