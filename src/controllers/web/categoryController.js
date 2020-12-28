@@ -320,6 +320,7 @@ module.exports.addBulkProducts = async (req, res) => {
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
             const _product = await getProductCat({ vendorId: element.vendorId })
+            console.log("🚀 ~ file: categoryController.js ~ line 323 ~ module.exports.addBulkProducts= ~ _product", _product)
             if (!_product) {
                 console.log("unique level4 record")
                 const query = {
@@ -339,7 +340,7 @@ module.exports.addBulkProducts = async (req, res) => {
                     await updateSecondaryCategory(parentCat._id, updateData)
                 }
             } else {
-                console.log("duplicate level4 record")
+                console.log("duplicate level4 record", element.vendorId)
             }
 
         }

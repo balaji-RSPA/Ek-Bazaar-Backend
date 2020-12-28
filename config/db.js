@@ -41,7 +41,7 @@ if (env) {
 
   if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
-    host = 'tradebazaarapi.tech-active.com:5085'
+    host = 'tradebaza arapi.tech-active.com:5085'
 
   } else if (env.NODE_ENV === 'production') {
 
