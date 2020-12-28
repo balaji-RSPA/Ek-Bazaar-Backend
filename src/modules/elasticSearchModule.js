@@ -382,7 +382,7 @@ exports.searchFromElastic = (query, range) =>
       from: skip || 0,
       query,/* ,
       highlight, */
-      // sort: { "mobile.mobile": "desc" }
+      sort: { "_id": "desc" }
     };
     const searchQuery = {
       index: INDEXNAME,

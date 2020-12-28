@@ -157,7 +157,7 @@ module.exports.getUserProfile = async (req, res) => {
   try {
     const { userID } = req;
     const user = await getUserProfile(userID)
-    const seller = await getSeller(userID,req.body.inStock);
+    const seller = await getSeller(userID, req.body.inStock);
     const buyer = await getBuyer(userID);
     const userData = {
       user,
@@ -175,7 +175,8 @@ module.exports.updateUser = async (req, res) => {
     const { userID } = req;
     const _buyer = req.body.buyer || {}
     let { name, email, business, location, type, sellerType } = req.body;
-    
+    console.log("🚀 ~ file: userController.js ~ line 178 ~ module.exports.updateUser= ~ req.body", req.body)
+
     let userData = {
       name: _buyer && _buyer.name || name,
       city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
@@ -189,21 +190,20 @@ module.exports.updateUser = async (req, res) => {
       ..._buyer
     };
     let _seller = await getSeller(userID)
-    let serviceType = _seller && _seller.sellerType || []
-    // if(!buyer)
-    //let serviceType
-    serviceType = [{
-      name: sellerType,
-      cities: [{
-        city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
-        state: _buyer && _buyer.location && _buyer.location.city || location.city || null,
-      }]
-    }]
+    console.log("🚀 ~ file: userController.js ~ line 193 ~ module.exports.updateUser= ~ _seller", _seller)
+    // let serviceType = _seller && _seller.sellerType || []
+    // serviceType = [{
+    //   name: sellerType,
+    //   cities: [{
+    //     city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
+    //     state: _buyer && _buyer.location && _buyer.location.city || location.city || null,
+    //   }]
+    // }]
     const sellerData = {
       name,
       email: email || null,
       location,
-      // sellerType: serviceType,
+      sellerType: [sellerType],
       userId: userID,
       ..._buyer
     };
