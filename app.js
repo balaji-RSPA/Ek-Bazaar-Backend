@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res) {
   console.log('Home page')
-  res.send('Hello Babu')
+  res.send('Its trade live')
 })
 
 app.use(router)
