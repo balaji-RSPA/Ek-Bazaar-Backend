@@ -443,10 +443,10 @@ module.exports.getSeller = (id, chkStock) =>
     Sellers.findOne({
       userId: id
     })
-      .populate('sellerProductId.')
-      .populate('sellerType.name', 'name')
-      .populate('sellerType.cities.city', 'name')
-      .populate('sellerType.cities.state', 'name region')
+      .populate('sellerProductId')
+      .populate('sellerType', 'name')
+      // .populate('sellerType.cities.city', 'name')
+      // .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
       .populate({
@@ -1207,7 +1207,8 @@ module.exports.getSellerProduct = (query) =>
       .populate({
         path: 'serviceCity.state'
       })
-      .then(doc => resolve(doc))
-      .catch(error => reject(error))
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
   })
-
