@@ -212,7 +212,6 @@ module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) 
       .catch(reject);
 })
 
-<<<<<<< HEAD
 module.exports.checkState = (query) =>
   new Promise((resolve, reject) => {
     States.findOne(query)
@@ -246,7 +245,6 @@ module.exports.updateState = (query,data) =>
         reject(error);
       });
   });
-=======
 /*get filtered cities*/
 module.exports.getFilteredCities = (query) =>
 new Promise((resolve, reject) => {
@@ -258,4 +256,3 @@ new Promise((resolve, reject) => {
       reject(error);
     });
 });
->>>>>>> staging
