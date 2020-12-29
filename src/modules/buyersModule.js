@@ -68,3 +68,12 @@ module.exports.updateBuyerPassword = (mobile, data) =>
       })
       .catch((error) => reject(error));
   });
+/*Buyer admin api*/
+  module.exports.getBuyerAdmin = (query) =>
+  new Promise((resolve, reject) => {
+    Buyers.findOne(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => reject(error));
+  });

@@ -50,7 +50,7 @@ module.exports.checkAndAddSellerType = (query) =>
       .catch(reject);
   });
 
-module.exports.getAllSellerTypes = () =>
+module.exports.getAllSellerTypes = (skip,limit) =>
   new Promise((resolve, reject) => {
     // const query = {
     //   _id: {
@@ -67,6 +67,8 @@ module.exports.getAllSellerTypes = () =>
     //   },
     // };
     SellerTypes.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })

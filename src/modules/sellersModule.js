@@ -639,7 +639,8 @@ module.exports.getAllSellers = (skip,limit) =>
 
 module.exports.updateSeller = (query, data, elastic) =>
   new Promise((resolve, reject) => {
-    Sellers.findOneAndUpdate(query, data, {
+    // Sellers.findOneAndUpdate(query, data, {
+      Sellers.updateMany(query, data, {
         new: true,
         upsert: true
       })
