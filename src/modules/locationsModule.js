@@ -149,7 +149,7 @@ exports.getAllCities = (reqQuery) =>
           "state.name": 1,
           "state._id": 1
         }
-      }      
+      }
     ]);
 
     execQuery
@@ -169,7 +169,7 @@ module.exports.checkAndAddCity = (query) =>
           resolve(doc);
         } else {
           this.addCity(query).then((newDoc) => {
-          // console.log("New City -------");
+            // console.log("New City -------");
             resolve(newDoc)
           }).catch(reject)
         }
@@ -177,8 +177,8 @@ module.exports.checkAndAddCity = (query) =>
       .catch(reject);
   });
 
-module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) => {
-    match = {
+module.exports.getServiceCity = (serviceCity) => new Promise((resolve, reject) => {
+  match = {
     $match: {
       name: {
         $in: serviceCity.map((name) => (name)),
@@ -186,33 +186,32 @@ module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) 
     },
   };
   const execQuery = Cities.aggregate([
-      match,
-      {
-        $lookup: {
-          from: "states",
-          localField: "state",
-          foreignField: "_id",
-          as: "state",
-        },
+    match,
+    {
+      $lookup: {
+        from: "states",
+        localField: "state",
+        foreignField: "_id",
+        as: "state",
       },
-      {$unwind: '$state'},
-      {
-        $project: {
-          "_id": 1,
-          "name": 1,
-          "state.name": 1,
-          "state._id": 1
-        }
-      }      
-    ]);
-    execQuery
-      .then((cities) => {
-        resolve(cities);
-      })
-      .catch(reject);
+    },
+    { $unwind: '$state' },
+    {
+      $project: {
+        "_id": 1,
+        "name": 1,
+        "state.name": 1,
+        "state._id": 1
+      }
+    }
+  ]);
+  execQuery
+    .then((cities) => {
+      resolve(cities);
+    })
+    .catch(reject);
 })
 
-<<<<<<< HEAD
 module.exports.checkState = (query) =>
   new Promise((resolve, reject) => {
     States.findOne(query)
@@ -222,7 +221,7 @@ module.exports.checkState = (query) =>
       .catch((error) => reject(error.message));
   });
 
-module.exports.updateCity = (query,data) =>
+module.exports.updateCity = (query, data) =>
   new Promise((resolve, reject) => {
     // console.log(query,data, ' tyui')
     Cities.findOneAndUpdate(query, data, { new: true, upsert: true })
@@ -235,8 +234,8 @@ module.exports.updateCity = (query,data) =>
         reject(error);
       });
   });
-  
-module.exports.updateState = (query,data) =>
+
+module.exports.updateState = (query, data) =>
   new Promise((resolve, reject) => {
     States.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
@@ -246,16 +245,14 @@ module.exports.updateState = (query,data) =>
         reject(error);
       });
   });
-=======
 /*get filtered cities*/
 module.exports.getFilteredCities = (query) =>
-new Promise((resolve, reject) => {
-  Cities.find(query)
-    .then((doc) => {
-      resolve(doc);
-    })
-    .catch((error) => {
-      reject(error);
-    });
-});
->>>>>>> staging
+  new Promise((resolve, reject) => {
+    Cities.find(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });

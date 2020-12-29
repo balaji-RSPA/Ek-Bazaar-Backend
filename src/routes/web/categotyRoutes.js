@@ -5,6 +5,7 @@ const router = Router();
 const category = require('../../controllers/web/categoryController');
 
 // Get All Categories
+router.get("/getCategories", category.getSpecificCategories)
 router.get("/getAllCategories", category.getAllCategories);
 router.get("/getAllProducts", category.getAllProducts)
 router.get("/getRelatedCategories/:id", category.getRelatedCategories)
