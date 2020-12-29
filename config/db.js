@@ -45,7 +45,7 @@ if (env) {
 
   } else if (env.NODE_ENV === 'production') {
 
-    host = 'tradebazaarapi.tech-active.com:5085'
+    host = 'tradesearch.ekbazaar.com:5085'
 
   }
 

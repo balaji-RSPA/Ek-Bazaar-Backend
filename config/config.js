@@ -12,11 +12,11 @@ if (process.env.NODE_ENV === "production") {
       server_port: "8070",
     },
     tenderdb: {
-      host: "139.59.46.227",
+      host: "tenderdb.ekbazaar.com",
       port: "5006",
-      user: "beta",
-      password: "active.123",
-      database: "ekbazarsample-beta",
+      user: "tender",
+      password: "Bamfesh7grer",
+      database: "tender",
     }
   };
 } else {

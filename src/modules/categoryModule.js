@@ -403,12 +403,12 @@ exports.getAllSecondaryCategory = () =>
       .catch((error) => reject(error));
   });
 
-exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
-  SecondaryCategory.find({})
-    .limit(4)
-    .sort({
-      _id: -1
-    })
+exports.getAllSecondaryCategories = (query) => new Promise((resolve, reject) => {
+  SecondaryCategory.find(query)
+    // .limit(4)
+    // .sort({
+    //   _id: -1
+    // })
     .populate("productId")
     .then((doc) => {
       resolve(doc)
