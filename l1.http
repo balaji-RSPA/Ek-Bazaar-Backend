@@ -4,11 +4,7 @@ content-type: application/json
 
 [
   {
-    "vendorId": 14,
-    "name": "Automobiles"
-  },
-  {
-    "vendorId": 23,
-    "name": "Cosmetics"
+    "vendorId": 31,
+    "name": "Sports Goods, Toys & Games"
   }
 ]
