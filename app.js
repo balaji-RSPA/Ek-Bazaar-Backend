@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 const cors = require('cors');
+const cron = require("node-cron");
 const Logger = require('./src/utils/logger');
 const useragent = require('express-useragent');
 const config = require('./config/config')
@@ -10,6 +11,7 @@ const { tradedb } = config
 
 require('dotenv').config();
 const { env } = process
+const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
 
 global.environment = env.NODE_ENV || 'production'
 require('./config/db').dbConnection();
@@ -34,9 +36,9 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function (req, res){
-    console.log('Home page')
-    res.send('Hello Babu')
+app.get('/', function (req, res) {
+  console.log('Home page')
+  res.send('Hello Babu')
 })
 
 app.use(router)

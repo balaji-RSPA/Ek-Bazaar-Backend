@@ -18,8 +18,8 @@ const image = new Schema({
 const primaryCatSchema = new Schema(
   {
     vendorId: {
-        type: String,
-        trim: true
+      type: String,
+      trim: true
     },
     name: {
       type: String,
@@ -27,23 +27,23 @@ const primaryCatSchema = new Schema(
       required: true,
     },
     status: {
-        type: Boolean,
-        default: true
+      type: Boolean,
+      default: true
     },
-    secondaryCategotyId:[{
-        type: ObjectId,
-        ref: 'secondaryCategory',
-        default: null
+    secondaryCategotyId: [{
+      type: ObjectId,
+      ref: 'level3',
+      default: []
     }],
     parentCatId: {
-        type: ObjectId,
-        ref: 'parentCategory',
-        default: null
+      type: ObjectId,
+      ref: 'level1',
+      default: null
     },
     image: {
-        type: { image }
+      type: { image }
     },
-    
+
   },
   {
     timestamps: true,
@@ -51,5 +51,5 @@ const primaryCatSchema = new Schema(
   }
 );
 
-const PrimaryCategory = model("primaryCategory", primaryCatSchema);
+const PrimaryCategory = model("level2", primaryCatSchema);
 module.exports = PrimaryCategory;

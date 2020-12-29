@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ProductsSubCategories = require("./productsSubCategoriesSchema");
 const SecondaryCategory = require('./secondaryCategorySchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
@@ -17,8 +18,8 @@ const image = new Schema({
 const productsSchema = new Schema(
   {
     vendorId: {
-        type: String,
-        trim: true
+      type: String,
+      trim: true
     },
     name: {
       type: String,
@@ -26,8 +27,8 @@ const productsSchema = new Schema(
       required: true,
     },
     status: {
-        type: Boolean,
-        default: true
+      type: Boolean,
+      default: true
     },
     image: {
       type: { image },
@@ -38,6 +39,11 @@ const productsSchema = new Schema(
       ref: SecondaryCategory,
       default: null
     },
+    subCategoryId: [{
+      type: ObjectId,
+      ref: ProductsSubCategories,
+      default: []
+    }],
     l1: {
       type: String,
       default: true
@@ -65,5 +71,5 @@ productsSchema.index({
   }
 })
 
-const Products = model("products", productsSchema);
+const Products = model("level4", productsSchema);
 module.exports = Products;

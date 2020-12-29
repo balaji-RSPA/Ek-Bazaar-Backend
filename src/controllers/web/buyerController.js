@@ -1,8 +1,9 @@
 const camelcaseKeys = require("camelcase-keys");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { buyers } = require("../../modules");
+const { buyers, sellers, category, elastic } = require("../../modules");
 const {
+  postRFP,
   checkBuyerExistOrNot,
   addBuyer,
   getBuyer,
@@ -10,7 +11,141 @@ const {
   getAllBuyers,
   updateBuyerPassword,
 } = buyers;
+const { getProductByName } = category
+const { sellerSearch, searchFromElastic } = elastic
+const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller } = sellers
 const { createToken } = require("../../utils/utils");
+
+const getUserAgent = (userAgent) => {
+
+  const {
+    browser, version, os, platform, source
+  } = userAgent
+  return {
+    browser,
+    version,
+    os,
+    platform,
+    source
+  }
+
+}
+
+module.exports.createRFP = async (req, res) => {
+  try {
+    const {mobile, name, email, location, productDetails, ipAddress} = req.body
+    const user = await checkUserExistOrNot({mobile: mobile.mobile})
+    console.log("~ user", user, productDetails)
+    if(user && user.length) {
+      // const range = {
+      //   skip: 0,
+      //   limit: 5,
+      // };
+      // const productResult = await getProductByName({name: productDetails.name})
+      // const searchQuery = await sellerSearch({productId: productResult._id})
+      // const { query } = searchQuery;
+      // const seller = await searchFromElastic(query, range);
+      // const resp = {
+      //   total: seller[1],
+      //   data: seller[0],
+      // };
+      // seller[0].map((sell) => {
+      //   console.log(sell._source.email, '---------')
+      // })
+      // console.log("productResult", resp)
+      const userData = {
+        name,
+        email,
+      }
+      const user = await updateUser({ mobile: mobile.mobile }, userData)
+      const buyerData = {
+        name,
+        email,
+        mobile: mobile.mobile,
+        countryCode: mobile.countryCode,
+        location,
+        userId: user._id
+      }
+      const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
+      let buyer
+      if (exist && exist.length)
+        buyer = await updateBuyer({ userId: user._id }, buyerData)
+      else
+        buyer = await addBuyer(buyerData)
+      const rfpData = {
+        buyerId: buyer._id,
+        buyerDetails: {
+          name,
+          email,
+          mobile: mobile.mobile,
+          location
+        },
+        productDetails
+      }
+      const rfp = await postRFP(rfpData)
+      respSuccess(res, "Your requirement has successfully submitted")
+    } else {
+      const userData = {
+        name,
+        email,
+        mobile: mobile.mobile,
+        countryCode: mobile.countryCode,
+        password: null
+      }
+      const user = await addUser(userData)
+      const buyerData = {
+        name,
+        email,
+        mobile: mobile.mobile,
+        countryCode: mobile.countryCode,
+        location,
+        userId: user._id
+      }
+      const buyer = await addBuyer(buyerData)
+
+       const sellerData = {
+        name,
+        email: email || null,
+        mobile,
+        location,
+        // sellerType: serviceType,
+        userId: user._id,
+      };
+      const seller = await addSeller(sellerData);
+
+      const rfpData = {
+        buyerId: buyer._id,
+        buyerDetails: {
+          name,
+          email,
+          mobile: mobile.mobile,
+          location
+        },
+        productDetails
+      }
+
+      if (buyer && seller) {
+        const deviceId = machineIdSync();
+        const userAgent = getUserAgent(req.useragent)
+        const token = createToken(deviceId, { userId: buyer.userId });
+        const finalData = {
+          userAgent,
+          userId: buyer.userId,
+          token,
+          deviceId,
+          ipAddress: ipAddress || null
+        }
+
+        const result1 = await handleUserSession(user._id, finalData)
+        const rfp = await postRFP(rfpData)
+        respSuccess(res, { token, buyer, seller }, "Your requirement has successfully submitted.")
+      }
+    }
+
+  } catch (error) {
+    respError(res, error.message)
+  }
+}
 
 module.exports.sendOtp = async (req, res) => {
   try {
@@ -74,10 +209,14 @@ module.exports.getBuyer = async (req, res) => {
 };
 
 module.exports.updateBuyer = async (req, res) => {
+  console.log("update buyer---------------------")
   try {
-    const { buyerID } = req;
-    const buyer = await updateBuyer(buyerID, re.body);
-    respSuccess(res, buyer);
+    // const { buyerID } = req;
+    const { userID } = req
+    // const { buyerNotifications } = req.body
+    // console.log(userID,  req.body, ' test------')
+    const buyer = await updateBuyer({ userId: userID }, req.body);
+    respSuccess(res, 'Updated Successfully');
   } catch (error) {
     respError(res, error.message);
   }

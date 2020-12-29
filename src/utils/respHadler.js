@@ -39,11 +39,12 @@ module.exports.respUnAuthorized = (res, msg) => {
 
 }
 
-module.exports.respAuthFailed = (res, msg) => {
+module.exports.respAuthFailed = (res,data,msg) => {
 
   const respData = {
     success: false,
     auth: false,
+    data:data,
     message: msg
   };
   res.status(200).json(respData);

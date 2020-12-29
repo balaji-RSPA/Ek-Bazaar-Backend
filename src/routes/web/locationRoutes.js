@@ -11,6 +11,10 @@ router.post("/states", location.createState)
 router.get("/countries", location.getAllCountries)
 router.post("/countries", location.createCountry)
 
+
+// router.post("/uploadNewCities", location.uploadNewCities)
+// router.get("/updateCountry", location.updateCountry)
+
 // router.get("/cities", location.getAllCities)
 // router.post("/city", location.createCity)
 
