@@ -3,7 +3,7 @@ const elasticsearch = require('elasticsearch');
 const { env } = process;
 const config = require('./config')
 const { tradedb } = config
-
+console.log(env.NODE_ENV, ' elastic search')
 function dbConnection() {
 
   let url;
@@ -45,7 +45,7 @@ if (env) {
 
   } else if (env.NODE_ENV === 'production') {
 
-    host = 'tradebazaarapi.tech-active.com:5085'
+    host = 'searchtrade.ekbazaar.com:5085'
 
   }
 

@@ -68,8 +68,8 @@ module.exports.checkSellerExist = (query) =>
 module.exports.getAccessToken = (ipAddress) =>
   new Promise((resolve, reject) => {
     Sessions.find({
-        ipAddress
-      })
+      ipAddress
+    })
       .sort({
         _id: -1
       })
@@ -84,8 +84,8 @@ module.exports.getAccessToken = (ipAddress) =>
 module.exports.getSessionLog = (ipAddress) =>
   new Promise((resolve, reject) => {
     SessionsLogs.find({
-        ipAddress
-      })
+      ipAddress
+    })
       .sort({
         _id: -1
       })
@@ -109,18 +109,18 @@ exports.handleUserSession = (userId, data) =>
 exports.getSessionCount = (userId) =>
   new Promise((resolve, reject) => {
     Sessions.countDocuments({
-        userId
-      })
+      userId
+    })
       .then((doc) => {
         if (doc >= 3) {
           Sessions.findOne({
-              userId
-            },
+            userId
+          },
             ['-_id -token '], {
-              sort: {
-                createdAt: 1
-              }
-            },
+            sort: {
+              createdAt: 1
+            }
+          },
             async (err, result) => {
               if (err) {
                 reject()
@@ -205,8 +205,8 @@ exports.getUserAllSessionDataUpdate = (userId) =>
 exports.deleteAllSession = (userId) =>
   new Promise((resolve, reject) => {
     Sessions.deleteMany({
-        userId
-      })
+      userId
+    })
       .then((doc) => {
         resolve(doc)
       })
@@ -216,8 +216,8 @@ exports.deleteAllSession = (userId) =>
 exports.deleteAllSessionLog = (userId) =>
   new Promise((resolve, reject) => {
     SessionsLogs.deleteMany({
-        userId
-      })
+      userId
+    })
       .then((doc) => {
         resolve(doc)
       })
@@ -254,8 +254,8 @@ module.exports.addUser = (data) =>
 module.exports.getUserProfile = (id) =>
   new Promise((resolve, reject) => {
     Users.findOne({
-        _id: id
-      })
+      _id: id
+    })
       .select({
         name: 1,
         email: 1,
@@ -274,8 +274,8 @@ module.exports.getUserProfile = (id) =>
 module.exports.updateUser = (query, data) =>
   new Promise((resolve, reject) => {
     Users.findOneAndUpdate(query, data, {
-        new: true
-      })
+      new: true
+    })
       .then((doc) => {
         // console.log(doc);
         resolve(doc)
@@ -286,10 +286,10 @@ module.exports.updateUser = (query, data) =>
 module.exports.forgetPassword = (mobile, data) =>
   new Promise((resolve, reject) => {
     Users.findOneAndUpdate({
-        mobile
-      }, data, {
-        new: true
-      })
+      mobile
+    }, data, {
+      new: true
+    })
       .then((doc) => {
         // console.log(doc);
         resolve(doc)
@@ -441,12 +441,12 @@ module.exports.getSeller = (id, chkStock) =>
     }
     // console.log("🚀 ~ file: sellersModule.js ~ line 302 ~ newPromise ~ matchVal", matchVal)
     Sellers.findOne({
-        userId: id
-      })
-      .populate('sellerProductId.')
-      .populate('sellerType.name', 'name')
-      .populate('sellerType.cities.city', 'name')
-      .populate('sellerType.cities.state', 'name region')
+      userId: id
+    })
+      .populate('sellerProductId')
+      .populate('sellerType', 'name')
+      // .populate('sellerType.cities.city', 'name')
+      // .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
       .populate({
@@ -520,8 +520,8 @@ module.exports.getSeller = (id, chkStock) =>
 exports.getSellerProfile = (id) =>
   new Promise((resolve, reject) => {
     Sellers.find({
-        _id: id
-      })
+      _id: id
+    })
       .populate("primaryCatId")
       .populate("sellerType")
       .populate("busenessId")
@@ -639,11 +639,10 @@ module.exports.getAllSellers = (skip,limit) =>
 
 module.exports.updateSeller = (query, data, elastic) =>
   new Promise((resolve, reject) => {
-    // Sellers.findOneAndUpdate(query, data, {
-      Sellers.updateMany(query, data, {
-        new: true,
-        upsert: true
-      })
+    Sellers.findOneAndUpdate(query, data, {
+      new: true,
+      upsert: true
+    })
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
       .populate('sellerType.cities.city', 'name')
@@ -714,13 +713,13 @@ module.exports.updateSeller = (query, data, elastic) =>
 module.exports.addbusinessDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
     SellersBusiness.findOneAndUpdate({
-        sellerId
-      }, {
-        $set: data
-      }, {
-        new: true,
-        upsert: true
-      }, )
+      sellerId
+    }, {
+      $set: data
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
         // console.log(doc);
         resolve(doc)
@@ -731,13 +730,13 @@ module.exports.addbusinessDetails = (sellerId, data) =>
 module.exports.addCompanyDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
     SellersCompany.findOneAndUpdate({
-        sellerId
-      }, {
-        $set: data
-      }, {
-        new: true,
-        upsert: true
-      }, )
+      sellerId
+    }, {
+      $set: data
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
         console.log(doc)
         resolve(doc)
@@ -749,13 +748,13 @@ module.exports.addContactDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
     console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
     SellersContact.findOneAndUpdate({
-        sellerId
-      }, {
-        $set: data
-      }, {
-        new: true,
-        upsert: true
-      }, )
+      sellerId
+    }, {
+      $set: data
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
         console.log(doc)
         resolve(doc)
@@ -769,13 +768,13 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
     console.log("🚀 ~ file: sellersModule.js ~ line 688 ~ data", photos)
 
     SellersEstablishment.findOneAndUpdate({
-        sellerId
-      }, {
-        photos
-      }, {
-        new: true,
-        upsert: true
-      })
+      sellerId
+    }, {
+      photos
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
         console.log(doc)
         resolve(doc)
@@ -786,12 +785,12 @@ module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
     if (id) {
       SelleresProductList.findOneAndUpdate({
-          _id: id
-        }, {
-          $set: data
-        }, {
-          new: true
-        })
+        _id: id
+      }, {
+        $set: data
+      }, {
+        new: true
+      })
         .then((doc) => {
           resolve(doc)
         })
@@ -808,13 +807,13 @@ module.exports.addProductDetails = (id, data) =>
 module.exports.addStatutoryDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
     SellersStatutory.findOneAndUpdate({
-        sellerId
-      }, {
-        $set: data
-      }, {
-        new: true,
-        upsert: true
-      }, )
+      sellerId
+    }, {
+      $set: data
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
         console.log(doc)
         resolve(doc)
@@ -981,8 +980,8 @@ exports.structureSellerData = async (seller) => {
     // console.log("finalData", _sellerType[1].cities)
 
     const updateSeller = await this.updateSeller({
-        _id: sellerExist._id
-      },
+      _id: sellerExist._id
+    },
       finalData,
     )
     // console.log("updateSeller +++++++++++++++++", updateSeller)
@@ -1015,8 +1014,8 @@ exports.structureSellerData = async (seller) => {
       cityData && cityData.state ? await getState(cityData.state) : null
     let countryData =
       stateData && stateData.country ?
-      await getCountry(stateData.country) :
-      null
+        await getCountry(stateData.country) :
+        null
     // let categoryData =
     //   countryData && Category ? await getPrimaryCat({ name: Category }) : null;
     let mobile = []
@@ -1091,7 +1090,7 @@ exports.structureSellerData = async (seller) => {
           city: cat._id,
           state: cat.state._id || null,
         })),
-      }, ],
+      },],
       source: 'vendor',
     }
     const result = await this.addSeller(finalData)
@@ -1144,8 +1143,8 @@ exports.structureSellerData = async (seller) => {
 module.exports.getSellerVal = (id) =>
   new Promise((resolve, reject) => {
     Sellers.findOne({
-        _id: id
-      })
+      _id: id
+    })
       .lean()
       .then((doc) => {
         resolve(doc)
@@ -1156,8 +1155,8 @@ module.exports.getSellerVal = (id) =>
 module.exports.deleteSellerProduct = (data) =>
   new Promise((resolve, reject) => {
     SelleresProductList.findByIdAndDelete({
-        _id: data
-      })
+      _id: data
+    })
       .then((doc) => {
         resolve(doc)
       })
@@ -1178,38 +1177,38 @@ module.exports.addSellerProduct = (data) =>
     })
   })
 
-  /**
- * 
- * Find Established photos
- * */
+/**
+* 
+* Find Established photos
+* */
 module.exports.findEstablishment = (id) =>
-new Promise((resolve, reject) => {
-  SellersEstablishment.findOne({
+  new Promise((resolve, reject) => {
+    SellersEstablishment.findOne({
       _id: id
     })
-    .then((doc) => {
-      resolve(doc)
-    })
-    .catch(reject)
-})
-  /**
- * 
- * Get seller product detail
- * */
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+/**
+* 
+* Get seller product detail
+* */
 module.exports.getSellerProduct = (query) =>
-new Promise((resolve, reject) => {
-  SelleresProductList.findOne(query)
-  .populate({
-    path : 'serviceCity.city'
+  new Promise((resolve, reject) => {
+    SelleresProductList.findOne(query)
+      .populate({
+        path: 'serviceCity.city'
+      })
+      .populate({
+        path: 'serviceCity.country'
+      })
+      .populate({
+        path: 'serviceCity.state'
+      })
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
   })
-  .populate({
-    path : 'serviceCity.country'
-  })
-  .populate({
-    path : 'serviceCity.state'
-  })
-  .then((doc) => {
-      resolve(doc)
-    })
-    .catch(reject)
-})
