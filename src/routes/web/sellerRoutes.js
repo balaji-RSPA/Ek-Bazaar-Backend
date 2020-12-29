@@ -19,6 +19,8 @@ router.get('/sellers', seller.getAllSellers)
 router.post('/sellerproduct/delete', seller.deleteSellerProduct)//,authenticate
 router.post('/sellerproduct/add', seller.addSellerProduct) //,authenticate,
 router.put('/sellerproduct/update',seller.updateSellerProduct)
+router.post('/getsellerproduct',seller.getSellerProduct)
 router.post('/uploadimage',uploadToDOSpace)
+router.post('/getfilteredcities',seller.getFilteredCities)
 
 module.exports = router

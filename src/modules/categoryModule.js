@@ -74,13 +74,21 @@ module.exports.getAllSellerTypes = () =>
   });
 module.exports.getAllCategories = (query) =>
   new Promise((resolve, reject) => {
+
+    //old id's
+    // "5f9a60b98420b75666d810d6",
+    // "5f9a60b98420b75666d810d8",
+    // "5f9a60b98420b75666d810e2",
+    // "5f9a60b98420b75666d810e8",
+
     ParentCategory.find({
       _id: {
         $in: [
-          "5f9a60b98420b75666d810d6",
-          "5f9a60b98420b75666d810d8",
-          "5f9a60b98420b75666d810e2",
-          "5f9a60b98420b75666d810e8",
+          "5fddf6051a15802b9764520d",
+          "5fddf6051a15802b97645210",
+          "5fddf6051a15802b9764520e",
+          "5fddf6051a15802b9764520f"
+
         ],
       },
     })
@@ -307,7 +315,7 @@ module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) =
       path: "secondaryCategotyId",
       populate: {
         path: "productId",
-        model: "products"
+        model: "level4"
       }
     })
     .then(doc => resolve(doc))
@@ -362,6 +370,13 @@ module.exports.getProductCat = (query) =>
       })
       .catch(reject);
   });
+
+module.exports.getProductSubcategory = (query) =>
+  new Promise((resolve, reject) => {
+    ProductsSubCategories.findOne(query)
+      .then(doc => resolve(doc))
+      .catch(error => reject(error))
+  })
 
 exports.updateSecondaryCategory = (id, newData) =>
   new Promise((resolve, reject) => {

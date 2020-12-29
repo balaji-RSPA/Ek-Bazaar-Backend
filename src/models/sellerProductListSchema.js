@@ -7,12 +7,14 @@ const PrimaryCategory = require('./primaryCategorySchema')
 const SecondaryCategory = require('./secondaryCategorySchema')
 const Products = require('./productsSchema');
 const ProductsSubCategories = require("./productsSubCategoriesSchema");
+const City = require('./citiesSchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
 const documentSchema = new Schema({
   name: {
     type: String,
+    trim: true,
   },
   code: {
     type: String,
@@ -20,56 +22,56 @@ const documentSchema = new Schema({
   },
 });
 
-const imageSchema = new Schema({
-  image1:{
-    name: {
-      type: String,
-      trim: true,
-      default: null
-    },
-    code: {
-      type: String,
-      trim: true,
-      default: null
-    },
-  },
-  image2 : {
-    name: {
-      type: String,
-      trim: true,
-      default: null
-    },
-    code: {
-      type: String,
-      trim: true,
-      default: null
-    },
-  },
-  image3:{
-    name: {
-      type: String,
-      trim: true,
-      default: null
-    },
-    code: {
-      type: String,
-      trim: true,
-      default: null
-    },
-  },
-  image4:{
-    name: {
-      type: String,
-      trim: true,
-      default: null
-    },
-    code: {
-      type: String,
-      trim: true,
-      default: null
-    },
-  }
-})
+// const imageSchema = new Schema({
+//   image1:{
+//     name: {
+//       type: String,
+//       trim: true,
+//       default: null
+//     },
+//     code: {
+//       type: String,
+//       trim: true,
+//       default: null
+//     },
+//   },
+//   image2 : {
+//     name: {
+//       type: String,
+//       trim: true,
+//       default: null
+//     },
+//     code: {
+//       type: String,
+//       trim: true,
+//       default: null
+//     },
+//   },
+//   image3:{
+//     name: {
+//       type: String,
+//       trim: true,
+//       default: null
+//     },
+//     code: {
+//       type: String,
+//       trim: true,
+//       default: null
+//     },
+//   },
+//   image4:{
+//     name: {
+//       type: String,
+//       trim: true,
+//       default: null
+//     },
+//     code: {
+//       type: String,
+//       trim: true,
+//       default: null
+//     },
+//   }
+// })
 
 const productDetailsSchema = new Schema({
   name: {
@@ -113,19 +115,27 @@ const productDetailsSchema = new Schema({
     }
   },
   packagingDetails: {
-    type: String,
-    trim: true,
+    packagingDetail: {
+      type: String,
+      trim: true,
+      default: null
+    },
+    packagingUnit: {
+      type: String,
+      trim: true,
+      default: null
+    }
   },
-  countryOfOrigin: {
-    type: ObjectId,
-    ref: Countries,
-    default: null,
-  },
-  regionOfOrigin: {
-    type: ObjectId,
-    ref: States,
-    default: null,
-  },
+  // countryOfOrigin: {
+  //   type: ObjectId,
+  //   ref: Countries,
+  //   default: null,
+  // },
+  // regionOfOrigin: {
+  //   type: ObjectId,
+  //   ref: States,
+  //   default: null,
+  // },
   productDescription: {
     type: String,
     trim: true,
@@ -134,7 +144,7 @@ const productDetailsSchema = new Schema({
     type: Boolean,
     trim: true,
   },
-  document: { documentSchema },
+  document:documentSchema,
   image : {image1:{
     name: {
       type: String,
@@ -186,6 +196,24 @@ const productDetailsSchema = new Schema({
 }
 });
 
+const serviceCitiesSchema = new Schema({
+    city: {
+      type: ObjectId,
+      ref: City,
+      default: null
+    },
+    state: {
+      type: ObjectId,
+      ref: States,
+      default: null
+    },
+    country: {
+      type: ObjectId,
+      ref: Countries,
+      default: null
+    }
+})
+
 const sellerProductSchema = new Schema(
   {
     sellerId: {
@@ -193,41 +221,44 @@ const sellerProductSchema = new Schema(
       ref: "sellers",
       default: null,
     },
+    userId: {
+      type: ObjectId,
+      default: null,
+    },
     serviceType: {
       type: ObjectId,
-      trim: true,
+      trim: true, 
       default: null
     },
-    parentCategoryId: {
+    parentCategoryId: [{ // level 1
       type: ObjectId,
       ref: ParentCategory,
       default: null,
-    },
-    primaryCategoryId: {
+    }],
+    primaryCategoryId: [{ // level 2 
       type: ObjectId,
       ref: PrimaryCategory,
       default: null,
-    },
-    secondaryCategoryId: {
+    }],
+    secondaryCategoryId: [{ // level 3
       type: ObjectId,
       ref: SecondaryCategory,
       default: null,
-    },
-    poductId: {
+    }],
+    poductId: [{ // level 4
       type: ObjectId,
       ref: Products,
       default: null,
-    },
-    productSubcategoryId: [{
-      categoryId: {
-        type: ObjectId,
-        ref: ProductsSubCategories,
-        default: null
-      },
-      productDetails: productDetailsSchema,
-      // default: [],
     }],
+    productSubcategoryId:[{ // level 5
+      type: ObjectId,
+      ref: ProductsSubCategories,
+      default: null
+    }],
+
     productDetails: productDetailsSchema,
+    
+    serviceCity: [serviceCitiesSchema]
   },
   {
     timestamps: true,

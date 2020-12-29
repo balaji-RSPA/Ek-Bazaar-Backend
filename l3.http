@@ -7,118 +7,1461 @@ content-type: application/json
 
 [
   {
-    "vendorId": "L3F1",
-    "primaryCatId": "F1",
-    "name": "Rice"
+    "vendorId": "L3APS1",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Automotive Accessories"
   },
   {
-    "vendorId": "L3F2",
-    "primaryCatId": "F1",
-    "name": "Wheat"
+    "vendorId": "L3APS2",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Car Accessories"
   },
   {
-    "vendorId": "L3F3",
-    "primaryCatId": "F1",
-    "name": "Pulses & Food Grains"
+    "vendorId": "L3APS3",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Seat Covers"
   },
   {
-    "vendorId": "L3F4",
-    "primaryCatId": "F1",
-    "name": "Sugar & Jaggery"
+    "vendorId": "L3APS4",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Two Wheeler Accessories"
   },
   {
-    "vendorId": "L3F5",
-    "primaryCatId": "F1",
-    "name": "Flours"
+    "vendorId": "L3APS5",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Driving Helmets"
   },
   {
-    "vendorId": "L3F6",
-    "primaryCatId": "F1",
-    "name": "Spices & Masala"
+    "vendorId": "L3APS6",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Car Interior Accessories"
   },
   {
-    "vendorId": "L3F7",
-    "primaryCatId": "F1",
-    "name": "Edible Oil & Allied Products"
+    "vendorId": "L3APS7",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Vehicle Horn"
   },
   {
-    "vendorId": "L3F8",
-    "primaryCatId": "F1",
-    "name": "Milk & Dairy Products"
+    "vendorId": "L3APS8",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Automotive Floor Mats"
   },
   {
-    "vendorId": "L3F9",
-    "primaryCatId": "F1",
-    "name": "Fruits & Vegetables"
+    "vendorId": "L3APS9",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Car LCD Monitor"
   },
   {
-    "vendorId": "L3F10",
-    "primaryCatId": "F1",
-    "name": "Eggs,Meat & Poultry"
+    "vendorId": "L3APS10",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Car Audio Video System"
   },
   {
-    "vendorId": "L3F11",
-    "primaryCatId": "F1",
-    "name": "Fish & Seafood"
+    "vendorId": "L3APS11",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Truck Accessories"
   },
   {
-    "vendorId": "L3F12",
-    "primaryCatId": "F2",
-    "name": "Flavours & Aromatics"
+    "vendorId": "L3APS12",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Automotive Decals"
   },
   {
-    "vendorId": "L3F13",
-    "primaryCatId": "F2",
-    "name": "Snacks & Namkeen"
+    "vendorId": "L3APS13",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Car Exterior Accessories"
   },
   {
-    "vendorId": "L3F14",
-    "primaryCatId": "F2",
-    "name": "Pickles & Chutneys"
+    "vendorId": "L3APS14",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Car Speakers"
   },
   {
-    "vendorId": "L3F15",
-    "primaryCatId": "F2",
-    "name": "Jams, Ketchups & Sauces"
+    "vendorId": "L3APS15",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Car Parking Sensor"
   },
   {
-    "vendorId": "L3F16",
-    "primaryCatId": "F2",
-    "name": "Ready To Eat & Instant Food Mixes"
+    "vendorId": "L3APS16",
+    "primaryCatId": "APS1",
+    "level1 id": 14,
+    "name": "Trailer Accessories"
   },
   {
-    "vendorId": "L3F17",
-    "primaryCatId": "F2",
-    "name": "Sweets & Desserts"
+    "vendorId": "L3APS17",
+    "primaryCatId": "APS2",
+    "level1 id": 14,
+    "name": "Automobile Bodies"
   },
   {
-    "vendorId": "L3F18",
-    "primaryCatId": "F3",
-    "name": "Nuts"
+    "vendorId": "L3APS18",
+    "primaryCatId": "APS2",
+    "level1 id": 14,
+    "name": "Chassis"
   },
   {
-    "vendorId": "L3F19",
-    "primaryCatId": "F3",
-    "name": "Dry Fruits & Dates"
+    "vendorId": "L3APS19",
+    "primaryCatId": "APS2",
+    "level1 id": 14,
+    "name": "ChassisTruck Body Part"
   },
   {
-    "vendorId": "L3F20",
-    "primaryCatId": "F4",
-    "name": "Juices,Drinks & Mixes"
+    "vendorId": "L3APS20",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Tyres"
   },
   {
-    "vendorId": "L3F21",
-    "primaryCatId": "F4",
-    "name": "Tea & Coffee"
+    "vendorId": "L3APS21",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Two Wheeler Tyres"
   },
   {
-    "vendorId": "L3F22",
-    "primaryCatId": "F5",
-    "name": "Bakery Products"
+    "vendorId": "L3APS22",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Motorcycle Tyres"
   },
   {
-    "vendorId": "L3F23",
-    "primaryCatId": "F5",
-    "name": "Chocolates,Jellies & Candies"
+    "vendorId": "L3APS23",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Car Tyres"
+  },
+  {
+    "vendorId": "L3APS24",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Truck Tyres"
+  },
+  {
+    "vendorId": "L3APS25",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Tyre Tube"
+  },
+  {
+    "vendorId": "L3APS26",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Alloy Wheels"
+  },
+  {
+    "vendorId": "L3APS27",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Tractor Tyres"
+  },
+  {
+    "vendorId": "L3APS28",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Wheel Rim"
+  },
+  {
+    "vendorId": "L3APS29",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Commercial Vehicle Tyres"
+  },
+  {
+    "vendorId": "L3APS30",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Radial Tyre"
+  },
+  {
+    "vendorId": "L3APS31",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Solid Tyres"
+  },
+  {
+    "vendorId": "L3APS32",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Off Road Tyres"
+  },
+  {
+    "vendorId": "L3APS33",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Tyre Accessories"
+  },
+  {
+    "vendorId": "L3APS34",
+    "primaryCatId": "APS3",
+    "level1 id": 14,
+    "name": "Second Hand Tyre"
+  },
+  {
+    "vendorId": "L3APS35",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Electric Rickshaw"
+  },
+  {
+    "vendorId": "L3APS36",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Trucks"
+  },
+  {
+    "vendorId": "L3APS37",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Three Wheelers"
+  },
+  {
+    "vendorId": "L3APS38",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Medium & Heavy Commercial Vehicles"
+  },
+  {
+    "vendorId": "L3APS39",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Tipper Trucks"
+  },
+  {
+    "vendorId": "L3APS40",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "E Rickshaw Spare Parts"
+  },
+  {
+    "vendorId": "L3APS41",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Auto Rickshaw"
+  },
+  {
+    "vendorId": "L3APS42",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Intermediate and Light Commercial Vehicles"
+  },
+  {
+    "vendorId": "L3APS43",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Mini Truck"
+  },
+  {
+    "vendorId": "L3APS44",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Electric Three Wheeler"
+  },
+  {
+    "vendorId": "L3APS45",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Bus"
+  },
+  {
+    "vendorId": "L3APS46",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Pickup Trucks"
+  },
+  {
+    "vendorId": "L3APS47",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Minibus"
+  },
+  {
+    "vendorId": "L3APS48",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Tank Trucks"
+  },
+  {
+    "vendorId": "L3APS49",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "City Bus"
+  },
+  {
+    "vendorId": "L3APS50",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Special Purpose Vehicle"
+  },
+  {
+    "vendorId": "L3APS51",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Van"
+  },
+  {
+    "vendorId": "L3APS52",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Ambulance and Emergency Vehicle"
+  },
+  {
+    "vendorId": "L3APS53",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Transport Tanks"
+  },
+  {
+    "vendorId": "L3APS54",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Intercity Bus"
+  },
+  {
+    "vendorId": "L3APS55",
+    "primaryCatId": "APS4",
+    "level1 id": 14,
+    "name": "Electric Utility Vehicle"
+  },
+  {
+    "vendorId": "L3APS56",
+    "primaryCatId": "APS5",
+    "level1 id": 14,
+    "name": "Auto Garage Equipment"
+  },
+  {
+    "vendorId": "L3APS57",
+    "primaryCatId": "APS5",
+    "level1 id": 14,
+    "name": "Automotive Equipments"
+  },
+  {
+    "vendorId": "L3APS58",
+    "primaryCatId": "APS5",
+    "level1 id": 14,
+    "name": "Car Lift"
+  },
+  {
+    "vendorId": "L3APS59",
+    "primaryCatId": "APS5",
+    "level1 id": 14,
+    "name": "Vehicle Lift"
+  },
+  {
+    "vendorId": "L3APS60",
+    "primaryCatId": "APS5",
+    "level1 id": 14,
+    "name": "Bottle Jacks"
+  },
+  {
+    "vendorId": "L3APS61",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Automotive Components"
+  },
+  {
+    "vendorId": "L3APS62",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Automotive Spare Parts"
+  },
+  {
+    "vendorId": "L3APS63",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Bike Spare Parts"
+  },
+  {
+    "vendorId": "L3APS64",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Two Wheeler Parts"
+  },
+  {
+    "vendorId": "L3APS65",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Car Parts"
+  },
+  {
+    "vendorId": "L3APS66",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Three Wheelers Parts"
+  },
+  {
+    "vendorId": "L3APS67",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Truck Parts"
+  },
+  {
+    "vendorId": "L3APS68",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Automotive Rubber Components"
+  },
+  {
+    "vendorId": "L3APS69",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Wiper Blades"
+  },
+  {
+    "vendorId": "L3APS70",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "E Rickshaw Spare Parts"
+  },
+  {
+    "vendorId": "L3APS71",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Automobile Bodies"
+  },
+  {
+    "vendorId": "L3APS72",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Spark Plug"
+  },
+  {
+    "vendorId": "L3APS73",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Automobile Silencers"
+  },
+  {
+    "vendorId": "L3APS74",
+    "primaryCatId": "APS6",
+    "level1 id": 14,
+    "name": "Automotive Brakes"
+  },
+  {
+    "vendorId": "L3APS75",
+    "primaryCatId": "APS7",
+    "level1 id": 14,
+    "name": "Spark Plug"
+  },
+  {
+    "vendorId": "L3APS76",
+    "primaryCatId": "APS7",
+    "level1 id": 14,
+    "name": "Automotive Cables"
+  },
+  {
+    "vendorId": "L3APS77",
+    "primaryCatId": "APS7",
+    "level1 id": 14,
+    "name": "Car Safety & Security Accessories"
+  },
+  {
+    "vendorId": "L3APS78",
+    "primaryCatId": "APS8",
+    "level1 id": 14,
+    "name": "Brake Parts"
+  },
+  {
+    "vendorId": "L3APS79",
+    "primaryCatId": "APS8",
+    "level1 id": 14,
+    "name": "Automotive Brakes"
+  },
+  {
+    "vendorId": "L3APS80",
+    "primaryCatId": "APS8",
+    "level1 id": 14,
+    "name": "Braking Systems"
+  },
+  {
+    "vendorId": "L3APS81",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Truck Trailer"
+  },
+  {
+    "vendorId": "L3APS82",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Trailer Spare Parts"
+  },
+  {
+    "vendorId": "L3APS83",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Trailer Accessories"
+  },
+  {
+    "vendorId": "L3APS84",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Crane Trucks"
+  },
+  {
+    "vendorId": "L3APS85",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Trucks"
+  },
+  {
+    "vendorId": "L3APS86",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Tipper Trucks"
+  },
+  {
+    "vendorId": "L3APS87",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Truck Parts"
+  },
+  {
+    "vendorId": "L3APS88",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Mini Truck"
+  },
+  {
+    "vendorId": "L3APS89",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Pickup Trucks"
+  },
+  {
+    "vendorId": "L3APS90",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Truck Body Part"
+  },
+  {
+    "vendorId": "L3APS91",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Tank Trucks"
+  },
+  {
+    "vendorId": "L3APS92",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Special Purpose Vehicle"
+  },
+  {
+    "vendorId": "L3APS93",
+    "primaryCatId": "APS9",
+    "level1 id": 14,
+    "name": "Truck Accessories"
+  },
+  {
+    "vendorId": "L3APS94",
+    "primaryCatId": "APS10",
+    "level1 id": 14,
+    "name": "Engine Components"
+  },
+  {
+    "vendorId": "L3APS95",
+    "primaryCatId": "APS10",
+    "level1 id": 14,
+    "name": "Crane Engine Parts"
+  },
+  {
+    "vendorId": "L3APS97",
+    "primaryCatId": "APS11",
+    "level1 id": 14,
+    "name": "Automotive Lights"
+  },
+  {
+    "vendorId": "L3APS98",
+    "primaryCatId": "APS12",
+    "level1 id": 14,
+    "name": "Motorcycle"
+  },
+  {
+    "vendorId": "L3APS99",
+    "primaryCatId": "APS12",
+    "level1 id": 14,
+    "name": "Scooter"
+  },
+  {
+    "vendorId": "L3APS100",
+    "primaryCatId": "APS12",
+    "level1 id": 14,
+    "name": "Cars"
+  },
+  {
+    "vendorId": "L3APS101",
+    "primaryCatId": "APS12",
+    "level1 id": 14,
+    "name": "Electric Three Wheeler"
+  },
+  {
+    "vendorId": "L3APS102",
+    "primaryCatId": "APS12",
+    "level1 id": 14,
+    "name": "Second Hand Vehicles"
+  },
+  {
+    "vendorId": "L3APS103",
+    "primaryCatId": "APS13",
+    "level1 id": 14,
+    "name": "Fuel Injection System, Assemblies & Parts"
+  },
+  {
+    "vendorId": "L3APS104",
+    "primaryCatId": "APS14",
+    "level1 id": 14,
+    "name": "Radiators, Auto Radiators, Car Radiators and Accessories"
+  },
+  {
+    "vendorId": "L3APS105",
+    "primaryCatId": "APS15",
+    "level1 id": 14,
+    "name": "Steerings & Steering Assemblies & Components"
+  },
+  {
+    "vendorId": "L3APS106",
+    "primaryCatId": "APS16",
+    "level1 id": 14,
+    "name": "Suspension & Suspension Components"
+  },
+  {
+    "vendorId": "L3APS107",
+    "primaryCatId": "APS17",
+    "level1 id": 14,
+    "name": "Automobile Silencers"
+  },
+  {
+    "vendorId": "L3APS108",
+    "primaryCatId": "APS17",
+    "level1 id": 14,
+    "name": "Air Intake System & Parts"
+  },
+  {
+    "vendorId": "L3APS109",
+    "primaryCatId": "APS17",
+    "level1 id": 14,
+    "name": "Exhaust System & System Components"
+  },
+  {
+    "vendorId": "L3APS110",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor Spare Parts"
+  },
+  {
+    "vendorId": "L3APS111",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor"
+  },
+  {
+    "vendorId": "L3APS112",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Cultivator"
+  },
+  {
+    "vendorId": "L3APS113",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Rotavator"
+  },
+  {
+    "vendorId": "L3APS114",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor Linkage Parts"
+  },
+  {
+    "vendorId": "L3APS115",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Disc Harrow"
+  },
+  {
+    "vendorId": "L3APS116",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor Accessories"
+  },
+  {
+    "vendorId": "L3APS117",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Combine Harvester"
+  },
+  {
+    "vendorId": "L3APS118",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Harvester"
+  },
+  {
+    "vendorId": "L3APS119",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tiller"
+  },
+  {
+    "vendorId": "L3APS120",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor Attachments"
+  },
+  {
+    "vendorId": "L3APS121",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor Shafts & Transmission Parts"
+  },
+  {
+    "vendorId": "L3APS122",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor Levelling Assembly"
+  },
+  {
+    "vendorId": "L3APS123",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Planter Machine"
+  },
+  {
+    "vendorId": "L3APS124",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Linkage & Hitch Pin"
+  },
+  {
+    "vendorId": "L3APS125",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor Body Parts & Covers"
+  },
+  {
+    "vendorId": "L3APS126",
+    "primaryCatId": "APS18",
+    "level1 id": 14,
+    "name": "Tractor Fittings"
+  },
+  {
+    "vendorId": "L3APS127",
+    "primaryCatId": "APS19",
+    "level1 id": 14,
+    "name": "Four Wheeler Repair and Maintenance Services"
+  },
+  {
+    "vendorId": "L3APS128",
+    "primaryCatId": "APS19",
+    "level1 id": 14,
+    "name": "Two Wheeler Repair and Maintenance Services"
+  },
+  {
+    "vendorId": "L3APS129",
+    "primaryCatId": "APS19",
+    "level1 id": 14,
+    "name": "Commercial Heavy Vehicle Repair and Maintenance Services"
+  },
+  {
+    "vendorId": "L3APS130",
+    "primaryCatId": "APS19",
+    "level1 id": 14,
+    "name": "Three Wheeler Repair and Maintenance Services"
+  },
+  {
+    "vendorId": "L3APS131",
+    "primaryCatId": "APS20",
+    "level1 id": 14,
+    "name": "Mechanical Power Transmission Tools And Accessories"
+  },
+  {
+    "vendorId": "L3CP1",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Oil"
+  },
+  {
+    "vendorId": "L3CP2",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Skin Creams"
+  },
+  {
+    "vendorId": "L3CP3",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Face Cream"
+  },
+  {
+    "vendorId": "L3CP4",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Beauty Cosmetics"
+  },
+  {
+    "vendorId": "L3CP5",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Body Lotions"
+  },
+  {
+    "vendorId": "L3CP6",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Skin Care Cosmetics"
+  },
+  {
+    "vendorId": "L3CP7",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Care Cosmetics"
+  },
+  {
+    "vendorId": "L3CP8",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Lip Cosmetics"
+  },
+  {
+    "vendorId": "L3CP9",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Eye Cosmetic"
+  },
+  {
+    "vendorId": "L3CP10",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Care Products"
+  },
+  {
+    "vendorId": "L3CP11",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Conditioner"
+  },
+  {
+    "vendorId": "L3CP12",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Human Hair"
+  },
+  {
+    "vendorId": "L3CP13",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Extensions"
+  },
+  {
+    "vendorId": "L3CP14",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Bleaching Cream"
+  },
+  {
+    "vendorId": "L3CP15",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Wig"
+  },
+  {
+    "vendorId": "L3CP16",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Cream"
+  },
+  {
+    "vendorId": "L3CP17",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Removal Wax"
+  },
+  {
+    "vendorId": "L3CP18",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Body Powder"
+  },
+  {
+    "vendorId": "L3CP19",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Body Cream"
+  },
+  {
+    "vendorId": "L3CP20",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Body Care Products"
+  },
+  {
+    "vendorId": "L3CP21",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Facial Mask"
+  },
+  {
+    "vendorId": "L3CP22",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Cosmetic Accessories"
+  },
+  {
+    "vendorId": "L3CP23",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Herbal Body Care Cosmetics"
+  },
+  {
+    "vendorId": "L3CP24",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Natural Cosmetics"
+  },
+  {
+    "vendorId": "L3CP25",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Nail Cosmetics"
+  },
+  {
+    "vendorId": "L3CP26",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Synthetic Hair"
+  },
+  {
+    "vendorId": "L3CP27",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Body Masks"
+  },
+  {
+    "vendorId": "L3CP28",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Nail Set"
+  },
+  {
+    "vendorId": "L3CP29",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Shampoo"
+  },
+  {
+    "vendorId": "L3CP30",
+    "primaryCatId": "CP1",
+    "level1 id": 23,
+    "name": "Hair Accessories"
+  },
+  {
+    "vendorId": "L3CP31",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Hand Sanitizer & Disinfectant"
+  },
+  {
+    "vendorId": "L3CP32",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Bath Soaps"
+  },
+  {
+    "vendorId": "L3CP33",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Hair Shampoo"
+  },
+  {
+    "vendorId": "L3CP34",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Face Wash"
+  },
+  {
+    "vendorId": "L3CP35",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Hand Wash"
+  },
+  {
+    "vendorId": "L3CP36",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Beauty Soap"
+  },
+  {
+    "vendorId": "L3CP37",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Herbal Soaps"
+  },
+  {
+    "vendorId": "L3CP38",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Toothpastes"
+  },
+  {
+    "vendorId": "L3CP39",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Air Fresheners"
+  },
+  {
+    "vendorId": "L3CP40",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Sanitary Pad"
+  },
+  {
+    "vendorId": "L3CP41",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Toothbrush"
+  },
+  {
+    "vendorId": "L3CP42",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Antiseptic Liquid & Cream"
+  },
+  {
+    "vendorId": "L3CP43",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Wet Wipes"
+  },
+  {
+    "vendorId": "L3CP44",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Toiletry Set"
+  },
+  {
+    "vendorId": "L3CP45",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Body Scrubber"
+  },
+  {
+    "vendorId": "L3CP46",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Organic Soap"
+  },
+  {
+    "vendorId": "L3CP47",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Female Hygiene Products & Test Kits"
+  },
+  {
+    "vendorId": "L3CP48",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Bath Tools"
+  },
+  {
+    "vendorId": "L3CP49",
+    "primaryCatId": "CP2",
+    "level1 id": 23,
+    "name": "Soap & Sanitizer Dispenser"
+  },
+  {
+    "vendorId": "L3CP50",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Facial Kit"
+  },
+  {
+    "vendorId": "L3CP51",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Beauty Salon Equipment"
+  },
+  {
+    "vendorId": "L3CP52",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Beauty Parlour Chair"
+  },
+  {
+    "vendorId": "L3CP53",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Makeup Accessories"
+  },
+  {
+    "vendorId": "L3CP54",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Hair Brushes"
+  },
+  {
+    "vendorId": "L3CP55",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Cosmetic Mirror"
+  },
+  {
+    "vendorId": "L3CP56",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Cosmetic Brush"
+  },
+  {
+    "vendorId": "L3CP57",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Cosmetic Kit"
+  },
+  {
+    "vendorId": "L3CP58",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Shaving Accessories"
+  },
+  {
+    "vendorId": "L3CP59",
+    "primaryCatId": "CP3",
+    "level1 id": 23,
+    "name": "Synthetic Brush"
+  },
+  {
+    "vendorId": "L3CP60",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Essential Oils"
+  },
+  {
+    "vendorId": "L3CP61",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Antibacterial Essential Oils"
+  },
+  {
+    "vendorId": "L3CP62",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Anti Stress Essential Oils"
+  },
+  {
+    "vendorId": "L3CP63",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Medicinal Essential Oils"
+  },
+  {
+    "vendorId": "L3CP64",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Pain Relief Essential Oils"
+  },
+  {
+    "vendorId": "L3CP65",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Oleoresin"
+  },
+  {
+    "vendorId": "L3CP66",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Hair Care Essential Oils"
+  },
+  {
+    "vendorId": "L3CP67",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Anti Cellulite Essential Oil"
+  },
+  {
+    "vendorId": "L3CP68",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Antioxidant Essential Oils"
+  },
+  {
+    "vendorId": "L3CP69",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Skin Care Essential Oils"
+  },
+  {
+    "vendorId": "L3CP70",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Natural Menthol"
+  },
+  {
+    "vendorId": "L3CP71",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Anti Acne Essential Oils"
+  },
+  {
+    "vendorId": "L3CP72",
+    "primaryCatId": "CP4",
+    "level1 id": 23,
+    "name": "Anti Aging Essential Oils"
+  },
+  {
+    "vendorId": "L3CP73",
+    "primaryCatId": "CP5",
+    "level1 id": 23,
+    "name": "Aloe Vera Gel"
+  },
+  {
+    "vendorId": "L3CP74",
+    "primaryCatId": "CP5",
+    "level1 id": 23,
+    "name": "Ayurvedic Cosmetics"
+  },
+  {
+    "vendorId": "L3CP75",
+    "primaryCatId": "CP5",
+    "level1 id": 23,
+    "name": "Herbal Cosmetics"
+  },
+  {
+    "vendorId": "L3CP76",
+    "primaryCatId": "CP5",
+    "level1 id": 23,
+    "name": "Herbal Skin Care Cosmetics"
+  },
+  {
+    "vendorId": "L3CP77",
+    "primaryCatId": "CP5",
+    "level1 id": 23,
+    "name": "Aloe Vera Cosmetics"
+  },
+  {
+    "vendorId": "L3CP78",
+    "primaryCatId": "CP5",
+    "level1 id": 23,
+    "name": "Herbal Soaps"
+  },
+  {
+    "vendorId": "L3CP79",
+    "primaryCatId": "CP5",
+    "level1 id": 23,
+    "name": "Herbal Body Care Cosmetics"
+  },
+  {
+    "vendorId": "L3CP80",
+    "primaryCatId": "CP5",
+    "level1 id": 23,
+    "name": "Natural Cosmetics"
+  },
+  {
+    "vendorId": "L3CP81",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Baby Care Products"
+  },
+  {
+    "vendorId": "L3CP82",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Baby Cradle and Bassinet"
+  },
+  {
+    "vendorId": "L3CP83",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Baby Oil"
+  },
+  {
+    "vendorId": "L3CP84",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Diaper"
+  },
+  {
+    "vendorId": "L3CP85",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Baby Foods"
+  },
+  {
+    "vendorId": "L3CP86",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Baby Soap & Body Wash"
+  },
+  {
+    "vendorId": "L3CP87",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Baby Wipe"
+  },
+  {
+    "vendorId": "L3CP88",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Baby Creams & Lotion"
+  },
+  {
+    "vendorId": "L3CP89",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Feeding Bottles & Sippers"
+  },
+  {
+    "vendorId": "L3CP90",
+    "primaryCatId": "CP6",
+    "level1 id": 23,
+    "name": "Baby Pillows & Baby Cot"
+  },
+  {
+    "vendorId": "L3CP91",
+    "primaryCatId": "CP7",
+    "level1 id": 23,
+    "name": "Body Massager"
+  },
+  {
+    "vendorId": "L3CP92",
+    "primaryCatId": "CP7",
+    "level1 id": 23,
+    "name": "Massagers"
+  },
+  {
+    "vendorId": "L3CP93",
+    "primaryCatId": "CP8",
+    "level1 id": 23,
+    "name": "Detergent Powder"
+  },
+  {
+    "vendorId": "L3CP94",
+    "primaryCatId": "CP8",
+    "level1 id": 23,
+    "name": "Detergent"
+  },
+  {
+    "vendorId": "L3CP95",
+    "primaryCatId": "CP8",
+    "level1 id": 23,
+    "name": "Dishwashing Detergents"
+  },
+  {
+    "vendorId": "L3CP96",
+    "primaryCatId": "CP8",
+    "level1 id": 23,
+    "name": "Fabric Whitener"
+  },
+  {
+    "vendorId": "L3CP97",
+    "primaryCatId": "CP8",
+    "level1 id": 23,
+    "name": "Detergent Raw Material"
+  },
+  {
+    "vendorId": "L3CP98",
+    "primaryCatId": "CP8",
+    "level1 id": 23,
+    "name": "Soap Raw Material"
+  },
+  {
+    "vendorId": "L3CP99",
+    "primaryCatId": "CP8",
+    "level1 id": 23,
+    "name": "Industrial Detergent"
+  },
+  {
+    "vendorId": "L3CP100",
+    "primaryCatId": "CP9",
+    "level1 id": 23,
+    "name": "Hair Clips"
+  },
+  {
+    "vendorId": "L3CP101",
+    "primaryCatId": "CP9",
+    "level1 id": 23,
+    "name": "Hair Accessories"
+  },
+  {
+    "vendorId": "L3CP102",
+    "primaryCatId": "CP9",
+    "level1 id": 23,
+    "name": "Hair Bands & Hair Tie"
+  },
+  {
+    "vendorId": "L3CP103",
+    "primaryCatId": "CP9",
+    "level1 id": 23,
+    "name": "Hair Pins"
+  },
+  {
+    "vendorId": "L3CP104",
+    "primaryCatId": "CP9",
+    "level1 id": 23,
+    "name": "Sindoor"
+  },
+  {
+    "vendorId": "L3CP105",
+    "primaryCatId": "CP9",
+    "level1 id": 23,
+    "name": "Headband"
+  },
+  {
+    "vendorId": "L3CP106",
+    "primaryCatId": "CP9",
+    "level1 id": 23,
+    "name": "Body Sticker"
+  },
+  {
+    "vendorId": "L3CP107",
+    "primaryCatId": "CP9",
+    "level1 id": 23,
+    "name": "Henna Mehandi"
+  },
+  {
+    "vendorId": "L3CP108",
+    "primaryCatId": "CP10",
+    "level1 id": 23,
+    "name": "Perfumes"
+  },
+  {
+    "vendorId": "L3CP109",
+    "primaryCatId": "CP11",
+    "level1 id": 23,
+    "name": "Beauty Services"
+  },
+  {
+    "vendorId": "L3CP110",
+    "primaryCatId": "CP11",
+    "level1 id": 23,
+    "name": "Hair Cutting"
+  },
+  {
+    "vendorId": "L3CP111",
+    "primaryCatId": "CP11",
+    "level1 id": 23,
+    "name": "Spa & Massage Service"
+  },
+  {
+    "vendorId": "L3CP112",
+    "primaryCatId": "CP11",
+    "level1 id": 23,
+    "name": "Health Club Services"
+  },
+  {
+    "vendorId": "L3CP113",
+    "primaryCatId": "CP12",
+    "level1 id": 23,
+    "name": "Henna Mehandi"
   }
 ]

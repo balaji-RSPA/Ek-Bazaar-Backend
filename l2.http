@@ -4,28 +4,163 @@ content-type: application/json
 
 [
   {
-    "vendorId": "F1",
-    "parentId": 3,
-    "name": "Staple Food"
+    "vendorId": "APS1",
+    "parentId": 14,
+    "name": "Automobile Interiors & Accessories"
   },
   {
-    "vendorId": "F2",
-    "parentId": 3,
-    "name": "Processed Food"
+    "vendorId": "APS2",
+    "parentId": 14,
+    "name": "Automobile Body Coach Building"
   },
   {
-    "vendorId": "F3",
-    "parentId": 3,
-    "name": "Dry Fruits & Nuts"
+    "vendorId": "APS3",
+    "parentId": 14,
+    "name": "Tyre, Tube & Flaps"
   },
   {
-    "vendorId": "F4",
-    "parentId": 3,
-    "name": "Juices & Beverages"
+    "vendorId": "APS4",
+    "parentId": 14,
+    "name": "Commercial Vehicles & Three Wheelers"
   },
   {
-    "vendorId": "F5",
-    "parentId": 3,
-    "name": "Biscuits & Confectionery"
+    "vendorId": "APS5",
+    "parentId": 14,
+    "name": "Automotive Repair Tools & Equipments"
+  },
+  {
+    "vendorId": "APS6",
+    "parentId": 14,
+    "name": "Automobile Fittings & Components"
+  },
+  {
+    "vendorId": "APS7",
+    "parentId": 14,
+    "name": "Automobile Electrical Components"
+  },
+  {
+    "vendorId": "APS8",
+    "parentId": 14,
+    "name": "Brakes & Braking Systems"
+  },
+  {
+    "vendorId": "APS9",
+    "parentId": 14,
+    "name": "Off Road & Earth Moving Vehicles"
+  },
+  {
+    "vendorId": "APS10",
+    "parentId": 14,
+    "name": "Engine & Engine Spare Parts"
+  },
+  {
+    "vendorId": "APS11",
+    "parentId": 14,
+    "name": "Automotive Lights and Lighting Parts"
+  },
+  {
+    "vendorId": "APS12",
+    "parentId": 14,
+    "name": "Motorcycles and Cars"
+  },
+  {
+    "vendorId": "APS13",
+    "parentId": 14,
+    "name": "Fuel Injection System & Assemblies"
+  },
+  {
+    "vendorId": "APS14",
+    "parentId": 14,
+    "name": "Radiators & Accessories"
+  },
+  {
+    "vendorId": "APS15",
+    "parentId": 14,
+    "name": "Steering Parts & Components"
+  },
+  {
+    "vendorId": "APS16",
+    "parentId": 14,
+    "name": "Suspension System & Components"
+  },
+  {
+    "vendorId": "APS17",
+    "parentId": 14,
+    "name": "Air Intakes, Exhaust Systems & Parts"
+  },
+  {
+    "vendorId": "APS18",
+    "parentId": 14,
+    "name": "Tractor, Tractor Parts & Assemblies"
+  },
+  {
+    "vendorId": "APS19",
+    "parentId": 14,
+    "name": "Automobile Repairing and Maintenance"
+  },
+  {
+    "vendorId": "APS20",
+    "parentId": 14,
+    "name": "Power Transmission Tools & Couplings"
+  },
+  {
+    "vendorId": "CP1",
+    "parentId": 23,
+    "name": "Cosmetics, Hair & Beauty Products"
+  },
+  {
+    "vendorId": "CP2",
+    "parentId": 23,
+    "name": "Hand Sanitizers & Personal Hygiene"
+  },
+  {
+    "vendorId": "CP3",
+    "parentId": 23,
+    "name": "Salon, Spa Kits & Equipments"
+  },
+  {
+    "vendorId": "CP4",
+    "parentId": 23,
+    "name": "Essential & Aromatic Oils"
+  },
+  {
+    "vendorId": "CP5",
+    "parentId": 23,
+    "name": "Ayurvedic, Herbal Oils and Cosmetics"
+  },
+  {
+    "vendorId": "CP6",
+    "parentId": 23,
+    "name": "Child and Baby Care Products"
+  },
+  {
+    "vendorId": "CP7",
+    "parentId": 23,
+    "name": "Massage Equipments & Spa Devices"
+  },
+  {
+    "vendorId": "CP8",
+    "parentId": 23,
+    "name": "Soaps, Detergent Powder & Cakes"
+  },
+  {
+    "vendorId": "CP9",
+    "parentId": 23,
+    "name": "Bindi & Body Beautification Products"
+  },
+  {
+    "vendorId": "CP10",
+    "parentId": 23,
+    "name": "Perfume and Fragrances"
+  },
+  {
+    "vendorId": "CP11",
+    "parentId": 23,
+    "name": "Fitness Clubs and Beauty Parlours"
+  },
+  {
+    "vendorId": "CP12",
+    "parentId": 23,
+    "name": "Natural & Herbal Henna"
   }
 ]

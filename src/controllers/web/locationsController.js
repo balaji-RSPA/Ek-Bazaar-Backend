@@ -10,7 +10,6 @@ const {
 
 module.exports.getAllCities = async (req, res) => {
   try {
-    // console.log(req.query)
     const cities = await getAllCities(req.query);
     respSuccess(res, cities);
   } catch (error) {
@@ -42,8 +41,7 @@ module.exports.createState = async (req, res) => {
 module.exports.getAllCountries = async (req, res) => {
   try {
     const countries = await getAllCountries();
-    console.log(countries, "countries......");
-    res.send(countries);
+    respSuccess(res, countries);
   } catch (error) {
     res.send(error.message);
   }
