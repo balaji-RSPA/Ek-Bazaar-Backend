@@ -579,3 +579,14 @@ module.exports.getProducts = async (req, res) => {
         respError(error)
     }
 }
+
+module.exports.getLevelFive = async (req, res) => {
+    try {
+        console.log(req.params, 'level five ---------------------------')
+        const { id } = req.params
+        const products = await getProductCategory(id)
+        respSuccess(res, products)
+    } catch (error) {
+        respError(error)
+    }
+}

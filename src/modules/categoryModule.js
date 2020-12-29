@@ -527,6 +527,7 @@ module.exports.addProductSubCategory = (data) =>
 module.exports.getProductCategory = (id) =>
   new Promise((resolve, reject) => {
     Products.findById(id)
+    .populate('subCategoryId')
       .then((doc) => {
         resolve(doc);
       })

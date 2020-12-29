@@ -3,6 +3,7 @@ const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
 const State = require("./statesSchema");
+const Countries = require("./countriesSchema")
 
 const citiesSchema = new Schema(
   {
@@ -10,6 +11,11 @@ const citiesSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+    },
+    country: {
+      type: ObjectId,
+      ref: Countries,
+      // required: true,
     },
     state: {
       type: ObjectId,
