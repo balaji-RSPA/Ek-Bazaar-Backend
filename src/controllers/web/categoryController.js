@@ -30,7 +30,8 @@ const {
     getPrimaryCategories,
     addProductSubCategory,
     getProductCat,
-    updateProductCategory
+    updateProductCategory,
+    getProductSubcategory
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const {
@@ -155,20 +156,26 @@ module.exports.addPrimaryCategories = async (req, res) => {
         let bulkData = []
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
-            const query = {
-                vendorId: element.parentId.toString()
+            const primaryCategory = await getPrimaryCat({ vendorId: element.vendorId })
+            if (!primaryCategory) {
+                console.log("unque level2 record")
+                const query = {
+                    vendorId: element.parentId.toString()
+                }
+                // const parentCatId = await checkParentCategory(query)
+                const parentCat = await getParentCat(query)
+                const primaryData = {
+                    ...element,
+                    parentCatId: parentCat._id
+                }
+                const result = await addPrimaryCategory(primaryData)
+                const updateData = {
+                    primaryCategotyId: parentCat.primaryCategotyId.concat(result._id)
+                }
+                await updateParentCategory(parentCat._id, updateData)
+            } else {
+                console.log("duplicate level2 record")
             }
-            // const parentCatId = await checkParentCategory(query)
-            const parentCat = await getParentCat(query)
-            const primaryData = {
-                ...element,
-                parentCatId: parentCat._id
-            }
-            const result = await addPrimaryCategory(primaryData)
-            const updateData = {
-                primaryCategotyId: parentCat.primaryCategotyId.concat(result._id)
-            }
-            await updateParentCategory(parentCat._id, updateData)
             // bulkData.push(primaryData)
 
         }
@@ -229,21 +236,27 @@ module.exports.addSecondaryCategories = async (req, res) => {
         const reqData = req.body
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
-            const query = {
-                vendorId: element.primaryCatId.toString()
+            const secondaryCategory = await getSecondaryCat({ vendorId: element.vendorId })
+            if (!secondaryCategory) {
+                console.log("unique level2 record")
+                const query = {
+                    vendorId: element.primaryCatId.toString()
+                }
+                const parentCat = await getPrimaryCat(query)
+                // console.log("module.exports.addSecondaryCategories -> parentCat", parentCat)
+                const secData = {
+                    ...element,
+                    primaryCatId: parentCat._id
+                }
+                const result = await addSecondaryCategory(secData)
+                const updateData = {
+                    secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
+                }
+                console.log(index, '------', element.primaryCatId, '---', element.l1, 'Count-----')
+                await updatePrimaryCategory(parentCat._id, updateData)
+            } else {
+                console.log("duplicate level2 record")
             }
-            const parentCat = await getPrimaryCat(query)
-            // console.log("module.exports.addSecondaryCategories -> parentCat", parentCat)
-            const secData = {
-                ...element,
-                primaryCatId: parentCat._id
-            }
-            const result = await addSecondaryCategory(secData)
-            const updateData = {
-                secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
-            }
-            console.log(index, '------', element.primaryCatId, '---', element.l1, 'Count-----')
-            await updatePrimaryCategory(parentCat._id, updateData)
 
         }
         console.log('COmpleted +++++++++++++')
@@ -306,21 +319,28 @@ module.exports.addBulkProducts = async (req, res) => {
         const reqData = req.body
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
-            const query = {
-                vendorId: element.secondaryId.toString()
-            }
-            const parentCat = await getSecondaryCat(query)
-            if (parentCat) {
-                const productData = {
-                    ...element,
-                    secondaryId: parentCat._id
+            const _product = await getProductCat({ vendorId: element.vendorId })
+            console.log("🚀 ~ file: categoryController.js ~ line 323 ~ module.exports.addBulkProducts= ~ _product", _product)
+            if (!_product) {
+                console.log("unique level4 record")
+                const query = {
+                    vendorId: element.secondaryId.toString()
                 }
-                const result = await addProductCategory(productData)
-                const updateData = {
-                    productId: parentCat.productId.concat(result._id)
+                const parentCat = await getSecondaryCat(query)
+                if (parentCat) {
+                    const productData = {
+                        ...element,
+                        secondaryId: parentCat._id
+                    }
+                    const result = await addProductCategory(productData)
+                    const updateData = {
+                        productId: parentCat.productId.concat(result._id)
+                    }
+                    console.log(index, "COunt----", element.l1, element.vendorId)
+                    await updateSecondaryCategory(parentCat._id, updateData)
                 }
-                console.log(index, "COunt----", element.l1, element.vendorId)
-                await updateSecondaryCategory(parentCat._id, updateData)
+            } else {
+                console.log("duplicate level4 record", element.vendorId)
             }
 
         }
@@ -340,26 +360,31 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
         const reqData = req.body
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
-            const query = {
-                vendorId: element.productId.toString()
-            }
-            const parentCat = await getProductCat(query)
-            console.log("🚀 ~ file: categoryController.js ~ line 346 ~ module.exports.addBulkProductSubCategories= ~ parentCat", parentCat)
-            if (parentCat) {
-                const productData = {
-                    ...element,
-                    secondaryId: parentCat.secondaryId,
-                    productId: parentCat._id
+            const productSubCategories = await getProductSubcategory({ vendorId: element.vendorId })
+            if (!productSubCategories) {
+                console.log("unique level5 record")
+                const query = {
+                    vendorId: element.productId.toString()
                 }
-                const result = await addProductSubCategory(productData)
-                console.log("🚀 ~ file: categoryController.js ~ line 354 ~ module.exports.addBulkProductSubCategories= ~ result", result)
-                const updateData = {
-                    subCategoryId: parentCat.subCategoryId.concat(result._id)
+                const parentCat = await getProductCat(query)
+                console.log("🚀 ~ file: categoryController.js ~ line 346 ~ module.exports.addBulkProductSubCategories= ~ parentCat", parentCat)
+                if (parentCat) {
+                    const productData = {
+                        ...element,
+                        secondaryId: parentCat.secondaryId,
+                        productId: parentCat._id
+                    }
+                    const result = await addProductSubCategory(productData)
+                    console.log("🚀 ~ file: categoryController.js ~ line 354 ~ module.exports.addBulkProductSubCategories= ~ result", result)
+                    const updateData = {
+                        subCategoryId: parentCat.subCategoryId.concat(result._id)
+                    }
+                    console.log(index, "COunt----", element.l1, element.vendorId)
+                    await updateProductCategory(parentCat._id, updateData)
                 }
-                console.log(index, "COunt----", element.l1, element.vendorId)
-                await updateProductCategory(parentCat._id, updateData)
+            } else {
+                console.log("duplicate level5 record")
             }
-
         }
         console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')

@@ -34,7 +34,6 @@ module.exports.getBuyer = (id) =>
   new Promise((resolve, reject) => {
     Buyers.findOne({ userId: id })
       .then((doc) => {
-        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -49,11 +48,12 @@ module.exports.updateBuyer = (query, data) =>
       .catch((error) => reject(error));
   });
 
-module.exports.getAllBuyers = () =>
+module.exports.getAllBuyers = (skip,limit) =>
   new Promise((resolve, reject) => {
     Buyers.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
-        console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
