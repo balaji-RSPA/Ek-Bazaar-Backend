@@ -7,7 +7,8 @@ const {
   ProductsSubCategories,
   SellerTypes,
   Sellers,
-  SellerProducts
+  SellerProducts,
+
 } = require("../models");
 const {
   searchProducts
@@ -74,7 +75,7 @@ module.exports.getAllSellerTypes = (skip,limit) =>
       })
       .catch(reject);
   });
-module.exports.getAllCategories = (query) =>
+module.exports.getAllCategories = (skip,limit) =>
   new Promise((resolve, reject) => {
 
     //old id's
@@ -109,6 +110,8 @@ module.exports.getAllCategories = (query) =>
           // },
         },
       })
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
@@ -298,9 +301,11 @@ exports.updatePrimaryCategory = (id, newData) =>
       .catch(reject);
   });
 
-exports.getAllPrimaryCategory = () =>
+exports.getAllPrimaryCategory = (skip,limit) =>
   new Promise((resolve, reject) => {
     PrimaryCategory.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => resolve(doc))
       .catch((error) => reject(error));
   });
@@ -388,9 +393,11 @@ exports.updateSecondaryCategory = (id, newData) =>
       .catch(reject);
   });
 
-exports.getAllSecondaryCategory = () =>
+exports.getAllSecondaryCategory = (skip,limit) =>
   new Promise((resolve, reject) => {
     SecondaryCategory.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => resolve(doc))
       .catch((error) => reject(error));
   });
@@ -892,3 +899,17 @@ exports.getLevelFiveCategoryList = (list) => new Promise((resolve, reject) => {
     })
     .catch(reject);
 })
+
+/**
+ * Get all label 5 category list module
+*/
+module.exports.getAllLabel5Categories = (skip,limit) =>
+  new Promise((resolve, reject) => {
+    ProductsSubCategories.find({})
+      .skip(skip)
+      .limit(limit)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+});
