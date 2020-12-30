@@ -77,3 +77,15 @@ module.exports.updateBuyerPassword = (mobile, data) =>
       })
       .catch((error) => reject(error));
   });
+/**
+   * Get RFP detail
+  */
+ module.exports.postRFP = (data) => new Promise((resolve, reject) => {
+  RFP.create(data)
+    .then(doc => {
+      console.log(doc)
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+
+})
