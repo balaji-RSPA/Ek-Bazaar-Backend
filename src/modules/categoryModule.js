@@ -46,7 +46,8 @@ module.exports.checkAndAddSellerType = (query) =>
               resolve(newDoc);
             })
             .catch(reject);
-        }
+              
+        }_id
       })
       .catch(reject);
   });
