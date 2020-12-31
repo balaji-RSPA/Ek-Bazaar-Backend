@@ -145,6 +145,7 @@ module.exports.addParentCategory = (data) =>
 module.exports.getParentCat = (query) =>
   new Promise((resolve, reject) => {
     ParentCategory.findOne(query)
+      .populate("primaryCategotyId")
       .then((doc) => {
         resolve(doc);
       })
@@ -283,6 +284,7 @@ module.exports.getRelatedPrimaryCategory = (id) =>
 module.exports.getPrimaryCat = (query) =>
   new Promise((resolve, reject) => {
     PrimaryCategory.findOne(query)
+      .populate("secondaryCategotyId")
       .then((doc) => {
         resolve(doc);
       })
@@ -366,6 +368,7 @@ module.exports.getSecondaryCategory = (id) =>
 module.exports.getSecondaryCat = (query) =>
   new Promise((resolve, reject) => {
     SecondaryCategory.findOne(query)
+      .populate("productId")
       .then((doc) => {
         resolve(doc);
       })
@@ -375,6 +378,7 @@ module.exports.getSecondaryCat = (query) =>
 module.exports.getProductCat = (query) =>
   new Promise((resolve, reject) => {
     Products.findOne(query)
+      .populate("subCategoryId")
       .then((doc) => {
         resolve(doc);
       })
@@ -914,7 +918,7 @@ exports.getLevelFiveCategoryList = (list) => new Promise((resolve, reject) => {
 /**
  * Get all label 5 category list module
 */
-module.exports.getAllLabel5Categories = (skip,limit) =>
+module.exports.getAllLevel5Categories = (skip,limit) =>
   new Promise((resolve, reject) => {
     ProductsSubCategories.find({})
       .skip(skip)

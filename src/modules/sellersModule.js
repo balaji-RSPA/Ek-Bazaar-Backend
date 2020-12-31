@@ -1217,11 +1217,6 @@ new Promise((resolve, reject) => {
     })
     .catch(reject)
 })
-  //     .then((doc) => {
-  //       resolve(doc)
-  //     })
-  //     .catch(reject)
-  // })
 /**
 * 
 * Get seller product detail

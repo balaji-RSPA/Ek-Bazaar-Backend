@@ -5,25 +5,45 @@ const category = require("../../controllers/admin/categoryController");
 const { authenticate } = require("../../middleware/auth");
 
 /** 
- * Get all label one categories
+ * Get level one category
 */
-router.get("/categories/l1",authenticate,category.getLabel1Categories)
+router.get("/category/l1/:id",authenticate,category.GetLevel1Category)
 /** 
- * Get all label two category
+ * Get level two category
 */
-router.get("/categories/l2",authenticate,category.getLabel2Categories)
+router.get("/category/l2/:id",authenticate,category.GetLevel2Category)
 /** 
- * Get all label three category
+ * Get level three category
 */
-router.get("/categories/l3",authenticate,category.getLabel3Categories)
+router.get("/category/l3/:id",authenticate,category.GetLevel3Category)
 /** 
- * Get all label four category
+ * Get level four category
 */
-router.get("/categories/l4",authenticate,category.getLabel4Categories)
+router.get("/category/l4/:id",authenticate,category.GetLevel4Category)
 /** 
- * Get all label five category
+ * Get level five category
 */
-router.get("/categories/l5",authenticate,category.getLabel5Categories)
+router.get("/category/l5/:id",authenticate,category.GetLevel5Category)
+/** 
+ * List all level one categories
+*/
+router.get("/categories/l1",authenticate,category.listAllLevel1Categories)
+/** 
+ * List all level two category
+*/
+router.get("/categories/l2",authenticate,category.listAllLevel2Categories)
+/** 
+ * List all level three category
+*/
+router.get("/categories/l3",authenticate,category.listAllLevel3Categories)
+/** 
+ * List all level four category
+*/
+router.get("/categories/l4",authenticate,category.listAllLevel4Categories)
+/** 
+ * List all level five category
+*/
+router.get("/categories/l5",authenticate,category.listAllLevel5Categories)
 
 
 module.exports = router;
