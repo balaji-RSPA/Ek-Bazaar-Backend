@@ -1186,11 +1186,37 @@ module.exports.findEstablishment = (id) =>
     SellersEstablishment.findOne({
       _id: id
     })
-      .then((doc) => {
-        resolve(doc)
-      })
-      .catch(reject)
-  })
+    .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
+  /**
+ * 
+ * Get seller product detail
+ * */
+module.exports.getSellerProductDtl = (query) =>
+new Promise((resolve, reject) => {
+  SelleresProductList.findOne(query)
+  .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
+  /**
+ * 
+ * Get all seller products
+ * */
+module.exports.listAllSellerProduct = (skip,limit) =>
+new Promise((resolve, reject) => {
+  SelleresProductList.find({})
+  .skip(skip)
+  .limit(limit)
+  .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
 /**
 * 
 * Get seller product detail
@@ -1212,8 +1238,6 @@ module.exports.getSellerProduct = (query) =>
       })
       .catch(reject)
   })
-
-
   exports.deleteSellerRecord = (id) =>
   new Promise((resolve, reject) => {
     Sellers.findByIdAndDelete(id)
