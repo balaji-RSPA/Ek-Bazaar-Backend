@@ -23,3 +23,11 @@ module.exports.searchProducts = (query) => new Promise((resolve, reject) => {
         .then(doc => resolve(doc))
         .catch(error => reject(error))
 })
+
+module.exports.deleteSellerProducts = (query) => new Promise((resolve, reject) => {
+    SellerProducts.deleteMany(query)
+    .then((doc) => {
+        resolve(doc)
+    })
+    .catch((error) => reject(error))
+})

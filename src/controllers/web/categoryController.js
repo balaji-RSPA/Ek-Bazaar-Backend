@@ -1,4 +1,5 @@
 const {
+    getSpecificCategories,
     getAllCategories,
     addParentCategory,
     addParentCategories,
@@ -56,6 +57,28 @@ module.exports.addSellerType = async (req, res) => {
 module.exports.getAllSellerTypes = async (req, res) => {
     try {
         const result = await getAllSellerTypes()
+        respSuccess(res, result)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.getSpecificCategories = async (req, res) => {
+    try {
+        const idsArray = [
+            "5fddf6051a15802b9764520d",
+            "5fddf6051a15802b97645214",
+            "5fddf6051a15802b9764520e",
+            "5fddf6051a15802b9764520f",
+            "5fddf6051a15802b9764521a"
+        ]
+        const query = {
+            _id: {
+                $in: idsArray
+            }
+        }
+        const result = await getSpecificCategories(query)
+        console.log("🚀 ~ file: categoryController.js ~ line 81 ~ module.exports.getSpecificCategories=async ~ result", result)
         respSuccess(res, result)
     } catch (error) {
         respError(error)
@@ -541,7 +564,18 @@ module.exports.deletel3 = async (req, res) => {
 
 module.exports.getAllSecondaryCategories = async (req, res) => {
     try {
-        const secondaryCategories = await getAllSecondaryCategories()
+        const idsArray = [
+            "5fdf6cd9be4f6810f1010491",
+            "5fdf6cdcbe4f6810f10104e2",
+            "5fdf6cedbe4f6810f10106bc",
+            "5fdf6cc8be4f6810f10102ca"
+        ]
+        const query = {
+            _id: {
+                $in: idsArray
+            }
+        }
+        const secondaryCategories = await getAllSecondaryCategories(query)
         respSuccess(res, secondaryCategories)
     } catch (error) {
         respError(error)
@@ -574,6 +608,17 @@ module.exports.getProducts = async (req, res) => {
             }
         }
         const products = await getProducts(query)
+        respSuccess(res, products)
+    } catch (error) {
+        respError(error)
+    }
+}
+
+module.exports.getLevelFive = async (req, res) => {
+    try {
+        console.log(req.params, 'level five ---------------------------')
+        const { id } = req.params
+        const products = await getProductCategory(id)
         respSuccess(res, products)
     } catch (error) {
         respError(error)

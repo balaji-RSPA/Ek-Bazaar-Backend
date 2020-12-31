@@ -1212,3 +1212,13 @@ module.exports.getSellerProduct = (query) =>
       })
       .catch(reject)
   })
+
+
+  exports.deleteSellerRecord = (id) =>
+  new Promise((resolve, reject) => {
+    Sellers.findByIdAndDelete(id)
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
@@ -9,9 +10,9 @@ const useragent = require('express-useragent');
 const config = require('./config/config')
 const { tradedb } = config
 
-require('dotenv').config();
 const { env } = process
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
+const { deleteRecords } = require('./src/controllers/web/userController')
 
 global.environment = env.NODE_ENV || 'production'
 require('./config/db').dbConnection();
@@ -40,6 +41,46 @@ app.get('/', function (req, res) {
   console.log('Home page')
   res.send('Its trade live')
 })
+
+// app.get('/deleteRecords1', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 0, limit : 1000})
+//   } catch (error) {
+    
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords2', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 1000, limit : 2000})
+//   } catch (error) {
+    
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords3', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 2000, limit : 3000})
+//   } catch (error) {
+    
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords4', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 3000, limit : 4000})
+//   } catch (error) {
+    
+//   }
+//   // res.send('Its delete records  live')
+// })
 
 app.use(router)
 

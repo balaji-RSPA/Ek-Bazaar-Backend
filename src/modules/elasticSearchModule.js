@@ -8,10 +8,12 @@ const { getCatId, getSecCatId } = require('../modules/categoryModule')
 module.exports.addSellerBulkIndex = async () => {
 
   try {
-    const data = await Sellers.estimatedDocumentCount(); // Getting total seller count
-    const limit = 100; // Limited for 1000
+    const data = await Sellers.count({_id: {$gt: "5fe3fff61c9d614de3ab75bc", $lt: "5feba4a1b0b2eb5c558b72c5"}})//.skip(109711); // Getting total seller count
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 12 ~ module.exports.addSellerBulkIndex= ~ data", data)
+    const limit = 400; // Limited for 1000
     const ratio = data / limit;
     let skip = 0;
+    let cnt = 20000
     let successCounter = 0;
     let failureCounter = 0;
     console.log(ratio, "ratio");
@@ -19,6 +21,7 @@ module.exports.addSellerBulkIndex = async () => {
       // making a batch 1000 records
       const foundDoc = await Sellers.find()
         .skip(skip)
+        .sort({_id: -1})
         .limit(limit)
         // .populate("primaryCatId", "name venderId")
         .populate("location.state", "name region")
@@ -79,16 +82,20 @@ module.exports.addSellerBulkIndex = async () => {
         .lean();
 
       try {
+        cnt += limit
+        console.log("bulk insert to elastic")
         await this.bulkStoreInElastic(foundDoc); // added to the ES
         successCounter++;
+        console.log("first------", foundDoc[0]["name"], "last----------", foundDoc[foundDoc.length-1]["name"])
       } catch (error) {
         console.log(error, "es index error");
         failureCounter++;
+        console.log("first------", foundDoc[0]["name"], "last----------", foundDoc[foundDoc.length-1]["name"])
       }
       // console.log("module.exports.addSellerBulkIndex -> const", foundDoc)
       // return foundDoc;
     }
-    return Promise.resolve(
+    return Promise.resolve(/*'Successfully indexed'*/
       `Successfully indexed ${(successCounter - failureCounter) * limit
       } out of ${data} items`
     );
@@ -142,9 +149,9 @@ exports.bulkStoreInElastic = (foundDoc) =>
   });
 
 exports.sellerSearch = async (reqQuery) => {
-  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery.level5Id)
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -160,17 +167,31 @@ exports.sellerSearch = async (reqQuery) => {
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 139 ~ exports.sellerSearch= ~ searchProductsBy", searchProductsBy)
     const keywordMatch = []
     const productMatch = []
-    if (searchProductsBy.serviceType) {
+    if (searchProductsBy.serviceType && searchProductsBy.city) {
       keywordMatch.push({
         "match": {
           "sellerProductId.serviceType._id": searchProductsBy.serviceType.id,
         }
       })
     }
-    if (searchProductsBy.city) {
+    if(searchProductsBy.serviceType) {
+      keywordMatch.push({
+        "match": {
+          "sellerType": {"query": searchProductsBy.serviceType.id},
+        }
+      })
+    }
+    if (searchProductsBy.city && searchProductsBy.serviceType) {
       keywordMatch.push({
         "match": {
           "sellerProductId.serviceCity.city._id": searchProductsBy.city.id,
+        }
+      })
+    }
+    if(searchProductsBy.city) {
+      keywordMatch.push({
+        "match": {
+          "location.city._id": searchProductsBy.city.id,
         }
       })
     }
@@ -270,9 +291,12 @@ exports.sellerSearch = async (reqQuery) => {
         "match": {
           "name": {
             "query": searchProductsBy.product,
-            "minimum_should_match": "100%"
+            "minimum_should_match": "10%"
           }
         }
+        // match: {
+        //   name: searchProductsBy.product
+        // }
       })
     }
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 216 ~ exports.sellerSearch= ~ productMatch", productMatch)
@@ -287,6 +311,15 @@ exports.sellerSearch = async (reqQuery) => {
     //     "should": productMatch
     //   }
     // })
+  }
+
+  if (level5Id) {
+    const level5Search = {
+      match: {
+        "sellerProductId.productSubcategoryId._id": level5Id,
+      },
+    }
+    query.bool.must.push(level5Search);
   }
 
   if (productId) {
@@ -349,7 +382,7 @@ exports.sellerSearch = async (reqQuery) => {
         const locationMatch = {
           term: {
             // "location.city._id": c,
-            "sellerType.cities.city._id": c
+            "sellerProductId.serviceCity.city._id": c
           },
         };
         query.bool.must[0].bool.should.push(locationMatch);
@@ -358,7 +391,7 @@ exports.sellerSearch = async (reqQuery) => {
       const locationMatch = {
         term: {
           // "location.city._id": cityId,
-          "sellerType.cities.city._id": cityId
+          "sellerProductId.serviceCity.city._id": cityId
         },
       };
       query.bool.must.push(locationMatch);
@@ -382,7 +415,7 @@ exports.searchFromElastic = (query, range) =>
       from: skip || 0,
       query,/* ,
       highlight, */
-      sort: { "_id": "desc" }
+      // sort: { "_id": "desc" }
     };
     const searchQuery = {
       index: INDEXNAME,

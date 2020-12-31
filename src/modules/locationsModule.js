@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const { States, Countries, Cities } = require("../models");
 
+const { SellerTypes } = require("../models");
+
 module.exports.getAllStates = () =>
   new Promise((resolve, reject) => {
     States.find({})
@@ -79,7 +81,8 @@ module.exports.addCity = (newData, id) =>
 module.exports.getCity = (query, id) =>
   new Promise((resolve, reject) => {
     Cities.findOne(query)
-      // .populate('state', 'name')
+      .populate('state', 'name')
+      .select("name state")
       .then((doc) => {
         resolve(doc && id ? doc._id : doc);
       })
@@ -91,7 +94,7 @@ module.exports.getCity = (query, id) =>
 exports.getAllCities = (reqQuery) =>
   new Promise((resolve, reject) => {
     const skip = parseInt(reqQuery.skip) || 0;
-    const limit = parseInt(reqQuery.limit) || 1500;
+    const limit = parseInt(reqQuery.limit) || 2000;
     const search = reqQuery.search || "";
 
     let { state } = reqQuery;
@@ -142,6 +145,7 @@ exports.getAllCities = (reqQuery) =>
           as: "state",
         },
       },
+      { $unwind: "$state" },
       {
         $project: {
           "_id": 1,
@@ -149,7 +153,7 @@ exports.getAllCities = (reqQuery) =>
           "state.name": 1,
           "state._id": 1
         }
-      }      
+      }
     ]);
 
     execQuery
@@ -161,6 +165,7 @@ exports.getAllCities = (reqQuery) =>
 
 module.exports.checkAndAddCity = (query) =>
   new Promise((resolve, reject) => {
+    console.log(query, ' eeee')
     this.getCity(query)
       .then((doc) => {
         if (doc) {
@@ -168,7 +173,7 @@ module.exports.checkAndAddCity = (query) =>
           resolve(doc);
         } else {
           this.addCity(query).then((newDoc) => {
-          // console.log("New City -------");
+            // console.log("New City -------");
             resolve(newDoc)
           }).catch(reject)
         }
@@ -176,8 +181,8 @@ module.exports.checkAndAddCity = (query) =>
       .catch(reject);
   });
 
-module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) => {
-    match = {
+module.exports.getServiceCity = (serviceCity) => new Promise((resolve, reject) => {
+  match = {
     $match: {
       name: {
         $in: serviceCity.map((name) => (name)),
@@ -185,40 +190,85 @@ module.exports.getServiceCity = (serviceCity) => new Promise ((resolve, reject) 
     },
   };
   const execQuery = Cities.aggregate([
-      match,
-      {
-        $lookup: {
-          from: "states",
-          localField: "state",
-          foreignField: "_id",
-          as: "state",
-        },
+    match,
+    {
+      $lookup: {
+        from: "states",
+        localField: "state",
+        foreignField: "_id",
+        as: "state",
       },
-      {$unwind: '$state'},
-      {
-        $project: {
-          "_id": 1,
-          "name": 1,
-          "state.name": 1,
-          "state._id": 1
-        }
-      }      
-    ]);
-    execQuery
-      .then((cities) => {
-        resolve(cities);
-      })
-      .catch(reject);
+    },
+    { $unwind: '$state' },
+    {
+      $project: {
+        "_id": 1,
+        "name": 1,
+        "state.name": 1,
+        "state._id": 1
+      }
+    }
+  ]);
+  execQuery
+    .then((cities) => {
+      resolve(cities);
+    })
+    .catch(reject);
 })
 
+module.exports.checkState = (query) =>
+  new Promise((resolve, reject) => {
+    States.findOne(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => reject(error.message));
+  });
+
+module.exports.updateCity = (query, data) =>
+  new Promise((resolve, reject) => {
+    // console.log(query,data, ' tyui')
+    Cities.findOneAndUpdate(query, data, { new: true, upsert: true })
+      .then((doc) => {
+        // console.log("🚀 ~ file: locationsModule.js ~ line 229 ~ .then ~ doc", doc)
+        resolve(doc);
+      })
+      .catch((error) => {
+        console.log(error, ' ghjk')
+        reject(error);
+      });
+  });
+
+module.exports.updateState = (query, data) =>
+  new Promise((resolve, reject) => {
+    States.findOneAndUpdate(query, data, { new: true, upsert: true })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
 /*get filtered cities*/
 module.exports.getFilteredCities = (query) =>
-new Promise((resolve, reject) => {
-  Cities.find(query)
-    .then((doc) => {
-      resolve(doc);
-    })
-    .catch((error) => {
-      reject(error);
-    });
-});
+  new Promise((resolve, reject) => {
+    Cities.find(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+
+  module.exports.getSellerTypeAll = (que, range) =>
+  new Promise((resolve, reject) => {
+    
+    SellerTypes.find(que)
+    .skip(range.skip)
+    .limit(range.limit)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => reject(error.message));
+  });
