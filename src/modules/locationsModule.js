@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const { States, Countries, Cities } = require("../models");
 
-const { SellerTypes } = require("../models");
-
-module.exports.getAllStates = () =>
+module.exports.getAllStates = (skip,limit) =>
   new Promise((resolve, reject) => {
     States.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
@@ -15,9 +15,11 @@ module.exports.getAllStates = () =>
       });
   });
 
-module.exports.getAllCountries = () =>
+module.exports.getAllCountries = (skip,limit) =>
   new Promise((resolve, reject) => {
     Countries.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })

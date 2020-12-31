@@ -54,7 +54,7 @@ module.exports.serachSeller = async (req, res) => {
         skip: parseInt(skip),
         limit: parseInt(limit),
       };
-      let serviceTypes = await getAllSellerTypes({});
+      let serviceTypes = await getAllSellerTypes(0, 16, {});
       console.log("🚀 ~ file: elasticSearchController.js ~ line 58 ~ module.exports.serachSeller= ~ serviceTypes", serviceTypes)
       serviceTypes = serviceTypes.map((type) => ({
         name: type.name,

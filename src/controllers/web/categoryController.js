@@ -56,7 +56,7 @@ module.exports.addSellerType = async (req, res) => {
 
 module.exports.getAllSellerTypes = async (req, res) => {
     try {
-        const result = await getAllSellerTypes()
+        const result = await getAllSellerTypes(0, 16, {status: true})
         respSuccess(res, result)
     } catch (error) {
         respError(error)
