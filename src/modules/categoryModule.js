@@ -45,7 +45,7 @@ module.exports.checkAndAddSellerType = (query) =>
               console.log("New seller type ++++");
               resolve(newDoc);
             })
-            .catch(reject);
+            .catch(reject);    
         }
       })
       .catch(reject);
