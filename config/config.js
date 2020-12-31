@@ -1,12 +1,23 @@
 let config;
-if (global.environment === "production") {
+
+console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
+if (process.env.NODE_ENV === "production") {
   config = {
-    host: "tradebazaarapi.tech-active.com",
-    port: "5006",
-    user: "tradeapi",
-    password: "Oyljeabr6Orc",
-    database: "tradeapi",
-    server_port: "8070",
+    tradedb: {
+      host: "tradedb.ekbazaar.com",
+      port: "5006",
+      user: "trade",
+      password: "jiarkerc9Om",
+      database: "trade",
+      server_port: "8070",
+    },
+    tenderdb: {
+      host: "tenderdb.ekbazaar.com",
+      port: "5006",
+      user: "tender",
+      password: "Bamfesh7grer",
+      database: "tender",
+    }
   };
 } else {
   config = {

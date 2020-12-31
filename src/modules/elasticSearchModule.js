@@ -142,9 +142,9 @@ exports.bulkStoreInElastic = (foundDoc) =>
   });
 
 exports.sellerSearch = async (reqQuery) => {
-  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery.level5Id)
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -289,6 +289,15 @@ exports.sellerSearch = async (reqQuery) => {
     // })
   }
 
+  if (level5Id) {
+    const level5Search = {
+      match: {
+        "sellerProductId.productSubcategoryId._id": level5Id,
+      },
+    }
+    query.bool.must.push(level5Search);
+  }
+
   if (productId) {
     // const categoryId = await getCatId({_id: productId }, '_id')
     // catId = categoryId
@@ -382,7 +391,7 @@ exports.searchFromElastic = (query, range) =>
       from: skip || 0,
       query,/* ,
       highlight, */
-      // sort: { "mobile.mobile": "desc" }
+      // sort: { "_id": "desc" }
     };
     const searchQuery = {
       index: INDEXNAME,

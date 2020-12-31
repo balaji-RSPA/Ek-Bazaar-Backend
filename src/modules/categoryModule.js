@@ -45,9 +45,8 @@ module.exports.checkAndAddSellerType = (query) =>
               console.log("New seller type ++++");
               resolve(newDoc);
             })
-            .catch(reject);
-              
-        }_id
+            .catch(reject);    
+        }
       })
       .catch(reject);
   });
@@ -76,26 +75,29 @@ module.exports.getAllSellerTypes = (skip,limit) =>
       })
       .catch(reject);
   });
+
+module.exports.getSpecificCategories = (query) =>
+  new Promise((resolve, reject) => {
+    ParentCategory.find(query)
+      .then(doc => resolve(doc))
+      .catch(error => reject(error))
+  })
+
 module.exports.getAllCategories = (skip,limit) =>
   new Promise((resolve, reject) => {
+    // ParentCategory.find({
+    //   _id: {
+    //     $in: [
+    //       "5fddf6051a15802b9764520d",
+    //       "5fddf6051a15802b97645210",
+    //       "5fddf6051a15802b9764520e",
+    //       "5fddf6051a15802b9764520f"
 
-    //old id's
-    // "5f9a60b98420b75666d810d6",
-    // "5f9a60b98420b75666d810d8",
-    // "5f9a60b98420b75666d810e2",
-    // "5f9a60b98420b75666d810e8",
-
-    ParentCategory.find({
-      _id: {
-        $in: [
-          "5fddf6051a15802b9764520d",
-          "5fddf6051a15802b97645210",
-          "5fddf6051a15802b9764520e",
-          "5fddf6051a15802b9764520f"
-
-        ],
-      },
-    })
+    //     ],
+    //   },
+    // })
+    ParentCategory.find({})
+      .sort({ name: 1 })
       .populate({
         path: "primaryCategotyId",
         model: PrimaryCategory,
@@ -379,6 +381,13 @@ module.exports.getProductCat = (query) =>
       .catch(reject);
   });
 
+module.exports.getProductSubcategory = (query) =>
+  new Promise((resolve, reject) => {
+    ProductsSubCategories.findOne(query)
+      .then(doc => resolve(doc))
+      .catch(error => reject(error))
+  })
+
 exports.updateSecondaryCategory = (id, newData) =>
   new Promise((resolve, reject) => {
     SecondaryCategory.findByIdAndUpdate(
@@ -403,12 +412,12 @@ exports.getAllSecondaryCategory = (skip,limit) =>
       .catch((error) => reject(error));
   });
 
-exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
-  SecondaryCategory.find({})
-    .limit(4)
-    .sort({
-      _id: -1
-    })
+exports.getAllSecondaryCategories = (query) => new Promise((resolve, reject) => {
+  SecondaryCategory.find(query)
+    // .limit(4)
+    // .sort({
+    //   _id: -1
+    // })
     .populate("productId")
     .then((doc) => {
       resolve(doc)
@@ -530,6 +539,7 @@ module.exports.addProductSubCategory = (data) =>
 module.exports.getProductCategory = (id) =>
   new Promise((resolve, reject) => {
     Products.findById(id)
+      .populate('subCategoryId')
       .then((doc) => {
         resolve(doc);
       })

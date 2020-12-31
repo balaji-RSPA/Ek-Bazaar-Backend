@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
@@ -9,7 +10,6 @@ const useragent = require('express-useragent');
 const config = require('./config/config')
 const { tradedb } = config
 
-require('dotenv').config();
 const { env } = process
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
 
