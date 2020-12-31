@@ -1196,18 +1196,23 @@ new Promise((resolve, reject) => {
  * 
  * Get seller product detail
  * */
-module.exports.getSellerProduct = (query) =>
+module.exports.getSellerProductDtl = (query) =>
 new Promise((resolve, reject) => {
   SelleresProductList.findOne(query)
-  .populate({
-    path : 'serviceCity.city'
-  })
-  .populate({
-    path : 'serviceCity.country'
-  })
-  .populate({
-    path : 'serviceCity.state'
-  })
+  .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
+  /**
+ * 
+ * Get all seller products
+ * */
+module.exports.listAllSellerProduct = (skip,limit) =>
+new Promise((resolve, reject) => {
+  SelleresProductList.find({})
+  .skip(skip)
+  .limit(limit)
   .then((doc) => {
       resolve(doc)
     })
