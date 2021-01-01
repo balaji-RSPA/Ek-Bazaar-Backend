@@ -3,7 +3,7 @@ const { Schema, model, Types } = mongoose
 const { ObjectId } = Types
 
 const subscriptionPlanSchema = new Schema({
-    type: {
+    type: {//Quarterly,Yearly,Full Bazaar
         type: String,
         trim: true,
         required: true
@@ -17,15 +17,23 @@ const subscriptionPlanSchema = new Schema({
       type: Number,
       required: true
     },
-    unit : {
+    priceUnit : {//month,year
       type: String,
       required: true
     },
-    popularity:{
+    popularity:{//Most Popular, popular, less popular
       type: String,
       required: true
     },
-    billing_type:{
+    billingType:{//billed quarterly,billed yearly,billed monthly
+      type: String,
+      required: true
+    },
+    days:{
+      type: Number,
+      required: true
+    },
+    daysUnit:{
       type: String,
       required: true
     }
