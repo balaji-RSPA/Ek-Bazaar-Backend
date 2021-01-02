@@ -30,10 +30,6 @@ const subscriptionPlanSchema = new Schema({
       required: true
     },
     days:{
-      type: Number,
-      required: true
-    },
-    daysUnit:{
       type: String,
       required: true
     }
