@@ -19,7 +19,7 @@ const{
 module.exports.listAllLevel1Categories = async (req, res) => {
   try {
     const { skip,limit } = req.body
-    const categories = await getAllCategories(skip,limit);
+    const categories = await getAllCategories(null,skip,limit);
     respSuccess(res, categories);
   } catch (error) {
     respError(res, error.message);

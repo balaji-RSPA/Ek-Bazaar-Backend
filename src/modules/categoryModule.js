@@ -83,7 +83,7 @@ module.exports.getSpecificCategories = (query) =>
       .catch(error => reject(error))
   })
 
-module.exports.getAllCategories = (skip,limit) =>
+module.exports.getAllCategories = (query,skip,limit) =>
   new Promise((resolve, reject) => {
     // ParentCategory.find({
     //   _id: {
@@ -102,10 +102,12 @@ module.exports.getAllCategories = (skip,limit) =>
         path: "primaryCategotyId",
         model: PrimaryCategory,
         select: "name vendorId",
+        options: { sort: { 'name': 1 } } ,
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
           select: "name vendorId",
+          options: { sort: { 'name': 1 } }
           // populate: {
           //   path: "productId",
           //   model: Products,

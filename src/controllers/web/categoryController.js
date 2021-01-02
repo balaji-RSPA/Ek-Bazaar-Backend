@@ -86,7 +86,6 @@ module.exports.getSpecificCategories = async (req, res) => {
 }
 
 module.exports.getAllCategories = async (req, res) => {
-
     try {
         const reqQuery = camelcaseKeys(req.query)
         let qery = {
@@ -107,7 +106,6 @@ module.exports.getAllCategories = async (req, res) => {
         respSuccess(res, result)
 
     } catch (error) {
-
         respError(error)
 
     }
