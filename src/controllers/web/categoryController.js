@@ -152,7 +152,6 @@ module.exports.getParentCategory = async (req, res) => {
 
         const id = req.params.id;
         const reqQuery = camelcaseKeys(req.query)
-        console.log(reqQuery, "111111111111111111111111111111111111111111111", req.params)
         const query = {
             id,
             search: reqQuery.search
@@ -462,7 +461,6 @@ module.exports.getPrimaryCat = async (req, res) => {
         } = reqQuery
         skip = skip && parseInt(skip) || 0
         limit = limit && parseInt(limit) || 10
-        console.log(reqQuery, "jkjdfkjdgfjkdfgjknd", req.query)
 
         const query = {
             _id: reqQuery.primaryId,
@@ -470,7 +468,6 @@ module.exports.getPrimaryCat = async (req, res) => {
             limit
         }
         const primaryCatyegory = await getPrimaryCategories(query)
-        console.log(primaryCatyegory, "???????????????????????????")
         respSuccess(res, primaryCatyegory)
 
     } catch (error) {
@@ -582,7 +579,6 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
 
 module.exports.getProducts = async (req, res) => {
     try {
-        console.log(req.query.limit, "======", req.query.search, "??????????????????????????????????????/", req.params)
         const {
             limit,
             search
@@ -614,7 +610,6 @@ module.exports.getProducts = async (req, res) => {
 
 module.exports.getLevelFive = async (req, res) => {
     try {
-        console.log(req.params, 'level five ---------------------------')
         const { id } = req.params
         const products = await getProductCategory(id)
         respSuccess(res, products)
