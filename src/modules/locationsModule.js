@@ -35,6 +35,17 @@ module.exports.getCountry = (id) =>
       });
   });
 
+module.exports.countiesBulkInsert = (data) =>
+  new Promise((resolve, reject) => {
+    Countries.insertMany(data, {
+      ordered: false,
+    })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });
+
 module.exports.addState = (newData) =>
   new Promise((resolve, reject) => {
     States.create(newData)
@@ -255,4 +266,26 @@ module.exports.getFilteredCities = (query) =>
       .catch((error) => {
         reject(error);
       });
+  });
+
+module.exports.statesBulkInsert = (data) =>
+  new Promise((resolve, reject) => {
+    States.insertMany(data, {
+      ordered: false,
+    })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });
+
+module.exports.citiesBulkInsert = (data) =>
+  new Promise((resolve, reject) => {
+    Cities.insertMany(data, {
+      ordered: false,
+    })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
   });

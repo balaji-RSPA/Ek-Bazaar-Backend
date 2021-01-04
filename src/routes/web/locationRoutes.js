@@ -6,7 +6,9 @@ const router = Router();
 router.get('/cities', location.getAllCities)
 
 router.get("/states", location.getAllStates);
-router.post("/states", location.createState)
+// router.post("/states", location.createState)
+// router.post("/statesBulkInsert", location.statesBulkInsert)
+// router.post("/citiesBulkInsert", location.citiesBulkInsert)
 
 router.get("/countries", location.getAllCountries)
 router.post("/countries", location.createCountry)

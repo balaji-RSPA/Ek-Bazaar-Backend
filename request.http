@@ -20,6 +20,29 @@ content-type: application/json
 
 
 ###
+POST http://localhost:8070/api/statesBulkInsert HTTP/1.1
+content-type: application/json
+
+# [
+#   {
+#     "name": "Andaman and Nicobar Islands",
+#     "region": "North",
+#     "country": "5e312f978acbee60ab54de08"
+#   }
+# ]
+###
+
+POST http://localhost:8070/api/citiesBulkInsert HTTP/1.1
+content-type: application/json
+
+# [
+#   {
+#     "name": "Mumbai",
+#     "state": "Maharashtra"
+#   }
+# ]
+
+###
 GET http://localhost:8070/api/states HTTP/1.1
 content-type: application/json
 
@@ -38,6 +61,14 @@ content-type: application/json
 ####
 POST http://localhost:8070/api/countries HTTP/1.1
 content-type: application/json
+
+# [
+#   {
+#     "iso": "AF",
+#     "name": "Afghanistan",
+#     "serialNo": 2
+#   }
+# ]
 
 ####
 POST http://localhost:8070/api/addBulkProducts HTTP/1.1

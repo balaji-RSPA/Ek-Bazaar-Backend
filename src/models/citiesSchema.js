@@ -11,6 +11,7 @@ const citiesSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+      lowercase: true
     },
     country: {
       type: ObjectId,
