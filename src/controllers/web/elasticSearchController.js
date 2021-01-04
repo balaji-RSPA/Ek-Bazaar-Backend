@@ -28,12 +28,14 @@ module.exports.addSellerBulkIndex = async (req, res) => {
 module.exports.serachSeller = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query);
-    console.log("🚀 ~ file: elasticSearchController.js ~ line 33 ~ module.exports.serachSeller= ~ req.query", req.query)
-    const secCat = await getSecondaryCategory(reqQuery.secondaryId);
-    if (secCat) {
-      const product = await getProductCategoryBySecCat({ name: secCat.name });
-      reqQuery.secondaryId =
-        (product && product.secondaryId) || reqQuery.secondaryId;
+    console.log("🚀 ~ file: elasticSearchController.js ~ line 33 ~ module.exports.serachSeller= ~ req.query", reqQuery)
+    if (reqQuery.secondaryId) {
+      const secCat = await getSecondaryCategory(reqQuery.secondaryId);
+      if (secCat) {
+        const product = await getProductCategoryBySecCat({ name: secCat.name });
+        reqQuery.secondaryId =
+          (product && product.secondaryId) || reqQuery.secondaryId;
+      }
     }
 
     if (reqQuery.keyword) {
@@ -151,15 +153,15 @@ module.exports.serachSeller = async (req, res) => {
     // const que = {
     //     _id: reqQuery.productId
     // }
-    const primaryCatId = await getCatId(reqQuery, "_id");
+    // const primaryCatId = await getCatId(reqQuery, "_id");
     const result = await sellerSearch(reqQuery);
     const { query, catId } = result;
     const seller = await searchFromElastic(query, range);
-    const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
+    // const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
     const resp = {
       total: seller[1],
       data: seller[0],
-      relatedCat,
+      // relatedCat,
     };
     return respSuccess(res, resp);
   } catch (error) { }
