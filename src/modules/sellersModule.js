@@ -575,9 +575,25 @@ exports.getSellerProfile = (id) =>
       .catch((error) => reject(error))
   })
 
-module.exports.getAllSellers = (skip,limit) =>
+module.exports.getAllSellers = (sellerType,searchQuery,skip,limit) =>
   new Promise((resolve, reject) => {
-    Sellers.find({})
+    let searchQry = {};
+    if(searchQuery && sellerType){
+      searchQry=  {$and: [
+        {sellerType : sellerType },
+        searchQuery ? {$or : [
+          { name : { $regex: searchQuery, $options: 'i' } },
+        { "mobile.mobile" : { $regex: searchQuery, $options: 'i' }},
+       ]} : {}
+      ]} 
+    }
+    if(searchQuery){
+      searchQry = {$or : [
+          { name : { $regex: searchQuery, $options: 'i' } },
+        { "mobile.mobile" : { $regex: searchQuery, $options: 'i' }},
+       ]} 
+    }
+    Sellers.find(searchQry)
       .skip(skip)
       .limit(limit)
       .populate('sellerProductId.')
@@ -1207,9 +1223,11 @@ new Promise((resolve, reject) => {
  * 
  * Get all seller products
  * */
-module.exports.listAllSellerProduct = (skip,limit) =>
+module.exports.listAllSellerProduct = (searchQuery,skip,limit) =>
 new Promise((resolve, reject) => {
-  SelleresProductList.find({})
+  let searchQry = searchQuery ? 
+    { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }: {};
+  SelleresProductList.find(searchQry)
   .skip(skip)
   .limit(limit)
   .then((doc) => {

@@ -18,8 +18,8 @@ const{
 */
 module.exports.listAllLevel1Categories = async (req, res) => {
   try {
-    const { skip,limit } = req.body
-    const categories = await getAllCategories(null,skip,limit);
+    const { search,skip,limit } = req.body
+    const categories = await getAllCategories(null,search,skip,limit);
     respSuccess(res, categories);
   } catch (error) {
     respError(res, error.message);
@@ -30,8 +30,8 @@ module.exports.listAllLevel1Categories = async (req, res) => {
 */
 module.exports.listAllLevel2Categories = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const level2Categories = await getAllPrimaryCategory(skip,limit);
+    const {search,skip,limit} = req.body
+    const level2Categories = await getAllPrimaryCategory(search,skip,limit);
     respSuccess(res, level2Categories);
   } catch (error) {
     respError(res, error.message);
@@ -42,8 +42,8 @@ module.exports.listAllLevel2Categories = async (req, res) => {
 */
 module.exports.listAllLevel3Categories = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const level3Categories = await getAllSecondaryCategory(skip,limit);
+    const {search,skip,limit} = req.body
+    const level3Categories = await getAllSecondaryCategory(search,skip,limit);
     respSuccess(res, level3Categories);
   } catch (error) {
     respError(res, error.message);
@@ -65,8 +65,8 @@ module.exports.listAllLevel4Categories = async (req, res) => {
 */
 module.exports.listAllLevel5Categories = async (req, res) => {
   try {
-    const {skip,limit} = req.body;
-    const level5Categories = await getAllLevel5Categories(skip,limit);
+    const {search,skip,limit} = req.body;
+    const level5Categories = await getAllLevel5Categories(search,skip,limit);
     respSuccess(res, level5Categories);
   } catch (error) {
     respError(res, error.message);
