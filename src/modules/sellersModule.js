@@ -587,7 +587,7 @@ module.exports.getAllSellers = (sellerType,searchQuery,skip,limit) =>
        ]} : {}
       ]} 
     }
-    if(searchQuery){
+    if(searchQuery && !sellerType){
       searchQry = {$or : [
           { name : { $regex: searchQuery, $options: 'i' } },
         { "mobile.mobile" : { $regex: searchQuery, $options: 'i' }},
@@ -1223,10 +1223,49 @@ new Promise((resolve, reject) => {
  * 
  * Get all seller products
  * */
-module.exports.listAllSellerProduct = (searchQuery,skip,limit) =>
+module.exports.listAllSellerProduct = (serviceType,searchQuery,skip,limit) =>
 new Promise((resolve, reject) => {
-  let searchQry = searchQuery ? 
-    { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }: {};
+  let searchQry = {};
+  if(searchQuery && serviceType){
+    searchQry =  {$and: [
+      {serviceType : serviceType },
+      searchQuery ? 
+      { "productDetails.name" : { $regex: searchQuery, $options: 'i' }} : {}
+    ]} 
+  }
+  if(searchQuery && !serviceType){
+    searchQry = { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }
+  }
+
+  // {"$match":{"title":{"$regex":/example/}}},
+  // {"$lookup":{
+  //   "from":"article_category",
+  //   "localField":"article_id",
+  //   "foreignField":"article_id",
+  //   "as":"article_category"
+  // }},
+  // {"$unwind":"$article_category"},
+
+  // SelleresProductList.aggregate([{
+  //   $lookup:{
+  //       from:"level1",
+  //       localField:"parentCategoryId",
+  //       foreignField:"_id",
+  //       as:"parentCategoryId"
+  //   }
+  // },
+  // {
+  //   $match:{'name' : "Medicine,Pharma & Drugs"}
+  // }
+// ])  
+  // .then((doc) => {
+  //   console.log(doc,"===============adsghfsfhshf")
+  //   resolve(doc)
+  // })
+  // .catch(reject)
+  // let searchQry = searchQuery ? 
+  //   { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }: {};
+  
   SelleresProductList.find(searchQry)
   .skip(skip)
   .limit(limit)

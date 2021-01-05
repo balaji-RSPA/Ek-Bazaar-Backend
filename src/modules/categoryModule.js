@@ -1,3 +1,4 @@
+const { values } = require("lodash");
 const mongoose = require("mongoose");
 const {
   PrimaryCategory,
@@ -83,9 +84,8 @@ module.exports.getSpecificCategories = (query) =>
 
 module.exports.getAllCategories = (query,searchQuery,skip,limit) =>
   new Promise((resolve, reject) => {
-    let searchQry = searchQuery ? {$or: [
-      { name : { $regex: searchQuery, $options: 'i' } },
-      ]}  : {};
+    let searchQry = searchQuery ? 
+      { name : { $regex: searchQuery, $options: 'i' } } : {};
     // searchQuery && Object.keys(searchQuery).forEach((el)=>{
     //   searchQry[el] = { $regex: `${searchQuery[el]}`, $options: 'i' }
     // })
@@ -126,7 +126,6 @@ module.exports.getAllCategories = (query,searchQuery,skip,limit) =>
       })
       .catch(reject);
   });
-
 // Parent Category
 module.exports.addParentCategories = (data) =>
   new Promise((resolve, reject) => {

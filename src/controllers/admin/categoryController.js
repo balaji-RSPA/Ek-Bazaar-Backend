@@ -132,3 +132,39 @@ module.exports.GetLevel5Category = async (req, res) => {
     respError(res, error.message);
   }
 };
+/**
+ * List all product based on search
+*/
+module.exports.listAllproducts = async (req, res) => {
+  try {
+    const { search,skip,limit } = req.body
+    const categories = await getAllCategories(null,search,skip,limit);
+    if(categories && categories.length){
+      respSuccess(res, categories);
+    }else{
+      const level2Categories = await getAllPrimaryCategory(search,skip,limit);
+      if(level2Categories && level2Categories.length){
+        respSuccess(res, level2Categories);
+      }else{
+        const level3Categories = await getAllSecondaryCategory(search,skip,limit);
+        if(level3Categories && level3Categories.length){
+          respSuccess(res, level3Categories);
+        }else{
+          const level4Categories = await getAllProducts(req.body);
+          if(level4Categories && level4Categories.length){
+            respSuccess(res, level4Categories);
+          }else{
+            const level5Categories = await getAllLevel5Categories(search,skip,limit);
+            if(level5Categories && level5Categories.length){
+              respSuccess(res, level5Categories);
+            }else{
+              respSuccess(res, "No Product found!");
+            }
+          }
+        } 
+      }
+    }
+  } catch (error) {
+    respError(res, error.message);
+  }
+};

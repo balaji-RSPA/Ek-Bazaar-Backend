@@ -104,8 +104,8 @@ module.exports.getSellerProductDtl = async (req, res) => {
 /*Get all seller products*/
 module.exports.listAllSellerProduct = async (req, res) => {
   try {
-    const {search,skip,limit} = req.body
-    const sellerProducts = await listAllSellerProduct(search,skip,limit);
+    const {serviceType,search,skip,limit} = req.body
+    const sellerProducts = await listAllSellerProduct(serviceType,search,skip,limit);
     respSuccess(res, sellerProducts);
   } catch (error) {
     respError(res, error.message);
