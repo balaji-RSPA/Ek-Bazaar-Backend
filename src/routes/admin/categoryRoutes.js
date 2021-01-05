@@ -44,6 +44,10 @@ router.get("/categories/l4",authenticate,category.listAllLevel4Categories)
  * List all level five category
 */
 router.get("/categories/l5",authenticate,category.listAllLevel5Categories)
+/** 
+ * List all product
+*/
+router.get("/categories",authenticate,category.listAllproducts)
 
 
 module.exports = router;

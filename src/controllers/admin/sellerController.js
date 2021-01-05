@@ -73,8 +73,8 @@ module.exports.updateSeller = async (req, res) => {
 /*Get all seller*/
 module.exports.getAllSellers = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const sellers = await getAllSellers(skip,limit);
+    const {sellerType,search,skip,limit} = req.body
+    const sellers = await getAllSellers(sellerType,search,skip,limit);
     respSuccess(res, sellers);
   } catch (error) {
     respError(res, error.message);
@@ -104,8 +104,8 @@ module.exports.getSellerProductDtl = async (req, res) => {
 /*Get all seller products*/
 module.exports.listAllSellerProduct = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const sellerProducts = await listAllSellerProduct(skip,limit);
+    const {serviceType,search,skip,limit} = req.body
+    const sellerProducts = await listAllSellerProduct(serviceType,search,skip,limit);
     respSuccess(res, sellerProducts);
   } catch (error) {
     respError(res, error.message);
