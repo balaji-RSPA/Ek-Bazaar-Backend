@@ -1,4 +1,5 @@
 exports.INDEXNAME = 'tradebazaar'
+// exports.INDEXNAME = 'opend_contacts.mastercollections'
 
 exports.bcryptSalt = {
   SALT: 10,

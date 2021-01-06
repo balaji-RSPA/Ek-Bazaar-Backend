@@ -1,7 +1,7 @@
 const camelcaseKeys = require("camelcase-keys");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { elastic, category, location } = require("../../modules");
-const { addSellerBulkIndex, sellerSearch, searchFromElastic } = elastic;
+const { addSellerBulkIndex, sellerSearch, searchFromElastic, getSuggestions } = elastic;
 const {
   /* getPrimaryCategory, */ getRelatedPrimaryCategory,
   getCatId,
@@ -54,12 +54,26 @@ module.exports.serachSeller = async (req, res) => {
         skip: parseInt(skip),
         limit: parseInt(limit),
       };
-      let serviceTypes = await getAllSellerTypes(0, 16, {});
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 58 ~ module.exports.serachSeller= ~ serviceTypes", serviceTypes)
-      serviceTypes = serviceTypes.map((type) => ({
-        name: type.name,
-        id: type._id,
-      }));
+
+      let serviceTypes = []
+      const obj = {}
+      if (reqQuery.serviceType) {
+        serviceTypes = []
+        obj.serviceType = reqQuery.serviceType
+        reqQuery.serviceType = undefined
+      } else {
+        serviceTypes = await getAllSellerTypes(0, 16, {});
+        serviceTypes = serviceTypes.map((type) => ({
+          name: type.name,
+          id: type._id,
+        }));
+      }
+
+      let serviceType = !serviceTypes.length && Array.isArray(obj.serviceType) ? obj.serviceType.map(type => ({ id: type })) : obj.serviceType ? { id: obj.serviceType } : "",
+        city = "",
+        state = ""
+      console.log("module.exports.serachSeller -> serviceType", serviceType)
+
       let cities = await getAllCities({});
       cities = cities.map((city) => ({ name: city.name, id: city._id, state: city.state }));
       let states = await getAllStates();
@@ -68,19 +82,19 @@ module.exports.serachSeller = async (req, res) => {
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 59 ~ module.exports.serachSeller= ~ cities", cities)
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 69 ~ module.exports.serachSeller= ~ states", states)
 
-      let serviceType = "",
-        city = "",
-        state = ""
 
       for (let i = 0; i < newKeyword.length; i++) {
         let _keyword = newKeyword[i]
         console.log("🚀 ~ file: elasticSearchController.js ~ line 75 ~ module.exports.serachSeller= ~ _keyword", _keyword)
 
         /* matched service_type && state || city */
-        let index = serviceTypes.findIndex(
-          (service) => service.name == _keyword
-        );
-        if (index !== -1) serviceType = serviceTypes[index];
+        let index = -1
+        if (serviceTypes.length) {
+          index = serviceTypes.findIndex(
+            (service) => service.name == _keyword
+          );
+          if (index !== -1) serviceType = serviceTypes[index];
+        }
         index = cities.findIndex((city) => city.name == _keyword);
         if (index !== -1 && city === "") city = cities[index];
         index = states.findIndex((state) => state.name.includes(_keyword));
@@ -92,19 +106,21 @@ module.exports.serachSeller = async (req, res) => {
 
       newKeyword = newKeyword.join(" ");
       console.log("🚀 ~ file: elasticSearchController.js ~ line 83 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
+      // let productSearchKeyword = newKeyword
       let productSearchKeyword = newKeyword.replace(city.name, "")
       productSearchKeyword = productSearchKeyword.replace(state.name, "")
-      productSearchKeyword = productSearchKeyword.replace(serviceType.name, "")
+      productSearchKeyword = !serviceType.length && serviceType.name ? productSearchKeyword.replace(serviceType.name, "") : productSearchKeyword
       productSearchKeyword = productSearchKeyword.replace(" In ", " ")
+      // productSearchKeyword = productSearchKeyword.split(" ")
       console.log("🚀 ~ file: elasticSearchController.js ~ line 89 ~ module.exports.serachSeller= ~ productSearchKeyword", productSearchKeyword)
 
       reqQuery.searchProductsBy = {
         serviceType,
         city,
         state,
-        product: productSearchKeyword.trim()
+        product: productSearchKeyword
       }
-      let reg = new RegExp(`${productSearchKeyword.trim()} `)
+      
       const result = await sellerSearch(reqQuery);
       const { query, catId } = result;
       const seller = await searchFromElastic(query, range);
@@ -173,3 +189,40 @@ module.exports.serachSeller = async (req, res) => {
     return respSuccess(res, resp);
   } catch (error) { }
 };
+
+module.exports.searchSuggestion = async (req, res) => {
+  try {
+    const reqQuery = camelcaseKeys(req.query)
+    console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
+    const { skip, limit, search } = reqQuery
+    if (search !== 'undefined' && search) {
+      const query = {
+        "wildcard": {
+          "name": {
+            "value": search+"*",
+            "boost": 1.0,
+            "rewrite": "constant_score"
+          }
+        }
+      }
+      let suggestions = await getSuggestions(query, { skip, limit })
+      return respSuccess(res, suggestions[0])
+    } else {
+      const query = {
+        // "query": {
+          "bool": {
+            "must" :{
+              "match_all": {}
+            }
+          }
+        // }
+      }
+      let suggestions = await getSuggestions(query, { skip, limit })
+      console.log("module.exports.searchSuggestion -> suggestions", suggestions)
+      return respSuccess(res, suggestions[0])
+    }
+
+  } catch (error) {
+    respError(res, error.message)
+  }
+}
