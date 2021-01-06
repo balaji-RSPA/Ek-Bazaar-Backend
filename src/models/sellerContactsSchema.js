@@ -75,12 +75,12 @@ const sellerContactSchema = new Schema(
         trim: true,
         // required: true,
       },
-      // country: {
-      //   type: ObjectId,
-      //   ref: Country,
-      //   trim: true,
-      //   // required: true,
-      // }
+      country: {
+        type: ObjectId,
+        ref: Country,
+        trim: true,
+        // required: true,
+      }
      },
   },
   {

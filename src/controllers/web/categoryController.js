@@ -105,7 +105,6 @@ module.exports.getAllCategories = async (req, res) => {
         respSuccess(res, result)
 
     } catch (error) {
-        console.log(error,"==================================")
         respError(error)
 
     }

@@ -3,7 +3,6 @@ const { Buyers, RFP } = require("../models");
 module.exports.postRFP = (data) => new Promise((resolve, reject) => {
   RFP.create(data)
     .then(doc => {
-      console.log(doc)
       resolve(doc)
     })
     .catch(error => reject(error))
@@ -14,17 +13,15 @@ module.exports.checkBuyerExistOrNot = (query) =>
   new Promise((resolve, reject) => {
     Buyers.find(query)
       .then((doc) => {
-        console.log(doc);
         resolve(doc);
       })
-      .catch((error) => reject(Error));
+      .catch((error) => reject(error));
   });
 
 module.exports.addBuyer = (data) =>
   new Promise((resolve, reject) => {
     Buyers.create(data)
       .then((doc) => {
-        console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -48,7 +45,7 @@ module.exports.updateBuyer = (query, data) =>
       .catch((error) => reject(error));
   });
 
-module.exports.getAllBuyers = (sellerType,searchQuery,skip,limit) =>
+module.exports.getAllBuyers = (searchQuery,skip,limit) =>
   new Promise((resolve, reject) => {
     let searchQry = searchQuery ? {$or: [
       { name : { $regex: searchQuery, $options: 'i' } },
@@ -70,7 +67,6 @@ module.exports.updateBuyerPassword = (mobile, data) =>
   new Promise((resolve, reject) => {
     Buyers.findOneAndUpdate({ mobile }, data, { new: true })
       .then((doc) => {
-        console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -90,7 +86,6 @@ module.exports.updateBuyerPassword = (mobile, data) =>
  module.exports.postRFP = (data) => new Promise((resolve, reject) => {
   RFP.create(data)
     .then(doc => {
-      console.log(doc)
       resolve(doc)
     })
     .catch(error => reject(error))
