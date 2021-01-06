@@ -48,9 +48,16 @@ module.exports.updateBuyer = (query, data) =>
       .catch((error) => reject(error));
   });
 
-module.exports.getAllBuyers = (skip,limit) =>
+module.exports.getAllBuyers = (sellerType,searchQuery,skip,limit) =>
   new Promise((resolve, reject) => {
-    Buyers.find({})
+    let searchQry = searchQuery ? {$or: [
+      { name : { $regex: searchQuery, $options: 'i' } },
+      { mobile : { $regex: searchQuery, $options: 'i' }}
+      ]}  : {};
+    // Object.keys(searchQuery).forEach((el)=>{
+    //   searchQry[el] = { $regex: `${searchQuery[el]}`, $options: 'i' }
+    // })
+     Buyers.find(searchQry)
       .skip(skip)
       .limit(limit)
       .then((doc) => {

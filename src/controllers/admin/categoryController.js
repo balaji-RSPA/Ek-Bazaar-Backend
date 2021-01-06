@@ -18,8 +18,8 @@ const{
 */
 module.exports.listAllLevel1Categories = async (req, res) => {
   try {
-    const { skip,limit } = req.body
-    const categories = await getAllCategories(null,skip,limit);
+    const { search,skip,limit } = req.body
+    const categories = await getAllCategories(null,search,skip,limit);
     respSuccess(res, categories);
   } catch (error) {
     respError(res, error.message);
@@ -30,8 +30,8 @@ module.exports.listAllLevel1Categories = async (req, res) => {
 */
 module.exports.listAllLevel2Categories = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const level2Categories = await getAllPrimaryCategory(skip,limit);
+    const {search,skip,limit} = req.body
+    const level2Categories = await getAllPrimaryCategory(search,skip,limit);
     respSuccess(res, level2Categories);
   } catch (error) {
     respError(res, error.message);
@@ -42,8 +42,8 @@ module.exports.listAllLevel2Categories = async (req, res) => {
 */
 module.exports.listAllLevel3Categories = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const level3Categories = await getAllSecondaryCategory(skip,limit);
+    const {search,skip,limit} = req.body
+    const level3Categories = await getAllSecondaryCategory(search,skip,limit);
     respSuccess(res, level3Categories);
   } catch (error) {
     respError(res, error.message);
@@ -65,8 +65,8 @@ module.exports.listAllLevel4Categories = async (req, res) => {
 */
 module.exports.listAllLevel5Categories = async (req, res) => {
   try {
-    const {skip,limit} = req.body;
-    const level5Categories = await getAllLevel5Categories(skip,limit);
+    const {search,skip,limit} = req.body;
+    const level5Categories = await getAllLevel5Categories(search,skip,limit);
     respSuccess(res, level5Categories);
   } catch (error) {
     respError(res, error.message);
@@ -128,6 +128,42 @@ module.exports.GetLevel5Category = async (req, res) => {
     const { id } = req.params
     const level5category = await getProductSubcategory({_id : id});
     respSuccess(res, level5category);
+  } catch (error) {
+    respError(res, error.message);
+  }
+};
+/**
+ * List all product based on search
+*/
+module.exports.listAllproducts = async (req, res) => {
+  try {
+    const { search,skip,limit } = req.body
+    const categories = await getAllCategories(null,search,skip,limit);
+    if(categories && categories.length){
+      respSuccess(res, categories);
+    }else{
+      const level2Categories = await getAllPrimaryCategory(search,skip,limit);
+      if(level2Categories && level2Categories.length){
+        respSuccess(res, level2Categories);
+      }else{
+        const level3Categories = await getAllSecondaryCategory(search,skip,limit);
+        if(level3Categories && level3Categories.length){
+          respSuccess(res, level3Categories);
+        }else{
+          const level4Categories = await getAllProducts(req.body);
+          if(level4Categories && level4Categories.length){
+            respSuccess(res, level4Categories);
+          }else{
+            const level5Categories = await getAllLevel5Categories(search,skip,limit);
+            if(level5Categories && level5Categories.length){
+              respSuccess(res, level5Categories);
+            }else{
+              respSuccess(res, "No Product found!");
+            }
+          }
+        } 
+      }
+    }
   } catch (error) {
     respError(res, error.message);
   }
