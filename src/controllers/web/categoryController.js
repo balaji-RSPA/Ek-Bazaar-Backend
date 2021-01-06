@@ -78,7 +78,6 @@ module.exports.getSpecificCategories = async (req, res) => {
             }
         }
         const result = await getSpecificCategories(query)
-        console.log("🚀 ~ file: categoryController.js ~ line 81 ~ module.exports.getSpecificCategories=async ~ result", result)
         respSuccess(res, result)
     } catch (error) {
         respError(error)
@@ -119,7 +118,6 @@ module.exports.addParentCategories = async (req, res) => {
 
         const reqData = req.body
         const result = await addParentCategories(reqData)
-        console.log("🚀 ~ file: categoryController.js ~ line 100 ~ module.exports.addParentCategories= ~ result", result)
         respSuccess(res, result)
 
     } catch (error) {
