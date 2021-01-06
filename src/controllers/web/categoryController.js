@@ -56,7 +56,7 @@ module.exports.addSellerType = async (req, res) => {
 
 module.exports.getAllSellerTypes = async (req, res) => {
     try {
-        const result = await getAllSellerTypes()
+        const result = await getAllSellerTypes(0, 16, {status: true})
         respSuccess(res, result)
     } catch (error) {
         respError(error)
@@ -86,7 +86,6 @@ module.exports.getSpecificCategories = async (req, res) => {
 }
 
 module.exports.getAllCategories = async (req, res) => {
-
     try {
         const reqQuery = camelcaseKeys(req.query)
         let qery = {
@@ -107,7 +106,6 @@ module.exports.getAllCategories = async (req, res) => {
         respSuccess(res, result)
 
     } catch (error) {
-
         respError(error)
 
     }

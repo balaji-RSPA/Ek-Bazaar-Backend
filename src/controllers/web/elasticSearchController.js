@@ -15,7 +15,7 @@ const {
   getSecondaryCategoryByName,
   getPrimaryCategoryByName
 } = category;
-const { getAllCities, getAllStates } = location;
+const { getAllCities, getAllStates, getCity } = location;
 module.exports.addSellerBulkIndex = async (req, res) => {
   try {
     const msg = await addSellerBulkIndex();
@@ -54,13 +54,14 @@ module.exports.serachSeller = async (req, res) => {
         skip: parseInt(skip),
         limit: parseInt(limit),
       };
-      let serviceTypes = await getAllSellerTypes();
+      let serviceTypes = await getAllSellerTypes(0, 16, {});
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 58 ~ module.exports.serachSeller= ~ serviceTypes", serviceTypes)
       serviceTypes = serviceTypes.map((type) => ({
         name: type.name,
         id: type._id,
       }));
       let cities = await getAllCities({});
-      cities = cities.map((city) => ({ name: city.name, id: city._id }));
+      cities = cities.map((city) => ({ name: city.name, id: city._id, state: city.state }));
       let states = await getAllStates();
       states = states.map((state) => ({ name: state.name, id: state._id }));
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 54 ~ serviceTypes=serviceTypes.map ~ serviceTypes", serviceTypes)
@@ -72,8 +73,7 @@ module.exports.serachSeller = async (req, res) => {
         state = ""
 
       for (let i = 0; i < newKeyword.length; i++) {
-        let _keyword =
-          newKeyword[i].charAt(0).toUpperCase() + newKeyword[i].slice(1);
+        let _keyword = newKeyword[i]
         console.log("🚀 ~ file: elasticSearchController.js ~ line 75 ~ module.exports.serachSeller= ~ _keyword", _keyword)
 
         /* matched service_type && state || city */
@@ -82,9 +82,9 @@ module.exports.serachSeller = async (req, res) => {
         );
         if (index !== -1) serviceType = serviceTypes[index];
         index = cities.findIndex((city) => city.name == _keyword);
-        if (index !== -1) city = cities[index];
-        index = states.findIndex((state) => state.name == _keyword);
-        if (index !== -1) state = states[index];
+        if (index !== -1 && city === "") city = cities[index];
+        index = states.findIndex((state) => state.name.includes(_keyword));
+        if (index !== -1 && state === "") state = states[index];
       }
       console.log("🚀 ~ file: elasticSearchController.js ~ line 68 ~ module.exports.serachSeller= ~ serviceType", serviceType)
       console.log("🚀 ~ file: elasticSearchController.js ~ line 69 ~ module.exports.serachSeller= ~ city", city)
@@ -95,7 +95,7 @@ module.exports.serachSeller = async (req, res) => {
       let productSearchKeyword = newKeyword.replace(city.name, "")
       productSearchKeyword = productSearchKeyword.replace(state.name, "")
       productSearchKeyword = productSearchKeyword.replace(serviceType.name, "")
-      productSearchKeyword = productSearchKeyword.includes(" In ") ? productSearchKeyword.replace(" In ", " ") : productSearchKeyword
+      productSearchKeyword = productSearchKeyword.replace(" In ", " ")
       console.log("🚀 ~ file: elasticSearchController.js ~ line 89 ~ module.exports.serachSeller= ~ productSearchKeyword", productSearchKeyword)
 
       reqQuery.searchProductsBy = {
@@ -106,10 +106,9 @@ module.exports.serachSeller = async (req, res) => {
       }
       let reg = new RegExp(`${productSearchKeyword.trim()} `)
       const result = await sellerSearch(reqQuery);
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 96 ~ module.exports.serachSeller= ~ result", result)
       const { query, catId } = result;
       const seller = await searchFromElastic(query, range);
-      // console.log("🚀 ~ file: elasticSearchController.js ~ line 99 ~ module.exports.serachSeller= ~ seller", seller)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 99 ~ module.exports.serachSeller= ~ seller", seller)
       // const product = await getProductByName({ name: { $regex: reg, $options: "si" } })
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 101 ~ module.exports.serachSeller= ~ product", product)
       // let primaryCatId, relatedCat, secCat, primCat
@@ -141,7 +140,6 @@ module.exports.serachSeller = async (req, res) => {
         state,
         productSearchKeyword
       };
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 140 ~ module.exports.serachSeller= ~ seller[0]", seller[0])
       return respSuccess(res, resp);
     }
 
@@ -154,6 +152,14 @@ module.exports.serachSeller = async (req, res) => {
     //     _id: reqQuery.productId
     // }
     // const primaryCatId = await getCatId(reqQuery, "_id");
+    const city = {}
+    if (reqQuery.cityId) {
+      const _city = await getCity({ _id: reqQuery.cityId })
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 157 ~ module.exports.serachSeller= ~ _city", _city)
+      city.id = _city._id
+      city.name = _city.name
+      city.state = _city.state
+    }
     const result = await sellerSearch(reqQuery);
     const { query, catId } = result;
     const seller = await searchFromElastic(query, range);
@@ -161,6 +167,7 @@ module.exports.serachSeller = async (req, res) => {
     const resp = {
       total: seller[1],
       data: seller[0],
+      city
       // relatedCat,
     };
     return respSuccess(res, resp);

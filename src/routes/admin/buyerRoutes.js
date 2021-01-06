@@ -5,8 +5,17 @@ const router = Router();
 const buyer = require("../../controllers/admin/buyerController");
 const { authenticate } = require("../../middleware/auth");
 
-router.get("/buyer",authenticate,buyer.getBuyer);
+/** 
+ * Get buyer
+*/
+router.get("/buyer/:id",authenticate,buyer.getBuyer);
+/** 
+ * Update buyer
+*/
 router.put("/buyer",authenticate,buyer.updateBuyer);
+/** 
+ * Get all buyer
+*/
 router.get("/buyers", buyer.getAllBuyers);
 
 module.exports = router;

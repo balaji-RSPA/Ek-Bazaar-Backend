@@ -7,7 +7,8 @@ const {
   ProductsSubCategories,
   SellerTypes,
   Sellers,
-  SellerProducts
+  SellerProducts,
+
 } = require("../models");
 const {
   searchProducts
@@ -44,13 +45,13 @@ module.exports.checkAndAddSellerType = (query) =>
               console.log("New seller type ++++");
               resolve(newDoc);
             })
-            .catch(reject);
+            .catch(reject);    
         }
       })
       .catch(reject);
   });
 
-module.exports.getAllSellerTypes = () =>
+module.exports.getAllSellerTypes = (skip,limit, query) =>
   new Promise((resolve, reject) => {
     // const query = {
     //   _id: {
@@ -66,7 +67,9 @@ module.exports.getAllSellerTypes = () =>
     //     ],
     //   },
     // };
-    SellerTypes.find({})
+    SellerTypes.find(query || {})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
@@ -80,7 +83,7 @@ module.exports.getSpecificCategories = (query) =>
       .catch(error => reject(error))
   })
 
-module.exports.getAllCategories = (query) =>
+module.exports.getAllCategories = (query,skip,limit) =>
   new Promise((resolve, reject) => {
     // ParentCategory.find({
     //   _id: {
@@ -99,10 +102,12 @@ module.exports.getAllCategories = (query) =>
         path: "primaryCategotyId",
         model: PrimaryCategory,
         select: "name vendorId",
+        options: { sort: { 'name': 1 } } ,
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
           select: "name vendorId",
+          options: { sort: { 'name': 1 } }
           // populate: {
           //   path: "productId",
           //   model: Products,
@@ -110,6 +115,8 @@ module.exports.getAllCategories = (query) =>
           // },
         },
       })
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
@@ -140,6 +147,7 @@ module.exports.addParentCategory = (data) =>
 module.exports.getParentCat = (query) =>
   new Promise((resolve, reject) => {
     ParentCategory.findOne(query)
+      .populate("primaryCategotyId")
       .then((doc) => {
         resolve(doc);
       })
@@ -182,6 +190,7 @@ module.exports.getParentCategory = (reqQuery) =>
         path: "primaryCategotyId",
         model: PrimaryCategory,
         select: "name vendorId",
+        options: { sort: { 'name': 1 } },
         match: {
           $and: [{
             name: {
@@ -194,11 +203,13 @@ module.exports.getParentCategory = (reqQuery) =>
           path: "secondaryCategotyId",
           model: SecondaryCategory,
           select: "name vendorId",
+          options: { sort: { 'name': 1 } }
         },
       })
       // .slice(PrimaryCategory, -1)
       // .select(PrimaryCategory)
       .lean()
+      .sort({name: 1})
       .then((doc) => {
         resolve(doc);
       })
@@ -278,6 +289,7 @@ module.exports.getRelatedPrimaryCategory = (id) =>
 module.exports.getPrimaryCat = (query) =>
   new Promise((resolve, reject) => {
     PrimaryCategory.findOne(query)
+      .populate("secondaryCategotyId")
       .then((doc) => {
         resolve(doc);
       })
@@ -299,15 +311,16 @@ exports.updatePrimaryCategory = (id, newData) =>
       .catch(reject);
   });
 
-exports.getAllPrimaryCategory = () =>
+exports.getAllPrimaryCategory = (skip,limit) =>
   new Promise((resolve, reject) => {
     PrimaryCategory.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => resolve(doc))
       .catch((error) => reject(error));
   });
 
 module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) => {
-  console.log(query, "vande matram ..................................")
   PrimaryCategory.findOne({
     _id: query._id
   })
@@ -316,9 +329,11 @@ module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) =
     .populate("secondaryCategotyId")
     .populate({
       path: "secondaryCategotyId",
+      options: { sort: { 'name': 1 } },
       populate: {
         path: "productId",
-        model: "level4"
+        model: "level4",
+        options: { sort: { 'name': 1 } }
       }
     })
     .then(doc => resolve(doc))
@@ -359,6 +374,7 @@ module.exports.getSecondaryCategory = (id) =>
 module.exports.getSecondaryCat = (query) =>
   new Promise((resolve, reject) => {
     SecondaryCategory.findOne(query)
+      .populate("productId")
       .then((doc) => {
         resolve(doc);
       })
@@ -368,6 +384,7 @@ module.exports.getSecondaryCat = (query) =>
 module.exports.getProductCat = (query) =>
   new Promise((resolve, reject) => {
     Products.findOne(query)
+      .populate("subCategoryId")
       .then((doc) => {
         resolve(doc);
       })
@@ -396,9 +413,11 @@ exports.updateSecondaryCategory = (id, newData) =>
       .catch(reject);
   });
 
-exports.getAllSecondaryCategory = () =>
+exports.getAllSecondaryCategory = (skip,limit) =>
   new Promise((resolve, reject) => {
     SecondaryCategory.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => resolve(doc))
       .catch((error) => reject(error));
   });
@@ -530,11 +549,12 @@ module.exports.addProductSubCategory = (data) =>
 module.exports.getProductCategory = (id) =>
   new Promise((resolve, reject) => {
     Products.findById(id)
-      .populate('subCategoryId')
-      .then((doc) => {
+    .populate({path: 'subCategoryId', options: {sort: {name: 1}}})
+    .sort({name: 1})  
+    .then((doc) => {
         resolve(doc);
       })
-      .catch(reject);
+    .catch(reject);
   });
 
 module.exports.getProductCategoryBySecCat = (query) =>
@@ -901,3 +921,17 @@ exports.getLevelFiveCategoryList = (list) => new Promise((resolve, reject) => {
     })
     .catch(reject);
 })
+
+/**
+ * Get all label 5 category list module
+*/
+module.exports.getAllLevel5Categories = (skip,limit) =>
+  new Promise((resolve, reject) => {
+    ProductsSubCategories.find({})
+      .skip(skip)
+      .limit(limit)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+});
