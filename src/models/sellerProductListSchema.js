@@ -144,6 +144,22 @@ const productDetailsSchema = new Schema({
     type: Boolean,
     trim: true,
   },
+  shelfLife:{
+    shelfLife:{
+      type: String,
+      trim: true,
+      default: null
+    },
+    unit:{
+      type: String,
+      trim: true,
+      default: null
+    }
+  },
+  isOrganic: {
+    type: Boolean,
+    trim: true,
+  },
   document:documentSchema,
   image : {image1:{
     name: {
