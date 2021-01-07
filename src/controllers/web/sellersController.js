@@ -397,12 +397,69 @@ module.exports.addSellerProduct = async (req, res) => {
 }
 module.exports.updateSellerProduct = async (req, res) => {
   // const {id,inStock} = req.body
+
   try {
     const {
       body,
       files
     } = req
     let updateDetail
+    if(body.productDetails || files.document || files.image1 || files.image2 || files.image3 || files.image4){
+      productDetails = JSON.parse(body.productDetails)
+
+      // /* need to optimize the below code*/
+      if (files && files.document) {
+        let data = {
+          Key: `${productDetails.sellerId}/${files.document.name}`,
+          body: files.document.data
+        }
+        const _document = await uploadToDOSpace(data)
+        productDetails.productDetails.document.name = files.document.name;
+        productDetails.productDetails.document.code = _document.Location;
+      }
+    
+      if (files && files.image1) {
+        let data = {
+          Key: `${productDetails.sellerId}/${files.image1.name}`,
+          body: files.image1.data
+        }
+        const _image1 = await uploadToDOSpace(data)
+        productDetails.productDetails.image.image1.name = files.image1.name;
+        productDetails.productDetails.image.image1.code = _image1.Location;
+      }
+
+      if (files && files.image2) {
+        let data = {
+          Key: `${productDetails.sellerId}/${files.image2.name}`,
+          body: files.image2.data
+        }
+        const _image2 = await uploadToDOSpace(data)
+        productDetails.productDetails.image.image2.name = files.image2.name;
+        productDetails.productDetails.image.image2.code = _image2.Location;
+      }
+
+      if (files && files.image3) {
+        let data = {
+          Key: `${productDetails.sellerId}/${files.image3.name}`,
+          body: files.image3.data
+        }
+        const _image3 = await uploadToDOSpace(data)
+        productDetails.productDetails.image.image3.name = files.image3.name;
+        productDetails.productDetails.image.image3.code = _image3.Location;
+      }
+
+      if (files && files.image4) {
+        let data = {
+          Key: `${productDetails.sellerId}/${files.image4.name}`,
+          body: files.image4.data
+        }
+        const _image4 = await uploadToDOSpace(data)
+        productDetails.productDetails.image.image4.name = files.image4.name;
+        productDetails.productDetails.image.image4.code = _image4.Location;
+      }
+      // /* till here*/
+      updateDetail = await addProductDetails(productDetails._id,productDetails);
+    }
     if (body.id && body.imageType) {
       const data = {
         Key: `${body.sellerId}/${body.fileName}`,
