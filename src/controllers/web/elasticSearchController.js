@@ -49,7 +49,6 @@ module.exports.serachSeller = async (req, res) => {
       newKeyword = newKeyword.map(word => {
         return word.replace(word[0], word[0].toUpperCase())
       })
-
       const range = {
         skip: parseInt(skip),
         limit: parseInt(limit),
