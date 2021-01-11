@@ -8,7 +8,7 @@ const { getCatId, getSecCatId } = require('../modules/categoryModule')
 module.exports.addSellerBulkIndex = async () => {
 
   try {
-    const data = await Sellers.count({_id: {$gt: "5fe3fff61c9d614de3ab75bc", $lt: "5feba4a1b0b2eb5c558b72c5"}})//.skip(109711); // Getting total seller count
+    const data = await Sellers.count({ _id: { $gt: "5fe3fff61c9d614de3ab75bc", $lt: "5feba4a1b0b2eb5c558b72c5" } })//.skip(109711); // Getting total seller count
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 12 ~ module.exports.addSellerBulkIndex= ~ data", data)
     const limit = 400; // Limited for 1000
     const ratio = data / limit;
@@ -21,7 +21,7 @@ module.exports.addSellerBulkIndex = async () => {
       // making a batch 1000 records
       const foundDoc = await Sellers.find()
         .skip(skip)
-        .sort({_id: -1})
+        .sort({ _id: -1 })
         .limit(limit)
         // .populate("primaryCatId", "name venderId")
         .populate("location.state", "name region")
@@ -86,11 +86,11 @@ module.exports.addSellerBulkIndex = async () => {
         console.log("bulk insert to elastic")
         await this.bulkStoreInElastic(foundDoc); // added to the ES
         successCounter++;
-        console.log("first------", foundDoc[0]["name"], "last----------", foundDoc[foundDoc.length-1]["name"])
+        console.log("first------", foundDoc[0]["name"], "last----------", foundDoc[foundDoc.length - 1]["name"])
       } catch (error) {
         console.log(error, "es index error");
         failureCounter++;
-        console.log("first------", foundDoc[0]["name"], "last----------", foundDoc[foundDoc.length-1]["name"])
+        console.log("first------", foundDoc[0]["name"], "last----------", foundDoc[foundDoc.length - 1]["name"])
       }
       // console.log("module.exports.addSellerBulkIndex -> const", foundDoc)
       // return foundDoc;
@@ -149,9 +149,9 @@ exports.bulkStoreInElastic = (foundDoc) =>
   });
 
 exports.sellerSearch = async (reqQuery) => {
-  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery.level5Id)
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -167,31 +167,35 @@ exports.sellerSearch = async (reqQuery) => {
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 139 ~ exports.sellerSearch= ~ searchProductsBy", searchProductsBy)
     const keywordMatch = []
     const productMatch = []
-    if (searchProductsBy.serviceType && searchProductsBy.city) {
-      keywordMatch.push({
-        "match": {
-          "sellerProductId.serviceType._id": searchProductsBy.serviceType.id,
-        }
-      })
+    // if (searchProductsBy.serviceType && searchProductsBy.city) {
+    //   keywordMatch.push({
+    //     "match": {
+    //       "sellerProductId.serviceType._id": searchProductsBy.serviceType.id,
+    //     }
+    //   })
+    // }
+
+    if (searchProductsBy.serviceType) {
+      if (Array.isArray(searchProductsBy.serviceType)) {
+        searchProductsBy.serviceType.forEach(type => (
+          productMatch.push({
+            "match": {
+              "sellerProductId.serviceType._id": type.id
+            },
+          })
+        ))
+      } else {
+        keywordMatch.push({
+          "match": {
+            "sellerProductId.serviceType._id": searchProductsBy.serviceType.id
+          },
+        })
+      }
     }
-    if(searchProductsBy.serviceType) {
-      keywordMatch.push({
-        "match": {
-          "sellerType": {"query": searchProductsBy.serviceType.id},
-        }
-      })
-    }
-    if (searchProductsBy.city && searchProductsBy.serviceType) {
+    if (searchProductsBy.city) {
       keywordMatch.push({
         "match": {
           "sellerProductId.serviceCity.city._id": searchProductsBy.city.id,
-        }
-      })
-    }
-    if(searchProductsBy.city) {
-      keywordMatch.push({
-        "match": {
-          "location.city._id": searchProductsBy.city.id,
         }
       })
     }
@@ -211,34 +215,12 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
 
-
       /** level 4 **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.poductId.name": searchProductsBy.product,
         }
       })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.poductId.name.keyword": searchProductsBy.product
-      //   }
-      // })
-
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.poductId.name": `* ${searchProductsBy.product}`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.poductId.name": `${searchProductsBy.product} *`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.poductId.name": `* ${searchProductsBy.product} *`
-      //   }
-      // })
 
       /** level 3 **/
       productMatch.push({
@@ -247,44 +229,12 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
 
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.secondaryCategoryId.name": `* ${searchProductsBy.product}`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.secondaryCategoryId.name": `${searchProductsBy.product} *`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.secondaryCategoryId.name": `* ${searchProductsBy.product} *`
-      //   }
-      // })
-
       /** level 2 **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.primaryCategoryId.name": searchProductsBy.product
         }
       })
-
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.primaryCategoryId.name": `* ${searchProductsBy.product}`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.primaryCategoryId.name": `${searchProductsBy.product} *`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.primaryCategoryId.name": `* ${searchProductsBy.product} *`
-      //   }
-      // })
 
       /** name */
       productMatch.push({
@@ -294,10 +244,24 @@ exports.sellerSearch = async (reqQuery) => {
             "minimum_should_match": "10%"
           }
         }
-        // match: {
-        //   name: searchProductsBy.product
-        // }
       })
+
+      // const {product} = searchProductsBy
+      // if(Array.isArray(product)) {
+      //   for(let i=0; i<product.length; i++) {
+      //     const prdct = product[i]
+      //     const searchSellers = {
+      //       "match": {
+      //             "name": {
+      //               "query": prdct,
+      //               "minimum_should_match": "10%"
+      //             }
+      //           }
+      //     }
+      //     query.bool.must.push(searchSellers)
+      //   }
+      // }
+
     }
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 216 ~ exports.sellerSearch= ~ productMatch", productMatch)
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 226 ~ exports.sellerSearch= ~ keywordMatch", keywordMatch)
@@ -311,6 +275,18 @@ exports.sellerSearch = async (reqQuery) => {
     //     "should": productMatch
     //   }
     // })
+  }
+
+  if (search) {
+    const suggestionQuery = {
+      "term": {
+        "name": {
+          "query": search.toLowerCase(),
+          // "minimum_should_match": "10%"
+        }
+      }
+    }
+    query.bool.should.push(suggestionQuery);
   }
 
   if (level5Id) {
@@ -469,3 +445,29 @@ exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
   console.log('elastic updatedd------------------')
   esClient.update(newData).then(resolve).catch(reject);
 });
+
+exports.getSuggestions = (query, range) => new Promise((resolve, reject) => {
+  const { skip, limit } = range;
+  console.log("range", range, query)
+  const body = {
+    size: limit || 10,
+    from: skip || 0,
+    query,/* ,
+      highlight, */
+    // sort: { "_id": "desc" }
+  };
+  const searchQuery = {
+    index: "suggestions",
+    body,
+  };
+  esClient
+    .search(searchQuery)
+    .then(async (results) => {
+      // const { count } = await this.getCounts(query); // To get exact count
+      resolve([
+        results.hits.hits,
+        // count,
+      ]);
+    })
+    .catch(error => reject(error))
+})

@@ -64,8 +64,8 @@ module.exports.updateBuyer = async (req, res) => {//update only name,email,phone
 /** Get all buyer*/
 module.exports.getAllBuyers = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const buyers = await getAllBuyers(skip,limit);
+    const {search,skip,limit} = req.body
+    const buyers = await getAllBuyers(search,skip,limit);
     respSuccess(res, buyers);
   } catch (error) {
     respError(res, error.message);

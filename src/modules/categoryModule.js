@@ -1,3 +1,4 @@
+const { values } = require("lodash");
 const mongoose = require("mongoose");
 const {
   PrimaryCategory,
@@ -37,36 +38,20 @@ module.exports.checkAndAddSellerType = (query) =>
     this.getSellerType(query, "_id")
       .then((doc) => {
         if (doc) {
-          console.log("existing seller type +++++");
           resolve(doc);
         } else {
           this.addSellerType(query, "_id")
             .then((newDoc) => {
-              console.log("New seller type ++++");
               resolve(newDoc);
             })
-            .catch(reject);    
+            .catch(reject);
         }
       })
       .catch(reject);
   });
 
-module.exports.getAllSellerTypes = (skip,limit, query) =>
+module.exports.getAllSellerTypes = (skip, limit, query) =>
   new Promise((resolve, reject) => {
-    // const query = {
-    //   _id: {
-    //     $in: [
-    //       "5f97ace6b9a4b5524568716b",
-    //       "5fa4fac96eb907267c7d15ce",
-    //       "5fa5506e0524f35f355955f2",
-    //       "5fa61d53520fd81fba4a1d6d",
-    //       "5fb39af634d3932a93e10025",
-    //       "5fb397c072e59028f0d17e32",
-    //       "5fb46f021135863cd3c66664",
-    //       "5fb5f268805ec7db145b4e58"
-    //     ],
-    //   },
-    // };
     SellerTypes.find(query || {})
       .skip(skip)
       .limit(limit)
@@ -83,26 +68,17 @@ module.exports.getSpecificCategories = (query) =>
       .catch(error => reject(error))
   })
 
-module.exports.getAllCategories = (query,skip,limit) =>
+module.exports.getAllCategories = (query, searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    // ParentCategory.find({
-    //   _id: {
-    //     $in: [
-    //       "5fddf6051a15802b9764520d",
-    //       "5fddf6051a15802b97645210",
-    //       "5fddf6051a15802b9764520e",
-    //       "5fddf6051a15802b9764520f"
-
-    //     ],
-    //   },
-    // })
-    ParentCategory.find({})
+    let searchQry = searchQuery ?
+      { name: { $regex: searchQuery, $options: 'i' } } : {};
+    ParentCategory.find(searchQry)
       .sort({ name: 1 })
       .populate({
         path: "primaryCategotyId",
         model: PrimaryCategory,
         select: "name vendorId",
-        options: { sort: { 'name': 1 } } ,
+        options: { sort: { 'name': 1 } },
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
@@ -122,7 +98,6 @@ module.exports.getAllCategories = (query,skip,limit) =>
       })
       .catch(reject);
   });
-
 // Parent Category
 module.exports.addParentCategories = (data) =>
   new Promise((resolve, reject) => {
@@ -208,8 +183,9 @@ module.exports.getParentCategory = (reqQuery) =>
       })
       // .slice(PrimaryCategory, -1)
       // .select(PrimaryCategory)
+      .sort({ name: 1 })
       .lean()
-      .sort({name: 1})
+      .sort({ name: 1 })
       .then((doc) => {
         resolve(doc);
       })
@@ -311,9 +287,14 @@ exports.updatePrimaryCategory = (id, newData) =>
       .catch(reject);
   });
 
-exports.getAllPrimaryCategory = (skip,limit) =>
+exports.getAllPrimaryCategory = (searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    PrimaryCategory.find({})
+    let searchQry = searchQuery ? {
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+      ]
+    } : {};
+    PrimaryCategory.find(searchQry)
       .skip(skip)
       .limit(limit)
       .then((doc) => resolve(doc))
@@ -326,6 +307,7 @@ module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) =
   })
     .limit(query.limit)
     .skip(query.skip)
+    .sort({ name: 1 })
     .populate("secondaryCategotyId")
     .populate({
       path: "secondaryCategotyId",
@@ -413,9 +395,14 @@ exports.updateSecondaryCategory = (id, newData) =>
       .catch(reject);
   });
 
-exports.getAllSecondaryCategory = (skip,limit) =>
+exports.getAllSecondaryCategory = (searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    SecondaryCategory.find({})
+    let searchQry = searchQuery ? {
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+      ]
+    } : {};
+    SecondaryCategory.find(searchQry)
       .skip(skip)
       .limit(limit)
       .then((doc) => resolve(doc))
@@ -549,12 +536,12 @@ module.exports.addProductSubCategory = (data) =>
 module.exports.getProductCategory = (id) =>
   new Promise((resolve, reject) => {
     Products.findById(id)
-    .populate({path: 'subCategoryId', options: {sort: {name: 1}}})
-    .sort({name: 1})  
-    .then((doc) => {
+      .populate({ path: 'subCategoryId', options: { sort: { name: 1 } } })
+      .sort({ name: 1 })
+      .then((doc) => {
         resolve(doc);
       })
-    .catch(reject);
+      .catch(reject);
   });
 
 module.exports.getProductCategoryBySecCat = (query) =>
@@ -676,7 +663,6 @@ exports.getAllProductsToSearch = () =>
   });
 
 exports.getProductByName = (query) => new Promise((resolve, reject) => {
-  console.log("🚀 ~ file: categoryModule.js ~ line 623 ~ exports.getProductByName= ~ query", query)
   Products.find(query)
     // .limit(1)
     .then((doc) => resolve(doc))
@@ -925,13 +911,19 @@ exports.getLevelFiveCategoryList = (list) => new Promise((resolve, reject) => {
 /**
  * Get all label 5 category list module
 */
-module.exports.getAllLevel5Categories = (skip,limit) =>
+module.exports.getAllLevel5Categories = (searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    ProductsSubCategories.find({})
+    let searchQry = searchQuery ? {
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+        { mobile: { $regex: searchQuery, $options: 'i' } },
+      ]
+    } : {};
+    ProductsSubCategories.find(searchQry)
       .skip(skip)
       .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
       .catch(reject);
-});
+  });
