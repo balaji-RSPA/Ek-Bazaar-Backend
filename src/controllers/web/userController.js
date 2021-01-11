@@ -3,6 +3,9 @@ const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
 const { sellers, buyers } = require("../../modules");
+const { getSellerTypeAll } = require('../../modules/locationsModule')
+const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
+const { deleteSellerProducts } = require('../../modules/sellerProductModule')
 const bcrypt = require("bcrypt");
 const {
   handleUserSession,
@@ -288,5 +291,66 @@ module.exports.updateNewPassword = async (req, res) => {
 //     milisecs = `${dt.getUTCMilliseconds()}`
 
 //     const startTime = `${year}-${month.length === 1 ? `0${month}` : month}-${date.length === 1 ? `0${date}` : date} ${hours.length === 1 ? `0${hours}` : hours}:${minutes.length === 1 ? `0${minutes}` : minutes}:${seconds.length === 1 ? `0${seconds}` : seconds}.${milisecs}Z`
+
+module.exports.deleteRecords = async (req, res) => new Promise(async (resolve, reject) => {
+
+  try {
+
+    console.log('delete ------')
+    const arr = ['5f97acc7b9a4b5524568716a', '5f97ace6b9a4b5524568716b', '5f97acf2b9a4b5524568716c', '5fa4fac96eb907267c7d15ce', '5fa5506e0524f35f355955f2',
+      '5fa61d53520fd81fba4a1d6d', '5fb397c072e59028f0d17e32', '5fb39ad034d3932a93e0f079', '5fb46f021135863cd3c66664', '5fb5f268805ec7db145b4e58', '5fddfd218994761734d8011b',
+    '5fe08558ad5cb94f153017d6', '5fe226ddcc99a97286d53e35','5fe2271e30e98d73b97671ea']
+    const que = {
+      _id: {
+        $nin: arr
+      }
+    }
+    const range = {
+      skip: req.skip,
+      limit : req.limit
+    }
+    console.log("🚀 ~ file: userController.js ~ line 312 ~ module.exports.deleteRecords ~ range", range)
+    const sellerType = await getSellerTypeAll(que, range)
+    if(sellerType.length) {
+      for (let i = 0; i < sellerType.length; i++) {
+          const sType = sellerType[i]
+          const query = {
+            sellerType : {
+              $in : sType._id
+            }
+          }
+          const seller = await checkSellerExist(query)
+          // console.log("🚀 ~ file: userController.js ~ line 316 ~ module.exports.deleteRecords ~ query", seller)
+          if(seller){
+            const pQuery = {
+              _id: {
+                $in: seller.sellerProductId
+              }
+            }
+            console.log(pQuery, 'length ::::::: ', pQuery.length, ' delete ids #####################################')
+            const delRec = await deleteSellerProducts(pQuery)
+            console.log(' seller pro delete --------------------------------------')
+            if(delRec){
+              const delSell = await deleteSellerRecord(seller._id)
+              console.log(delSell.name, ' seller delte +++++++++++++++++++++++++++++++++++++++++++++')
+            }
+          }else{
+            console.log('not exist----------------------------')
+          }
+          console.log(sType.name +' &&&& '+ i, "    ~ seller Type")
+      }
+    }
+    console.log('Completed----------')
+    resolve()
+    // res.send(sellerType)
+    
+  } catch (error) {
+    console.log("🚀 ~ file: userController.js ~ line 343 ~ module.exports.deleteRecords ~ error", error)
+    reject(error)
+  }
+
+})
+
+
 
 

@@ -56,7 +56,7 @@ module.exports.addSellerType = async (req, res) => {
 
 module.exports.getAllSellerTypes = async (req, res) => {
     try {
-        const result = await getAllSellerTypes()
+        const result = await getAllSellerTypes(0, 16, {status: true})
         respSuccess(res, result)
     } catch (error) {
         respError(error)
@@ -78,7 +78,6 @@ module.exports.getSpecificCategories = async (req, res) => {
             }
         }
         const result = await getSpecificCategories(query)
-        console.log("🚀 ~ file: categoryController.js ~ line 81 ~ module.exports.getSpecificCategories=async ~ result", result)
         respSuccess(res, result)
     } catch (error) {
         respError(error)
@@ -86,7 +85,6 @@ module.exports.getSpecificCategories = async (req, res) => {
 }
 
 module.exports.getAllCategories = async (req, res) => {
-
     try {
         const reqQuery = camelcaseKeys(req.query)
         let qery = {
@@ -107,7 +105,6 @@ module.exports.getAllCategories = async (req, res) => {
         respSuccess(res, result)
 
     } catch (error) {
-
         respError(error)
 
     }
@@ -121,7 +118,6 @@ module.exports.addParentCategories = async (req, res) => {
 
         const reqData = req.body
         const result = await addParentCategories(reqData)
-        console.log("🚀 ~ file: categoryController.js ~ line 100 ~ module.exports.addParentCategories= ~ result", result)
         respSuccess(res, result)
 
     } catch (error) {
@@ -154,7 +150,6 @@ module.exports.getParentCategory = async (req, res) => {
 
         const id = req.params.id;
         const reqQuery = camelcaseKeys(req.query)
-        console.log(reqQuery, "111111111111111111111111111111111111111111111", req.params)
         const query = {
             id,
             search: reqQuery.search
@@ -464,7 +459,6 @@ module.exports.getPrimaryCat = async (req, res) => {
         } = reqQuery
         skip = skip && parseInt(skip) || 0
         limit = limit && parseInt(limit) || 10
-        console.log(reqQuery, "jkjdfkjdgfjkdfgjknd", req.query)
 
         const query = {
             _id: reqQuery.primaryId,
@@ -472,7 +466,6 @@ module.exports.getPrimaryCat = async (req, res) => {
             limit
         }
         const primaryCatyegory = await getPrimaryCategories(query)
-        console.log(primaryCatyegory, "???????????????????????????")
         respSuccess(res, primaryCatyegory)
 
     } catch (error) {
@@ -584,7 +577,6 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
 
 module.exports.getProducts = async (req, res) => {
     try {
-        console.log(req.query.limit, "======", req.query.search, "??????????????????????????????????????/", req.params)
         const {
             limit,
             search
@@ -616,7 +608,6 @@ module.exports.getProducts = async (req, res) => {
 
 module.exports.getLevelFive = async (req, res) => {
     try {
-        console.log(req.params, 'level five ---------------------------')
         const { id } = req.params
         const products = await getProductCategory(id)
         respSuccess(res, products)

@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 
 const { States, Countries, Cities } = require("../models");
 
-module.exports.getAllStates = () =>
+module.exports.getAllStates = (skip, limit) =>
   new Promise((resolve, reject) => {
     States.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
@@ -13,9 +15,11 @@ module.exports.getAllStates = () =>
       });
   });
 
-module.exports.getAllCountries = () =>
+module.exports.getAllCountries = (skip, limit) =>
   new Promise((resolve, reject) => {
     Countries.find({})
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
@@ -90,7 +94,8 @@ module.exports.addCity = (newData, id) =>
 module.exports.getCity = (query, id) =>
   new Promise((resolve, reject) => {
     Cities.findOne(query)
-      // .populate('state', 'name')
+      .populate('state', 'name')
+      .select("name state")
       .then((doc) => {
         resolve(doc && id ? doc._id : doc);
       })
@@ -153,6 +158,7 @@ exports.getAllCities = (reqQuery) =>
           as: "state",
         },
       },
+      { $unwind: "$state" },
       {
         $project: {
           "_id": 1,
@@ -288,4 +294,15 @@ module.exports.citiesBulkInsert = (data) =>
         resolve(doc);
       })
       .catch(reject);
+  })
+module.exports.getSellerTypeAll = (que, range) =>
+  new Promise((resolve, reject) => {
+
+    SellerTypes.find(que)
+      .skip(range.skip)
+      .limit(range.limit)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => reject(error.message));
   });

@@ -20,4 +20,7 @@ router.post("/countries", location.createCountry)
 // router.get("/cities", location.getAllCities)
 // router.post("/city", location.createCity)
 
+
+router.post("/uploadCityAlias", location.uploadCityAlias)
+
 module.exports = router;

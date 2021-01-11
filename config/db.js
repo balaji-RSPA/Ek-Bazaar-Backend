@@ -36,12 +36,14 @@ function dbConnection() {
 };
 
 // function elasticSearchConnect() {
-let host = 'localhost:9200'
+let host = ''
 if (env) {
-
-  if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'development') {
+    host = 'localhost:9200'
+  } else if (env.NODE_ENV === 'staging') {
 
     host = 'tradebazaarapi.tech-active.com:5085'
+    // host = 'searchtradetemp.tech-active.com:5085'
 
   } else if (env.NODE_ENV === 'production') {
 

@@ -12,6 +12,7 @@ const Sessions = require('../../config/tenderdb').sessionModel
 const SessionsLogs = require('../../config/tenderdb').sessionLogModel
 const Cities = require('../models/citiesSchema')
 const States = require('../models/statesSchema')
+const Countries = require('../models/countriesSchema')
 const {
   checkAndAddCity,
   getState,
@@ -75,7 +76,6 @@ module.exports.getAccessToken = (ipAddress) =>
       })
       .limit(1)
       .then((doc) => {
-        // console.log(doc, 'doc.........')
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -91,7 +91,6 @@ module.exports.getSessionLog = (ipAddress) =>
       })
       .limit(1)
       .then((doc) => {
-        // console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -265,7 +264,6 @@ module.exports.getUserProfile = (id) =>
         // _id: -1,
       })
       .then((doc) => {
-        // console.log(doc);
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -277,7 +275,6 @@ module.exports.updateUser = (query, data) =>
       new: true
     })
       .then((doc) => {
-        // console.log(doc);
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -291,7 +288,6 @@ module.exports.forgetPassword = (mobile, data) =>
       new: true
     })
       .then((doc) => {
-        // console.log(doc);
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -314,7 +310,6 @@ module.exports.sellerBulkInser = (data) =>
   new Promise((resolve, reject) => {
     Sellers.insertMany(data)
       .then((doc) => {
-        // console.log("doc", doc);
         resolve(doc)
       })
       .catch(reject)
@@ -412,7 +407,6 @@ module.exports.sellerBulkInser = (data) =>
 
 module.exports.getSeller = (id, chkStock) =>
   new Promise((resolve, reject) => {
-    // console.log("🚀 ~ file: sellersModule.js ~ line 286 ~ chkStock", chkStock)
     let matchVal = null
     if (chkStock === true || chkStock === false) {
       matchVal = {
@@ -439,7 +433,6 @@ module.exports.getSeller = (id, chkStock) =>
         }
       }
     }
-    // console.log("🚀 ~ file: sellersModule.js ~ line 302 ~ newPromise ~ matchVal", matchVal)
     Sellers.findOne({
       userId: id
     })
@@ -463,6 +456,14 @@ module.exports.getSeller = (id, chkStock) =>
         populate: {
           path: "location.state",
           model: States,
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.country",
+          model: Countries,
         }
       })
       .populate('sellerCompanyId')
@@ -538,6 +539,10 @@ exports.getSellerProfile = (id) =>
       //     path: 'state',
       //     model: States
       //   },
+      //   populate: {
+      //     path: 'country',
+      //     model: Countries
+      //   },
       // })
       .populate("sellerCompanyId")
       .populate("establishmentId")
@@ -575,9 +580,25 @@ exports.getSellerProfile = (id) =>
       .catch((error) => reject(error))
   })
 
-module.exports.getAllSellers = (skip,limit) =>
+module.exports.getAllSellers = (sellerType,searchQuery,skip,limit) =>
   new Promise((resolve, reject) => {
-    Sellers.find({})
+    let searchQry = {};
+    if(searchQuery && sellerType){
+      searchQry=  {$and: [
+        {sellerType : sellerType },
+        searchQuery ? {$or : [
+          { name : { $regex: searchQuery, $options: 'i' } },
+        { "mobile.mobile" : { $regex: searchQuery, $options: 'i' }},
+       ]} : {}
+      ]} 
+    }
+    if(searchQuery && !sellerType){
+      searchQry = {$or : [
+          { name : { $regex: searchQuery, $options: 'i' } },
+        { "mobile.mobile" : { $regex: searchQuery, $options: 'i' }},
+       ]} 
+    }
+    Sellers.find(searchQry)
       .skip(skip)
       .limit(limit)
       .populate('sellerProductId.')
@@ -1186,11 +1207,84 @@ module.exports.findEstablishment = (id) =>
     SellersEstablishment.findOne({
       _id: id
     })
-      .then((doc) => {
-        resolve(doc)
-      })
-      .catch(reject)
-  })
+    .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
+  /**
+ * 
+ * Get seller product detail
+ * */
+module.exports.getSellerProductDtl = (query) =>
+new Promise((resolve, reject) => {
+  SelleresProductList.findOne(query)
+  .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
+  /**
+ * 
+ * Get all seller products
+ * */
+module.exports.listAllSellerProduct = (serviceType,searchQuery,skip,limit) =>
+new Promise((resolve, reject) => {
+  let searchQry = {};
+  if(searchQuery && serviceType){
+    searchQry =  {$and: [
+      {serviceType : serviceType },
+      searchQuery ? 
+      { "productDetails.name" : { $regex: searchQuery, $options: 'i' }} : {}
+    ]} 
+  }
+  if(searchQuery && !serviceType){
+    searchQry = { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }
+  }
+
+  // {"$match":{"title":{"$regex":/example/}}},
+  // {"$lookup":{
+  //   "from":"article_category",
+  //   "localField":"article_id",
+  //   "foreignField":"article_id",
+  //   "as":"article_category"
+  // }},
+  // {"$unwind":"$article_category"},
+
+//   SelleresProductList.aggregate([{
+//       $lookup:{
+//           from: ParentCategory.collection.name,      
+//           localField: "parentCategoryId",   
+//           foreignField: "_id",
+//           as: "level_1"        
+//       }
+//     // $lookup:{
+//     //     from:"level1",
+//     //     localField:"parentCategoryId",
+//     //     foreignField:"_id",
+//     //     as:"parentCategoryId"
+//     // }
+//   },
+//   {
+//     $match:{'name' : "Medicine,Pharma & Drugs"}
+//   }
+// ]) 
+//   .then((doc) => {
+//     console.log(doc,"===============adsghfsfhshf")
+//     resolve(doc)
+//   })
+//   .catch(reject)
+  // let searchQry = searchQuery ? 
+  //   { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }: {};
+  
+  SelleresProductList.find(searchQry)
+  .skip(skip)
+  .limit(limit)
+  .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
 /**
 * 
 * Get seller product detail
@@ -1207,6 +1301,14 @@ module.exports.getSellerProduct = (query) =>
       .populate({
         path: 'serviceCity.state'
       })
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+  exports.deleteSellerRecord = (id) =>
+  new Promise((resolve, reject) => {
+    Sellers.findByIdAndDelete(id)
       .then((doc) => {
         resolve(doc)
       })

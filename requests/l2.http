@@ -1,0 +1,11 @@
+###
+POST http://localhost:8070/api/addPrimaryCategories HTTP/1.1
+content-type: application/json
+
+# [
+#   {
+#     "vendorId": "LI1",
+#     "parentId": 12,
+#     "name": "Laboratory & Lab Equipment"
+#   }
+# ]

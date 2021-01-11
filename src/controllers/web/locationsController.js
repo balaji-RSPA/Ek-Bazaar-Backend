@@ -103,18 +103,18 @@ module.exports.getAllCountries = async (req, res) => {
 };
 
 module.exports.createCountry = async (req, res) => {
-  try {
-    // const countries = await addCountry({
-    //   name: "India",
-    //   status: true,
-    // });
-    const data = req.body
-    if (data.length)
-      const result = await countiesBulkInsert(data)
-    res.send(result);
-  } catch (error) {
-    res.send(error.message);
-  }
+  // try {
+  //   // const countries = await addCountry({
+  //   //   name: "India",
+  //   //   status: true,
+  //   // });
+  //   const data = req.body
+  //   if (data.length)
+  //     const result = await countiesBulkInsert(data)
+  //   res.send(result);
+  // } catch (error) {
+  //   res.send(error.message);
+  // }
 };
 
 
@@ -180,3 +180,15 @@ module.exports.updateCountry = async (req, res) => {
     res.send(error.message);
   }
 };
+
+module.exports.uploadCityAlias = async (req, res) => {
+
+  try {
+
+    console.log(req.body, 'aliasss-----')
+
+  } catch (error) {
+
+  }
+
+}

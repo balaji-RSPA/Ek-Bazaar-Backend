@@ -1,4 +1,6 @@
 require('dotenv').config();
+const { env } = process
+global.environment = env.NODE_ENV || 'production'
 const express = require('express')
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
@@ -10,10 +12,9 @@ const useragent = require('express-useragent');
 const config = require('./config/config')
 const { tradedb } = config
 
-const { env } = process
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
+const { deleteRecords } = require('./src/controllers/web/userController')
 
-global.environment = env.NODE_ENV || 'production'
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 // require('./config/db').elasticSearchConnect();
@@ -25,7 +26,18 @@ const router = require('./src/routes');
 const models = require('./src/models')
 // const States = models.States
 // const Countries = models.Countries
-console.log(env.NODE_ENV, 'node env')
+
+const { suggestions, level1, level2, level3, level4, level5, city, state, country, serviceType } = require("./elasticsearch-mapping");
+const { checkIndices, putMapping } = suggestions
+const l1CheckIndices = level1.checkIndices, l1PutMapping = level1.putMapping,
+l2CheckIndices = level2.checkIndices, l2PutMapping = level2.putMapping,
+l3CheckIndices = level3.checkIndices, l3PutMapping = level3.putMapping,
+l4CheckIndices = level4.checkIndices, l4PutMapping = level4.putMapping,
+l5CheckIndices = level5.checkIndices, l5PutMapping = level5.putMapping,
+cityCheckIndices = city.checkIndices, cityPutMapping = city.putMapping,
+stateCheckIndices = state.checkIndices, statePutMapping = state.putMapping,
+countryCheckIndices = country.checkIndices, countryPutMapping = country.putMapping,
+serviceTypeCheckIndices = serviceType.checkIndices, serviceTypePutMapping = serviceType.putMapping
 
 app.use(useragent.express());
 app.use(fileUpload());
@@ -38,8 +50,72 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res) {
   console.log('Home page')
-  res.send('Hello Babu')
+  res.send('Its trade live')
 })
+
+async function indexing() {
+  await checkIndices()
+  await putMapping()
+  // await l1CheckIndices()
+  // await l1PutMapping()
+  // await l2CheckIndices()
+  // await l2PutMapping()
+  // await l3CheckIndices()
+  // await l3PutMapping()
+  // await l4CheckIndices()
+  // await l4PutMapping()
+  // await l5CheckIndices()
+  // await l5PutMapping()
+  // await cityCheckIndices()
+  // await cityPutMapping()
+  // await stateCheckIndices()
+  // await statePutMapping()
+  // await countryCheckIndices()
+  // await countryPutMapping()
+  // await serviceTypeCheckIndices()
+  // await serviceTypePutMapping() 
+}
+// indexing()
+
+// app.get('/deleteRecords1', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 0, limit : 1000})
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords2', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 1000, limit : 2000})
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords3', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 2000, limit : 3000})
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords4', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 3000, limit : 4000})
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
 
 app.use(router)
 
