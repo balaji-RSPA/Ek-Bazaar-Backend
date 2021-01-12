@@ -38,6 +38,8 @@ const {
   PrimaryCategory,
   SecondaryCategory,
   ParentCategory,
+  Products,
+  ProductsSubCategories,
   SellerContact
 } = require('../models')
 const {
@@ -569,6 +571,22 @@ exports.getSellerProfile = (id) =>
         populate: {
           path: "secondaryCategoryId",
           model: SecondaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
         },
       })
       .populate("location.city", "name")
