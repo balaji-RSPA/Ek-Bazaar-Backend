@@ -39,15 +39,19 @@ exports.login = async (req, res) => {
       return respAuthFailed(res, undefined, "User not found");
     }
     if (userType === 'seller') {
+
       const seller = await sellers.getSeller(user._id);
-      if (seller.deactivateAccount && (seller.deactivateAccount.status === true)) {
+      if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true)) 
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
-      }
+      
+
     } else if (userType === 'buyer') {
+
       const buyer = await buyers.getBuyer(user._id);
-      if (buyer.deactivateAccount.status === true)
+      if (buyer && buyer.deactivateAccount.status === true)
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
-    }
+    
+      }
 
     const result = await bcrypt.compare(password, user.password);
     if (result) {

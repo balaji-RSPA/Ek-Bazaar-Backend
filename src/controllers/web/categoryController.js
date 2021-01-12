@@ -56,8 +56,39 @@ module.exports.addSellerType = async (req, res) => {
 
 module.exports.getAllSellerTypes = async (req, res) => {
     try {
-        const result = await getAllSellerTypes(0, 16, {status: true})
-        respSuccess(res, result)
+        const reqQuery = camelcaseKeys(req.query)
+        const { search } = reqQuery
+        console.log("module.exports.getAllSellerTypes -> reqQuery", reqQuery)
+        let result = await getAllSellerTypes(0, 16, { status: true })
+        console.log("module.exports.getAllSellerTypes -> result", result)
+        if (search) {
+            let types = []
+            let combine = result && result.length && result.filter((type) => {
+                if (type.name.toLowerCase() === "importer" || type.name.toLowerCase() === "exporter" || type.name.toLowerCase() === "dealer" || type.name.toLowerCase() === "distributor") {
+                    return true;
+                } else {
+                    types.push(type);
+                    return false;
+                }
+            })
+            const obj = [{
+                _id: `${combine[0]._id}|${combine[1]._id}`,
+                name: `${combine[0].name} / ${combine[1].name}`,
+                status: combine[0].status,
+                sequence: 4,
+                group: combine[0].group
+            }, {
+                _id: `${combine[2]._id}|${combine[3]._id}`,
+                name: `${combine[2].name} / ${combine[3].name}`,
+                status: combine[2].status,
+                sequence: 7,
+                group: combine[2].group
+            }]
+            let rest = [...types, ...obj]
+            respSuccess(res, rest)
+        } else {
+            respSuccess(res, result)
+        }
     } catch (error) {
         respError(error)
     }

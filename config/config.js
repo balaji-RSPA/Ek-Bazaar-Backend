@@ -24,9 +24,12 @@ if (process.env.NODE_ENV === "production") {
     tradedb: {
       host: "tradebazaarapi.tech-active.com",
       port: "5006",
-      user: "tradeapi",
-      password: "Oyljeabr6Orc",
-      database: "tradeapi",
+      // user: "tradeapi",
+      // password: "Oyljeabr6Orc",
+      // database: "tradeapi",
+      user: "tradelive",
+      password: "jiarkerc9Om",
+      database: "trade-live",
       server_port: "8070",
     },
     tenderdb: {
