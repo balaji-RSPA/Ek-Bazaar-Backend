@@ -13,7 +13,8 @@ const mongoose = require('mongoose');
 
 const {
   sellers,
-  location
+  location,
+  category
 } = require('../../modules')
 const _ = require('lodash')
 
@@ -37,6 +38,13 @@ const {
   findEstablishment,
   getSellerProduct
 } = sellers
+const {
+  getParentCat,
+  getPrimaryCat,
+  getSecondaryCat,
+  getProductCat,
+  getProductSubcategory
+} = category
 const { getFilteredCities } = location;
 
 module.exports.getSeller = async (req, res) => {
@@ -380,8 +388,37 @@ module.exports.addSellerProduct = async (req, res) => {
     let result
     let sellerId = req.body && req.body[0] && req.body[0].sellerId
     if (sellerId) {
-      const findSeller = await getSellerProfile(sellerId)
-      result = await addSellerProduct(req.body)
+      let resultVal = []
+      for(let i = 0; i<req.body.length; i++){
+        if (req.body[i].productType === 'level5') {
+          let findLevel4 = await getlevelFiveCategories(req.body[i])
+          resultVal.push(findLevel4)
+        }
+        if (req.body[i].productType === 'level4') {
+          let findLevel3 = await getlevelFourCategories(req.body[i])
+          await resultVal.push(findLevel3)
+        }
+        if (req.body[i].productType === 'level3') {
+          let findLevel2 = await getlevelThreeCategories(req.body[i])
+          await resultVal.push(findLevel2);
+        }
+        if (req.body[i].productType === 'level2') {
+          let findLevel1 = await getlevelTwoCategories(req.body[i])
+          await resultVal.push(findLevel1);
+        }
+        if (req.body[i].productType === 'level1') {
+            req.body[i].parentCategoryId = req.body[i].id,
+            req.body[i].primaryCategoryId = null,
+            req.body[i].secondaryCategoryId = null,
+            req.body[i].productId = null,
+            req.body[i].productSubcategoryId = null
+          delete req.body[i].id,
+          delete req.body[i].productType
+          await resultVal.push(req.body[i]);
+        }
+      }
+      const findSeller = await getSellerProfile(sellerId);
+      result = await addSellerProduct(resultVal)
       if (findSeller && findSeller.length) {
         findSeller[0].sellerProductId = findSeller[0].sellerProductId && findSeller[0].sellerProductId.length !== 0 ? [...result, ...findSeller[0].sellerProductId] : result;
         // findSeller[0].sellerProductId.concat(result)
@@ -404,7 +441,7 @@ module.exports.updateSellerProduct = async (req, res) => {
       files
     } = req
     let updateDetail
-    if(body.productDetails || files.document || files.image1 || files.image2 || files.image3 || files.image4){
+    if(body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)){
       productDetails = JSON.parse(body.productDetails)
 
       // /* need to optimize the below code*/
@@ -515,3 +552,109 @@ module.exports.getFilteredCities = async (req, res) => {
     respError(res, error.message)
   }
 }
+
+getlevelTwoCategories = async (element) => {
+
+ let findLevel1 = await getPrimaryCat({
+   _id: element.id
+ })
+  element.parentCategoryId = findLevel1.parentCatId,
+  element.primaryCategoryId = element.id,
+  element.secondaryCategoryId = null,
+  element.productId = null,
+  element.productSubcategoryId = null
+  delete element.id,
+  delete element.productType
+  return element;
+}
+
+getlevelThreeCategories = async (element) => {
+
+  let findLevel2 = await getSecondaryCat({
+    _id: element.id
+  })
+
+  let findLevel1 = await getlevelTwoCategories({id : findLevel2.primaryCatId})
+  element.parentCategoryId = findLevel1.parentCategoryId,
+  element.primaryCategoryId = findLevel2.primaryCatId,
+  element.secondaryCategoryId = element.id,
+  element.productId = null,
+  element.productSubcategoryId = null
+  delete element.id,
+  delete element.productType
+ return element;
+
+}
+
+getlevelFourCategories = async (element) => {
+  
+  let findLevel3 = await getProductCat({
+    _id: element.id
+  })
+
+  let findLevel2 = await getlevelThreeCategories({id : findLevel3.secondaryId})
+
+    element.parentCategoryId = findLevel2.parentCategoryId,
+    element.primaryCategoryId = findLevel2.primaryCategoryId,
+    element.secondaryCategoryId = findLevel3.secondaryId,
+    element.productId = element.id,
+    element.productSubcategoryId = null
+    delete element.id,
+    delete element.productType
+    return element;
+
+}
+
+getlevelFiveCategories = async(element) => {
+
+  let findLevel4 = await getProductSubcategory({
+    _id: element.id
+  })
+  let findLevel3 = await getlevelFourCategories({
+    id: findLevel4.productId
+  })
+  element.parentCategoryId = findLevel3.parentCategoryId,
+    element.primaryCategoryId = findLevel3.primaryCategoryId,
+    element.secondaryCategoryId = findLevel3.secondaryCategoryId,
+    element.productId = findLevel4.productId,
+    element.productSubcategoryId = element.id
+    delete element.id,
+    delete element.productType
+   return element;
+
+}
+
+
+
+      // req.body && req.body.length && req.body.forEach(async element => {
+      //   if(element.productType === 'level5'){
+      //     let findLevel4 = await getlevelFiveCategories(element)
+      //     await resultVal.push(findLevel4)
+      //     // console.log(findLevel4, "55555555555")
+      //   }
+      //   if (element.productType === 'level4'){
+      //     let findLevel3 = await getlevelFourCategories(element)
+      //     await resultVal.push(findLevel3)
+      //     //  console.log(findLevel3, "4444444444444")
+      //   }
+      //   if (element.productType === 'level3') {
+      //     let findLevel2 = await getlevelThreeCategories(element)
+      //     // console.log(findLevel2, "3333333333333")
+      //     return resultVal.push(findLevel2);
+      //   }
+      //   if (element.productType === 'level2'){
+      //     let findLevel1 = await getlevelTwoCategories(element)
+      //     await resultVal.push(findLevel1);
+      //   }
+      //   if (element.productType === 'level1') {
+      //     element.parentCategoryId = element.id,
+      //     element.primaryCategoryId = null,
+      //     element.secondaryCategoryId = null,
+      //     element.productId = null,
+      //     element.productSubcategoryId = null
+      //     delete element.id,
+      //     delete element.productType
+      //     await resultVal.push(element);
+      //     // console.log(element, "============")
+      //   }
+      // });
