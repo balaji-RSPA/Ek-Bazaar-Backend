@@ -803,9 +803,6 @@ module.exports.addContactDetails = (sellerId, data) =>
 
 module.exports.addEstablishmentPhotos = (sellerId, photos) =>
   new Promise((resolve, reject) => {
-    console.log("🚀 ~ file: sellersModule.js ~ line 745 ~ sellerId", sellerId)
-    console.log("🚀 ~ file: sellersModule.js ~ line 688 ~ data", photos)
-
     SellersEstablishment.findOneAndUpdate({
       sellerId
     }, {
@@ -815,7 +812,6 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
       upsert: true
     })
       .then((doc) => {
-        console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
