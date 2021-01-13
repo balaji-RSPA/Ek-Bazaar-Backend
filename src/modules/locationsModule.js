@@ -93,9 +93,10 @@ module.exports.addCity = (newData, id) =>
 
 module.exports.getCity = (query, id) =>
   new Promise((resolve, reject) => {
+    console.log(query, 'sdfsd')
     Cities.findOne(query)
       .populate('state', 'name')
-      .select("name state")
+      // .select("name state country")
       .then((doc) => {
         resolve(doc && id ? doc._id : doc);
       })
@@ -247,7 +248,7 @@ module.exports.updateCity = (query, data) =>
         resolve(doc);
       })
       .catch((error) => {
-        console.log(error, ' ghjk')
+        // console.log(error, ' ghjk')
         reject(error);
       });
   });
@@ -305,4 +306,15 @@ module.exports.getSellerTypeAll = (que, range) =>
         resolve(doc);
       })
       .catch((error) => reject(error.message));
+  });
+
+module.exports.getAllCitiesUpdate = (query) =>
+  new Promise((resolve, reject) => {
+    Cities.find(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });

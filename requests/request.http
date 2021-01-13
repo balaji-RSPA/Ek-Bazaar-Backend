@@ -1,14 +1,19 @@
 ###
+GET  http://localhost:8070/api/updateCityAlias HTTP/1.1
+content-type: application/json
+
+
+###
 POST  http://localhost:8070/api/uploadCityAlias HTTP/1.1
 content-type: application/json
 
-[
-  {
-    "name": "Vijayawada",
-    "state": "Andhra Pradesh",
-    "aliases": "Bezawada"
-  }
-]
+# [
+#   {
+#     "name": "Vijayawada",
+#     "state": "Andhra Pradesh",
+#     "aliases": "Bezawada, test"
+#   }
+# ]
 
 ###
 GET  http://localhost:8070/api/getLevelFive/5fdf6e25be4f6810f1010ce9 HTTP/1.1

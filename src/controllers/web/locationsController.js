@@ -15,7 +15,8 @@ const {
   updateState,
   statesBulkInsert,
   citiesBulkInsert,
-  countiesBulkInsert
+  countiesBulkInsert,
+  getAllCitiesUpdate
 } = location;
 
 module.exports.getAllCities = async (req, res) => {
@@ -185,10 +186,101 @@ module.exports.uploadCityAlias = async (req, res) => {
 
   try {
 
-    console.log(req.body, 'aliasss-----')
+    // console.log(req.body, 'aliasss-----')
+    const data = req.body
+    if (data.length) {
+
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        // console.log(element.name)
+        const query = {
+          name: element.name
+        }
+        const result = await getCity(query)
+        // console.log("🚀 ~ file: locationsController.js ~ line 199 ~ module.exports.uploadCityAlias= ~ result", result)
+
+        if (result) {
+
+          console.log('city exist-----')
+
+          let alia = []
+          alia.push(element.name.trim().toLowerCase())
+
+          if (element.aliases) {
+            const aliaArray = element.aliases.split(",").map((rec) => rec.trim().toLowerCase())
+            alia.push(...aliaArray.map((rec) => rec))
+          }
+
+          const updateResult = await updateCity({ _id: result._id }, { alias: alia })
+          console.log("updated alias ----------------  ", updateResult.name)
+
+        } else {
+          console.log('city not exist-----')
+          const stateResult = await checkState({ name: element.state })
+          if (stateResult) {
+            let alia = []
+            alia.push(element.name.trim().toLowerCase())
+            if (element.aliases) {
+              const aliaArray = element.aliases.split(",").map((rec) => rec.trim().toLowerCase())
+              alia.push(...aliaArray.map((rec) => rec))
+            }
+            const addData = {
+              name: element.name,
+              state: stateResult._id,
+              country: stateResult.country || null,
+              alias: alia
+            }
+            console.log(addData, ' data------')
+            const addCityResult = await addCity(addData)
+            console.log("new city added : --  ", addCityResult.name)
+            // console.log("tateResult", addData)
+          } else {
+            console.log(' city and state not exist === ', element.name + '---' + element.state)
+          }
+
+        }
+
+      }
+
+    }
+    respSuccess(res, 'Uploaded successfully------');
 
   } catch (error) {
+
+    console.log(error)
+    res.send(error.message);
 
   }
 
 }
+
+
+module.exports.updateCityAlias = async (req, res) => {
+
+  try {
+    console.log('update cites functiona-----=-')
+    const data = await getAllCitiesUpdate({ alias: null })
+    if (data.length) {
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        // console.log("🚀 ~ file: locationsController.js ~ line 266 ~ module.exports.updateCityAlias= ~ element", element)
+        let alia = []
+        alia.push(element.name.trim().toLowerCase())
+        console.log("data", element.name)
+        const updateResult = await updateCity({ _id: element._id }, { alias: alia })
+      }
+    }
+    console.log('Completed updateing')
+    respSuccess(res, 'Uploaded successfully------');
+
+  } catch (error) {
+
+    console.log(error)
+    res.send(error.message);
+
+
+  }
+}
+
+
+

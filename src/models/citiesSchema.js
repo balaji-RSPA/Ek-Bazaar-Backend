@@ -27,6 +27,10 @@ const citiesSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    alias: {
+      type: Array,
+      default: null
+    }
   },
   {
     timestamps: true,

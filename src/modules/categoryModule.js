@@ -53,6 +53,8 @@ module.exports.checkAndAddSellerType = (query) =>
 module.exports.getAllSellerTypes = (skip, limit, query) =>
   new Promise((resolve, reject) => {
     SellerTypes.find(query || {})
+      .sort({sequence: 1})
+      .select("name group status sequence")
       .skip(skip)
       .limit(limit)
       .then((doc) => {
