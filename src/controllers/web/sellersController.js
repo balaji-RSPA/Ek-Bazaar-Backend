@@ -142,8 +142,7 @@ module.exports.updateSeller = async (req, res) => {
       // newData.busenessId = cntctDtls._id;
     }
     if (!productDetails && req.files && (req.files.image1 || req.files.image2 || req.files.image3 || req.files.image4 || req.files.image5 || req.files.image6)) {
-      // image.substr(image.length-1)
-      let photos = []
+      let photos = [];
       let values = Object.values(req.files)
       for (let i = 0; i < values.length; i++) {
         const name = values[i].name
@@ -161,34 +160,40 @@ module.exports.updateSeller = async (req, res) => {
       let estblsmntPhts
       if (user.establishmentId) {
         let getEstablishmentPht = await findEstablishment(user.establishmentId)
-
-        photos = getEstablishmentPht.photos.length ? [...getEstablishmentPht.photos, ...photos] : photos
-        estblsmntPhts = await addEstablishmentPhotos(
-          sellerID,
-          photos
-        )
-
-      } else {
-        estblsmntPhts = await addEstablishmentPhotos(
-          sellerID,
-          photos
-        )
-        newData.establishmentId = estblsmntPhts._id
-        seller = await updateSeller({
-          _id: sellerID
-        }, newData)
-      }
-      // newData.establishmentId = estblsmntPhts._id
-      // const estblsmntPhts = await addEstablishmentPhotos(
-      //   sellerID,
-      //   photos
-      //   )
-      // const estblsmntPhts = await addEstablishmentPhotos(
-      //   sellerID,
-      //   establishmentPhotos,
-      // )
-      // newData.establishmentId = estblsmntPhts._id
-
+            if (req.files.image1) {
+              getEstablishmentPht.photos[0]=null;
+            }
+            if (req.files.image2){
+               getEstablishmentPht.photos[1] = null;
+            }
+            if (req.files.image3) {
+               getEstablishmentPht.photos[2] = null;
+            }
+            if (req.files.image4) {
+               getEstablishmentPht.photos[3] = null;
+            }
+            if (req.files.image5) {
+               getEstablishmentPht.photos[4] = null;
+            }
+            if (req.files.image6) {
+              getEstablishmentPht.photos[5] = null;
+            }
+            getEstablishmentPht.photos = getEstablishmentPht.photos.filter((Boolean));
+            photos = getEstablishmentPht.photos.length ? [...getEstablishmentPht.photos, ...photos] : photos
+            estblsmntPhts = await addEstablishmentPhotos(
+              sellerID,
+              photos
+            )
+           } else {
+            estblsmntPhts = await addEstablishmentPhotos(
+              sellerID,
+              photos
+            )
+            newData.establishmentId = estblsmntPhts._id
+            seller = await updateSeller({
+              _id: sellerID
+            }, newData)
+        }
     }
     if (companyProfile) {
       companyProfile = {
@@ -202,91 +207,6 @@ module.exports.updateSeller = async (req, res) => {
       }, {
         sellerCompanyId: cmpnyPrfl._id
       })
-    }
-    if (productDetails || (req.files && (req.files.document || req.files.image1 || req.files.image2 || req.files.image3 || req.files.image4))) {
-
-      productDetails = JSON.parse(productDetails)
-
-      /* need to optimize the below code*/
-      if (req.files && req.files.document) {
-        let data = {
-          Key: `${sellerID}/${req.files.document.name}`,
-          body: req.files.document.data
-        }
-        const _document = await uploadToDOSpace(data)
-        productDetails.productDetails.document.name = req.files.document.name;
-        productDetails.productDetails.document.code = _document.Location;
-      }
-
-      if (req.files && req.files.image1) {
-        let data = {
-          Key: `${sellerID}/${req.files.image1.name}`,
-          body: req.files.image1.data
-        }
-        const _image1 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image1.name = req.files.image1.name;
-        productDetails.productDetails.image.image1.code = _image1.Location;
-      }
-      if (req.files && req.files.image2) {
-        let data = {
-          Key: `${sellerID}/${req.files.image2.name}`,
-          body: req.files.image2.data
-        }
-        const _image2 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image2.name = req.files.image2.name;
-        productDetails.productDetails.image.image2.code = _image2.Location;
-      }
-      if (req.files && req.files.image3) {
-        let data = {
-          Key: `${sellerID}/${req.files.image3.name}`,
-          body: req.files.image3.data
-        }
-        const _image3 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image3.name = req.files.image3.name;
-        productDetails.productDetails.image.image3.code = _image3.Location;
-      }
-      if (req.files && req.files.image4) {
-        let data = {
-          Key: `${sellerID}/${req.files.image4.name}`,
-          body: req.files.image4.data
-        }
-        const _image4 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image4.name = req.files.image4.name;
-        productDetails.productDetails.image.image4.code = _image4.Location;
-      }
-      /* till here*/
-
-      let productsId = []
-      let prdctDtls
-
-      if (productDetails._id !== null) {
-        prdctDtls = await addProductDetails(productDetails._id, productDetails)
-      } else {
-        prdctDtls = await addProductDetails(null, productDetails)
-      }
-      productsId = user.sellerProductId
-
-      if (
-        (productsId &&
-          productsId.length &&
-          productDetails &&
-          productDetails._id === null) ||
-        productDetails._id === undefined
-      ) {
-        productsId.push(prdctDtls._id)
-      } else if (
-        (prdctDtls._id &&
-          productsId.length === 0 &&
-          productDetails._id === null) ||
-        productDetails._id === undefined
-      ) {
-        productsId = []
-        productsId.push(prdctDtls._id)
-      }
-      newData.sellerProductId = productsId
-      seller = await updateSeller({
-        _id: sellerID
-      }, newData)
     }
     if (notifications) {
       seller = await updateSeller({
@@ -302,9 +222,6 @@ module.exports.updateSeller = async (req, res) => {
         deactivateAccount
       })
     }
-
-    // console.log(seller, ' .........00000000000')
-    // const seller = await updateSeller({ _id: sellerID }, newData)
     respSuccess(res, seller, 'Profile updated successfully')
   } catch (error) {
     respError(res, error.message)
@@ -624,37 +541,89 @@ getlevelFiveCategories = async(element) => {
 
 }
 
+//unused code
+// if (productDetails || (req.files && (req.files.document || req.files.image1 || req.files.image2 || req.files.image3 || req.files.image4))) {
 
+//   productDetails = JSON.parse(productDetails)
 
-      // req.body && req.body.length && req.body.forEach(async element => {
-      //   if(element.productType === 'level5'){
-      //     let findLevel4 = await getlevelFiveCategories(element)
-      //     await resultVal.push(findLevel4)
-      //     // console.log(findLevel4, "55555555555")
-      //   }
-      //   if (element.productType === 'level4'){
-      //     let findLevel3 = await getlevelFourCategories(element)
-      //     await resultVal.push(findLevel3)
-      //     //  console.log(findLevel3, "4444444444444")
-      //   }
-      //   if (element.productType === 'level3') {
-      //     let findLevel2 = await getlevelThreeCategories(element)
-      //     // console.log(findLevel2, "3333333333333")
-      //     return resultVal.push(findLevel2);
-      //   }
-      //   if (element.productType === 'level2'){
-      //     let findLevel1 = await getlevelTwoCategories(element)
-      //     await resultVal.push(findLevel1);
-      //   }
-      //   if (element.productType === 'level1') {
-      //     element.parentCategoryId = element.id,
-      //     element.primaryCategoryId = null,
-      //     element.secondaryCategoryId = null,
-      //     element.productId = null,
-      //     element.productSubcategoryId = null
-      //     delete element.id,
-      //     delete element.productType
-      //     await resultVal.push(element);
-      //     // console.log(element, "============")
-      //   }
-      // });
+//   /* need to optimize the below code*/
+//   if (req.files && req.files.document) {
+//     let data = {
+//       Key: `${sellerID}/${req.files.document.name}`,
+//       body: req.files.document.data
+//     }
+//     const _document = await uploadToDOSpace(data)
+//     productDetails.productDetails.document.name = req.files.document.name;
+//     productDetails.productDetails.document.code = _document.Location;
+//   }
+
+//   if (req.files && req.files.image1) {
+//     let data = {
+//       Key: `${sellerID}/${req.files.image1.name}`,
+//       body: req.files.image1.data
+//     }
+//     const _image1 = await uploadToDOSpace(data)
+//     productDetails.productDetails.image.image1.name = req.files.image1.name;
+//     productDetails.productDetails.image.image1.code = _image1.Location;
+//   }
+//   if (req.files && req.files.image2) {
+//     let data = {
+//       Key: `${sellerID}/${req.files.image2.name}`,
+//       body: req.files.image2.data
+//     }
+//     const _image2 = await uploadToDOSpace(data)
+//     productDetails.productDetails.image.image2.name = req.files.image2.name;
+//     productDetails.productDetails.image.image2.code = _image2.Location;
+//   }
+//   if (req.files && req.files.image3) {
+//     let data = {
+//       Key: `${sellerID}/${req.files.image3.name}`,
+//       body: req.files.image3.data
+//     }
+//     const _image3 = await uploadToDOSpace(data)
+//     productDetails.productDetails.image.image3.name = req.files.image3.name;
+//     productDetails.productDetails.image.image3.code = _image3.Location;
+//   }
+//   if (req.files && req.files.image4) {
+//     let data = {
+//       Key: `${sellerID}/${req.files.image4.name}`,
+//       body: req.files.image4.data
+//     }
+//     const _image4 = await uploadToDOSpace(data)
+//     productDetails.productDetails.image.image4.name = req.files.image4.name;
+//     productDetails.productDetails.image.image4.code = _image4.Location;
+//   }
+//   /* till here*/
+
+//   let productsId = []
+//   let prdctDtls
+
+//   if (productDetails._id !== null) {
+//     prdctDtls = await addProductDetails(productDetails._id, productDetails)
+//   } else {
+//     prdctDtls = await addProductDetails(null, productDetails)
+//   }
+//   productsId = user.sellerProductId
+
+//   if (
+//     (productsId &&
+//       productsId.length &&
+//       productDetails &&
+//       productDetails._id === null) ||
+//     productDetails._id === undefined
+//   ) {
+//     productsId.push(prdctDtls._id)
+//   } else if (
+//     (prdctDtls._id &&
+//       productsId.length === 0 &&
+//       productDetails._id === null) ||
+//     productDetails._id === undefined
+//   ) {
+//     productsId = []
+//     productsId.push(prdctDtls._id)
+//   }
+//   newData.sellerProductId = productsId
+//   seller = await updateSeller({
+//     _id: sellerID
+//   }, newData)
+// }
