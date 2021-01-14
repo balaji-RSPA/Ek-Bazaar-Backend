@@ -521,7 +521,8 @@ module.exports.getSeller = (id, chkStock) =>
   })
 
 exports.getSellerProfile = (id) =>
-  new Promise((resolve, reject) => {
+new Promise((resolve, reject) => {
+  console.log("id", id)
     Sellers.find({
       _id: id
     })
@@ -530,64 +531,11 @@ exports.getSellerProfile = (id) =>
       .populate("busenessId")
       .populate("statutoryId")
       .populate("sellerContactId")
-      // .populate({
-      //   path: 'sellerContactId',
-      //   model: SellerContact,
-      //   populate: {
-      //     path: 'city',
-      //     model: Cities
-      //   },
-      //   populate: {
-      //     path: 'state',
-      //     model: States
-      //   },
-      //   populate: {
-      //     path: 'country',
-      //     model: Countries
-      //   },
-      // })
       .populate("sellerCompanyId")
       .populate("establishmentId")
-
       .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "parentCategoryId",
-          model: ParentCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "primaryCategoryId",
-          model: PrimaryCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "secondaryCategoryId",
-          model: SecondaryCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "poductId",
-          model: Products.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "productSubcategoryId",
-          model: ProductsSubCategories.collection.name
-        },
+        path: "sellerProductId",
+        model: "sellerproducts"
       })
       .populate("location.city", "name")
       .populate("location.state", "name")

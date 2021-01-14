@@ -104,13 +104,14 @@ const getUserAgent = (userAgent) => {
 
 module.exports.addUser = async (req, res) => {
   try {
-    const { password, mobile, ipAddress } = req.body;
+    const { password, mobile, ipAddress, preferredLanguage } = req.body;
     req.body.password = encodePassword(password);
     const tenderUser = {
       countryCode: mobile.countryCode,
       mobile: mobile.mobile,
       isPhoneVerified: 2,
       password: req.body.password,
+      preferredLanguage
     };
     const user = await addUser(tenderUser);
 

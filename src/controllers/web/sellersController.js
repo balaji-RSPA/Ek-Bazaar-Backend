@@ -15,8 +15,10 @@ const {
   sellers,
   location,
   category,
-  mastercollections
+  mastercollections,
+  elastic
 } = require('../../modules')
+const { sellerSearch, searchFromElastic } = elastic;
 const _ = require('lodash')
 
 const {
@@ -55,11 +57,26 @@ module.exports.getSeller = async (req, res) => {
     const {
       userID
     } = req
-    const {
-      id
-    } = req.query
-    const seller = userID ? await getSeller(userID) : await getSellerProfile(id)
-    respSuccess(res, seller)
+    const reqQuery = camelcaseKeys(req.query)
+    const { id, elastic } = reqQuery
+    console.log("module.exports.getSeller -> req.query", reqQuery)
+    if (elastic === 'true') {
+
+      const result = await sellerSearch(reqQuery)
+      const { query } = result
+      const seller = await searchFromElastic(query, { limit: 1, skip: 0 })
+      console.log("module.exports.getSeller -> seller", seller)
+      respSuccess(res, {
+        total: seller[1],
+        data: seller[0]
+      })
+
+    } else {
+
+      const seller = userID ? await getSeller(userID) : await getSellerProfile(id)
+      respSuccess(res, seller)
+
+    }
   } catch (error) {
     respError(res, error.message)
   }
@@ -164,40 +181,40 @@ module.exports.updateSeller = async (req, res) => {
       let estblsmntPhts
       if (user.establishmentId) {
         let getEstablishmentPht = await findEstablishment(user.establishmentId)
-            if (req.files.image1) {
-              getEstablishmentPht.photos[0]=null;
-            }
-            if (req.files.image2){
-               getEstablishmentPht.photos[1] = null;
-            }
-            if (req.files.image3) {
-               getEstablishmentPht.photos[2] = null;
-            }
-            if (req.files.image4) {
-               getEstablishmentPht.photos[3] = null;
-            }
-            if (req.files.image5) {
-               getEstablishmentPht.photos[4] = null;
-            }
-            if (req.files.image6) {
-              getEstablishmentPht.photos[5] = null;
-            }
-            getEstablishmentPht.photos = getEstablishmentPht.photos.filter((Boolean));
-            photos = getEstablishmentPht.photos.length ? [...getEstablishmentPht.photos, ...photos] : photos
-            estblsmntPhts = await addEstablishmentPhotos(
-              sellerID,
-              photos
-            )
-           } else {
-            estblsmntPhts = await addEstablishmentPhotos(
-              sellerID,
-              photos
-            )
-            newData.establishmentId = estblsmntPhts._id
-            seller = await updateSeller({
-              _id: sellerID
-            }, newData)
+        if (req.files.image1) {
+          getEstablishmentPht.photos[0] = null;
         }
+        if (req.files.image2) {
+          getEstablishmentPht.photos[1] = null;
+        }
+        if (req.files.image3) {
+          getEstablishmentPht.photos[2] = null;
+        }
+        if (req.files.image4) {
+          getEstablishmentPht.photos[3] = null;
+        }
+        if (req.files.image5) {
+          getEstablishmentPht.photos[4] = null;
+        }
+        if (req.files.image6) {
+          getEstablishmentPht.photos[5] = null;
+        }
+        getEstablishmentPht.photos = getEstablishmentPht.photos.filter((Boolean));
+        photos = getEstablishmentPht.photos.length ? [...getEstablishmentPht.photos, ...photos] : photos
+        estblsmntPhts = await addEstablishmentPhotos(
+          sellerID,
+          photos
+        )
+      } else {
+        estblsmntPhts = await addEstablishmentPhotos(
+          sellerID,
+          photos
+        )
+        newData.establishmentId = estblsmntPhts._id
+        seller = await updateSeller({
+          _id: sellerID
+        }, newData)
+      }
     }
     if (companyProfile) {
       companyProfile = {
@@ -712,6 +729,7 @@ getlevelThreeCategories = async (element, userId, serviceType) => {
 }
 
 getlevelFourCategories = async (element, userId, serviceType) => {
+  // getlevelFourCategories = async (element) => {
 
   let findLevel3 = await getProductCat({
     _id: element.id
@@ -733,6 +751,7 @@ getlevelFourCategories = async (element, userId, serviceType) => {
 }
 
 getlevelFiveCategories = async (element, userId, serviceType) => {
+  // getlevelFiveCategories = async (element) => {
 
   let findLevel4 = await getProductSubcategory({
     _id: element.id
@@ -747,6 +766,7 @@ getlevelFiveCategories = async (element, userId, serviceType) => {
     element.productSubcategoryId = element.id,
     element.userId = userId
   element.serviceType = serviceType
+  // element.productSubcategoryId = element.id
   delete element.id,
     delete element.productType
   return element;
