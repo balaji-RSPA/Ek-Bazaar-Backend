@@ -111,7 +111,11 @@ const sellersSchema = new Schema(
       trim: true,
       default: null
     },
-    mobile: [mobile],
+    // mobile: [mobile],
+    mobile: {
+      type: [mobile],
+      default: []
+    },
     alternateNumber: {
       type: String,
       trim: true,
@@ -131,6 +135,18 @@ const sellersSchema = new Schema(
       type: Boolean,
       default: false,
       // required: true
+    },
+    sellerVerified: {
+      type: Boolean,
+      default: false
+    },
+    paidSeller: {
+      type: Boolean,
+      default: false
+    },
+    international: {
+      type: Boolean,
+      default: false
     },
     location: {
       type: location,
@@ -229,6 +245,10 @@ const sellersSchema = new Schema(
       type: String,
       default: null,
       trim: true
+    },
+    profileUpdate: {
+      type: Boolean,
+      default: false
     }
   },
   {

@@ -8,6 +8,7 @@ const SecondaryCategory = require('./secondaryCategorySchema')
 const Products = require('./productsSchema');
 const ProductsSubCategories = require("./productsSubCategoriesSchema");
 const City = require('./citiesSchema')
+const SellerTypes = require('./sellertTypesSchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
@@ -126,16 +127,16 @@ const productDetailsSchema = new Schema({
       default: null
     }
   },
-  // countryOfOrigin: {
-  //   type: ObjectId,
-  //   ref: Countries,
-  //   default: null,
-  // },
-  // regionOfOrigin: {
-  //   type: ObjectId,
-  //   ref: States,
-  //   default: null,
-  // },
+  countryOfOrigin: {
+    type: ObjectId,
+    ref: Countries,
+    default: null,
+  },
+  regionOfOrigin: {
+    type: ObjectId,
+    ref: States,
+    default: null,
+  },
   productDescription: {
     type: String,
     trim: true,
@@ -144,13 +145,13 @@ const productDetailsSchema = new Schema({
     type: Boolean,
     trim: true,
   },
-  shelfLife:{
-    shelfLife:{
+  shelfLife: {
+    shelfLife: {
       type: String,
       trim: true,
       default: null
     },
-    unit:{
+    unit: {
       type: String,
       trim: true,
       default: null
@@ -160,74 +161,79 @@ const productDetailsSchema = new Schema({
     type: Boolean,
     trim: true,
   },
-  document:documentSchema,
-  image : {image1:{
-    name: {
-      type: String,
-      trim: true,
-      default: null
+  document: documentSchema,
+  image: {
+    image1: {
+      name: {
+        type: String,
+        trim: true,
+        default: null
+      },
+      code: {
+        type: String,
+        trim: true,
+        default: null
+      },
     },
-    code: {
-      type: String,
-      trim: true,
-      default: null
+    image2: {
+      name: {
+        type: String,
+        trim: true,
+        default: null
+      },
+      code: {
+        type: String,
+        trim: true,
+        default: null
+      },
     },
-  },
-  image2 : {
-    name: {
-      type: String,
-      trim: true,
-      default: null
+    image3: {
+      name: {
+        type: String,
+        trim: true,
+        default: null
+      },
+      code: {
+        type: String,
+        trim: true,
+        default: null
+      },
     },
-    code: {
-      type: String,
-      trim: true,
-      default: null
-    },
-  },
-  image3:{
-    name: {
-      type: String,
-      trim: true,
-      default: null
-    },
-    code: {
-      type: String,
-      trim: true,
-      default: null
-    },
-  },
-  image4:{
-    name: {
-      type: String,
-      trim: true,
-      default: null
-    },
-    code: {
-      type: String,
-      trim: true,
-      default: null
-    },
+    image4: {
+      name: {
+        type: String,
+        trim: true,
+        default: null
+      },
+      code: {
+        type: String,
+        trim: true,
+        default: null
+      },
+    }
   }
-}
 });
 
 const serviceCitiesSchema = new Schema({
-    city: {
-      type: ObjectId,
-      ref: City,
-      default: null
-    },
-    state: {
-      type: ObjectId,
-      ref: States,
-      default: null
-    },
-    country: {
-      type: ObjectId,
-      ref: Countries,
-      default: null
-    }
+  city: {
+    type: ObjectId,
+    ref: City,
+    default: null
+  },
+  state: {
+    type: ObjectId,
+    ref: States,
+    default: null
+  },
+  country: {
+    type: ObjectId,
+    ref: Countries,
+    default: null
+  },
+  region: {
+    type: String,
+    default: null
+  },
 })
 
 const sellerProductSchema = new Schema(
@@ -243,7 +249,8 @@ const sellerProductSchema = new Schema(
     },
     serviceType: {
       type: ObjectId,
-      trim: true, 
+      ref: SellerTypes,
+      trim: true,
       default: null
     },
     parentCategoryId: [{ // level 1
@@ -266,21 +273,45 @@ const sellerProductSchema = new Schema(
       ref: Products,
       default: null,
     }],
-    productSubcategoryId:[{ // level 5
+    productSubcategoryId: [{ // level 5
       type: ObjectId,
       ref: ProductsSubCategories,
       default: null
     }],
 
-    productDetails: productDetailsSchema,
-    
-    serviceCity: [serviceCitiesSchema]
+    productDetails: {
+      type: productDetailsSchema,
+      default: null
+    },
+
+    serviceCity: [serviceCitiesSchema],
+    status: {
+      type: Boolean,
+      default: true
+    },
+    keywords: {
+      type: Array,
+      default: null
+    },
+    flag: {
+      type: Number,
+      default: 1,
+    },
+    batch: {
+      type: Number,
+      default: 1
+    },
   },
   {
     timestamps: true,
     versionKey: false,
   }
 );
+
+sellerProductSchema.index({
+  flag: 1,
+  batch: 1
+})
 
 const SellerProducts = model("sellerproducts", sellerProductSchema);
 module.exports = SellerProducts;

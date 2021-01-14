@@ -14,7 +14,8 @@ const mongoose = require('mongoose');
 const {
   sellers,
   location,
-  category
+  category,
+  mastercollections
 } = require('../../modules')
 const _ = require('lodash')
 
@@ -36,7 +37,8 @@ const {
   getSellerVal,
   addSellerProduct,
   findEstablishment,
-  getSellerProduct
+  getSellerProduct,
+  getSellerProductDetails
 } = sellers
 const {
   getParentCat,
@@ -46,6 +48,7 @@ const {
   getProductSubcategory
 } = category
 const { getFilteredCities } = location;
+const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct } = mastercollections
 
 module.exports.getSeller = async (req, res) => {
   try {
@@ -78,6 +81,7 @@ module.exports.updateSeller = async (req, res) => {
       GstNumber,
       IeCode,
     } = req.body
+    console.log("🚀 ~ file: sellersController.js ~ line 84 ~ module.exports.updateSeller= ~ req.body", req.body)
     const {
       userID
     } = req
@@ -280,9 +284,11 @@ module.exports.sellerBulkInsertWithBatch = async (req, res) => new Promise(async
 
 
 module.exports.deleteSellerProduct = async (req, res) => {
+  console.log("delete product--------")
   try {
     let result
     let sellerProduct = await deleteSellerProduct(req.body.id)
+    const masterDelete = await deleteMasterProduct(req.body.id)
     let findSeller = await getSellerVal(sellerProduct.sellerId)
     if (findSeller) {
       let objVal = mongoose.Types.ObjectId(req.body.id);
@@ -300,42 +306,209 @@ module.exports.deleteSellerProduct = async (req, res) => {
     respError(res, error.message)
   }
 }
+
+// function masterMapData(val, keywords) {
+const masterMapData = (val, type) => new Promise((resolve, reject) => {
+  console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", val)
+  const _Scity = [];
+  let serviceProductData;
+  if (val.serviceCity && val.serviceCity.length) {
+    // delete val.serviceCity._id
+    serviceProductData = _.map(val.serviceCity, function (c) {
+      return _.omit(c, ['region', '_id']);
+    });
+  }
+  val.serviceCity && val.serviceCity.length && val.serviceCity.map((v) => {
+    _Scity.push(v.city && v.city.name.toLowerCase())
+    _Scity.push(v.state && v.state.name.toLowerCase())
+    _Scity.push(v.country && v.country.name.toLowerCase())
+    _Scity.push(v.region && v.region.toLowerCase())
+  })
+  val.sellerId && val.sellerId.location && delete val.sellerId.location._id
+
+  let keywords = []
+  keywords.push(val.sellerId.name.toLowerCase())
+  keywords.push(val.serviceType && val.serviceType.name.toLowerCase())
+  keywords.push(val.parentCategoryId && val.parentCategoryId.length && val.parentCategoryId[0].name.toLowerCase())
+  keywords.push(val.primaryCategoryId && val.primaryCategoryId.length && val.primaryCategoryId[0].name.toLowerCase())
+  keywords.push(val.secondaryCategoryId && val.secondaryCategoryId.length && val.secondaryCategoryId[0].name.toLowerCase())
+  keywords.push(val.poductId && val.poductId.length && val.poductId[0].name.toLowerCase())
+  keywords.push(val.productSubcategoryId && val.productSubcategoryId.length && val.productSubcategoryId[0].name.toLowerCase())
+  keywords.push(val.productDetails && val.productDetails.name.toLowerCase())
+  keywords.push(val.productDetails && val.productDetails.productDescription && val.productDetails.productDescription.toLowerCase())
+  keywords.push(..._Scity)
+
+  keywords = _.without(_.uniq(keywords), '', null, undefined, 0)
+  let data;
+  if (type === "update") {
+    data = {
+      productDetails: val.productDetails && val.productDetails || null,
+      status: val.status || true,
+      batch: 1,
+      keywords,
+      serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null
+    }
+
+  } else {
+    data = {
+      sellerId: val.sellerId && {
+        location: val.sellerId && val.sellerId.location || null,
+        name: val.sellerId && val.sellerId.name || null,
+        email: val.sellerId && val.sellerId.email || null,
+
+        sellerType: val.sellerId && val.sellerId.sellerType && val.sellerId.sellerType.length && {
+          _id: val.sellerId.sellerType[0]._id,
+          name: val.sellerId.sellerType[0].name
+        } || null,
+
+        _id: val.sellerId && val.sellerId._id || null,
+        mobile: val.sellerId && val.sellerId.mobile || null,
+        website: val.sellerId.website || null,
+        isEmailVerified: val.sellerId.isEmailVerified || false,
+        isPhoneVerified: val.sellerId.isPhoneVerified || false,
+        sellerVerified: val.sellerId.sellerVerified || false,
+        paidSeller: val.sellerId.paidSeller || false,
+        international: val.sellerId.international || false,
+        deactivateAccount: val.sellerId.deactivateAccount && val.sellerId.deactivateAccount.status || false,
+        businessName: val.sellerId.busenessId && val.sellerId.busenessId.name || null
+      } || null,
+      userId: val.sellerId && val.sellerId.userId && {
+        name: val.sellerId.name || null,
+        _id: val.sellerId.userId
+      } || null,
+      productDetails: val.productDetails && val.productDetails || null,
+      status: val.status || true,
+      batch: 1,
+      keywords,
+      serviceType: val.serviceType && {
+        _id: val.serviceType._id,
+        name: val.serviceType.name
+      } || null,
+      parentCategoryId: val.parentCategoryId && val.parentCategoryId.length && val.parentCategoryId || null,
+      primaryCategoryId: val.primaryCategoryId && val.primaryCategoryId.length && val.primaryCategoryId || null,
+      secondaryCategoryId: val.secondaryCategoryId && val.secondaryCategoryId.length && val.secondaryCategoryId || null,
+      poductId: val.poductId && val.poductId.length && val.poductId || null,
+      productSubcategoryId: val.productSubcategoryId && val.productSubcategoryId.length && val.productSubcategoryId || null,
+      // serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null
+    }
+
+  }
+
+  if (type === 'insert') {
+    data = {
+      ...data,
+      _id: val._id
+    }
+  }
+  resolve(data)
+
+})
+
 module.exports.addSellerProduct = async (req, res) => {
   try {
     let result
     let sellerId = req.body && req.body[0] && req.body[0].sellerId
+    // console.log("🚀 ~ file: sellersController.js ~ line 390 ~ module.exports.addSellerProduct= ~ sellerId", req.body)
     if (sellerId) {
+      const findSeller = await getSellerProfile(sellerId);
+      console.log("🚀 ~ file: sellersController.js ~ line 497 ~ module.exports.addSellerProduct= ~ findSeller", findSeller)
+      const userId = findSeller && findSeller.length && findSeller[0].userId || null
+      const serviceType = findSeller && findSeller.length && findSeller[0].sellerType.length && findSeller[0].sellerType[0]._id || null
       let resultVal = []
-      for(let i = 0; i<req.body.length; i++){
+      for (let i = 0; i < req.body.length; i++) {
         if (req.body[i].productType === 'level5') {
-          let findLevel4 = await getlevelFiveCategories(req.body[i])
+          let findLevel4 = await getlevelFiveCategories(req.body[i], userId, serviceType)
           resultVal.push(findLevel4)
         }
         if (req.body[i].productType === 'level4') {
-          let findLevel3 = await getlevelFourCategories(req.body[i])
+          let findLevel3 = await getlevelFourCategories(req.body[i], userId, serviceType)
           await resultVal.push(findLevel3)
         }
         if (req.body[i].productType === 'level3') {
-          let findLevel2 = await getlevelThreeCategories(req.body[i])
+          let findLevel2 = await getlevelThreeCategories(req.body[i], userId, serviceType)
           await resultVal.push(findLevel2);
         }
         if (req.body[i].productType === 'level2') {
-          let findLevel1 = await getlevelTwoCategories(req.body[i])
+          let findLevel1 = await getlevelTwoCategories(req.body[i], userId, serviceType)
           await resultVal.push(findLevel1);
         }
         if (req.body[i].productType === 'level1') {
-            req.body[i].parentCategoryId = req.body[i].id,
+          req.body[i].parentCategoryId = req.body[i].id,
             req.body[i].primaryCategoryId = null,
             req.body[i].secondaryCategoryId = null,
             req.body[i].productId = null,
-            req.body[i].productSubcategoryId = null
+            req.body[i].productSubcategoryId = null,
+            req.body[i].userId = userId
+          req.body[i].serviceType = serviceType
           delete req.body[i].id,
-          delete req.body[i].productType
+            delete req.body[i].productType
           await resultVal.push(req.body[i]);
         }
       }
-      const findSeller = await getSellerProfile(sellerId);
+      // const findSeller = await getSellerProfile(sellerId);
       result = await addSellerProduct(resultVal)
+      const que = {
+        _id: { $in: result }
+      }
+      const proDetails = await getSellerProductDetails(que)
+
+      let masterData = [];
+      if (proDetails.length) {
+
+        // masterData = proDetails.map((val) => {
+        for (let index = 0; index < proDetails.length; index++) {
+          const val = proDetails[index];
+
+
+          const formateData = await masterMapData(val, 'insert')
+          masterData.push(formateData)
+          // return ({
+          //   sellerId: val.sellerId && {
+          //     location: val.sellerId && val.sellerId.location || null,
+          //     name: val.sellerId && val.sellerId.name || null,
+          //     email: val.sellerId && val.sellerId.email || null,
+
+          //     sellerType: val.sellerId && val.sellerId.sellerType && val.sellerId.sellerType.length && {
+          //       _id: val.sellerId.sellerType[0]._id,
+          //       name: val.sellerId.sellerType[0].name
+          //     } || null,
+
+          //     _id: val.sellerId && val.sellerId._id || null,
+          //     mobile: val.sellerId && val.sellerId.mobile || null,
+          //     website: val.sellerId.website || null,
+          //     isEmailVerified: val.sellerId.isEmailVerified || false,
+          //     isPhoneVerified: val.sellerId.isPhoneVerified || false,
+          //     sellerVerified: val.sellerId.sellerVerified || false,
+          //     paidSeller: val.sellerId.paidSeller || false,
+          //     international: val.sellerId.international || false,
+          //     deactivateAccount: val.sellerId.deactivateAccount && val.sellerId.deactivateAccount.status || false,
+          //     businessName: val.sellerId.busenessId && val.sellerId.busenessId.name || null
+          //   } || null,
+          //   userId: val.sellerId && val.sellerId.userId && {
+          //     name: val.sellerId.name || null,
+          //     _id: val.sellerId.userId
+          //   } || null,
+          //   productDetails: null,
+          //   status: true,
+          //   batch: 1,
+          //   keywords,
+          //   serviceType: val.serviceType && {
+          //     _id: val.serviceType._id,
+          //     name: val.serviceType.name
+          //   } || null,
+          //   parentCategoryId: val.parentCategoryId && val.parentCategoryId.length && val.parentCategoryId || null,
+          //   primaryCategoryId: val.primaryCategoryId && val.primaryCategoryId.length && val.primaryCategoryId || null,
+          //   secondaryCategoryId: val.secondaryCategoryId && val.secondaryCategoryId.length && val.secondaryCategoryId || null,
+          //   poductId: val.poductId && val.poductId.length && val.poductId || null,
+          //   productSubcategoryId: val.productSubcategoryId && val.productSubcategoryId.length && val.productSubcategoryId || null,
+
+          // })
+        }
+        // )
+        const mosterResult = await insertManyMaster(masterData)
+
+      }
+
       if (findSeller && findSeller.length) {
         findSeller[0].sellerProductId = findSeller[0].sellerProductId && findSeller[0].sellerProductId.length !== 0 ? [...result, ...findSeller[0].sellerProductId] : result;
         // findSeller[0].sellerProductId.concat(result)
@@ -343,12 +516,15 @@ module.exports.addSellerProduct = async (req, res) => {
       seller = await updateSeller({
         _id: sellerId
       }, findSeller[0])
+
       respSuccess(res, seller, "Successfully added product")
     }
   } catch (error) {
+    console.log(error, ' error')
     respError(res, "Seller not found or something went wrong")
   }
 }
+
 module.exports.updateSellerProduct = async (req, res) => {
   // const {id,inStock} = req.body
 
@@ -357,9 +533,11 @@ module.exports.updateSellerProduct = async (req, res) => {
       body,
       files
     } = req
+    console.log('update poroduct---', req.body)
     let updateDetail
-    if(body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)){
+    if (body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
+      console.log("🚀 ~ file: sellersController.js ~ line 619 ~ module.exports.updateSellerProduct= ~ productDetails", productDetails)
 
       // /* need to optimize the below code*/
       if (files && files.document) {
@@ -368,18 +546,25 @@ module.exports.updateSellerProduct = async (req, res) => {
           body: files.document.data
         }
         const _document = await uploadToDOSpace(data)
-        productDetails.productDetails.document.name = files.document.name;
-        productDetails.productDetails.document.code = _document.Location;
+        productDetails.productDetails.document = {
+          name: files.document.name,
+          code: _document.Location
+        }
+
       }
-    
+
       if (files && files.image1) {
         let data = {
           Key: `${productDetails.sellerId}/${files.image1.name}`,
           body: files.image1.data
         }
         const _image1 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image1.name = files.image1.name;
-        productDetails.productDetails.image.image1.code = _image1.Location;
+        productDetails.productDetails.image.image1 = {
+          name: files.image1.nam,
+          code: _image1.Location
+        }
+        // productDetails.productDetails.image.image1.name = files.image1.name;
+        // productDetails.productDetails.image.image1.code = _image1.Location;
       }
 
       if (files && files.image2) {
@@ -388,8 +573,12 @@ module.exports.updateSellerProduct = async (req, res) => {
           body: files.image2.data
         }
         const _image2 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image2.name = files.image2.name;
-        productDetails.productDetails.image.image2.code = _image2.Location;
+        productDetails.productDetails.image.image2 = {
+          name: files.image2.name,
+          code: _image2.Location
+        }
+        // productDetails.productDetails.image.image2.name = files.image2.name;
+        // productDetails.productDetails.image.image2.code = _image2.Location;
       }
 
       if (files && files.image3) {
@@ -398,8 +587,12 @@ module.exports.updateSellerProduct = async (req, res) => {
           body: files.image3.data
         }
         const _image3 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image3.name = files.image3.name;
-        productDetails.productDetails.image.image3.code = _image3.Location;
+        productDetails.productDetails.image.image3 = {
+          name: files.image3.name,
+          code: _image3.Location
+        }
+        // productDetails.productDetails.image.image3.name = files.image3.name;
+        // productDetails.productDetails.image.image3.code = _image3.Location;
       }
 
       if (files && files.image4) {
@@ -408,11 +601,15 @@ module.exports.updateSellerProduct = async (req, res) => {
           body: files.image4.data
         }
         const _image4 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image4.name = files.image4.name;
-        productDetails.productDetails.image.image4.code = _image4.Location;
+        productDetails.productDetails.image.image4 = {
+          name: files.image4.name,
+          code: _image4.Location
+        }
+        // productDetails.productDetails.image.image4.name = files.image4.name;
+        // productDetails.productDetails.image.image4.code = _image4.Location;
       }
       // /* till here*/
-      updateDetail = await addProductDetails(productDetails._id,productDetails);
+      updateDetail = await addProductDetails(productDetails._id, productDetails);
     }
     if (body.id && body.imageType) {
       const data = {
@@ -436,12 +633,19 @@ module.exports.updateSellerProduct = async (req, res) => {
         "productDetails.inStock": body.inStock
       })
     }
+    if (updateDetail) {
+      const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
+      const masterData = await masterMapData(updatedProduct[0], 'update')
+      // console.log(JSON.stringify(masterData), ' fffffffffff')
+      const masResult = await updateMaster({ _id: updateDetail._id }, masterData)
+    }
     // if(body.id && body.inStock){
     //   
     // }else
     let seller = await getSellerProfile(updateDetail.sellerId)
     respSuccess(res, seller, "Successfully updated")
   } catch (error) {
+    console.log(error, ' ipdate data----------------')
     respError(res, error.message)
   }
 }
@@ -459,70 +663,76 @@ module.exports.getSellerProduct = async (req, res) => {
 module.exports.getFilteredCities = async (req, res) => {
   try {
     const { stateId } = req.body
-    let filteredCities = await getFilteredCities({ state: stateId})
-      filteredCities = filteredCities.map((val) =>({
-        label:val.name,
-        value:val._id
-      }))
+    let filteredCities = await getFilteredCities({ state: stateId })
+    filteredCities = filteredCities.map((val) => ({
+      label: val.name,
+      value: val._id
+    }))
     respSuccess(res, filteredCities)
   } catch (error) {
     respError(res, error.message)
   }
 }
 
-getlevelTwoCategories = async (element) => {
+getlevelTwoCategories = async (element, userId, serviceType) => {
 
- let findLevel1 = await getPrimaryCat({
-   _id: element.id
- })
+  let findLevel1 = await getPrimaryCat({
+    _id: element.id
+  })
   element.parentCategoryId = findLevel1.parentCatId,
-  element.primaryCategoryId = element.id,
-  element.secondaryCategoryId = null,
-  element.productId = null,
-  element.productSubcategoryId = null
+    element.primaryCategoryId = element.id,
+    element.secondaryCategoryId = null,
+    element.productId = null,
+    element.productSubcategoryId = null,
+    element.userId = userId
+  element.userId = serviceType
   delete element.id,
-  delete element.productType
+    delete element.productType
   return element;
 }
 
-getlevelThreeCategories = async (element) => {
+getlevelThreeCategories = async (element, userId, serviceType) => {
 
   let findLevel2 = await getSecondaryCat({
     _id: element.id
   })
 
-  let findLevel1 = await getlevelTwoCategories({id : findLevel2.primaryCatId})
+  let findLevel1 = await getlevelTwoCategories({ id: findLevel2.primaryCatId })
   element.parentCategoryId = findLevel1.parentCategoryId,
-  element.primaryCategoryId = findLevel2.primaryCatId,
-  element.secondaryCategoryId = element.id,
-  element.productId = null,
-  element.productSubcategoryId = null
+    element.primaryCategoryId = findLevel2.primaryCatId,
+    element.secondaryCategoryId = element.id,
+    element.productId = null,
+    element.productSubcategoryId = null,
+    element.userId = userId
+  element.serviceType = serviceType
   delete element.id,
-  delete element.productType
- return element;
+    delete element.productType
+  return element;
 
 }
 
-getlevelFourCategories = async (element) => {
-  
+getlevelFourCategories = async (element, userId, serviceType) => {
+
   let findLevel3 = await getProductCat({
     _id: element.id
   })
 
-  let findLevel2 = await getlevelThreeCategories({id : findLevel3.secondaryId})
+  let findLevel2 = await getlevelThreeCategories({ id: findLevel3.secondaryId })
 
-    element.parentCategoryId = findLevel2.parentCategoryId,
+  element.parentCategoryId = findLevel2.parentCategoryId,
     element.primaryCategoryId = findLevel2.primaryCategoryId,
     element.secondaryCategoryId = findLevel3.secondaryId,
     element.productId = element.id,
-    element.productSubcategoryId = null
-    delete element.id,
+    element.productSubcategoryId = null,
+    element.userId = userId
+  element.serviceType = serviceType
+  delete element.id,
     delete element.productType
-    return element;
+  return element;
 
 }
 
-getlevelFiveCategories = async(element) => {
+getlevelFiveCategories = async (element, userId, serviceType) => {
 
   let findLevel4 = await getProductSubcategory({
     _id: element.id
@@ -534,10 +744,12 @@ getlevelFiveCategories = async(element) => {
     element.primaryCategoryId = findLevel3.primaryCategoryId,
     element.secondaryCategoryId = findLevel3.secondaryCategoryId,
     element.productId = findLevel4.productId,
-    element.productSubcategoryId = element.id
-    delete element.id,
+    element.productSubcategoryId = element.id,
+    element.userId = userId
+  element.serviceType = serviceType
+  delete element.id,
     delete element.productType
-   return element;
+  return element;
 
 }
 
