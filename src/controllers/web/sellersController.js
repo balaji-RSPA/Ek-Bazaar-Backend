@@ -14,8 +14,10 @@ const mongoose = require('mongoose');
 const {
   sellers,
   location,
-  category
+  category,
+  elastic
 } = require('../../modules')
+const { sellerSearch, searchFromElastic } = elastic;
 const _ = require('lodash')
 
 const {
@@ -52,11 +54,26 @@ module.exports.getSeller = async (req, res) => {
     const {
       userID
     } = req
-    const {
-      id
-    } = req.query
-    const seller = userID ? await getSeller(userID) : await getSellerProfile(id)
-    respSuccess(res, seller)
+    const reqQuery = camelcaseKeys(req.query)
+    const { id, elastic } = reqQuery
+    console.log("module.exports.getSeller -> req.query", reqQuery)
+    if (elastic === 'true') {
+
+      const result = await sellerSearch(reqQuery)
+      const { query } = result
+      const seller = await searchFromElastic(query, { limit: 1, skip: 0 })
+      console.log("module.exports.getSeller -> seller", seller)
+      respSuccess(res, {
+        total: seller[1],
+        data: seller[0]
+      })
+
+    } else {
+
+      const seller = userID ? await getSeller(userID) : await getSellerProfile(id)
+      respSuccess(res, seller)
+
+    }
   } catch (error) {
     respError(res, error.message)
   }
@@ -389,7 +406,7 @@ module.exports.addSellerProduct = async (req, res) => {
     let sellerId = req.body && req.body[0] && req.body[0].sellerId
     if (sellerId) {
       let resultVal = []
-      for(let i = 0; i<req.body.length; i++){
+      for (let i = 0; i < req.body.length; i++) {
         if (req.body[i].productType === 'level5') {
           let findLevel4 = await getlevelFiveCategories(req.body[i])
           resultVal.push(findLevel4)
@@ -407,13 +424,13 @@ module.exports.addSellerProduct = async (req, res) => {
           await resultVal.push(findLevel1);
         }
         if (req.body[i].productType === 'level1') {
-            req.body[i].parentCategoryId = req.body[i].id,
+          req.body[i].parentCategoryId = req.body[i].id,
             req.body[i].primaryCategoryId = null,
             req.body[i].secondaryCategoryId = null,
             req.body[i].productId = null,
             req.body[i].productSubcategoryId = null
           delete req.body[i].id,
-          delete req.body[i].productType
+            delete req.body[i].productType
           await resultVal.push(req.body[i]);
         }
       }
@@ -441,7 +458,7 @@ module.exports.updateSellerProduct = async (req, res) => {
       files
     } = req
     let updateDetail
-    if(body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)){
+    if (body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
 
       // /* need to optimize the below code*/
@@ -454,7 +471,7 @@ module.exports.updateSellerProduct = async (req, res) => {
         productDetails.productDetails.document.name = files.document.name;
         productDetails.productDetails.document.code = _document.Location;
       }
-    
+
       if (files && files.image1) {
         let data = {
           Key: `${productDetails.sellerId}/${files.image1.name}`,
@@ -495,7 +512,7 @@ module.exports.updateSellerProduct = async (req, res) => {
         productDetails.productDetails.image.image4.code = _image4.Location;
       }
       // /* till here*/
-      updateDetail = await addProductDetails(productDetails._id,productDetails);
+      updateDetail = await addProductDetails(productDetails._id, productDetails);
     }
     if (body.id && body.imageType) {
       const data = {
@@ -542,11 +559,11 @@ module.exports.getSellerProduct = async (req, res) => {
 module.exports.getFilteredCities = async (req, res) => {
   try {
     const { stateId } = req.body
-    let filteredCities = await getFilteredCities({ state: stateId})
-      filteredCities = filteredCities.map((val) =>({
-        label:val.name,
-        value:val._id
-      }))
+    let filteredCities = await getFilteredCities({ state: stateId })
+    filteredCities = filteredCities.map((val) => ({
+      label: val.name,
+      value: val._id
+    }))
     respSuccess(res, filteredCities)
   } catch (error) {
     respError(res, error.message)
@@ -555,16 +572,16 @@ module.exports.getFilteredCities = async (req, res) => {
 
 getlevelTwoCategories = async (element) => {
 
- let findLevel1 = await getPrimaryCat({
-   _id: element.id
- })
+  let findLevel1 = await getPrimaryCat({
+    _id: element.id
+  })
   element.parentCategoryId = findLevel1.parentCatId,
-  element.primaryCategoryId = element.id,
-  element.secondaryCategoryId = null,
-  element.productId = null,
-  element.productSubcategoryId = null
+    element.primaryCategoryId = element.id,
+    element.secondaryCategoryId = null,
+    element.productId = null,
+    element.productSubcategoryId = null
   delete element.id,
-  delete element.productType
+    delete element.productType
   return element;
 }
 
@@ -574,38 +591,38 @@ getlevelThreeCategories = async (element) => {
     _id: element.id
   })
 
-  let findLevel1 = await getlevelTwoCategories({id : findLevel2.primaryCatId})
+  let findLevel1 = await getlevelTwoCategories({ id: findLevel2.primaryCatId })
   element.parentCategoryId = findLevel1.parentCategoryId,
-  element.primaryCategoryId = findLevel2.primaryCatId,
-  element.secondaryCategoryId = element.id,
-  element.productId = null,
-  element.productSubcategoryId = null
+    element.primaryCategoryId = findLevel2.primaryCatId,
+    element.secondaryCategoryId = element.id,
+    element.productId = null,
+    element.productSubcategoryId = null
   delete element.id,
-  delete element.productType
- return element;
+    delete element.productType
+  return element;
 
 }
 
 getlevelFourCategories = async (element) => {
-  
+
   let findLevel3 = await getProductCat({
     _id: element.id
   })
 
-  let findLevel2 = await getlevelThreeCategories({id : findLevel3.secondaryId})
+  let findLevel2 = await getlevelThreeCategories({ id: findLevel3.secondaryId })
 
-    element.parentCategoryId = findLevel2.parentCategoryId,
+  element.parentCategoryId = findLevel2.parentCategoryId,
     element.primaryCategoryId = findLevel2.primaryCategoryId,
     element.secondaryCategoryId = findLevel3.secondaryId,
     element.productId = element.id,
     element.productSubcategoryId = null
-    delete element.id,
+  delete element.id,
     delete element.productType
-    return element;
+  return element;
 
 }
 
-getlevelFiveCategories = async(element) => {
+getlevelFiveCategories = async (element) => {
 
   let findLevel4 = await getProductSubcategory({
     _id: element.id
@@ -618,9 +635,9 @@ getlevelFiveCategories = async(element) => {
     element.secondaryCategoryId = findLevel3.secondaryCategoryId,
     element.productId = findLevel4.productId,
     element.productSubcategoryId = element.id
-    delete element.id,
+  delete element.id,
     delete element.productType
-   return element;
+  return element;
 
 }
 
