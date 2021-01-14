@@ -448,7 +448,6 @@ exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
 
 exports.getSuggestions = (query, range) => new Promise((resolve, reject) => {
   const { skip, limit } = range;
-  console.log("range", range, query)
   const body = {
     size: limit || 10,
     from: skip || 0,
