@@ -79,12 +79,12 @@ module.exports.getAllCategories = (query, searchQuery, skip, limit) =>
       .populate({
         path: "primaryCategotyId",
         model: PrimaryCategory,
-        select: "name vendorId",
+        select: "name vendorId secondaryCategotyId",
         options: { sort: { 'name': 1 } },
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
-          select: "name vendorId",
+          select: "name vendorId productId",
           options: { sort: { 'name': 1 } }
           // populate: {
           //   path: "productId",
@@ -166,8 +166,8 @@ module.exports.getParentCategory = (reqQuery) =>
       .populate({
         path: "primaryCategotyId",
         model: PrimaryCategory,
-        select: "name vendorId",
-        options: { sort: { 'name': 1 } },
+        select: "name vendorId secondaryCategotyId",
+        sort: { name: 1 },
         match: {
           $and: [{
             name: {
@@ -179,8 +179,8 @@ module.exports.getParentCategory = (reqQuery) =>
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
-          select: "name vendorId",
-          options: { sort: { 'name': 1 } }
+          select: "name vendorId productId",
+          sort: { name: 1 }
         },
       })
       // .slice(PrimaryCategory, -1)

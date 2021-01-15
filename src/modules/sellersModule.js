@@ -448,8 +448,8 @@ module.exports.getSeller = (id, chkStock) =>
         path: 'sellerContactId',
         model: SellersContact,
         populate: {
-          path: "location.city",
-          model: Cities
+          path: "location.city location.state location.country",
+          // model: Cities
         }
       })
       .populate({
@@ -521,7 +521,8 @@ module.exports.getSeller = (id, chkStock) =>
   })
 
 exports.getSellerProfile = (id) =>
-  new Promise((resolve, reject) => {
+new Promise((resolve, reject) => {
+  console.log("id", id)
     Sellers.find({
       _id: id
     })
@@ -530,64 +531,11 @@ exports.getSellerProfile = (id) =>
       .populate("busenessId")
       .populate("statutoryId")
       .populate("sellerContactId")
-      // .populate({
-      //   path: 'sellerContactId',
-      //   model: SellerContact,
-      //   populate: {
-      //     path: 'city',
-      //     model: Cities
-      //   },
-      //   populate: {
-      //     path: 'state',
-      //     model: States
-      //   },
-      //   populate: {
-      //     path: 'country',
-      //     model: Countries
-      //   },
-      // })
       .populate("sellerCompanyId")
       .populate("establishmentId")
-
       .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "parentCategoryId",
-          model: ParentCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "primaryCategoryId",
-          model: PrimaryCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "secondaryCategoryId",
-          model: SecondaryCategory.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "poductId",
-          model: Products.collection.name
-        },
-      })
-      .populate({
-        path: 'sellerProductId',
-        model: 'sellerproducts',
-        populate: {
-          path: "productSubcategoryId",
-          model: ProductsSubCategories.collection.name
-        },
+        path: "sellerProductId",
+        model: "sellerproducts"
       })
       .populate("location.city", "name")
       .populate("location.state", "name")
@@ -598,23 +546,29 @@ exports.getSellerProfile = (id) =>
       .catch((error) => reject(error))
   })
 
-module.exports.getAllSellers = (sellerType,searchQuery,skip,limit) =>
+module.exports.getAllSellers = (sellerType, searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
     let searchQry = {};
-    if(searchQuery && sellerType){
-      searchQry=  {$and: [
-        {sellerType : sellerType },
-        searchQuery ? {$or : [
-          { name : { $regex: searchQuery, $options: 'i' } },
-        { "mobile.mobile" : { $regex: searchQuery, $options: 'i' }},
-       ]} : {}
-      ]} 
+    if (searchQuery && sellerType) {
+      searchQry = {
+        $and: [
+          { sellerType: sellerType },
+          searchQuery ? {
+            $or: [
+              { name: { $regex: searchQuery, $options: 'i' } },
+              { "mobile.mobile": { $regex: searchQuery, $options: 'i' } },
+            ]
+          } : {}
+        ]
+      }
     }
-    if(searchQuery && !sellerType){
-      searchQry = {$or : [
-          { name : { $regex: searchQuery, $options: 'i' } },
-        { "mobile.mobile" : { $regex: searchQuery, $options: 'i' }},
-       ]} 
+    if (searchQuery && !sellerType) {
+      searchQry = {
+        $or: [
+          { name: { $regex: searchQuery, $options: 'i' } },
+          { "mobile.mobile": { $regex: searchQuery, $options: 'i' } },
+        ]
+      }
     }
     Sellers.find(searchQry)
       .skip(skip)
@@ -803,9 +757,6 @@ module.exports.addContactDetails = (sellerId, data) =>
 
 module.exports.addEstablishmentPhotos = (sellerId, photos) =>
   new Promise((resolve, reject) => {
-    console.log("🚀 ~ file: sellersModule.js ~ line 745 ~ sellerId", sellerId)
-    console.log("🚀 ~ file: sellersModule.js ~ line 688 ~ data", photos)
-
     SellersEstablishment.findOneAndUpdate({
       sellerId
     }, {
@@ -815,7 +766,6 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
       upsert: true
     })
       .then((doc) => {
-        console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -1212,6 +1162,8 @@ module.exports.addSellerProduct = (data) =>
       else {
         const idArray = doc && doc.length && doc.map(d => d._id)
         resolve(idArray)
+        // resolve(doc)
+
       }
     })
   })
@@ -1225,84 +1177,86 @@ module.exports.findEstablishment = (id) =>
     SellersEstablishment.findOne({
       _id: id
     })
-    .then((doc) => {
-      resolve(doc)
-    })
-    .catch(reject)
-})
-  /**
- * 
- * Get seller product detail
- * */
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+/**
+* 
+* Get seller product detail
+* */
 module.exports.getSellerProductDtl = (query) =>
-new Promise((resolve, reject) => {
-  SelleresProductList.findOne(query)
-  .then((doc) => {
-      resolve(doc)
-    })
-    .catch(reject)
-})
-  /**
- * 
- * Get all seller products
- * */
-module.exports.listAllSellerProduct = (serviceType,searchQuery,skip,limit) =>
-new Promise((resolve, reject) => {
-  let searchQry = {};
-  if(searchQuery && serviceType){
-    searchQry =  {$and: [
-      {serviceType : serviceType },
-      searchQuery ? 
-      { "productDetails.name" : { $regex: searchQuery, $options: 'i' }} : {}
-    ]} 
-  }
-  if(searchQuery && !serviceType){
-    searchQry = { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }
-  }
+  new Promise((resolve, reject) => {
+    SelleresProductList.findOne(query)
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+/**
+* 
+* Get all seller products
+* */
+module.exports.listAllSellerProduct = (serviceType, searchQuery, skip, limit) =>
+  new Promise((resolve, reject) => {
+    let searchQry = {};
+    if (searchQuery && serviceType) {
+      searchQry = {
+        $and: [
+          { serviceType: serviceType },
+          searchQuery ?
+            { "productDetails.name": { $regex: searchQuery, $options: 'i' } } : {}
+        ]
+      }
+    }
+    if (searchQuery && !serviceType) {
+      searchQry = { "productDetails.name": { $regex: searchQuery, $options: 'i' } }
+    }
 
-  // {"$match":{"title":{"$regex":/example/}}},
-  // {"$lookup":{
-  //   "from":"article_category",
-  //   "localField":"article_id",
-  //   "foreignField":"article_id",
-  //   "as":"article_category"
-  // }},
-  // {"$unwind":"$article_category"},
+    // {"$match":{"title":{"$regex":/example/}}},
+    // {"$lookup":{
+    //   "from":"article_category",
+    //   "localField":"article_id",
+    //   "foreignField":"article_id",
+    //   "as":"article_category"
+    // }},
+    // {"$unwind":"$article_category"},
 
-//   SelleresProductList.aggregate([{
-//       $lookup:{
-//           from: ParentCategory.collection.name,      
-//           localField: "parentCategoryId",   
-//           foreignField: "_id",
-//           as: "level_1"        
-//       }
-//     // $lookup:{
-//     //     from:"level1",
-//     //     localField:"parentCategoryId",
-//     //     foreignField:"_id",
-//     //     as:"parentCategoryId"
-//     // }
-//   },
-//   {
-//     $match:{'name' : "Medicine,Pharma & Drugs"}
-//   }
-// ]) 
-//   .then((doc) => {
-//     console.log(doc,"===============adsghfsfhshf")
-//     resolve(doc)
-//   })
-//   .catch(reject)
-  // let searchQry = searchQuery ? 
-  //   { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }: {};
-  
-  SelleresProductList.find(searchQry)
-  .skip(skip)
-  .limit(limit)
-  .then((doc) => {
-      resolve(doc)
-    })
-    .catch(reject)
-})
+    //   SelleresProductList.aggregate([{
+    //       $lookup:{
+    //           from: ParentCategory.collection.name,      
+    //           localField: "parentCategoryId",   
+    //           foreignField: "_id",
+    //           as: "level_1"        
+    //       }
+    //     // $lookup:{
+    //     //     from:"level1",
+    //     //     localField:"parentCategoryId",
+    //     //     foreignField:"_id",
+    //     //     as:"parentCategoryId"
+    //     // }
+    //   },
+    //   {
+    //     $match:{'name' : "Medicine,Pharma & Drugs"}
+    //   }
+    // ]) 
+    //   .then((doc) => {
+    //     console.log(doc,"===============adsghfsfhshf")
+    //     resolve(doc)
+    //   })
+    //   .catch(reject)
+    // let searchQry = searchQuery ? 
+    //   { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }: {};
+
+    SelleresProductList.find(searchQry)
+      .skip(skip)
+      .limit(limit)
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
 /**
 * 
 * Get seller product detail
@@ -1324,7 +1278,7 @@ module.exports.getSellerProduct = (query) =>
       })
       .catch(reject)
   })
-  exports.deleteSellerRecord = (id) =>
+exports.deleteSellerRecord = (id) =>
   new Promise((resolve, reject) => {
     Sellers.findByIdAndDelete(id)
       .then((doc) => {
@@ -1332,3 +1286,81 @@ module.exports.getSellerProduct = (query) =>
       })
       .catch(reject)
   })
+
+module.exports.getSellerProductDetails = (query) =>
+  new Promise((resolve, reject) => {
+    SelleresProductList.find(query)
+      .populate({
+        path: 'sellerId',
+        populate: {
+          path: 'sellerType busenessId location.city location.state location.country',
+          select: 'name',
+        }
+      })
+      .populate({
+        path: 'serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId productSubcategoryId serviceCity.city serviceCity.country serviceCity.state',
+        select: 'name vendorId'
+      })
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+
+module.exports.getUpdatedSellerDetails = (query) => new Promise((resolve, reject) => {
+  Sellers.find(searchQry)
+    .skip(skip)
+    .limit(limit)
+    .populate({
+      path: 'sellerType sellerProductId'
+    })
+    // .populate('sellerType.name', 'name')
+    // .populate('sellerType.cities.city', 'name')
+    // .populate('sellerType.cities.state', 'name region')
+
+    // .populate({
+    //   path: 'sellerProductId',
+    //   model: 'sellerproducts',
+    //   populate: {
+    //     path: "parentCategoryId",
+    //     model: ParentCategory.collection.name
+    //   },
+    // })
+    // .populate({
+    //   path: 'sellerProductId',
+    //   model: 'sellerproducts',
+    //   populate: {
+    //     path: "primaryCategoryId",
+    //     model: PrimaryCategory.collection.name
+    //   },
+    // })
+    // .populate({
+    //   path: 'sellerProductId',
+    //   model: 'sellerproducts',
+    //   populate: {
+    //     path: "secondaryCategoryId",
+    //     model: SecondaryCategory.collection.name
+    //   },
+    // })
+    // .populate({
+    //   path: 'sellerProductId',
+    //   model: 'sellerproducts',
+    //   populate: {
+    //     path: 'productDetails.regionOfOrigin',
+    //   },
+    // })
+    // .populate({
+    //   path: 'sellerProductId',
+    //   model: 'sellerproducts',
+    //   populate: {
+    //     path: 'productDetails.countryOfOrigin',
+    //   },
+    // })
+    // .populate('location.city', 'name')
+    // .populate('location.state', 'name region')
+    // .populate('location.country', 'name')
+    .then((doc) => {
+      resolve(doc)
+    })
+    .catch((error) => reject(error))
+})

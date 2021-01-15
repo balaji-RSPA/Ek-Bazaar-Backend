@@ -4,23 +4,30 @@ const Country = require('./countriesSchema')
 const { ObjectId } = Types
 
 const statesSchema = new Schema({
-    name: {
-        type: String,
-        trim: true,
-        required: true
-    },
-    country: {
-        type: ObjectId,
-        ref: Country,
-        required: true
-    },
-    status: {
-        type: Boolean,
-        default: true
-    }
+  name: {
+    type: String,
+    trim: true,
+    required: true,
+    lowercase: true
+  },
+  region: {
+    type: String,
+    trim: true,
+    lowercase: true
+  },
+  country: {
+    type: ObjectId,
+    ref: Country,
+    trim: true
+    // required: true
+  },
+  status: {
+    type: Boolean,
+    default: true
+  }
 }, {
-    timestamps: true,
-    versionKey: false
+  timestamps: true,
+  versionKey: false
 })
 
 statesSchema.index({

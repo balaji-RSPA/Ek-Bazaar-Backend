@@ -14,6 +14,7 @@ const { tradedb } = config
 
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
 const { deleteRecords } = require('./src/controllers/web/userController')
+const { updateSelleProfileChangesToProducts } = require('./src/crons/cron')
 
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
@@ -30,14 +31,14 @@ const models = require('./src/models')
 const { suggestions, level1, level2, level3, level4, level5, city, state, country, serviceType } = require("./elasticsearch-mapping");
 const { checkIndices, putMapping } = suggestions
 const l1CheckIndices = level1.checkIndices, l1PutMapping = level1.putMapping,
-l2CheckIndices = level2.checkIndices, l2PutMapping = level2.putMapping,
-l3CheckIndices = level3.checkIndices, l3PutMapping = level3.putMapping,
-l4CheckIndices = level4.checkIndices, l4PutMapping = level4.putMapping,
-l5CheckIndices = level5.checkIndices, l5PutMapping = level5.putMapping,
-cityCheckIndices = city.checkIndices, cityPutMapping = city.putMapping,
-stateCheckIndices = state.checkIndices, statePutMapping = state.putMapping,
-countryCheckIndices = country.checkIndices, countryPutMapping = country.putMapping,
-serviceTypeCheckIndices = serviceType.checkIndices, serviceTypePutMapping = serviceType.putMapping
+  l2CheckIndices = level2.checkIndices, l2PutMapping = level2.putMapping,
+  l3CheckIndices = level3.checkIndices, l3PutMapping = level3.putMapping,
+  l4CheckIndices = level4.checkIndices, l4PutMapping = level4.putMapping,
+  l5CheckIndices = level5.checkIndices, l5PutMapping = level5.putMapping,
+  cityCheckIndices = city.checkIndices, cityPutMapping = city.putMapping,
+  stateCheckIndices = state.checkIndices, statePutMapping = state.putMapping,
+  countryCheckIndices = country.checkIndices, countryPutMapping = country.putMapping,
+  serviceTypeCheckIndices = serviceType.checkIndices, serviceTypePutMapping = serviceType.putMapping
 
 app.use(useragent.express());
 app.use(fileUpload());
@@ -116,6 +117,16 @@ async function indexing() {
 //   }
 //   // res.send('Its delete records  live')
 // })
+
+app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+  // console.log('Home page')
+  try {
+    const result = await updateSelleProfileChangesToProducts()
+  } catch (error) {
+
+  }
+  // res.send('Its delete records  live')
+})
 
 app.use(router)
 

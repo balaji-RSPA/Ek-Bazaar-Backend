@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { States, Countries, Cities } = require("../models");
 
-module.exports.getAllStates = (skip,limit) =>
+module.exports.getAllStates = (skip, limit) =>
   new Promise((resolve, reject) => {
     States.find({})
       .skip(skip)
@@ -15,7 +15,7 @@ module.exports.getAllStates = (skip,limit) =>
       });
   });
 
-module.exports.getAllCountries = (skip,limit) =>
+module.exports.getAllCountries = (skip, limit) =>
   new Promise((resolve, reject) => {
     Countries.find({})
       .skip(skip)
@@ -37,6 +37,17 @@ module.exports.getCountry = (id) =>
       .catch((error) => {
         reject(error);
       });
+  });
+
+module.exports.countiesBulkInsert = (data) =>
+  new Promise((resolve, reject) => {
+    Countries.insertMany(data, {
+      ordered: false,
+    })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
   });
 
 module.exports.addState = (newData) =>
@@ -82,9 +93,10 @@ module.exports.addCity = (newData, id) =>
 
 module.exports.getCity = (query, id) =>
   new Promise((resolve, reject) => {
+    console.log(query, 'sdfsd')
     Cities.findOne(query)
       .populate('state', 'name')
-      .select("name state")
+      // .select("name state country")
       .then((doc) => {
         resolve(doc && id ? doc._id : doc);
       })
@@ -236,7 +248,7 @@ module.exports.updateCity = (query, data) =>
         resolve(doc);
       })
       .catch((error) => {
-        console.log(error, ' ghjk')
+        // console.log(error, ' ghjk')
         reject(error);
       });
   });
@@ -263,14 +275,46 @@ module.exports.getFilteredCities = (query) =>
       });
   });
 
-  module.exports.getSellerTypeAll = (que, range) =>
+module.exports.statesBulkInsert = (data) =>
   new Promise((resolve, reject) => {
-    
+    States.insertMany(data, {
+      ordered: false,
+    })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });
+
+module.exports.citiesBulkInsert = (data) =>
+  new Promise((resolve, reject) => {
+    Cities.insertMany(data, {
+      ordered: false,
+    })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  })
+module.exports.getSellerTypeAll = (que, range) =>
+  new Promise((resolve, reject) => {
+
     SellerTypes.find(que)
-    .skip(range.skip)
-    .limit(range.limit)
+      .skip(range.skip)
+      .limit(range.limit)
       .then((doc) => {
         resolve(doc);
       })
       .catch((error) => reject(error.message));
+  });
+
+module.exports.getAllCitiesUpdate = (query) =>
+  new Promise((resolve, reject) => {
+    Cities.find(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
