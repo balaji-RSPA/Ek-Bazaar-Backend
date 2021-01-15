@@ -236,6 +236,7 @@ module.exports.updateUser = async (req, res) => {
       });
     }
     seller = await getSeller(userID)
+    buyer = await getBuyer(userID)
 
     // let keywords = []
     // keywords.push(seller.name.toLowerCase())
