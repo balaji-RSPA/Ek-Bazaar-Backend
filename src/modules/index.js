@@ -6,6 +6,7 @@ const elastic = require('./elasticSearchModule')
 const rfp = require('./rfpModule')
 const subscriptionPlan = require('./subscriptionPlanModule')
 const mastercollections = require('./masterModule')
+const sellerProducts = require('./sellerProductModule')
 
 module.exports = {
     location,
@@ -15,5 +16,6 @@ module.exports = {
     elastic,
     rfp,
     subscriptionPlan,
-    mastercollections
+    mastercollections,
+    sellerProducts
 }

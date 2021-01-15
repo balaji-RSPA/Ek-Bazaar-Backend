@@ -1,7 +1,8 @@
 const camelcaseKeys = require("camelcase-keys");
+const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { buyers, sellers, category, elastic } = require("../../modules");
+const { buyers, sellers, category, elastic, location } = require("../../modules");
 const {
   postRFP,
   checkBuyerExistOrNot,
@@ -13,7 +14,8 @@ const {
 } = buyers;
 const { getProductByName } = category
 const { sellerSearch, searchFromElastic } = elastic
-const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller } = sellers
+const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile } = sellers
+const { getCity } = location
 const { createToken } = require("../../utils/utils");
 
 const getUserAgent = (userAgent) => {
@@ -33,10 +35,11 @@ const getUserAgent = (userAgent) => {
 
 module.exports.createRFP = async (req, res) => {
   try {
-    const {mobile, name, email, location, productDetails, ipAddress} = req.body
-    const user = await checkUserExistOrNot({mobile: mobile.mobile})
+    const { mobile, name, email, location, productDetails, ipAddress, requestType, sellerId } = req.body
+    console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
+    const user = await checkUserExistOrNot({ mobile: mobile.mobile })
     console.log("~ user", user, productDetails)
-    if(user && user.length) {
+    if (user && user.length) {
       // const range = {
       //   skip: 0,
       //   limit: 5,
@@ -53,6 +56,7 @@ module.exports.createRFP = async (req, res) => {
       //   console.log(sell._source.email, '---------')
       // })
       // console.log("productResult", resp)
+
       const userData = {
         name,
         email,
@@ -78,13 +82,34 @@ module.exports.createRFP = async (req, res) => {
           name,
           email,
           mobile: mobile.mobile,
-          location
+          location,
+          sellerId: sellerId || null
         },
-        productDetails
+        productDetails,
+        requestType,
+        sellerId: sellerId || null
       }
       const rfp = await postRFP(rfpData)
+      if (sellerId && requestType === 1) {
+        const sellerData = await getSellerProfile(sellerId)
+        const locationDetails = await getCity({ _id: location.city })
+        const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+        const _loc = locationDetails ? `${locationDetails.name}, ${locationDetails.state && locationDetails.state.name}` : ''
+        if (constsellerContactNo && constsellerContactNo.mobile) {
+          console.log('message sending...........')
+          // console.log("🚀 ~ file: buyerController.js ~ line 94 ~ module.exports.createRFP= ~ locationDetails", locationDetails)
+          const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+          const resp = await axios.post(url, {
+            mobile: constsellerContactNo.mobile,
+            message: `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
+          })
+
+        }
+      }
       respSuccess(res, "Your requirement has successfully submitted")
     } else {
+      console.log(' not register buyer-----------------')
+      console.log(sellerId, requestType, 'testtttttttttttt')
       const userData = {
         name,
         email,
@@ -103,7 +128,7 @@ module.exports.createRFP = async (req, res) => {
       }
       const buyer = await addBuyer(buyerData)
 
-       const sellerData = {
+      const sellerData = {
         name,
         email: email || null,
         mobile,
@@ -121,7 +146,9 @@ module.exports.createRFP = async (req, res) => {
           mobile: mobile.mobile,
           location
         },
-        productDetails
+        productDetails,
+        requestType,
+        sellerId: sellerId || null
       }
 
       if (buyer && seller) {
@@ -138,6 +165,25 @@ module.exports.createRFP = async (req, res) => {
 
         const result1 = await handleUserSession(user._id, finalData)
         const rfp = await postRFP(rfpData)
+
+        if (sellerId && requestType === 1) {
+          const sellerData = await getSellerProfile(sellerId)
+          const locationDetails = await getCity({ _id: location.city })
+          const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+          const _loc = locationDetails ? `${locationDetails.name}, ${locationDetails.state && locationDetails.state.name}` : ''
+          if (constsellerContactNo && constsellerContactNo.mobile) {
+            console.log('message sending...........')
+            // console.log("🚀 ~ file: buyerController.js ~ line 94 ~ module.exports.createRFP= ~ locationDetails", sellerData[0].name)
+            const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+            const resp = await axios.post(url, {
+              mobile: constsellerContactNo.mobile,
+              message: `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
+            })
+
+          }
+        }
+
+
         respSuccess(res, { token, buyer, seller }, "Your requirement has successfully submitted.")
       }
     }

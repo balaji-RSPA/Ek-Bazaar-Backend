@@ -1,6 +1,6 @@
 var client = require('../config/db').esClient;
-const index = "suggestions"
-const type = "searchSuggestions"
+const index =  process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions"
+const type = "_doc"
 
 const { ParentCategory, PrimaryCategory, SecondaryCategory, Products, ProductsSubCategories } = require("../src/models")
 

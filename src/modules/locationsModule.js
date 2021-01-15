@@ -165,7 +165,8 @@ exports.getAllCities = (reqQuery) =>
           "_id": 1,
           "name": 1,
           "state.name": 1,
-          "state._id": 1
+          "state._id": 1,
+          "alias": 1
         }
       }
     ]);
@@ -317,4 +318,19 @@ module.exports.getAllCitiesUpdate = (query) =>
       .catch((error) => {
         reject(error);
       });
+  });
+module.exports.getSellerSelectedCities = (data)=>
+  new Promise((resolve, reject) => {
+    Cities.find({
+      _id: {
+        $in: data
+      }
+    })
+    .populate('state')
+    .then((doc) => {
+      resolve(doc);
+    })
+    .catch((error) => {
+      reject(error);
+    });
   });

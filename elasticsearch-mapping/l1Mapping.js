@@ -1,6 +1,6 @@
 var client = require('../config/db').esClient;
-const index = "categoriesl1"
-const type = "level1"
+const index = process.env.NODE_ENV === "production" ? "tradedb.level1" : "trade-live.level1"
+const type = "_doc"
 
 const { ParentCategory } = require("../src/models")
 
