@@ -318,3 +318,18 @@ module.exports.getAllCitiesUpdate = (query) =>
         reject(error);
       });
   });
+module.exports.getSellerSelectedCities = (data)=>
+  new Promise((resolve, reject) => {
+    Cities.find({
+      _id: {
+        $in: data
+      }
+    })
+    .populate('state')
+    .then((doc) => {
+      resolve(doc);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+  });
