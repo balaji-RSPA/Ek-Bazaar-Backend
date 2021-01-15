@@ -76,6 +76,7 @@ module.exports.sendOtp = async (req, res) => {
       mobile
     })
 
+    console.log(resp.data, ' pppppppppppppppppppp')
     if (resp.data.success)
       return respSuccess(res, { otp: resp.data.data.otp });
 
