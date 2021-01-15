@@ -8,6 +8,7 @@ const level2 = require("./l2Mapping");
 const level3 = require("./l3Mapping");
 const level4 = require("./l4Mapping");
 const level5 = require("./l5Mapping");
+const tradeMaster = require("./tradebazaar")
 
 module.exports = {
     suggestions,
@@ -19,5 +20,6 @@ module.exports = {
     level2,
     level3,
     level4,
-    level5
+    level5,
+    tradeMaster
 }

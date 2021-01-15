@@ -150,7 +150,7 @@ exports.bulkStoreInElastic = (foundDoc) =>
 
 exports.sellerSearch = async (reqQuery) => {
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -161,6 +161,52 @@ exports.sellerSearch = async (reqQuery) => {
     },
   };
   let aggs = {
+
+  }
+
+  if(cityFromKeyWord) {
+    if(Array.isArray(cityFromKeyWord)) {
+      cityFromKeyWord.forEach(city => {
+
+        const searchCity = {
+          "match": {
+            "alias" : city
+          }
+        }
+        query.bool.should.push(searchCity)
+      })
+    } else {
+      const searchCity = {
+        "match": {
+          "alias" : cityFromKeyWord
+        }
+      }
+      query.bool.should.push(searchCity)
+    }
+  }
+
+  if(stateFromKeyWord) {
+    if(Array.isArray(stateFromKeyWord)) {
+      stateFromKeyWord.forEach(city => {
+
+        const searchCity = {
+          "match": {
+            "name" : city
+          }
+        }
+        query.bool.should.push(searchCity)
+      })
+    } else {
+      const searchCity = {
+        "match": {
+          "name" : stateFromKeyWord
+        }
+      }
+      query.bool.should.push(searchCity)
+    }
+  }
+
+  if(countryFromKeyword) {
 
   }
 
@@ -256,9 +302,10 @@ exports.sellerSearch = async (reqQuery) => {
     if (Array.isArray(serviceType)) {
       query.bool.must.unshift({ bool: { should: [] } });
       for (let i = 0; i < serviceType.length; i++) {
+        const service = serviceType[i]
         const categoryMatch = {
           "match": {
-            "serviceType._id": serviceType,
+            "serviceType._id": service,
           }
         };
         query.bool.must[0].bool.should.push(categoryMatch);
@@ -450,7 +497,47 @@ exports.getSuggestions = (query, range) => new Promise((resolve, reject) => {
     // sort: { "_id": "desc" }
   };
   const searchQuery = {
-    index: "suggestions",
+    index: process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states",
+    body,
+  };
+  esClient
+    .search(searchQuery)
+    .then(async (results) => {
+      // const { count } = await this.getCounts(query); // To get exact count
+      resolve([
+        results.hits.hits,
+        // count,
+      ]);
+    })
+    .catch(error => reject(error))
+})
+
+exports.getAllCitiesElastic = (query) => new Promise((resolve, reject) => {
+  const body = {
+    query
+  };
+  const searchQuery = {
+    index: process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities",
+    body,
+  };
+  esClient
+    .search(searchQuery)
+    .then(async (results) => {
+      // const { count } = await this.getCounts(query); // To get exact count
+      resolve([
+        results.hits.hits,
+        // count,
+      ]);
+    })
+    .catch(error => reject(error))
+})
+
+exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
+  const body = {
+    query
+  };
+  const searchQuery = {
+    index: process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states",
     body,
   };
   esClient

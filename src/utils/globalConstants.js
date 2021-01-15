@@ -1,4 +1,4 @@
-exports.INDEXNAME = 'tradebazaar'
+exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections"
 // exports.INDEXNAME = 'opend_contacts.mastercollections'
 
 exports.bcryptSalt = {
@@ -41,5 +41,12 @@ exports.moduleTypes = {
   // statesManagement: 'statesManagement',
   tendersManagement: "tendersManagement",
 };
+
+exports.sms = {
+  smsURL: 'https://http.myvfirst.com/smpp/sendsms',
+  username: 'cn14604',
+  password: 'Admin@14604',
+  senderID: 'EKBZAR'
+}
 
 exports.accessModules = Object.values(this.moduleTypes);
