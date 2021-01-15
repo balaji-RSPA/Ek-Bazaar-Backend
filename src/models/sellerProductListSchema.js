@@ -215,25 +215,25 @@ const productDetailsSchema = new Schema({
 });
 
 const serviceCitiesSchema = new Schema({
-  city: {
-    type: ObjectId,
-    ref: City,
-    default: null
-  },
-  state: {
-    type: ObjectId,
-    ref: States,
-    default: null
-  },
-  country: {
-    type: ObjectId,
-    ref: Countries,
-    default: null
-  },
-  region: {
-    type: String,
-    default: null
-  },
+    city: {
+      type: ObjectId,
+      ref: City,
+      default: null
+    },
+    state: {
+      type: ObjectId,
+      ref: States,
+      default: null
+    },
+    country: {
+      type: ObjectId,
+      ref: Countries,
+      default: null
+    },
+    region: {
+      type: String,
+      default: null
+    }
 })
 
 const sellerProductSchema = new Schema(
