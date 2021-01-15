@@ -43,7 +43,6 @@ module.exports.insertManyMaster = (data) => new Promise((resolve, reject) => {
 })
 
 module.exports.updateMaster = (query, data) => new Promise((resolve, reject) => {
-    console.log("🚀 ~ file: masterModule.js ~ line 35 ~ module.exports.updateMaster= ~ query", query, JSON.stringify(data))
 
     MasterCollection.findOneAndUpdate(query, data, { new: true })
         .then((doc) => {

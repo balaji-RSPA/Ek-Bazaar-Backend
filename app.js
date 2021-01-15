@@ -14,7 +14,7 @@ const { tradeDb } = config
 
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
 const { deleteRecords } = require('./src/controllers/web/userController')
-const { updateSelleProfileChangesToProducts } = require('./src/crons/cron')
+const { updateSelleProfileChangesToProducts, updateKeywords } = require('./src/crons/cron')
 
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
@@ -121,15 +121,25 @@ async function indexing() {
 //   // res.send('Its delete records  live')
 // })
 
-app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
-  // console.log('Home page')
-  try {
-    const result = await updateSelleProfileChangesToProducts()
-  } catch (error) {
+// app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await updateSelleProfileChangesToProducts()
+//   } catch (error) {
 
-  }
-  // res.send('Its delete records  live')
-})
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/updateKeywords', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await updateKeywords()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
 
 app.use(router)
 
@@ -148,3 +158,15 @@ server.on('listening', () => {
   Logger.info(`Listening:${server.address().port}`)
 
 });
+
+// if (env.NODE_ENV === "production") {
+
+//   const cstToJson = cron.schedule('* * * * *', async () => {
+//     cstToJson.stop()
+//     console.log('@@@@@ cstToJson file cron start @@@@@', new Date());
+//     await updateKeywords()
+//     console.log('@@@@@ cstToJson file cron completed @@@@@', new Date())
+//     cstToJson.start()
+//   })
+//   cstToJson.start()
+// }

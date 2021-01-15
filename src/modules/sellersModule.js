@@ -1347,58 +1347,13 @@ module.exports.getSellerProductDetails = (query) =>
       .catch(reject)
   })
 
-module.exports.getUpdatedSellerDetails = (query) => new Promise((resolve, reject) => {
-  Sellers.find(searchQry)
+module.exports.getUpdatedSellerDetails = (query, skip, limit) => new Promise((resolve, reject) => {
+  Sellers.find(query)
     .skip(skip)
     .limit(limit)
     .populate({
-      path: 'sellerType sellerProductId'
+      path: 'sellerType busenessId location.city location.state location.country'
     })
-    // .populate('sellerType.name', 'name')
-    // .populate('sellerType.cities.city', 'name')
-    // .populate('sellerType.cities.state', 'name region')
-
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: "parentCategoryId",
-    //     model: ParentCategory.collection.name
-    //   },
-    // })
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: "primaryCategoryId",
-    //     model: PrimaryCategory.collection.name
-    //   },
-    // })
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: "secondaryCategoryId",
-    //     model: SecondaryCategory.collection.name
-    //   },
-    // })
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: 'productDetails.regionOfOrigin',
-    //   },
-    // })
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: 'productDetails.countryOfOrigin',
-    //   },
-    // })
-    // .populate('location.city', 'name')
-    // .populate('location.state', 'name region')
-    // .populate('location.country', 'name')
     .then((doc) => {
       resolve(doc)
     })
