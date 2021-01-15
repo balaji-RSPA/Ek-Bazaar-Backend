@@ -67,6 +67,10 @@ const buyerSchema = new Schema(
       required: true,
       trim: true,
     },
+    alternateNumber: {
+      type: String,
+      trim: true,
+    },
     // password: {
     //   type: String,
     //   required: true,
