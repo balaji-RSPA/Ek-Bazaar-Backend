@@ -1,6 +1,6 @@
 var client = require('../config/db').esClient;
 const {getAllCities} = require("../src/modules/locationsModule")
-const index = "cities"
+const index = process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities"
 const type = "_doc"
 
 module.exports.checkIndices = function () {
@@ -48,6 +48,14 @@ module.exports.putMapping = function () {
                     properties: {
                         id: { type: 'text' },
                         name: { type: 'keyword' },
+                        alias: {type: 'text'},
+                        state: {
+                            type: "nested",
+                            properties: {
+                                name: {type: 'keyword'},
+                                id: {type: 'keyword'}
+                            }
+                        }
                     }
                 }
             }
@@ -59,6 +67,7 @@ module.exports.putMapping = function () {
             else {
 
                 let data = await getAllCities({skip: 0, limit: 2000})
+                console.log("module.exports.putMapping -> data", data)
                 const bulkBody = []
                 data.forEach(city => {
                     bulkBody.push({
@@ -68,7 +77,7 @@ module.exports.putMapping = function () {
                             _id: city._id
                         }
                     })
-                    bulkBody.push({id: city._id, name: city.name})
+                    bulkBody.push({id: city._id, name: city.name, alias: city.alias, state :{name: city.state.name, id: city.state._id}})
                 })
                 client.bulk({
                     body: bulkBody

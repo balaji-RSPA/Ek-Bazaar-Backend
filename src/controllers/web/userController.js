@@ -1,5 +1,6 @@
 const camelcaseKeys = require("camelcase-keys");
 const _ = require('lodash')
+const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
@@ -24,6 +25,13 @@ const {
 } = sellers;
 const { getBuyer, addBuyer, updateBuyer } = buyers;
 const { getMaster, addMaster, updateMaster } = mastercollections
+const {sms} = require("../../utils/globalConstants")
+// const {username, password, senderID, smsURL} = sms
+
+const smsURL = 'https://http.myvfirst.com/smpp/sendsms'
+const username = 'cn14604'
+const password = 'Admin@14604'
+const senderID = 'EKBZAR'
 
 module.exports.getAccessToken = async (req, res) => {
   try {
@@ -69,7 +77,18 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "A seller with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
+
     const otp = 1234;
+    const mob = "7633940634"
+    // const message = `You have an inquiry from EkBazaar.com for Rice, 10kg from Bengaluru.
+    // Details: Satish-9844826777
+    
+    // Note: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
+    const message = "Dear customer, your one time password for Ekbazaar registration is '" + otp + "'. Use this to validate your number"
+    const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mob}&from=${senderID}&text=${message}&dlr-mask=19&dlr-url`
+    console.log("module.exports.sendOtp -> sendsmsuri", sendsmsuri)
+    const resp = await axios.get(sendsmsuri)
+    console.log("module.exports.sendOtp -> resp", resp)
     return respSuccess(res, { otp });
   } catch (error) {
     return respError(res, error.message);
