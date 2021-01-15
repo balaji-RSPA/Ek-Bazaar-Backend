@@ -138,60 +138,60 @@ exports.updateSelleProfileChangesToProducts = async (req, res) => new Promise(as
 
 exports.updateKeywords = async (req, res) => new Promise(async (resolve, reject) => {
 
-    try {
-        const date1 = new Date(1610409601000).toISOString()
-        console.log('keywords-------------', new Date(1610409601000).toISOString())
-        const data = await getSellerProducts({ flag: 0, createdAt: { $lt: date1 } }, 0, 10)
-        console.log(data.length, ' ---- Prodoct count')
-        // console.log("🚀 ~ file: cron.js ~ line 145 ~ exports.updateKeywords= ~ data", JSON.stringify(data))
-        const updateIds = []
-        if (data.length) {
+    // try {
+    //     const date1 = new Date(1610409601000).toISOString()
+    //     console.log('keywords-------------', new Date(1610409601000).toISOString())
+    //     const data = await getSellerProducts({ flag: 0, createdAt: { $lt: date1 } }, 0, 1000)
+    //     console.log(data.length, ' ---- Prodoct count')
+    //     // console.log("🚀 ~ file: cron.js ~ line 145 ~ exports.updateKeywords= ~ data", JSON.stringify(data))
+    //     const updateIds = []
+    //     if (data.length) {
 
-            for (let index = 0; index < data.length; index++) {
-                const product = data[index];
-                let keywords = product.keywords
-                let _Scity = product.keywords
-                if (product.serviceCity && product.serviceCity.length) {
-                    // console.log(product.serviceCity, ' tttttttttt')
-                    product.serviceCity.map((v) => {
-                        const alea = v.city && v.city.alias && v.city.alias.length && v.city.alias.map((al) => al.toLowerCase()) || null
-                        if (alea && alea.length) {
-                            console.log(product._id)
-                            _Scity.push(...alea)
-                        }
-                        // console.log(alea, ' -------------')
-                        _Scity.push(v.city && v.city.name.toLowerCase())
-                        _Scity.push(v.state && v.state.name.toLowerCase())
-                        _Scity.push(v.country && v.country.name.toLowerCase())
-                        _Scity.push(v.state && v.state.region && v.state.region.toLowerCase())
-                    })
-                    _Scity = _.without(_.uniq(_Scity), '', null, undefined, 0)
-                    console.log(_Scity, ' Keywords----------------')
+    //         for (let index = 0; index < data.length; index++) {
+    //             const product = data[index];
+    //             let keywords = product.keywords
+    //             let _Scity = product.keywords
+    //             if (product.serviceCity && product.serviceCity.length) {
+    //                 // console.log(product.serviceCity, ' tttttttttt')
+    //                 product.serviceCity.map((v) => {
+    //                     const alea = v.city && v.city.alias && v.city.alias.length && v.city.alias.map((al) => al.toLowerCase()) || null
+    //                     if (alea && alea.length) {
+    //                         // console.log(product._id)
+    //                         _Scity.push(...alea)
+    //                     }
+    //                     // console.log(alea, ' -------------')
+    //                     _Scity.push(v.city && v.city.name.toLowerCase())
+    //                     _Scity.push(v.state && v.state.name.toLowerCase())
+    //                     _Scity.push(v.country && v.country.name.toLowerCase())
+    //                     _Scity.push(v.state && v.state.region && v.state.region.toLowerCase())
+    //                 })
+    //                 _Scity = _.without(_.uniq(_Scity), '', null, undefined, 0)
+    //                 console.log(_Scity, ' Keywords----------------')
 
 
-                    const updateResult = await addProductDetails({ _id: product._id }, { keywords: _Scity })
-                    const masResult = await updateMaster({ _id: product._id }, { keywords: _Scity })
+    //                 const updateResult = await addProductDetails({ _id: product._id }, { keywords: _Scity })
+    //                 const masResult = await updateMaster({ _id: product._id }, { keywords: _Scity })
 
-                }
-                updateIds.push(product._id)
-                console.log(' running count ---- ', index)
-            }
+    //             }
+    //             updateIds.push(product._id)
+    //             console.log(' running count ---- ', index)
+    //         }
 
-            if (updateIds.length) {
+    //         if (updateIds.length) {
 
-                const updateResult = await updateSellerProducts({ _id: { $in: updateIds } }, { flag: 2 })
-                console.log(updateIds, ' -------update query------')
-            }
-        } else {
+    //             const updateResult = await updateSellerProducts({ _id: { $in: updateIds } }, { flag: 2 })
+    //             console.log(updateIds, ' -------update query------')
+    //         }
+    //     } else {
 
-            console.log('----- No Products to update keywords ----------')
+    //         console.log('----- No Products to update keywords ----------')
 
-        }
-        console.log('---------Completed mapping--------------')
-        resolve()
+    //     }
+    //     console.log('---------Completed mapping--------------')
+    //     resolve()
 
-    } catch (error) {
-        console.log(error)
-    }
+    // } catch (error) {
+    //     console.log(error)
+    // }
 
 })

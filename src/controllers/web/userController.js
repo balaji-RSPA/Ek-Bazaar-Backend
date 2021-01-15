@@ -1,5 +1,6 @@
 const camelcaseKeys = require("camelcase-keys");
 const _ = require('lodash')
+const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
@@ -69,8 +70,15 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "A seller with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-    const otp = 1234;
-    return respSuccess(res, { otp });
+    // const otp = 1234;
+    const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+    const resp = await axios.post(url, {
+      mobile
+    })
+
+    if (resp.data.success)
+      return respSuccess(res, { otp: resp.data.data.otp });
+
   } catch (error) {
     return respError(res, error.message);
   }
@@ -104,13 +112,14 @@ const getUserAgent = (userAgent) => {
 
 module.exports.addUser = async (req, res) => {
   try {
-    const { password, mobile, ipAddress } = req.body;
+    const { password, mobile, ipAddress, preferredLanguage } = req.body;
     req.body.password = encodePassword(password);
     const tenderUser = {
       countryCode: mobile.countryCode,
       mobile: mobile.mobile,
       isPhoneVerified: 2,
       password: req.body.password,
+      preferredLanguage
     };
     const user = await addUser(tenderUser);
 
@@ -240,6 +249,7 @@ module.exports.updateUser = async (req, res) => {
       });
     }
     seller = await getSeller(userID)
+    buyer = await getBuyer(userID)
 
     // let keywords = []
     // keywords.push(seller.name.toLowerCase())

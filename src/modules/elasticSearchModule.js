@@ -149,9 +149,8 @@ exports.bulkStoreInElastic = (foundDoc) =>
   });
 
 exports.sellerSearch = async (reqQuery) => {
-  console.log("🚀 ~ file: elasticSearchModule.js ~ line 125 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -161,120 +160,53 @@ exports.sellerSearch = async (reqQuery) => {
       filter: []
     },
   };
+  let aggs = {
+
+  }
 
   if (keyword) {
-    const { searchProductsBy } = reqQuery
-    console.log("🚀 ~ file: elasticSearchModule.js ~ line 139 ~ exports.sellerSearch= ~ searchProductsBy", searchProductsBy)
-    const keywordMatch = []
-    const productMatch = []
-    // if (searchProductsBy.serviceType && searchProductsBy.city) {
-    //   keywordMatch.push({
-    //     "match": {
-    //       "sellerProductId.serviceType._id": searchProductsBy.serviceType.id,
-    //     }
-    //   })
-    // }
-
-    if (searchProductsBy.serviceType) {
-      if (Array.isArray(searchProductsBy.serviceType)) {
-        searchProductsBy.serviceType.forEach(type => (
-          productMatch.push({
-            "match": {
-              "sellerProductId.serviceType._id": type.id
-            },
-          })
-        ))
-      } else {
-        keywordMatch.push({
-          "match": {
-            "sellerProductId.serviceType._id": searchProductsBy.serviceType.id
-          },
+    const { product } = searchProductsBy
+    if (product) {
+      if (Array.isArray(product)) {
+        
+        // query.bool.must.unshift({ bool: { should: [] } });
+        product.forEach(p => {
+          const searchKey = {
+            "match_phrase": {
+              "keywords": p
+            }
+          }
+          query.bool.must.push(searchKey)
         })
-      }
-    }
-    if (searchProductsBy.city) {
-      keywordMatch.push({
-        "match": {
-          "sellerProductId.serviceCity.city._id": searchProductsBy.city.id,
-        }
-      })
-    }
-    if (searchProductsBy.state) {
-      keywordMatch.push({
-        match: {
-          "sellerProductId.serviceCity.state._id": searchProductsBy.state.id,
-        }
-      })
-    }
-    if (searchProductsBy.product) {
-
-      /** level 5 **/
-      productMatch.push({
-        "match_phrase": {
-          "sellerProductId.productSubcategoryId.name": searchProductsBy.product,
-        }
-      })
-
-      /** level 4 **/
-      productMatch.push({
-        "match_phrase": {
-          "sellerProductId.poductId.name": searchProductsBy.product,
-        }
-      })
-
-      /** level 3 **/
-      productMatch.push({
-        "match_phrase": {
-          "sellerProductId.secondaryCategoryId.name": searchProductsBy.product
-        }
-      })
-
-      /** level 2 **/
-      productMatch.push({
-        "match_phrase": {
-          "sellerProductId.primaryCategoryId.name": searchProductsBy.product
-        }
-      })
-
-      /** name */
-      productMatch.push({
-        "match": {
-          "name": {
-            "query": searchProductsBy.product,
-            "minimum_should_match": "10%"
+        aggs = {
+          "collapse": {
+            "field": "sellerId.name.keyword"
           }
         }
-      })
+      } else {
+        const searchKey = {
+          "match": {
+            "keywords": product
+          }
+        }
+        query.bool.must.push(searchKey)
 
-      // const {product} = searchProductsBy
-      // if(Array.isArray(product)) {
-      //   for(let i=0; i<product.length; i++) {
-      //     const prdct = product[i]
-      //     const searchSellers = {
-      //       "match": {
-      //             "name": {
-      //               "query": prdct,
-      //               "minimum_should_match": "10%"
-      //             }
-      //           }
-      //     }
-      //     query.bool.must.push(searchSellers)
-      //   }
-      // }
-
+        aggs = {
+          "collapse": {
+            "field": "sellerId.name.keyword"
+          }
+        }
+      }
     }
-    console.log("🚀 ~ file: elasticSearchModule.js ~ line 216 ~ exports.sellerSearch= ~ productMatch", productMatch)
-    console.log("🚀 ~ file: elasticSearchModule.js ~ line 226 ~ exports.sellerSearch= ~ keywordMatch", keywordMatch)
+  }
 
-    query.bool.should = productMatch
-    query.bool["minimum_should_match"] = 1
-    query.bool.must = keywordMatch
-
-    // query.bool.filter.push({
-    //   "bool": {
-    //     "should": productMatch
-    //   }
-    // })
+  if(elastic) {
+    const seller = {
+      "match": {
+        "sellerId._id": reqQuery.id
+      }
+    }
+    query.bool.must.push(seller)
   }
 
   if (search) {
@@ -292,10 +224,15 @@ exports.sellerSearch = async (reqQuery) => {
   if (level5Id) {
     const level5Search = {
       match: {
-        "sellerProductId.productSubcategoryId._id": level5Id,
+        "productSubcategoryId._id": level5Id,
       },
     }
     query.bool.must.push(level5Search);
+    aggs = {
+      "collapse": {
+        "field": "sellerId.name.keyword"
+      }
+    }
   }
 
   if (productId) {
@@ -303,41 +240,78 @@ exports.sellerSearch = async (reqQuery) => {
     // catId = categoryId
     const categoryMatch = {
       match: {
-        "sellerProductId.poductId._id": productId,
+        "poductId._id": productId,
       },
     };
 
     query.bool.must.push(categoryMatch);
+    aggs = {
+      "collapse": {
+        "field": "sellerId.name.keyword"
+      }
+    }
   }
 
   if (serviceType) {
-    const categoryMatch = {
-      "match": {
-        "sellerProductId.serviceType._id": serviceType,
+    if (Array.isArray(serviceType)) {
+      query.bool.must.unshift({ bool: { should: [] } });
+      for (let i = 0; i < serviceType.length; i++) {
+        const categoryMatch = {
+          "match": {
+            "serviceType._id": serviceType,
+          }
+        };
+        query.bool.must[0].bool.should.push(categoryMatch);
       }
-    };
-
-    query.bool.must.push(categoryMatch);
+      aggs = {
+        "collapse": {
+          "field": "sellerId.name.keyword"
+        }
+      }
+    } else {
+      const categoryMatch = {
+        "match": {
+          "serviceType._id": serviceType,
+        }
+      };
+      query.bool.must.push(categoryMatch);
+      aggs = {
+        "collapse": {
+          "field": "sellerId.name.keyword"
+        }
+      }
+    }
   }
 
   if (secondaryId) {
     // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
     const categoryMatch = {
       term: {
-        "sellerProductId.secondaryCategoryId._id": secondaryId,
+        "secondaryCategoryId._id": secondaryId,
       },
     };
     query.bool.must.push(categoryMatch);
+    aggs = {
+      "collapse": {
+        "field": "sellerId.name.keyword"
+      }
+    }
+    
   }
 
   if (primaryId) {
     // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
     const categoryMatch = {
       term: {
-        "sellerProductId.primaryCategoryId._id": primaryId,
+        "primaryCategoryId._id": primaryId,
       },
     };
     query.bool.must.push(categoryMatch);
+    aggs = {
+      "collapse": {
+        "field": "sellerId.name.keyword"
+      }
+    }
   }
 
   if (parentId) {
@@ -345,10 +319,15 @@ exports.sellerSearch = async (reqQuery) => {
     // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
     const categoryMatch = {
       term: {
-        "sellerProductId.parentCategoryId._id": parentId,
+        "parentCategoryId._id": parentId,
       },
     };
     query.bool.must.push(categoryMatch);
+    aggs = {
+      "collapse": {
+        "field": "sellerId.name.keyword"
+      }
+    }
   }
 
   if (cityId) {
@@ -358,45 +337,60 @@ exports.sellerSearch = async (reqQuery) => {
         const locationMatch = {
           term: {
             // "location.city._id": c,
-            "sellerProductId.serviceCity.city._id": c
+            "serviceCity.city._id": c
           },
         };
         query.bool.must[0].bool.should.push(locationMatch);
       });
+      aggs = {
+        "collapse": {
+          "field": "sellerId.name.keyword"
+        }
+      }
     } else {
       const locationMatch = {
         term: {
           // "location.city._id": cityId,
-          "sellerProductId.serviceCity.city._id": cityId
+          "serviceCity.city._id": cityId
         },
       };
       query.bool.must.push(locationMatch);
+      aggs = {
+        "collapse": {
+          "field": "sellerId.name.keyword"
+        }
+      }
     }
   }
-
   return {
     query,
+    aggs,
     catId
   }
 
 }
 
-exports.searchFromElastic = (query, range) =>
+exports.searchFromElastic = (query, range, aggs) =>
   new Promise((resolve, reject) => {
 
     const { skip, limit } = range;
-    console.log("range", range, query)
+    aggs = aggs || {}
+    
+    
     const body = {
       size: limit || 10,
       from: skip || 0,
-      query,/* ,
+      query,
+      ...aggs,/* ,
       highlight, */
-      // sort: { "_id": "desc" }
+      sort: { "sellerId._id.keyword": "asc" }
     };
+    
     const searchQuery = {
       index: INDEXNAME,
       body,
     };
+    
     esClient
       .search(searchQuery)
       .then(async (results) => {
@@ -442,7 +436,7 @@ exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
     id,
     body,
   };
-  console.log('elastic updatedd------------------')
+  
   esClient.update(newData).then(resolve).catch(reject);
 });
 

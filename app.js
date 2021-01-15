@@ -156,14 +156,14 @@ server.on('listening', () => {
 
 });
 
-if (env.NODE_ENV === "production") {
+// if (env.NODE_ENV === "production") {
 
-  const cstToJson = cron.schedule('* * * * *', async () => {
-    cstToJson.stop()
-    console.log('@@@@@ cstToJson file cron start @@@@@', new Date());
-    await updateKeywords()
-    console.log('@@@@@ cstToJson file cron completed @@@@@', new Date())
-    cstToJson.start()
-  })
-  cstToJson.start()
-}
+//   const cstToJson = cron.schedule('* * * * *', async () => {
+//     cstToJson.stop()
+//     console.log('@@@@@ cstToJson file cron start @@@@@', new Date());
+//     await updateKeywords()
+//     console.log('@@@@@ cstToJson file cron completed @@@@@', new Date())
+//     cstToJson.start()
+//   })
+//   cstToJson.start()
+// }
