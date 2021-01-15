@@ -421,7 +421,10 @@ module.exports.getSeller = (id, chkStock) =>
           },
         },
         match: {
-          'productDetails.inStock': {
+          // 'productDetails.inStock': {
+          //   $eq: chkStock
+          // }
+          status: {
             $eq: chkStock
           }
         }
@@ -551,7 +554,45 @@ exports.getSellerProfile = (id) =>
       .populate("establishmentId")
       .populate({
         path: "sellerProductId",
-        model: "sellerproducts"
+        model: "sellerproducts",
+        populate: {
+          path: "parentCategoryId",
+          select: "name",
+          model: ParentCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          select: "name",
+          model: PrimaryCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        }
       })
       .populate("location.city", "name")
       .populate("location.state", "name")
