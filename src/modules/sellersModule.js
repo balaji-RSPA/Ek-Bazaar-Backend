@@ -521,8 +521,8 @@ module.exports.getSeller = (id, chkStock) =>
   })
 
 exports.getSellerProfile = (id) =>
-new Promise((resolve, reject) => {
-  console.log("id", id)
+  new Promise((resolve, reject) => {
+    console.log("id", id)
     Sellers.find({
       _id: id
     })
@@ -535,7 +535,45 @@ new Promise((resolve, reject) => {
       .populate("establishmentId")
       .populate({
         path: "sellerProductId",
-        model: "sellerproducts"
+        model: "sellerproducts",
+        populate: {
+          path: "parentCategoryId",
+          select: "name",
+          model: ParentCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          select: "name",
+          model: PrimaryCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        }
       })
       .populate("location.city", "name")
       .populate("location.state", "name")

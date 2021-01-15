@@ -167,7 +167,7 @@ module.exports.getParentCategory = (reqQuery) =>
         path: "primaryCategotyId",
         model: PrimaryCategory,
         select: "name vendorId secondaryCategotyId",
-        sort: { name: 1 },
+        options: { sort: { 'name': 1 } },
         match: {
           $and: [{
             name: {
@@ -180,7 +180,7 @@ module.exports.getParentCategory = (reqQuery) =>
           path: "secondaryCategotyId",
           model: SecondaryCategory,
           select: "name vendorId productId",
-          sort: { name: 1 }
+          options: { sort: { 'name': 1 } },
         },
       })
       // .slice(PrimaryCategory, -1)

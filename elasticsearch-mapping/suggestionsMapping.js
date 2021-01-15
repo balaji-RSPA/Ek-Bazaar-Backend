@@ -49,7 +49,7 @@ module.exports.putMapping = function () {
             includeTypeName: true,
             type,
             body: {
-                searchSuggestions: {
+                [type]: {
                     properties: {
                         "name": {
                             "type": "text",

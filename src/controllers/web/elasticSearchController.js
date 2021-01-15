@@ -97,6 +97,7 @@ module.exports.serachSeller = async (req, res) => {
 
       const result = await sellerSearch(reqQuery);
       query = result.query
+      console.log("module.exports.serachSeller -> query", query)
       let { aggs, catId } = result;
       const seller = await searchFromElastic(query, range, aggs);
       console.log("module.exports.serachSeller -> seller", seller)
