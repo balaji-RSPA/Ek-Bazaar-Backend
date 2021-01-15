@@ -1,6 +1,6 @@
 var client = require('../config/db').esClient;
 const {getAllStates} = require("../src/modules/locationsModule")
-const index = "states"
+const index = process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states"
 const type = "_doc"
 
 module.exports.checkIndices = function () {

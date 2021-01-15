@@ -25,6 +25,13 @@ const {
 } = sellers;
 const { getBuyer, addBuyer, updateBuyer } = buyers;
 const { getMaster, addMaster, updateMaster } = mastercollections
+const { sms } = require("../../utils/globalConstants")
+// const {username, password, senderID, smsURL} = sms
+
+const smsURL = 'https://http.myvfirst.com/smpp/sendsms'
+const username = 'cn14604'
+const password = 'Admin@14604'
+const senderID = 'EKBZAR'
 
 module.exports.getAccessToken = async (req, res) => {
   try {
@@ -76,7 +83,7 @@ module.exports.sendOtp = async (req, res) => {
       mobile
     })
 
-    console.log(resp.data, ' pppppppppppppppppppp')
+    // console.log(resp.data, ' pppppppppppppppppppp')
     if (resp.data.success)
       return respSuccess(res, { otp: resp.data.data.otp });
 
