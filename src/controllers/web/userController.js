@@ -207,17 +207,22 @@ module.exports.updateUser = async (req, res) => {
       ..._buyer
     };
     let _seller = await getSeller(userID)
-    // console.log("🚀 ~ file: userController.js ~ line 193 ~ module.exports.updateUser= ~ _seller", _seller)
-
-    const sellerData = {
+    console.log("🚀 ~ file: userController.js ~ line 193 ~ module.exports.updateUser= ~ _seller", _seller)
+    let sellerData
+    sellerData = {
       name,
       email: email || null,
       location,
       sellerType: [sellerType],
       userId: userID,
-      profileUpdate: true,
       ..._buyer
     };
+    if (_seller && _seller.sellerProductId.length) {
+      sellerData = {
+        ...sellerData,
+        profileUpdate: true,
+      }
+    }
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);

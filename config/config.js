@@ -25,12 +25,12 @@ if (process.env.NODE_ENV === "production") {
       // stating server db 
       host: "tradebazaarapi.tech-active.com",
       port: "5006",
-      // user: "tradelive",
-      // password: "jiarkerc9Om",
-      // database: "trade-live",
-      user: "tradeapi",
-      password: "Oyljeabr6Orc",
-      database: "tradeapi",
+      user: "tradelive",
+      password: "jiarkerc9Om",
+      database: "trade-live",
+      // user: "tradeapi",
+      // password: "Oyljeabr6Orc",
+      // database: "tradeapi",
       server_port: "8070",
 
       // Actual Live db dont connect
