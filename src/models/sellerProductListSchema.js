@@ -126,16 +126,16 @@ const productDetailsSchema = new Schema({
       default: null
     }
   },
-  // countryOfOrigin: {
-  //   type: ObjectId,
-  //   ref: Countries,
-  //   default: null,
-  // },
-  // regionOfOrigin: {
-  //   type: ObjectId,
-  //   ref: States,
-  //   default: null,
-  // },
+  countryOfOrigin: {
+    type: ObjectId,
+    ref: Countries,
+    default: null,
+  },
+  regionOfOrigin: {
+    type: ObjectId,
+    ref: States,
+    default: null,
+  },
   productDescription: {
     type: String,
     trim: true,
@@ -227,6 +227,10 @@ const serviceCitiesSchema = new Schema({
       type: ObjectId,
       ref: Countries,
       default: null
+    },
+    region: {
+      type: String,
+      default: null
     }
 })
 
@@ -274,7 +278,11 @@ const sellerProductSchema = new Schema(
 
     productDetails: productDetailsSchema,
     
-    serviceCity: [serviceCitiesSchema]
+    serviceCity: [serviceCitiesSchema],
+    status: {
+      type: Boolean,
+      trim: true,
+    }
   },
   {
     timestamps: true,

@@ -496,6 +496,22 @@ module.exports.getSeller = (id, chkStock) =>
         },
       })
       .populate({
+          path: 'sellerProductId',
+          model: 'sellerproducts',
+          populate: {
+            path: "poductId",
+            model: Products.collection.name
+          },
+        })
+        .populate({
+          path: 'sellerProductId',
+          model: 'sellerproducts',
+          populate: {
+            path: "productSubcategoryId",
+            model: ProductsSubCategories.collection.name
+          },
+        })
+      .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
         populate: {
@@ -592,6 +608,7 @@ exports.getSellerProfile = (id) =>
       .populate("location.city", "name")
       .populate("location.state", "name")
       .populate("location.country", "name")
+      .lean()
       .then((doc) => {
         resolve(doc);
       })
@@ -670,6 +687,7 @@ module.exports.getAllSellers = (sellerType,searchQuery,skip,limit) =>
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
+      .lean()
       .then((doc) => {
         resolve(doc)
       })
@@ -716,6 +734,22 @@ module.exports.updateSeller = (query, data, elastic) =>
           model: SecondaryCategory.collection.name
         },
       })
+      .populate({
+          path: 'sellerProductId',
+          model: 'sellerproducts',
+          populate: {
+            path: "poductId",
+            model: Products.collection.name
+          },
+        })
+        .populate({
+          path: 'sellerProductId',
+          model: 'sellerproducts',
+          populate: {
+            path: "productSubcategoryId",
+            model: ProductsSubCategories.collection.name
+          },
+        })
       .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -1310,11 +1344,17 @@ module.exports.getSellerProduct = (query) =>
         path: 'serviceCity.city'
       })
       .populate({
-        path: 'serviceCity.country'
+        path: 'productDetails.countryOfOrigin'
       })
       .populate({
-        path: 'serviceCity.state'
+        path: 'productDetails.regionOfOrigin'
       })
+      // .populate({
+      //   path: 'serviceCity.country'
+      // })
+      // .populate({
+      //   path: 'serviceCity.state'
+      // })
       .then((doc) => {
         resolve(doc)
       })

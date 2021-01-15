@@ -45,7 +45,7 @@ const {
   getProductCat,
   getProductSubcategory
 } = category
-const { getFilteredCities } = location;
+const { getFilteredCities,getSellerSelectedCities } = location;
 
 module.exports.getSeller = async (req, res) => {
   try {
@@ -327,7 +327,7 @@ module.exports.addSellerProduct = async (req, res) => {
             req.body[i].parentCategoryId = req.body[i].id,
             req.body[i].primaryCategoryId = null,
             req.body[i].secondaryCategoryId = null,
-            req.body[i].productId = null,
+            req.body[i].poductId = null,
             req.body[i].productSubcategoryId = null
           delete req.body[i].id,
           delete req.body[i].productType
@@ -360,7 +360,15 @@ module.exports.updateSellerProduct = async (req, res) => {
     let updateDetail
     if(body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)){
       productDetails = JSON.parse(body.productDetails)
-
+      let findCities = await getSellerSelectedCities(productDetails.serviceCity);
+      if (findCities && findCities.length){
+        productDetails.serviceCity = findCities.map((val) => ({
+          city: val._id,
+          state: val.state._id,
+          country: val.country,
+          region: val.state && val.state.region
+        }))
+      }
       // /* need to optimize the below code*/
       if (files && files.document) {
         let data = {
@@ -411,7 +419,7 @@ module.exports.updateSellerProduct = async (req, res) => {
         productDetails.productDetails.image.image4.name = files.image4.name;
         productDetails.productDetails.image.image4.code = _image4.Location;
       }
-      // /* till here*/
+      /* till here*/
       updateDetail = await addProductDetails(productDetails._id,productDetails);
     }
     if (body.id && body.imageType) {
@@ -431,14 +439,11 @@ module.exports.updateSellerProduct = async (req, res) => {
       imageDtl[imageVal] = imageNameLoc;
       updateDetail = await addProductDetails(body.id, imageDtl)
     }
-    if (body.id && (body.inStock === false || body.inStock)) {
+    if (body.id && (body.status === false || body.status)) {
       updateDetail = await addProductDetails(body.id, {
-        "productDetails.inStock": body.inStock
+        "status": body.status
       })
     }
-    // if(body.id && body.inStock){
-    //   
-    // }else
     let seller = await getSellerProfile(updateDetail.sellerId)
     respSuccess(res, seller, "Successfully updated")
   } catch (error) {
@@ -478,7 +483,7 @@ getlevelTwoCategories = async (element) => {
   element.parentCategoryId = findLevel1.parentCatId,
   element.primaryCategoryId = element.id,
   element.secondaryCategoryId = null,
-  element.productId = null,
+  element.poductId = null,
   element.productSubcategoryId = null
   delete element.id,
   delete element.productType
@@ -495,7 +500,7 @@ getlevelThreeCategories = async (element) => {
   element.parentCategoryId = findLevel1.parentCategoryId,
   element.primaryCategoryId = findLevel2.primaryCatId,
   element.secondaryCategoryId = element.id,
-  element.productId = null,
+  element.poductId = null,
   element.productSubcategoryId = null
   delete element.id,
   delete element.productType
@@ -514,7 +519,7 @@ getlevelFourCategories = async (element) => {
     element.parentCategoryId = findLevel2.parentCategoryId,
     element.primaryCategoryId = findLevel2.primaryCategoryId,
     element.secondaryCategoryId = findLevel3.secondaryId,
-    element.productId = element.id,
+    element.poductId = element.id,
     element.productSubcategoryId = null
     delete element.id,
     delete element.productType
@@ -533,7 +538,7 @@ getlevelFiveCategories = async(element) => {
   element.parentCategoryId = findLevel3.parentCategoryId,
     element.primaryCategoryId = findLevel3.primaryCategoryId,
     element.secondaryCategoryId = findLevel3.secondaryCategoryId,
-    element.productId = findLevel4.productId,
+    element.poductId = findLevel4.productId,
     element.productSubcategoryId = element.id
     delete element.id,
     delete element.productType
