@@ -227,6 +227,13 @@ exports.sellerSearch = async (reqQuery) => {
         aggs = {
           "collapse": {
             "field": "sellerId.name.keyword"
+          },
+          "aggs": {
+            "products": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
           }
         }
       } else {
@@ -240,6 +247,13 @@ exports.sellerSearch = async (reqQuery) => {
         aggs = {
           "collapse": {
             "field": "sellerId.name.keyword"
+          },
+          "aggs": {
+            "products": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
           }
         }
       }
@@ -277,6 +291,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
   }
@@ -294,6 +315,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
   }
@@ -313,6 +341,13 @@ exports.sellerSearch = async (reqQuery) => {
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
+        },
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
         }
       }
     } else {
@@ -325,6 +360,13 @@ exports.sellerSearch = async (reqQuery) => {
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
+        },
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
         }
       }
     }
@@ -341,6 +383,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
 
@@ -357,6 +406,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
   }
@@ -373,6 +429,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
   }
@@ -392,6 +455,13 @@ exports.sellerSearch = async (reqQuery) => {
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
+        },
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
         }
       }
     } else {
@@ -405,6 +475,13 @@ exports.sellerSearch = async (reqQuery) => {
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
+        },
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
         }
       }
     }
@@ -430,7 +507,7 @@ exports.searchFromElastic = (query, range, aggs) =>
       query,
       ...aggs,/* ,
       highlight, */
-      sort: { "sellerId._id.keyword": "asc" }
+      sort: { "sellerId._id.keyword": "desc" }
     };
 
     const searchQuery = {

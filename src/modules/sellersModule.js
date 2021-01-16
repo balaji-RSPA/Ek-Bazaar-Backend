@@ -1348,6 +1348,23 @@ module.exports.getSellerProduct = (query) =>
       .populate({
         path: 'productDetails.regionOfOrigin'
       })
+      .populate("sellerId")
+      // .populate({
+      //   path: "sellerId",
+      //   populate: {
+      //     busenessId
+      //   }
+      // })
+      .populate({
+        path: "sellerId",
+        populate: "location.city location.state busenessId statutoryId"
+      })
+      .populate("serviceType")
+      .populate("parentCategoryId")
+      .populate("primaryCategoryId")
+      .populate("secondaryCategoryId")
+      .populate("poductId")
+      .populate("productSubcategoryId")
       // .populate({
       //   path: 'serviceCity.country'
       // })
