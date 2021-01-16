@@ -230,7 +230,7 @@ module.exports.updateUser = async (req, res) => {
       name,
       email: email || null,
       location,
-      sellerType: [sellerType],
+      sellerType: sellerType ? [sellerType] : _seller.sellerType,
       userId: userID,
       ..._buyer
     };
