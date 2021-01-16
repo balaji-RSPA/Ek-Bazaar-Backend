@@ -25,7 +25,7 @@ const {
 } = sellers;
 const { getBuyer, addBuyer, updateBuyer } = buyers;
 const { getMaster, addMaster, updateMaster } = mastercollections
-const {sms} = require("../../utils/globalConstants")
+const { sms } = require("../../utils/globalConstants")
 // const {username, password, senderID, smsURL} = sms
 
 const smsURL = 'https://http.myvfirst.com/smpp/sendsms'
@@ -77,19 +77,16 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "A seller with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
+    // const otp = 1234;
+    const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+    const resp = await axios.post(url, {
+      mobile
+    })
 
-    const otp = 1234;
-    const mob = "7633940634"
-    // const message = `You have an inquiry from EkBazaar.com for Rice, 10kg from Bengaluru.
-    // Details: Satish-9844826777
-    
-    // Note: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
-    const message = "Dear customer, your one time password for Ekbazaar registration is '" + otp + "'. Use this to validate your number"
-    const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mob}&from=${senderID}&text=${message}&dlr-mask=19&dlr-url`
-    console.log("module.exports.sendOtp -> sendsmsuri", sendsmsuri)
-    const resp = await axios.get(sendsmsuri)
-    console.log("module.exports.sendOtp -> resp", resp)
-    return respSuccess(res, { otp });
+    // console.log(resp.data, ' pppppppppppppppppppp')
+    if (resp.data.success)
+      return respSuccess(res, { otp: resp.data.data.otp });
+
   } catch (error) {
     return respError(res, error.message);
   }
@@ -227,17 +224,22 @@ module.exports.updateUser = async (req, res) => {
       ..._buyer
     };
     let _seller = await getSeller(userID)
-    // console.log("🚀 ~ file: userController.js ~ line 193 ~ module.exports.updateUser= ~ _seller", _seller)
-
-    const sellerData = {
+    console.log("🚀 ~ file: userController.js ~ line 193 ~ module.exports.updateUser= ~ _seller", _seller)
+    let sellerData
+    sellerData = {
       name,
       email: email || null,
       location,
-      sellerType: [sellerType],
+      sellerType: sellerType ? [sellerType] : _seller.sellerType,
       userId: userID,
-      profileUpdate: true,
       ..._buyer
     };
+    if (_seller && _seller.sellerProductId.length) {
+      sellerData = {
+        ...sellerData,
+        profileUpdate: true,
+      }
+    }
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);

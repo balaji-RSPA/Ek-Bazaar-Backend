@@ -43,6 +43,9 @@ if (process.env.NODE_ENV === "production") {
       user: "tradelive",
       password: "jiarkerc9Om",
       database: "trade-live",
+      // user: "tradeapi",
+      // password: "Oyljeabr6Orc",
+      // database: "tradeapi",
       server_port: "8070",
 
       // Actual Live db dont connect
