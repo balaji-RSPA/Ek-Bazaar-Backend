@@ -507,7 +507,7 @@ exports.searchFromElastic = (query, range, aggs) =>
       query,
       ...aggs,/* ,
       highlight, */
-      sort: { "sellerId._id.keyword": "asc" }
+      sort: { "sellerId._id.keyword": "desc" }
     };
 
     const searchQuery = {
@@ -522,6 +522,7 @@ exports.searchFromElastic = (query, range, aggs) =>
         resolve([
           results.hits.hits,
           count,
+          results.aggregations
         ]);
       })
       .catch(error => reject(error))

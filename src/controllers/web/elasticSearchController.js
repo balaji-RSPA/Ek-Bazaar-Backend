@@ -41,7 +41,7 @@ module.exports.serachSeller = async (req, res) => {
     if (reqQuery.keyword) {
       const { keyword, skip, limit } = reqQuery
 
-      let newKeyword = keyword.toLowerCase()
+      let newKeyword = keyword.toLowerCase().trim()
       newKeyword = newKeyword.replace(" in ", " ");
       newKeyword = newKeyword.replace(",", "")
       newKeyword = newKeyword.split(" ");
@@ -100,6 +100,7 @@ module.exports.serachSeller = async (req, res) => {
       query = result.query
       console.log("module.exports.serachSeller -> query", query)
       let { aggs, catId } = result;
+      console.log("module.exports.serachSeller -> aggs", aggs)
       const seller = await searchFromElastic(query, range, aggs);
       console.log("module.exports.serachSeller -> seller", seller)
       // const product = await getProductByName({ name: { $regex: reg, $options: "si" } })
@@ -122,7 +123,7 @@ module.exports.serachSeller = async (req, res) => {
       //   }
       // }
       const resp = {
-        total: seller[1],
+        total: seller[2]["products"]["value"],
         data: seller[0],
         // relatedCat: relatedCat || [],
         // serviceType,
