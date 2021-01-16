@@ -1357,7 +1357,7 @@ module.exports.getSellerProduct = (query) =>
       // })
       .populate({
         path: "sellerId",
-        populate: "location.city location.state busenessId statutoryId"
+        populate: "location.city location.state busenessId statutoryId sellerCompanyId sellerContactId sellerType"
       })
       .populate("serviceType")
       .populate("parentCategoryId")

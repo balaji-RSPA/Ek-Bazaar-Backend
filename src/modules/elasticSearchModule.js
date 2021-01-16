@@ -522,6 +522,7 @@ exports.searchFromElastic = (query, range, aggs) =>
         resolve([
           results.hits.hits,
           count,
+          results.aggregations
         ]);
       })
       .catch(error => reject(error))
