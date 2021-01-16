@@ -45,6 +45,7 @@ module.exports.serachSeller = async (req, res) => {
       newKeyword = newKeyword.replace(" in ", " ");
       newKeyword = newKeyword.replace(",", "")
       newKeyword = newKeyword.split(" ");
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 48 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
 
       const range = {
         skip: parseInt(skip),

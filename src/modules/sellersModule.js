@@ -29,7 +29,7 @@ const {
   getLevelFiveCategoryList
 } = require('../modules/categoryModule')
 const {
-  sellerProductsBulkInsert
+  sellerProductsBulkInsert,
 } = require('./sellerProductModule')
 const {
   capitalizeFirstLetter
@@ -421,7 +421,10 @@ module.exports.getSeller = (id, chkStock) =>
           },
         },
         match: {
-          'productDetails.inStock': {
+          // 'productDetails.inStock': {
+          //   $eq: chkStock
+          // }
+          status: {
             $eq: chkStock
           }
         }
@@ -496,21 +499,21 @@ module.exports.getSeller = (id, chkStock) =>
         },
       })
       .populate({
-          path: 'sellerProductId',
-          model: 'sellerproducts',
-          populate: {
-            path: "poductId",
-            model: Products.collection.name
-          },
-        })
-        .populate({
-          path: 'sellerProductId',
-          model: 'sellerproducts',
-          populate: {
-            path: "productSubcategoryId",
-            model: ProductsSubCategories.collection.name
-          },
-        })
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
       .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -727,21 +730,21 @@ module.exports.updateSeller = (query, data, elastic) =>
         },
       })
       .populate({
-          path: 'sellerProductId',
-          model: 'sellerproducts',
-          populate: {
-            path: "poductId",
-            model: Products.collection.name
-          },
-        })
-        .populate({
-          path: 'sellerProductId',
-          model: 'sellerproducts',
-          populate: {
-            path: "productSubcategoryId",
-            model: ProductsSubCategories.collection.name
-          },
-        })
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
       .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -1345,6 +1348,23 @@ module.exports.getSellerProduct = (query) =>
       .populate({
         path: 'productDetails.regionOfOrigin'
       })
+      .populate("sellerId")
+      // .populate({
+      //   path: "sellerId",
+      //   populate: {
+      //     busenessId
+      //   }
+      // })
+      .populate({
+        path: "sellerId",
+        populate: "location.city location.state busenessId statutoryId"
+      })
+      .populate("serviceType")
+      .populate("parentCategoryId")
+      .populate("primaryCategoryId")
+      .populate("secondaryCategoryId")
+      .populate("poductId")
+      .populate("productSubcategoryId")
       // .populate({
       //   path: 'serviceCity.country'
       // })

@@ -191,7 +191,7 @@ module.exports.getUserProfile = async (req, res) => {
   try {
     const { userID } = req;
     const user = await getUserProfile(userID)
-    const seller = await getSeller(userID, req.body.inStock);
+    const seller = await getSeller(userID, req.body.status);
     const buyer = await getBuyer(userID);
     const userData = {
       user,
