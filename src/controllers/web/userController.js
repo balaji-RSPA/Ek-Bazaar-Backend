@@ -77,15 +77,23 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "A seller with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-    // const otp = 1234;
-    const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-    const resp = await axios.post(url, {
-      mobile
-    })
 
-    // console.log(resp.data, ' pppppppppppppppppppp')
-    if (resp.data.success)
-      return respSuccess(res, { otp: resp.data.data.otp });
+    if (process.env.NODE_ENV === "production") {
+
+      const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+      const resp = await axios.post(url, {
+        mobile
+      })
+
+      if (resp.data.success)
+        return respSuccess(res, { otp: resp.data.data.otp });
+
+    } else {
+
+      const otp = 1234;
+      return respSuccess(res, { otp });
+
+    }
 
   } catch (error) {
     return respError(res, error.message);
