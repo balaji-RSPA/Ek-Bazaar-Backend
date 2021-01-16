@@ -164,13 +164,13 @@ exports.sellerSearch = async (reqQuery) => {
 
   }
 
-  if(cityFromKeyWord) {
-    if(Array.isArray(cityFromKeyWord)) {
+  if (cityFromKeyWord) {
+    if (Array.isArray(cityFromKeyWord)) {
       cityFromKeyWord.forEach(city => {
 
         const searchCity = {
           "match": {
-            "alias" : city
+            "alias": city
           }
         }
         query.bool.should.push(searchCity)
@@ -178,20 +178,20 @@ exports.sellerSearch = async (reqQuery) => {
     } else {
       const searchCity = {
         "match": {
-          "alias" : cityFromKeyWord
+          "alias": cityFromKeyWord
         }
       }
       query.bool.should.push(searchCity)
     }
   }
 
-  if(stateFromKeyWord) {
-    if(Array.isArray(stateFromKeyWord)) {
+  if (stateFromKeyWord) {
+    if (Array.isArray(stateFromKeyWord)) {
       stateFromKeyWord.forEach(city => {
 
         const searchCity = {
           "match": {
-            "name" : city
+            "name": city
           }
         }
         query.bool.should.push(searchCity)
@@ -199,14 +199,14 @@ exports.sellerSearch = async (reqQuery) => {
     } else {
       const searchCity = {
         "match": {
-          "name" : stateFromKeyWord
+          "name": stateFromKeyWord
         }
       }
       query.bool.should.push(searchCity)
     }
   }
 
-  if(countryFromKeyword) {
+  if (countryFromKeyword) {
 
   }
 
@@ -214,7 +214,7 @@ exports.sellerSearch = async (reqQuery) => {
     const { product } = searchProductsBy
     if (product) {
       if (Array.isArray(product)) {
-        
+
         // query.bool.must.unshift({ bool: { should: [] } });
         product.forEach(p => {
           const searchKey = {
@@ -260,7 +260,7 @@ exports.sellerSearch = async (reqQuery) => {
     }
   }
 
-  if(elastic) {
+  if (elastic) {
     const seller = {
       "match": {
         "sellerId._id": reqQuery.id
@@ -392,7 +392,7 @@ exports.sellerSearch = async (reqQuery) => {
         }
       }
     }
-    
+
   }
 
   if (primaryId) {
@@ -499,8 +499,8 @@ exports.searchFromElastic = (query, range, aggs) =>
 
     const { skip, limit } = range;
     aggs = aggs || {}
-    
-    
+
+
     const body = {
       size: limit || 10,
       from: skip || 0,
@@ -509,12 +509,12 @@ exports.searchFromElastic = (query, range, aggs) =>
       highlight, */
       sort: { "sellerId._id.keyword": "asc" }
     };
-    
+
     const searchQuery = {
       index: INDEXNAME,
       body,
     };
-    
+
     esClient
       .search(searchQuery)
       .then(async (results) => {
@@ -560,7 +560,7 @@ exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
     id,
     body,
   };
-  
+
   esClient.update(newData).then(resolve).catch(reject);
 });
 
