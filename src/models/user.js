@@ -146,6 +146,16 @@ const userSchema = new Schema({
   trialExtends: {
     type: Number,
     default: null
+  },
+  preferredLanguage: {
+    lang: {
+      type: String,
+      default: null
+    },
+    langCode: {
+      type: String,
+      default: null
+    }
   }
 }, {
   versionKey: false,

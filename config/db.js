@@ -2,24 +2,39 @@ const mongoose = require('mongoose');
 const elasticsearch = require('elasticsearch');
 const { env } = process;
 const config = require('./config')
-const { tradedb } = config
+const { tradeDb } = config
 console.log(env.NODE_ENV, ' elastic search')
 function dbConnection() {
 
-  let url;
+  let url, options = {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    autoIndex: true,
+    connectTimeoutMS: 300000,
+    socketTimeoutMS: 45000,
+    serverSelectionTimeoutMS: 10000,
+    // reconnectTries: 30,
+  };
+  if (env.NODE_ENV === 'production') {
+
+    url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+    options = {
+      ...options,
+      keepAlive: true,
+      replicaSet: `${tradeDb.replicaName}`,
+      // useMongoClient: true,
+    }
+  } else {
+
+    url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}:${tradeDb.port}/${tradeDb.database}`;
+
+  }
   if (env) {
 
-    url = `mongodb://${tradedb.user}:${tradedb.password}@${tradedb.host}:${tradedb.port}/${tradedb.database}`
-    mongoose.connect(url, {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      autoIndex: true,
-      connectTimeoutMS: 10000,
-      socketTimeoutMS: 45000,
-      serverSelectionTimeoutMS: 10000
-    }).catch(console.log);
+    // url = `mongodb://${tradedb.user}:${tradedb.password}@${tradedb.host}:${tradedb.port}/${tradedb.database}`
+    mongoose.connect(url, options).catch(console.log);
 
   }
 
@@ -36,16 +51,19 @@ function dbConnection() {
 };
 
 // function elasticSearchConnect() {
-let host = 'localhost:9200'
+let host = ''
 if (env) {
-
-  if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'development') {
+    host = 'localhost:9200'
+  } else if (env.NODE_ENV === 'staging') {
 
     host = 'tradebazaarapi.tech-active.com:5085'
+    // host = 'searchtradetemp.tech-active.com:5085'
 
   } else if (env.NODE_ENV === 'production') {
 
-    host = 'searchtrade.ekbazaar.com:5085'
+    // host = 'searchtrade.ekbazaar.com:5085'
+    host = 'searchtradetemp.tech-active.com:5085'
 
   }
 

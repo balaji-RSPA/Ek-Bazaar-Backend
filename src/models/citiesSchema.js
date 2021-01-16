@@ -11,6 +11,7 @@ const citiesSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+      lowercase: true
     },
     country: {
       type: ObjectId,
@@ -26,6 +27,10 @@ const citiesSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    alias: {
+      type: Array,
+      default: null
+    }
   },
   {
     timestamps: true,

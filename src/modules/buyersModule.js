@@ -3,7 +3,6 @@ const { Buyers, RFP } = require("../models");
 module.exports.postRFP = (data) => new Promise((resolve, reject) => {
   RFP.create(data)
     .then(doc => {
-      console.log(doc)
       resolve(doc)
     })
     .catch(error => reject(error))
@@ -14,17 +13,15 @@ module.exports.checkBuyerExistOrNot = (query) =>
   new Promise((resolve, reject) => {
     Buyers.find(query)
       .then((doc) => {
-        console.log(doc);
         resolve(doc);
       })
-      .catch((error) => reject(Error));
+      .catch((error) => reject(error));
   });
 
 module.exports.addBuyer = (data) =>
   new Promise((resolve, reject) => {
     Buyers.create(data)
       .then((doc) => {
-        console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
@@ -33,13 +30,23 @@ module.exports.addBuyer = (data) =>
 module.exports.getBuyer = (id) =>
   new Promise((resolve, reject) => {
     Buyers.findOne({ userId: id })
+      .populate({
+        path: "location.city",
+        model: "cities",
+        select: "name"
+      })
+      .populate({
+        path: "location.state",
+        model: "states",
+        select: "name"
+      })
       .then((doc) => {
         resolve(doc);
       })
       .catch((error) => reject(error));
   });
 
-module.exports.updateBuyer = (query, data) => 
+module.exports.updateBuyer = (query, data) =>
   new Promise((resolve, reject) => {
     Buyers.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
@@ -48,9 +55,18 @@ module.exports.updateBuyer = (query, data) =>
       .catch((error) => reject(error));
   });
 
-module.exports.getAllBuyers = (skip,limit) =>
+module.exports.getAllBuyers = (searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    Buyers.find({})
+    let searchQry = searchQuery ? {
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+        { mobile: { $regex: searchQuery, $options: 'i' } }
+      ]
+    } : {};
+    // Object.keys(searchQuery).forEach((el)=>{
+    //   searchQry[el] = { $regex: `${searchQuery[el]}`, $options: 'i' }
+    // })
+    Buyers.find(searchQry)
       .skip(skip)
       .limit(limit)
       .then((doc) => {
@@ -63,13 +79,12 @@ module.exports.updateBuyerPassword = (mobile, data) =>
   new Promise((resolve, reject) => {
     Buyers.findOneAndUpdate({ mobile }, data, { new: true })
       .then((doc) => {
-        console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error));
   });
 /*Buyer admin api*/
-  module.exports.getBuyerAdmin = (query) =>
+module.exports.getBuyerAdmin = (query) =>
   new Promise((resolve, reject) => {
     Buyers.findOne(query)
       .then((doc) => {
@@ -80,10 +95,9 @@ module.exports.updateBuyerPassword = (mobile, data) =>
 /**
    * Get RFP detail
   */
- module.exports.postRFP = (data) => new Promise((resolve, reject) => {
+module.exports.postRFP = (data) => new Promise((resolve, reject) => {
   RFP.create(data)
     .then(doc => {
-      console.log(doc)
       resolve(doc)
     })
     .catch(error => reject(error))
