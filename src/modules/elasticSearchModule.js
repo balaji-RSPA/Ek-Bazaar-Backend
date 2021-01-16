@@ -167,34 +167,40 @@ exports.sellerSearch = async (reqQuery) => {
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 139 ~ exports.sellerSearch= ~ searchProductsBy", searchProductsBy)
     const keywordMatch = []
     const productMatch = []
-    if (searchProductsBy.serviceType && searchProductsBy.city) {
-      keywordMatch.push({
-        "match": {
-          "sellerProductId.serviceType._id": searchProductsBy.serviceType.id,
-        }
-      })
-    }
+
+    /** search by service_type, and service_city **/
+    // if (searchProductsBy.serviceType && searchProductsBy.city) {
+    //   keywordMatch.push({
+    //     "match": {
+    //       "sellerProductId.serviceType._id": searchProductsBy.serviceType.id,
+    //     }
+    //   })
+    //   keywordMatch.push({
+    //     "match": {
+    //       "sellerProductId.serviceCity.city._id": searchProductsBy.city.id,
+    //     }
+    //   })
+    // }
+
+    /** search by seller_type **/
     if(searchProductsBy.serviceType) {
       keywordMatch.push({
         "match": {
-          "sellerType": {"query": searchProductsBy.serviceType.id},
+          "sellerProductId.serviceType._id": searchProductsBy.serviceType.id //{"query": searchProductsBy.serviceType.id},
         }
       })
     }
-    if (searchProductsBy.city && searchProductsBy.serviceType) {
+
+    /* search by seller city */
+    if(searchProductsBy.city) {
       keywordMatch.push({
         "match": {
           "sellerProductId.serviceCity.city._id": searchProductsBy.city.id,
         }
       })
     }
-    if(searchProductsBy.city) {
-      keywordMatch.push({
-        "match": {
-          "location.city._id": searchProductsBy.city.id,
-        }
-      })
-    }
+
+    /* search by seller state */
     if (searchProductsBy.state) {
       keywordMatch.push({
         match: {
@@ -202,9 +208,11 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
     }
+
+    /** search by categories **/
     if (searchProductsBy.product) {
 
-      /** level 5 **/
+      /** search in level 5 category **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.productSubcategoryId.name": searchProductsBy.product,
@@ -212,81 +220,28 @@ exports.sellerSearch = async (reqQuery) => {
       })
 
 
-      /** level 4 **/
+      /** search in level 4 category **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.poductId.name": searchProductsBy.product,
         }
       })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.poductId.name.keyword": searchProductsBy.product
-      //   }
-      // })
 
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.poductId.name": `* ${searchProductsBy.product}`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.poductId.name": `${searchProductsBy.product} *`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.poductId.name": `* ${searchProductsBy.product} *`
-      //   }
-      // })
-
-      /** level 3 **/
+      /** search in level 3 category **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.secondaryCategoryId.name": searchProductsBy.product
         }
       })
 
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.secondaryCategoryId.name": `* ${searchProductsBy.product}`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.secondaryCategoryId.name": `${searchProductsBy.product} *`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.secondaryCategoryId.name": `* ${searchProductsBy.product} *`
-      //   }
-      // })
-
-      /** level 2 **/
+      /** search in level 2 category **/
       productMatch.push({
         "match_phrase": {
           "sellerProductId.primaryCategoryId.name": searchProductsBy.product
         }
       })
 
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.primaryCategoryId.name": `* ${searchProductsBy.product}`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.primaryCategoryId.name": `${searchProductsBy.product} *`
-      //   }
-      // })
-      // productMatch.push({
-      //   "wildcard": {
-      //     "sellerProductId.primaryCategoryId.name": `* ${searchProductsBy.product} *`
-      //   }
-      // })
-
-      /** name */
+      /** search by seller name */
       productMatch.push({
         "match": {
           "name": {
@@ -294,23 +249,16 @@ exports.sellerSearch = async (reqQuery) => {
             "minimum_should_match": "10%"
           }
         }
-        // match: {
-        //   name: searchProductsBy.product
-        // }
       })
     }
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 216 ~ exports.sellerSearch= ~ productMatch", productMatch)
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 226 ~ exports.sellerSearch= ~ keywordMatch", keywordMatch)
 
     query.bool.should = productMatch
-    query.bool["minimum_should_match"] = 1
+    if(searchProductsBy.product)
+      query.bool["minimum_should_match"] = 1
     query.bool.must = keywordMatch
 
-    // query.bool.filter.push({
-    //   "bool": {
-    //     "should": productMatch
-    //   }
-    // })
   }
 
   if (level5Id) {

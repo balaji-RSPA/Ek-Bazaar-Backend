@@ -83,7 +83,7 @@ module.exports.getSpecificCategories = (query) =>
       .catch(error => reject(error))
   })
 
-module.exports.getAllCategories = (skip,limit) =>
+module.exports.getAllCategories = (query) =>
   new Promise((resolve, reject) => {
     // ParentCategory.find({
     //   _id: {
@@ -113,8 +113,8 @@ module.exports.getAllCategories = (skip,limit) =>
           // },
         },
       })
-      .skip(skip)
-      .limit(limit)
+      // .skip(skip)
+      // .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
