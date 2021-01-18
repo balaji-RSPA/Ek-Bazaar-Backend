@@ -30,6 +30,14 @@ module.exports.addBuyer = (data) =>
 module.exports.getBuyer = (id) =>
   new Promise((resolve, reject) => {
     Buyers.findOne({ userId: id })
+    .populate({
+      path: 'location.city'
+    })
+    .populate({
+      path: 'location.state'
+    })
+    // .populate("location.city")
+    // .populate("location.state")
       .then((doc) => {
         resolve(doc);
       })

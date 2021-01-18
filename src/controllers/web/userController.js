@@ -218,6 +218,7 @@ module.exports.updateUser = async (req, res) => {
       buyerData.countryCode = _buyer.mobile[0].countryCode;
     }
     delete buyerData && buyerData._id;
+    console.log(buyerData,"=====================hwjgejwgr hjgwrgwrjh whrjhgw")
     buyer = await updateBuyer({ userId: userID }, buyerData);
 
     if (business) {
