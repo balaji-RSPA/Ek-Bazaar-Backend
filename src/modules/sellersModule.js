@@ -29,7 +29,7 @@ const {
   getLevelFiveCategoryList
 } = require('../modules/categoryModule')
 const {
-  sellerProductsBulkInsert
+  sellerProductsBulkInsert,
 } = require('./sellerProductModule')
 const {
   capitalizeFirstLetter
@@ -421,7 +421,10 @@ module.exports.getSeller = (id, chkStock) =>
           },
         },
         match: {
-          'productDetails.inStock': {
+          // 'productDetails.inStock': {
+          //   $eq: chkStock
+          // }
+          status: {
             $eq: chkStock
           }
         }
@@ -496,21 +499,21 @@ module.exports.getSeller = (id, chkStock) =>
         },
       })
       .populate({
-          path: 'sellerProductId',
-          model: 'sellerproducts',
-          populate: {
-            path: "poductId",
-            model: Products.collection.name
-          },
-        })
-        .populate({
-          path: 'sellerProductId',
-          model: 'sellerproducts',
-          populate: {
-            path: "productSubcategoryId",
-            model: ProductsSubCategories.collection.name
-          },
-        })
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
       .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -537,8 +540,8 @@ module.exports.getSeller = (id, chkStock) =>
   })
 
 exports.getSellerProfile = (id) =>
-new Promise((resolve, reject) => {
-  console.log("id", id)
+  new Promise((resolve, reject) => {
+    console.log("id", id)
     Sellers.find({
       _id: id
     })
@@ -551,7 +554,45 @@ new Promise((resolve, reject) => {
       .populate("establishmentId")
       .populate({
         path: "sellerProductId",
-        model: "sellerproducts"
+        model: "sellerproducts",
+        populate: {
+          path: "parentCategoryId",
+          select: "name",
+          model: ParentCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          select: "name",
+          model: PrimaryCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        }
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        }
       })
       .populate("location.city", "name")
       .populate("location.state", "name")
@@ -689,21 +730,21 @@ module.exports.updateSeller = (query, data, elastic) =>
         },
       })
       .populate({
-          path: 'sellerProductId',
-          model: 'sellerproducts',
-          populate: {
-            path: "poductId",
-            model: Products.collection.name
-          },
-        })
-        .populate({
-          path: 'sellerProductId',
-          model: 'sellerproducts',
-          populate: {
-            path: "productSubcategoryId",
-            model: ProductsSubCategories.collection.name
-          },
-        })
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
       .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -1307,6 +1348,23 @@ module.exports.getSellerProduct = (query) =>
       .populate({
         path: 'productDetails.regionOfOrigin'
       })
+      .populate("sellerId")
+      // .populate({
+      //   path: "sellerId",
+      //   populate: {
+      //     busenessId
+      //   }
+      // })
+      .populate({
+        path: "sellerId",
+        populate: "location.city location.state busenessId statutoryId sellerCompanyId sellerContactId sellerType"
+      })
+      .populate("serviceType")
+      .populate("parentCategoryId")
+      .populate("primaryCategoryId")
+      .populate("secondaryCategoryId")
+      .populate("poductId")
+      .populate("productSubcategoryId")
       // .populate({
       //   path: 'serviceCity.country'
       // })
@@ -1347,58 +1405,13 @@ module.exports.getSellerProductDetails = (query) =>
       .catch(reject)
   })
 
-module.exports.getUpdatedSellerDetails = (query) => new Promise((resolve, reject) => {
-  Sellers.find(searchQry)
+module.exports.getUpdatedSellerDetails = (query, skip, limit) => new Promise((resolve, reject) => {
+  Sellers.find(query)
     .skip(skip)
     .limit(limit)
     .populate({
-      path: 'sellerType sellerProductId'
+      path: 'sellerType busenessId location.city location.state location.country'
     })
-    // .populate('sellerType.name', 'name')
-    // .populate('sellerType.cities.city', 'name')
-    // .populate('sellerType.cities.state', 'name region')
-
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: "parentCategoryId",
-    //     model: ParentCategory.collection.name
-    //   },
-    // })
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: "primaryCategoryId",
-    //     model: PrimaryCategory.collection.name
-    //   },
-    // })
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: "secondaryCategoryId",
-    //     model: SecondaryCategory.collection.name
-    //   },
-    // })
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: 'productDetails.regionOfOrigin',
-    //   },
-    // })
-    // .populate({
-    //   path: 'sellerProductId',
-    //   model: 'sellerproducts',
-    //   populate: {
-    //     path: 'productDetails.countryOfOrigin',
-    //   },
-    // })
-    // .populate('location.city', 'name')
-    // .populate('location.state', 'name region')
-    // .populate('location.country', 'name')
     .then((doc) => {
       resolve(doc)
     })

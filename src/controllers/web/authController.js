@@ -45,7 +45,7 @@ exports.login = async (req, res) => {
       }
     } else if (userType === 'buyer') {
       const buyer = await buyers.getBuyer(user._id);
-      if (buyer.deactivateAccount.status === true)
+      if (buyer && buyer.deactivateAccount.status === true)
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
     }
 

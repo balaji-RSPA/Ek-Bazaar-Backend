@@ -1,5 +1,6 @@
 const camelcaseKeys = require("camelcase-keys");
 const _ = require('lodash')
+const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
@@ -24,6 +25,13 @@ const {
 } = sellers;
 const { getBuyer, addBuyer, updateBuyer } = buyers;
 const { getMaster, addMaster, updateMaster } = mastercollections
+const { sms } = require("../../utils/globalConstants")
+// const {username, password, senderID, smsURL} = sms
+
+const smsURL = 'https://http.myvfirst.com/smpp/sendsms'
+const username = 'cn14604'
+const password = 'Admin@14604'
+const senderID = 'EKBZAR'
 
 module.exports.getAccessToken = async (req, res) => {
   try {
@@ -69,8 +77,24 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "A seller with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-    const otp = 1234;
-    return respSuccess(res, { otp });
+
+    if (process.env.NODE_ENV === "production") {
+
+      const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+      const resp = await axios.post(url, {
+        mobile
+      })
+
+      if (resp.data.success)
+        return respSuccess(res, { otp: resp.data.data.otp });
+
+    } else {
+
+      const otp = 1234;
+      return respSuccess(res, { otp });
+
+    }
+
   } catch (error) {
     return respError(res, error.message);
   }
@@ -175,7 +199,7 @@ module.exports.getUserProfile = async (req, res) => {
   try {
     const { userID } = req;
     const user = await getUserProfile(userID)
-    const seller = await getSeller(userID, req.body.inStock);
+    const seller = await getSeller(userID, req.body.status);
     const buyer = await getBuyer(userID);
     const userData = {
       user,
@@ -208,17 +232,22 @@ module.exports.updateUser = async (req, res) => {
       ..._buyer
     };
     let _seller = await getSeller(userID)
-    // console.log("🚀 ~ file: userController.js ~ line 193 ~ module.exports.updateUser= ~ _seller", _seller)
-
-    const sellerData = {
+    console.log("🚀 ~ file: userController.js ~ line 193 ~ module.exports.updateUser= ~ _seller", _seller)
+    let sellerData
+    sellerData = {
       name,
       email: email || null,
       location,
-      sellerType: [sellerType],
+      sellerType: sellerType ? [sellerType] : _seller.sellerType,
       userId: userID,
-      profileUpdate: true,
       ..._buyer
     };
+    if (_seller && _seller.sellerProductId.length) {
+      sellerData = {
+        ...sellerData,
+        profileUpdate: true,
+      }
+    }
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);

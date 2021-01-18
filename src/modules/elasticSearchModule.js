@@ -150,7 +150,7 @@ exports.bulkStoreInElastic = (foundDoc) =>
 
 exports.sellerSearch = async (reqQuery) => {
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword } = reqQuery
   let catId = ''
   let query = {
     bool: {
@@ -164,11 +164,57 @@ exports.sellerSearch = async (reqQuery) => {
 
   }
 
+  if (cityFromKeyWord) {
+    if (Array.isArray(cityFromKeyWord)) {
+      cityFromKeyWord.forEach(city => {
+
+        const searchCity = {
+          "match": {
+            "alias": city
+          }
+        }
+        query.bool.should.push(searchCity)
+      })
+    } else {
+      const searchCity = {
+        "match": {
+          "alias": cityFromKeyWord
+        }
+      }
+      query.bool.should.push(searchCity)
+    }
+  }
+
+  if (stateFromKeyWord) {
+    if (Array.isArray(stateFromKeyWord)) {
+      stateFromKeyWord.forEach(city => {
+
+        const searchCity = {
+          "match": {
+            "name": city
+          }
+        }
+        query.bool.should.push(searchCity)
+      })
+    } else {
+      const searchCity = {
+        "match": {
+          "name": stateFromKeyWord
+        }
+      }
+      query.bool.should.push(searchCity)
+    }
+  }
+
+  if (countryFromKeyword) {
+
+  }
+
   if (keyword) {
     const { product } = searchProductsBy
     if (product) {
       if (Array.isArray(product)) {
-        
+
         // query.bool.must.unshift({ bool: { should: [] } });
         product.forEach(p => {
           const searchKey = {
@@ -181,6 +227,13 @@ exports.sellerSearch = async (reqQuery) => {
         aggs = {
           "collapse": {
             "field": "sellerId.name.keyword"
+          },
+          "aggs": {
+            "products": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
           }
         }
       } else {
@@ -194,13 +247,20 @@ exports.sellerSearch = async (reqQuery) => {
         aggs = {
           "collapse": {
             "field": "sellerId.name.keyword"
+          },
+          "aggs": {
+            "products": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
           }
         }
       }
     }
   }
 
-  if(elastic) {
+  if (elastic) {
     const seller = {
       "match": {
         "sellerId._id": reqQuery.id
@@ -231,6 +291,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
   }
@@ -248,6 +315,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
   }
@@ -256,9 +330,10 @@ exports.sellerSearch = async (reqQuery) => {
     if (Array.isArray(serviceType)) {
       query.bool.must.unshift({ bool: { should: [] } });
       for (let i = 0; i < serviceType.length; i++) {
+        const service = serviceType[i]
         const categoryMatch = {
           "match": {
-            "serviceType._id": serviceType,
+            "serviceType._id": service,
           }
         };
         query.bool.must[0].bool.should.push(categoryMatch);
@@ -266,6 +341,13 @@ exports.sellerSearch = async (reqQuery) => {
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
+        },
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
         }
       }
     } else {
@@ -278,6 +360,13 @@ exports.sellerSearch = async (reqQuery) => {
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
+        },
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
         }
       }
     }
@@ -294,9 +383,16 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
-    
+
   }
 
   if (primaryId) {
@@ -310,6 +406,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
   }
@@ -326,6 +429,13 @@ exports.sellerSearch = async (reqQuery) => {
     aggs = {
       "collapse": {
         "field": "sellerId.name.keyword"
+      },
+      "aggs": {
+        "products": {
+          "cardinality": {
+            "field": "sellerId.name.keyword"
+          }
+        }
       }
     }
   }
@@ -345,6 +455,13 @@ exports.sellerSearch = async (reqQuery) => {
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
+        },
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
         }
       }
     } else {
@@ -358,6 +475,13 @@ exports.sellerSearch = async (reqQuery) => {
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
+        },
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
         }
       }
     }
@@ -375,22 +499,22 @@ exports.searchFromElastic = (query, range, aggs) =>
 
     const { skip, limit } = range;
     aggs = aggs || {}
-    
-    
+
+
     const body = {
       size: limit || 10,
       from: skip || 0,
       query,
       ...aggs,/* ,
       highlight, */
-      sort: { "sellerId._id.keyword": "asc" }
+      sort: { "sellerId._id.keyword": "desc" }
     };
-    
+
     const searchQuery = {
       index: INDEXNAME,
       body,
     };
-    
+
     esClient
       .search(searchQuery)
       .then(async (results) => {
@@ -398,6 +522,7 @@ exports.searchFromElastic = (query, range, aggs) =>
         resolve([
           results.hits.hits,
           count,
+          results.aggregations
         ]);
       })
       .catch(error => reject(error))
@@ -436,7 +561,7 @@ exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
     id,
     body,
   };
-  
+
   esClient.update(newData).then(resolve).catch(reject);
 });
 
@@ -450,7 +575,47 @@ exports.getSuggestions = (query, range) => new Promise((resolve, reject) => {
     // sort: { "_id": "desc" }
   };
   const searchQuery = {
-    index: "suggestions",
+    index: process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions",
+    body,
+  };
+  esClient
+    .search(searchQuery)
+    .then(async (results) => {
+      // const { count } = await this.getCounts(query); // To get exact count
+      resolve([
+        results.hits.hits,
+        // count,
+      ]);
+    })
+    .catch(error => reject(error))
+})
+
+exports.getAllCitiesElastic = (query) => new Promise((resolve, reject) => {
+  const body = {
+    query
+  };
+  const searchQuery = {
+    index: process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities",
+    body,
+  };
+  esClient
+    .search(searchQuery)
+    .then(async (results) => {
+      // const { count } = await this.getCounts(query); // To get exact count
+      resolve([
+        results.hits.hits,
+        // count,
+      ]);
+    })
+    .catch(error => reject(error))
+})
+
+exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
+  const body = {
+    query
+  };
+  const searchQuery = {
+    index: process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states",
     body,
   };
   esClient

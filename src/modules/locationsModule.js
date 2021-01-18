@@ -165,7 +165,8 @@ exports.getAllCities = (reqQuery) =>
           "_id": 1,
           "name": 1,
           "state.name": 1,
-          "state._id": 1
+          "state._id": 1,
+          "alias": 1
         }
       }
     ]);

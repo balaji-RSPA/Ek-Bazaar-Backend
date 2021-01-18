@@ -16,7 +16,8 @@ const {
   location,
   category,
   mastercollections,
-  elastic
+  elastic,
+  sellerProducts
 } = require('../../modules')
 const { sellerSearch, searchFromElastic } = elastic;
 const _ = require('lodash')
@@ -50,8 +51,9 @@ const {
   getProductSubcategory
 } = category
 
-const { getFilteredCities,getSellerSelectedCities } = location;
+const { getFilteredCities, getSellerSelectedCities } = location;
 const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct } = mastercollections
+const { updateSellerProducts } = sellerProducts
 
 module.exports.getSeller = async (req, res) => {
   try {
@@ -327,7 +329,7 @@ module.exports.deleteSellerProduct = async (req, res) => {
 
 // function masterMapData(val, keywords) {
 const masterMapData = (val, type) => new Promise((resolve, reject) => {
-  console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", val)
+  // console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", val)
   const _Scity = [];
   let serviceProductData;
   if (val.serviceCity && val.serviceCity.length) {
@@ -429,7 +431,7 @@ module.exports.addSellerProduct = async (req, res) => {
     // console.log("🚀 ~ file: sellersController.js ~ line 390 ~ module.exports.addSellerProduct= ~ sellerId", req.body)
     if (sellerId) {
       const findSeller = await getSellerProfile(sellerId);
-      console.log("🚀 ~ file: sellersController.js ~ line 497 ~ module.exports.addSellerProduct= ~ findSeller", findSeller)
+      // console.log("🚀 ~ file: sellersController.js ~ line 497 ~ module.exports.addSellerProduct= ~ findSeller", findSeller)
       const userId = findSeller && findSeller.length && findSeller[0].userId || null
       const serviceType = findSeller && findSeller.length && findSeller[0].sellerType.length && findSeller[0].sellerType[0]._id || null
       let resultVal = []
@@ -467,6 +469,7 @@ module.exports.addSellerProduct = async (req, res) => {
         _id: { $in: result }
       }
       const proDetails = await getSellerProductDetails(que)
+      // console.log("_______________________________proDetails", proDetails)
 
       let masterData = [];
       if (proDetails.length) {
@@ -477,6 +480,7 @@ module.exports.addSellerProduct = async (req, res) => {
 
 
           const formateData = await masterMapData(val, 'insert')
+          const updatePro = await updateSellerProducts({ _id: val._id }, { keywords: formateData.keywords })
           masterData.push(formateData)
           // return ({
           //   sellerId: val.sellerId && {
@@ -549,12 +553,12 @@ module.exports.updateSellerProduct = async (req, res) => {
       body,
       files
     } = req
-    console.log('update poroduct---', req.body)
+    // console.log('update poroduct---', req.body)
     let updateDetail
     if (body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
       let findCities = await getSellerSelectedCities(productDetails.serviceCity);
-      if (findCities && findCities.length){
+      if (findCities && findCities.length) {
         productDetails.serviceCity = findCities.map((val) => ({
           city: val._id,
           state: val.state._id,
@@ -583,7 +587,7 @@ module.exports.updateSellerProduct = async (req, res) => {
         }
         const _image1 = await uploadToDOSpace(data)
         productDetails.productDetails.image.image1 = {
-          name: files.image1.nam,
+          name: files.image1.name,
           code: _image1.Location
         }
         // productDetails.productDetails.image.image1.name = files.image1.name;
@@ -632,7 +636,7 @@ module.exports.updateSellerProduct = async (req, res) => {
         // productDetails.productDetails.image.image4.code = _image4.Location;
       }
       /* till here*/
-      updateDetail = await addProductDetails(productDetails._id,productDetails);
+      updateDetail = await addProductDetails(productDetails._id, productDetails);
     }
     if (body.id && body.imageType) {
       const data = {
@@ -659,7 +663,7 @@ module.exports.updateSellerProduct = async (req, res) => {
     if (updateDetail) {
       const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
       const masterData = await masterMapData(updatedProduct[0], 'update')
-      // console.log(JSON.stringify(masterData), ' fffffffffff')
+      const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
       const masResult = await updateMaster({ _id: updateDetail._id }, masterData)
     }
     // if(body.id && body.inStock){
@@ -703,10 +707,10 @@ getlevelTwoCategories = async (element, userId, serviceType) => {
     _id: element.id
   })
   element.parentCategoryId = findLevel1.parentCatId,
-  element.primaryCategoryId = element.id,
-  element.secondaryCategoryId = null,
-  element.poductId = null,
-  element.productSubcategoryId = null
+    element.primaryCategoryId = element.id,
+    element.secondaryCategoryId = null,
+    element.poductId = null,
+    element.productSubcategoryId = null
   delete element.id,
     delete element.productType
   return element;
@@ -720,10 +724,10 @@ getlevelThreeCategories = async (element, userId, serviceType) => {
 
   let findLevel1 = await getlevelTwoCategories({ id: findLevel2.primaryCatId })
   element.parentCategoryId = findLevel1.parentCategoryId,
-  element.primaryCategoryId = findLevel2.primaryCatId,
-  element.secondaryCategoryId = element.id,
-  element.poductId = null,
-  element.productSubcategoryId = null
+    element.primaryCategoryId = findLevel2.primaryCatId,
+    element.secondaryCategoryId = element.id,
+    element.poductId = null,
+    element.productSubcategoryId = null
   delete element.id,
     delete element.productType
   return element;
@@ -744,7 +748,7 @@ getlevelFourCategories = async (element, userId, serviceType) => {
     element.secondaryCategoryId = findLevel3.secondaryId,
     element.poductId = element.id,
     element.productSubcategoryId = null
-    delete element.id,
+  delete element.id,
     delete element.productType
   return element;
 
@@ -764,7 +768,7 @@ getlevelFiveCategories = async (element, userId, serviceType) => {
     element.secondaryCategoryId = findLevel3.secondaryCategoryId,
     element.poductId = findLevel4.productId,
     element.productSubcategoryId = element.id
-    delete element.id,
+  delete element.id,
     delete element.productType
   return element;
 
