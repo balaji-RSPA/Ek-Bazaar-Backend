@@ -30,23 +30,23 @@ const getUserAgent = (userAgent) => {
 exports.login = async (req, res) => {
   try {
     const { password, ipAddress, location, mobile, userType } = req.body;
-    let user = await sellers.checkUserExistOrNot({mobile});
+    let user = await sellers.checkUserExistOrNot({ mobile });
     user = user[0]
-    if(!user.password){
-      return respAuthFailed(res,user,"Password is not set or is not yet available");
+    if (!user.password) {
+      return respAuthFailed(res, user, "Password is not set or is not yet available");
     }
     if (!user) {
-      return respAuthFailed(res,undefined,"User not found");
+      return respAuthFailed(res, undefined, "User not found");
     }
-    if(userType === 'seller'){
+    if (userType === 'seller') {
       const seller = await sellers.getSeller(user._id);
-      if(seller.deactivateAccount && (seller.deactivateAccount.status === true)){
-        return respAuthFailed(res,undefined,"Account Deactivated, contact Support team");
+      if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true)) {
+        return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
       }
-    }else if (userType === 'buyer'){
+    } else if (userType === 'buyer') {
       const buyer = await buyers.getBuyer(user._id);
-      if(buyer.deactivateAccount.status === true)
-        return respAuthFailed(res,undefined,"Account Deactivated, contact Support team");
+      if (buyer && buyer.deactivateAccount.status === true)
+        return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
     }
 
     const result = await bcrypt.compare(password, user.password);
@@ -67,7 +67,7 @@ exports.login = async (req, res) => {
       const result1 = await sellers.handleUserSession(user._id, finalData);
       return respSuccess(res, { token, location }, "successfully logged in!");
     }
-    return respAuthFailed(res,undefined,"Invalid Credentials!");
+    return respAuthFailed(res, undefined, "Invalid Credentials!");
   } catch (error) {
     return respError(res, error.message);
   }

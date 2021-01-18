@@ -1,16 +1,20 @@
 var client = require('../config/db').esClient;
-const {getAllSellerTypes} = require("../src/modules/categoryModule")
-const index = process.env.NODE_ENV === "production" ? "tradedb.sellertypes" : "trade-live.sellertypes"
+const index = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections"
 const type = "_doc"
+const {config} = require("./mapping")
 
-module.exports.checkIndices = function () {
+client.cluster.health({}, function (err, resp, status) {
+    console.log("-- Client Health --", resp);
+});
+
+module.exports.checkIndicesMaster = function () {
     return new Promise((resolve, reject) => {
-        client.indices.exists({ index }, (err, res, status) => {
+        client.indices.exists({ index: index }, (err, res, status) => {
             if (res) {
                 console.log('index already exists')
                 resolve();
             } else {
-                client.indices.create({ index, includeTypeName: true }, (err, res, status) => {
+                client.indices.create({ index: index, includeTypeName: true }, (err, res, status) => {
                     if (err) {
                         console.log(err)
                         reject(err);
@@ -26,7 +30,7 @@ module.exports.checkIndices = function () {
 
 }
 
-module.exports.putMapping = function () {
+module.exports.putMappingMaster = function () {
     console.log("Creating Mapping index");
     return new Promise((resolve, reject) => {
 
@@ -44,12 +48,7 @@ module.exports.putMapping = function () {
             includeTypeName: true,
             type,
             body: {
-                [type]: {
-                    properties: {
-                        id: { type: 'text' },
-                        name: { type: 'keyword' },
-                    }
-                }
+                [type]: config
             }
         }, async (err, resp, status) => {
             if (err) {
@@ -57,30 +56,7 @@ module.exports.putMapping = function () {
                 reject(err)
             }
             else {
-
-                let data = await getAllSellerTypes(0, 2000)
-                const bulkBody = []
-                data.forEach(serviceType => {
-                    bulkBody.push({
-                        index: {
-                            _index: index,
-                            _type: type,
-                            _id: serviceType._id
-                        }
-                    })
-                    bulkBody.push({id: serviceType._id, name: serviceType.name})
-                })
-                client.bulk({
-                    body: bulkBody
-                }, (err, resp, status) => {
-                    if (err) {
-                        console.log(err)
-                        reject()
-                    } else {
-                        console.log(resp, status)
-                    }
-                });
-                console.log('Successfully Created Index', status);
+                console.log('Successfully Created Index', status, resp);
                 resolve(status, resp)
             }
         });
@@ -88,7 +64,7 @@ module.exports.putMapping = function () {
 }
 
 module.exports.deleteIndices = function () {
-    client.indices.delete({ index }, function (err, resp, status) {
+    client.indices.delete({ index: index }, function (err, resp, status) {
         console.log("delete", resp);
     });
 }

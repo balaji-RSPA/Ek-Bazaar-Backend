@@ -3,14 +3,29 @@ let config;
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
 if (process.env.NODE_ENV === "production") {
   config = {
-    tradedb: {
-      host: "tradedb.ekbazaar.com",
+    tradeDb: {
+      // replicaset
+      host1: "159.65.145.186",
+      host2: "128.199.29.212",
+      host3: "143.110.177.149",
       port: "5006",
-      user: "trade",
-      password: "jiarkerc9Om",
-      database: "trade",
+      user: "dev",
+      password: "active.123",
+      database: "tradedb",
+      replicaName: "rs1",
       server_port: "8070",
     },
+    // tradedb: {
+    //   host: "tradedbtemp.tech-active.com",
+    //   // host: "tradedb.ekbazaar.com",
+    //   port: "5006",
+    //   // user: "trade",
+    //   // password: "jiarkerc9Om",
+    //   // database: "trade",
+    //   user: "dev",
+    //   password: "active.123",
+    //   database: "tradedb",
+    // },
     tenderdb: {
       host: "tenderdb.ekbazaar.com",
       port: "5006",
@@ -21,13 +36,16 @@ if (process.env.NODE_ENV === "production") {
   };
 } else {
   config = {
-    tradedb: {
+    tradeDb: {
       // stating server db 
       host: "tradebazaarapi.tech-active.com",
       port: "5006",
-      user: "tradeapi",
-      password: "Oyljeabr6Orc",
-      database: "tradeapi",
+      user: "tradelive",
+      password: "jiarkerc9Om",
+      database: "trade-live",
+      // user: "tradeapi",
+      // password: "Oyljeabr6Orc",
+      // database: "tradeapi",
       server_port: "8070",
 
       // Actual Live db dont connect

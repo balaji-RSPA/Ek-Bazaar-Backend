@@ -87,6 +87,10 @@ const rfpSchema = new Schema(
       type: { productDetails },
       trim: true,
     },
+    requestType: {
+      type: Number,
+      default: null
+    }
   },
   {
     versionKey: false,
