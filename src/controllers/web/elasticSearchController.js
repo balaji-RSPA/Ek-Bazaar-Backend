@@ -122,7 +122,7 @@ module.exports.serachSeller = async (req, res) => {
       //   }
       // }
       const resp = {
-        total:  seller[2]["products"]["value"],//seller[1],
+        total: seller[2]["products"]["value"], //seller[1],
         data: seller[0],
         // relatedCat: relatedCat || [],
         // serviceType,
