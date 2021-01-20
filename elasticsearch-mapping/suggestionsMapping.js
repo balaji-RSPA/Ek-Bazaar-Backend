@@ -1,5 +1,5 @@
 var client = require('../config/db').esClient;
-const index =  process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions"
+const index =  process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "suggestions" //"trade-live.suggestions"
 const type = "_doc"
 
 const { ParentCategory, PrimaryCategory, SecondaryCategory, Products, ProductsSubCategories } = require("../src/models")
@@ -55,7 +55,7 @@ module.exports.putMapping = function () {
                             "type": "text",
                             "fields": {
                                 "keyword": {
-                                    "ignore_above": 256.0,
+                                    // "ignore_above": 256.0,
                                     "type": "keyword"
                                 }
                             }
@@ -64,7 +64,7 @@ module.exports.putMapping = function () {
                             "type": "text",
                             "fields": {
                                 "keyword": {
-                                    "ignore_above": 256.0,
+                                    // "ignore_above": 256.0,
                                     "type": "keyword"
                                 }
                             }
@@ -73,7 +73,7 @@ module.exports.putMapping = function () {
                             "type": "text",
                             "fields": {
                                 "keyword": {
-                                    "ignore_above": 256.0,
+                                    // "ignore_above": 256.0,
                                     "type": "keyword"
                                 }
                             }
@@ -82,7 +82,7 @@ module.exports.putMapping = function () {
                             "type": "text",
                             "fields": {
                                 "keyword": {
-                                    "ignore_above": 256.0,
+                                    // "ignore_above": 256.0,
                                     "type": "keyword"
                                 }
                             }

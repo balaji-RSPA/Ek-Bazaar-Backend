@@ -166,20 +166,34 @@ module.exports.serachSeller = async (req, res) => {
 module.exports.searchSuggestion = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
+    console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
 
-    const { skip, limit, search } = reqQuery
+    const { skip, limit, search, product } = reqQuery
     if (search !== 'undefined' && search) {
       const query = {
-        "wildcard": {
-          "name": {
-            "value": search + "*",
-            "boost": 1.0,
-            "rewrite": "constant_score"
+        "match_phrase_prefix": {
+          "name": search.toLowerCase()
+        }
+        // "wildcard": {
+        //   "name": {
+        //     "value": search + "*",
+        //     "boost": 1.0,
+        //     "rewrite": "constant_score"
+        //   }
+        // }
+      }
+      const aggs = {
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "name.keyword"
+            }
           }
         }
       }
-      let suggestions = await getSuggestions(query, { skip, limit })
-      return respSuccess(res, suggestions[0])
+      let suggestions = await getSuggestions(query, { skip, limit }, product, aggs)
+      console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length-1])
+      return respSuccess(res, suggestions[0], suggestions[1]["products"])
     } else {
       const query = {
         // "query": {
@@ -190,9 +204,19 @@ module.exports.searchSuggestion = async (req, res) => {
         }
         // }
       }
-      let suggestions = await getSuggestions(query, { skip, limit })
+      const aggs = {
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "name.keyword"
+            }
+          }
+        }
+      }
+      let suggestions = await getSuggestions(query, { skip, limit }, null, aggs)
+      console.log("module.exports.searchSuggestion -> suggestions", suggestions)
 
-      return respSuccess(res, suggestions[0])
+      return respSuccess(res, suggestions[0], suggestions[1]["products"])
     }
 
   } catch (error) {

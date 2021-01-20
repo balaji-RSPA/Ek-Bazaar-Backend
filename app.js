@@ -56,8 +56,8 @@ app.get('/', function (req, res) {
 })
 
 async function indexing() {
-  // await checkIndices()
-  // await putMapping()
+  await checkIndices()
+  await putMapping()
   // await l1CheckIndices()
   // await l1PutMapping()
   // await l2CheckIndices()
