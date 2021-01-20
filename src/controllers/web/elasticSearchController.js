@@ -45,6 +45,7 @@ module.exports.serachSeller = async (req, res) => {
       newKeyword = newKeyword.replace(" in ", " ");
       newKeyword = newKeyword.replace(",", "")
       newKeyword = newKeyword.split(" ");
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 48 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
 
       const range = {
         skip: parseInt(skip),
@@ -57,17 +58,17 @@ module.exports.serachSeller = async (req, res) => {
       const citiesQuery = await sellerSearch({ cityFromKeyWord: keyword })
       let { query } = citiesQuery
       console.log("module.exports.serachSeller -> query", query)
-      // const _cities = await getAllCitiesElastic(query)
-      // console.log("module.exports.serachSeller -> _cities", _cities)
-      // if (_cities[0].length && _cities[0][0]._source)
-      //   cities = _cities[0][0]._source
-      // console.log("module.exports.serachSeller -> cities", cities)
-      // const statesQuery = await sellerSearch({ stateFromKeyWord: keyword })
-      // query = statesQuery.query
-      // const _states = await getAllStatesElastic(query)
-      // console.log("module.exports.serachSeller -> _states", _states[0][0])
-      // if (_states[0].length && _states[0][0]._source)
-      //   states = _states[0][0]._source
+      const _cities = await getAllCitiesElastic(query)
+      console.log("module.exports.serachSeller -> _cities", _cities)
+      if (_cities[0].length && _cities[0][0]._source)
+        cities = _cities[0][0]._source
+      console.log("module.exports.serachSeller -> cities", cities)
+      const statesQuery = await sellerSearch({ stateFromKeyWord: keyword })
+      query = statesQuery.query
+      const _states = await getAllStatesElastic(query)
+      console.log("module.exports.serachSeller -> _states", _states[0][0])
+      if (_states[0].length && _states[0][0]._source)
+        states = _states[0][0]._source
       console.log("module.exports.serachSeller -> states", states)
       // let cities = await getAllCities({});
       // cities = cities.map((city) => ({ name: city.name, id: city._id, state: city.state }));
@@ -121,7 +122,7 @@ module.exports.serachSeller = async (req, res) => {
       //   }
       // }
       const resp = {
-        total: seller[1],
+        total: seller[2]["products"]["value"], //seller[1],
         data: seller[0],
         // relatedCat: relatedCat || [],
         // serviceType,
@@ -165,20 +166,34 @@ module.exports.serachSeller = async (req, res) => {
 module.exports.searchSuggestion = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
+    console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
 
-    const { skip, limit, search } = reqQuery
+    const { skip, limit, search, product } = reqQuery
     if (search !== 'undefined' && search) {
       const query = {
-        "wildcard": {
-          "name": {
-            "value": search + "*",
-            "boost": 1.0,
-            "rewrite": "constant_score"
+        "match_phrase_prefix": {
+          "name": search.toLowerCase()
+        }
+        // "wildcard": {
+        //   "name": {
+        //     "value": search + "*",
+        //     "boost": 1.0,
+        //     "rewrite": "constant_score"
+        //   }
+        // }
+      }
+      const aggs = {
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "name.keyword"
+            }
           }
         }
       }
-      let suggestions = await getSuggestions(query, { skip, limit })
-      return respSuccess(res, suggestions[0])
+      let suggestions = await getSuggestions(query, { skip, limit }, product, aggs)
+      console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length-1])
+      return respSuccess(res, suggestions[0], suggestions[1]["products"])
     } else {
       const query = {
         // "query": {
@@ -189,9 +204,19 @@ module.exports.searchSuggestion = async (req, res) => {
         }
         // }
       }
-      let suggestions = await getSuggestions(query, { skip, limit })
+      const aggs = {
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "name.keyword"
+            }
+          }
+        }
+      }
+      let suggestions = await getSuggestions(query, { skip, limit }, null, aggs)
+      console.log("module.exports.searchSuggestion -> suggestions", suggestions)
 
-      return respSuccess(res, suggestions[0])
+      return respSuccess(res, suggestions[0], suggestions[1]["products"])
     }
 
   } catch (error) {

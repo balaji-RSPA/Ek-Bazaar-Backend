@@ -38,11 +38,14 @@ if (process.env.NODE_ENV === "production") {
   config = {
     tradeDb: {
       // stating server db 
-      host: "tradebazaarapi.tech-active.com",
+      host1: "159.89.166.142",
+      host2: "143.110.249.95",
+      host3: "143.110.254.145",
       port: "5006",
       user: "tradelive",
       password: "jiarkerc9Om",
       database: "trade-live",
+      replicaName: "rs2",
       // user: "tradeapi",
       // password: "Oyljeabr6Orc",
       // database: "tradeapi",

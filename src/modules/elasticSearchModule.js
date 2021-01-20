@@ -164,13 +164,13 @@ exports.sellerSearch = async (reqQuery) => {
 
   }
 
-  if(cityFromKeyWord) {
-    if(Array.isArray(cityFromKeyWord)) {
+  if (cityFromKeyWord) {
+    if (Array.isArray(cityFromKeyWord)) {
       cityFromKeyWord.forEach(city => {
 
         const searchCity = {
           "match": {
-            "alias" : city
+            "alias": city
           }
         }
         query.bool.should.push(searchCity)
@@ -178,20 +178,20 @@ exports.sellerSearch = async (reqQuery) => {
     } else {
       const searchCity = {
         "match": {
-          "alias" : cityFromKeyWord
+          "alias": cityFromKeyWord
         }
       }
       query.bool.should.push(searchCity)
     }
   }
 
-  if(stateFromKeyWord) {
-    if(Array.isArray(stateFromKeyWord)) {
+  if (stateFromKeyWord) {
+    if (Array.isArray(stateFromKeyWord)) {
       stateFromKeyWord.forEach(city => {
 
         const searchCity = {
           "match": {
-            "name" : city
+            "name": city
           }
         }
         query.bool.should.push(searchCity)
@@ -199,14 +199,14 @@ exports.sellerSearch = async (reqQuery) => {
     } else {
       const searchCity = {
         "match": {
-          "name" : stateFromKeyWord
+          "name": stateFromKeyWord
         }
       }
       query.bool.should.push(searchCity)
     }
   }
 
-  if(countryFromKeyword) {
+  if (countryFromKeyword) {
 
   }
 
@@ -214,7 +214,7 @@ exports.sellerSearch = async (reqQuery) => {
     const { product } = searchProductsBy
     if (product) {
       if (Array.isArray(product)) {
-        
+
         // query.bool.must.unshift({ bool: { should: [] } });
         product.forEach(p => {
           const searchKey = {
@@ -260,7 +260,7 @@ exports.sellerSearch = async (reqQuery) => {
     }
   }
 
-  if(elastic) {
+  if (elastic) {
     const seller = {
       "match": {
         "sellerId._id": reqQuery.id
@@ -392,7 +392,7 @@ exports.sellerSearch = async (reqQuery) => {
         }
       }
     }
-    
+
   }
 
   if (primaryId) {
@@ -499,22 +499,22 @@ exports.searchFromElastic = (query, range, aggs) =>
 
     const { skip, limit } = range;
     aggs = aggs || {}
-    
-    
+
+
     const body = {
       size: limit || 10,
       from: skip || 0,
       query,
       ...aggs,/* ,
       highlight, */
-      sort: { "sellerId._id.keyword": "asc" }
+      sort: { "sellerId._id.keyword": "desc" }
     };
-    
+
     const searchQuery = {
       index: INDEXNAME,
       body,
     };
-    
+
     esClient
       .search(searchQuery)
       .then(async (results) => {
@@ -522,6 +522,7 @@ exports.searchFromElastic = (query, range, aggs) =>
         resolve([
           results.hits.hits,
           count,
+          results.aggregations
         ]);
       })
       .catch(error => reject(error))
@@ -560,19 +561,28 @@ exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
     id,
     body,
   };
-  
+
   esClient.update(newData).then(resolve).catch(reject);
 });
 
-exports.getSuggestions = (query, range) => new Promise((resolve, reject) => {
+exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, reject) => {
   const { skip, limit } = range;
-  const body = {
-    size: limit || 10,
+  console.log("exports.getSuggestions -> limit", limit)
+  aggs = aggs || {}
+  let body = !product ? {
+    size: limit || 20,
     from: skip || 0,
-    query,/* ,
-      highlight, */
+    query,
+    ...aggs/* ,
+    highlight, */
     // sort: { "_id": "desc" }
+  } : {
+    from: skip || 0,
+    size: 10000,
+    query,
+    ...aggs
   };
+  console.log("exports.getSuggestions -> body", body)
   const searchQuery = {
     index: process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions",
     body,
@@ -583,6 +593,7 @@ exports.getSuggestions = (query, range) => new Promise((resolve, reject) => {
       // const { count } = await this.getCounts(query); // To get exact count
       resolve([
         results.hits.hits,
+        results.aggregations
         // count,
       ]);
     })

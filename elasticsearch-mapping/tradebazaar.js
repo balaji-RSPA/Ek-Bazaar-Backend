@@ -9,12 +9,12 @@ client.cluster.health({}, function (err, resp, status) {
 
 module.exports.checkIndicesMaster = function () {
     return new Promise((resolve, reject) => {
-        client.indices.exists({ index: index }, (err, res, status) => {
+        client.indices.exists({ index }, (err, res, status) => {
             if (res) {
                 console.log('index already exists')
                 resolve();
             } else {
-                client.indices.create({ index: index, includeTypeName: true }, (err, res, status) => {
+                client.indices.create({ index, includeTypeName: true }, (err, res, status) => {
                     if (err) {
                         console.log(err)
                         reject(err);

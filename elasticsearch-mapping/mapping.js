@@ -2,6 +2,7 @@
 module.exports.config = {
     "properties": {
         "serviceType": {
+            "type": "nested",
             "properties": {
                 "name": {
                     "type": "keyword"
@@ -141,7 +142,31 @@ module.exports.config = {
                             "type": "keyword"
                         }
                     }
-                }
+                },
+                "website": {
+                    "type": "text",
+                },
+                "isEmailVerified": {
+                    "type": "boolean",
+                },
+                "isPhoneVerified": {
+                    "type": "boolean",
+                },
+                "sellerVerified": {
+                    "type": "boolean",
+                },
+                "paidSeller": {
+                    "type": "boolean",
+                },
+                "international": {
+                    "type": "boolean",
+                },
+                "deactivateAccount": {
+                    "type": "boolean",
+                },
+                "businessName": {
+                    "type": "keyword",
+                },
             }
         },
         "parentCategoryId": {
@@ -211,6 +236,158 @@ module.exports.config = {
                 },
                 "_id": {
                     "type": "keyword"
+                }
+            }
+        },
+        "productDetails": {
+            "type": "nested",
+            "properties": {
+                "name": {
+                    "type": "keyword",
+                },
+                "price": {
+                    "type": "nested",
+                    "properties": {
+                        "price": {
+                            "type": "text"
+                        },
+                        "unit": {
+                            "type": "text"
+                        }
+                    }
+                },
+                "minmumOrderQty": {
+                    "type": "nested",
+                    "properties": {
+                        "quantity": {
+                            "type": "text"
+                        },
+                        "unit": {
+                            "type": "text"
+                        }
+                    }
+                },
+                "deliveryTime": {
+                    "type": "nested",
+                    "properties": {
+                        "deliveryTime": {
+                            "type": "text"
+                        },
+                        "unit": {
+                            "type": "text"
+                        }
+                    }
+                },
+                "packagingDetails": {
+                    "type": "nested",
+                    "properties": {
+                        "packagingDetail": {
+                            "type": "text"
+                        },
+                        "packagingUnit": {
+                            "type": "text"
+                        }
+                    }
+                },
+                "countryOfOrigin": {
+                    "type": "nested",
+                    "properties": {
+                        "name": {
+                            "type": "keyword"
+                        },
+                        "_id": {
+                            "type": "text"
+                        }
+                    }
+                },
+                "regionOfOrigin": {
+                    "type": "nested",
+                    "properties": {
+                        "name": {
+                            "type": "keyword"
+                        },
+                        "_id": {
+                            "type": "text"
+                        }
+                    }
+                },
+                "cityOfOrigin": {
+                    "type": "nested",
+                    "properties": {
+                        "name": {
+                            "type": "keyword"
+                        },
+                        "_id": {
+                            "type": "text"
+                        }
+                    }
+                },
+                "productDescription": {
+                    "type": "text"
+                },
+                "inStock": {
+                    "type": "boolean"
+                },
+                "document": {
+                    "type": "nested",
+                    "properties": {
+                        "name": {
+                            "type": "keyword",
+                        },
+                        "code": {
+                            "type": "text",
+                        }
+                    }
+                },
+                "image": {
+                    "type": "nested",
+                    "properties": {
+                        "image1": {
+                            "type": "nested",
+                            "properties": {
+
+                                "name": {
+                                    "type": "keyword"
+                                },
+                                "code": {
+                                    "type": "text"
+                                }
+                            }
+                        },
+                        "image2": {
+                            "type": "nested",
+                            "properties": {
+                                "name": {
+                                    "type": "keyword"
+                                },
+                                "code": {
+                                    "type": "text"
+                                }
+                            }
+                        },
+                        "image3": {
+                            "type": "nested",
+                            "properties": {
+                                "name": {
+                                    "type": "keyword"
+                                },
+                                "code": {
+                                    "type": "text"
+                                }
+                            }
+                        },
+                        "image4": {
+                            "type": "nested",
+                            "properties": {
+                                "name": {
+                                    "type": "keyword"
+                                },
+                                "code": {
+                                    "type": "text"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
