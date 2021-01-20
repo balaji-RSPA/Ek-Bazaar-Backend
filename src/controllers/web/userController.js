@@ -28,10 +28,7 @@ const { getMaster, addMaster, updateMaster } = mastercollections
 const { sms } = require("../../utils/globalConstants")
 // const {username, password, senderID, smsURL} = sms
 
-const smsURL = 'https://http.myvfirst.com/smpp/sendsms'
-const username = 'cn14604'
-const password = 'Admin@14604'
-const senderID = 'EKBZAR'
+const isProd = process.env.NODE_ENV === "production"
 
 module.exports.getAccessToken = async (req, res) => {
   try {
@@ -77,15 +74,18 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "A seller with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-    // const otp = 1234;
-    const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-    const resp = await axios.post(url, {
-      mobile
-    })
+    const otp = 1234;
+    if(isProd) {
+      const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+      const resp = await axios.post(url, {
+        mobile
+      })
+
+      if (resp.data.success)
+        return respSuccess(res, { otp: resp.data.data.otp });
+    } else return respSuccess(res, { otp });
 
     // console.log(resp.data, ' pppppppppppppppppppp')
-    if (resp.data.success)
-      return respSuccess(res, { otp: resp.data.data.otp });
 
   } catch (error) {
     return respError(res, error.message);

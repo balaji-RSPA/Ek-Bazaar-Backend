@@ -261,6 +261,7 @@ module.exports.getUserProfile = (id) =>
         name: 1,
         email: 1,
         mobile: 1,
+        preferredLanguage: 1,
         isPhoneVerified: 1,
         isMobileVerified: 1,
         // _id: -1,
