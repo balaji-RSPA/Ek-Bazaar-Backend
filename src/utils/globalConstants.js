@@ -1,4 +1,4 @@
-exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections"
+exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections" //tradebazaar
 // exports.INDEXNAME = 'opend_contacts.mastercollections'
 
 exports.bcryptSalt = {
