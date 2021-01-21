@@ -309,6 +309,7 @@ const sellerProductSchema = new Schema(
 );
 
 sellerProductSchema.index({
+  // sellerId:1
   flag: 1,
   batch: 1
 })

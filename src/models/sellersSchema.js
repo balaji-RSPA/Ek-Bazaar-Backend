@@ -249,6 +249,10 @@ const sellersSchema = new Schema(
     profileUpdate: {
       type: Boolean,
       default: false
+    },
+    status:{
+      type:Boolean,
+      default: true
     }
   },
   {
