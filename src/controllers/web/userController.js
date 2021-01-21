@@ -234,7 +234,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
-    if (_seller && _seller.sellerProductId.length) {
+    if (_seller && _seller.sellerProductId && _seller.sellerProductId.length) {
       sellerData = {
         ...sellerData,
         profileUpdate: true,
@@ -248,6 +248,7 @@ module.exports.updateUser = async (req, res) => {
       buyerData.countryCode = _buyer.mobile[0].countryCode;
     }
     delete buyerData && buyerData._id;
+    console.log(buyerData,"=====================hwjgejwgr hjgwrgwrjh whrjhgw")
     buyer = await updateBuyer({ userId: userID }, buyerData);
 
     if (business) {
@@ -282,7 +283,7 @@ module.exports.updateUser = async (req, res) => {
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     if (user && buyer && seller) {
-      respSuccess(res, { seller, buyer }, "Updated Seccessfully");
+      respSuccess(res, { seller, buyer }, "Updated Successfully");
     } else {
       respError(res, "Failed to update");
     }
