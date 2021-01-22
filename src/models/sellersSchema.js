@@ -93,6 +93,18 @@ const serviceSchema = new Schema({
   }]
 })
 
+const telephoneSchema = new Schema({
+  telephone: {
+    type: String,
+    trim: true
+  },
+  countryCode: {
+    type: String,
+    trim: true,
+    default: null
+  }
+})
+
 const sellersSchema = new Schema(
   {
     userId: {
@@ -249,6 +261,26 @@ const sellersSchema = new Schema(
     profileUpdate: {
       type: Boolean,
       default: false
+    },
+    flag: {
+      type: Number,
+      default: 1,
+    },
+    international: {
+      type: Boolean,
+      default: false
+    },
+    telephone: {
+      type: [telephoneSchema],
+      default: null
+    },
+    website: {
+      type: String,
+      default: null
+    },
+    country: {
+      type: Object,
+      default: null
     }
   },
   {
