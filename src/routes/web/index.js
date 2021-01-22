@@ -6,6 +6,8 @@ const category = require('./categotyRoutes')
 const elastic = require('./elasticSearchRoutes')
 const user = require('./userRoutes')
 const subscriptionPlan = require('./subscriptionPlanRoutes')
+const contact = require('./contactRoutes')
+const removeListing = require('./removeListingRoutes')
 
 router.use(location)
 router.use(buyer)
@@ -14,5 +16,7 @@ router.use(category)
 router.use(elastic)
 router.use(user)
 router.use(subscriptionPlan)
+router.use(contact)
+router.use(removeListing)
 
 module.exports = router

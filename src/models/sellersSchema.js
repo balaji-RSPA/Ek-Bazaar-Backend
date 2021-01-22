@@ -156,10 +156,6 @@ const sellersSchema = new Schema(
       type: Boolean,
       default: false
     },
-    international: {
-      type: Boolean,
-      default: false
-    },
     location: {
       type: location,
       trim: true,
@@ -281,6 +277,10 @@ const sellersSchema = new Schema(
     country: {
       type: Object,
       default: null
+    },
+    status: {
+      type: Boolean,
+      default: true
     }
   },
   {

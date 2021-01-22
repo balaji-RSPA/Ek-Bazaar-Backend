@@ -11,7 +11,7 @@ const { authenticate } = require('../../middleware/auth')
 // const {addProductDetails} = sellerProductUpdate
 
 router.post('/seller/bulkInsert', seller.sellerBulkInsert)
-
+// router.put('/seller/update/status',authenticate, seller.filterSellerUpdateStatus)
 router.get('/seller', /* sellerAuthenticate, */ seller.getSeller)
 router.put('/seller', authenticate, seller.updateSeller)
 router.get('/sellers', seller.getAllSellers)

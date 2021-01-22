@@ -7,6 +7,7 @@ const rfp = require('./rfpModule')
 const subscriptionPlan = require('./subscriptionPlanModule')
 const mastercollections = require('./masterModule')
 const sellerProducts = require('./sellerProductModule')
+const RemoveListing = require('./removeListingModule')
 
 module.exports = {
     location,
@@ -17,5 +18,6 @@ module.exports = {
     rfp,
     subscriptionPlan,
     mastercollections,
-    sellerProducts
+    sellerProducts,
+    RemoveListing
 }
