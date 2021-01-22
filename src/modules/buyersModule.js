@@ -63,9 +63,6 @@ module.exports.getAllBuyers = (searchQuery, skip, limit) =>
         { mobile: { $regex: searchQuery, $options: 'i' } }
       ]
     } : {};
-    // Object.keys(searchQuery).forEach((el)=>{
-    //   searchQry[el] = { $regex: `${searchQuery[el]}`, $options: 'i' }
-    // })
     Buyers.find(searchQry)
       .skip(skip)
       .limit(limit)
@@ -93,7 +90,7 @@ module.exports.getBuyerAdmin = (query) =>
       .catch((error) => reject(error));
   });
 /**
-   * Get RFP detail
+   * Create RFP
   */
 module.exports.postRFP = (data) => new Promise((resolve, reject) => {
   RFP.create(data)
@@ -102,4 +99,14 @@ module.exports.postRFP = (data) => new Promise((resolve, reject) => {
     })
     .catch(error => reject(error))
 
+})
+/**
+ * Get Specific RFP
+ */
+module.exports.getRFP = (query) => new Promise((resolve, reject) => {
+  RFP.find(query)
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
 })

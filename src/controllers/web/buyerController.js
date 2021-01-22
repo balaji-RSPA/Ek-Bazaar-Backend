@@ -10,6 +10,7 @@ const {
   getBuyer,
   updateBuyer,
   getAllBuyers,
+  getRFP,
   updateBuyerPassword,
 } = buyers;
 const { getProductByName } = category
@@ -282,6 +283,22 @@ module.exports.updateBuyerPassword = async (req, res) => {
     const { mobile } = req.body;
     const seller = await updateSellerPassword(mobile, req.body);
     respSuccess(res, seller);
+  } catch (error) {
+    respError(res, error.message);
+  }
+};
+/**
+ * get RFPs
+ */
+module.exports.getRFPS = async (req, res) => {
+  try {
+    const {
+      sellerId
+    } = req.params;
+    const RFP = await getRFP({
+      sellerId
+    });
+    respSuccess(res, RFP);
   } catch (error) {
     respError(res, error.message);
   }
