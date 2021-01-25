@@ -2,7 +2,7 @@ const camelcaseKeys = require("camelcase-keys");
 const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { buyers, sellers, category, elastic, location } = require("../../modules");
+const { buyers, sellers, category, elastic, location, SMSQue } = require("../../modules");
 const {
   postRFP,
   checkBuyerExistOrNot,
@@ -11,12 +11,14 @@ const {
   updateBuyer,
   getAllBuyers,
   updateBuyerPassword,
+  updateRFP
 } = buyers;
 const { getProductByName } = category
-const { sellerSearch, searchFromElastic } = elastic
+const { sellerSearch, searchFromElastic, getSuggestions } = elastic
 const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile } = sellers
 const { getCity } = location
 const { createToken } = require("../../utils/utils");
+const { queSMSBulkInsert, getQueSMS } = SMSQue
 
 const getUserAgent = (userAgent) => {
 
@@ -32,6 +34,96 @@ const getUserAgent = (userAgent) => {
   }
 
 }
+
+module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp) => {
+
+  try {
+
+
+    if (productDetails.name !== 'undefined' && productDetails.name) {
+      const query = {
+        "term": {
+          "name.keyword": productDetails.name
+        }
+      }
+      let suggestions = await getSuggestions(query, {}, '', '')
+      const pro = suggestions && suggestions.length && suggestions[0] && suggestions[0].length && suggestions[0][0]._source || '';
+      // console.log("🚀 ~ file: buyerController.js ~ line 50 ~ module.exports.queSmsData= ~ pro", pro)
+      if (pro) {
+        let parentId, productId, secondaryId, primaryId, level5Id = ''
+        if (pro.search === 'level1')
+          parentId = pro.id
+        else if (pro.search === 'level2')
+          primaryId = pro.id
+        else if (pro.search === 'level3')
+          secondaryId = pro.id
+        else if (pro.search === 'level4')
+          productId = pro.id
+        else if (pro.search === 'level5')
+          level5Id = pro.id
+
+        const reqQuery = {
+          parentId, productId, secondaryId, primaryId, level5Id
+        }
+        const result = await sellerSearch(reqQuery);
+        const Searchquery = result.query, limit = 1000
+        let skip = 0, status = true, totalInsertion = 0
+        const sellerIds = []
+
+        while (status) {
+
+          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs);
+
+          if (seller[0] && seller[0].length) {
+            // totalInsertion += seller[3]
+            const sellers = seller[0]
+            const QueData = sellers.map((v, index) => {
+
+              const sellerId = v._source.sellerId
+              const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
+              totalInsertion++
+              sellerIds.push(sellerId._id)
+              return ({
+                sellerId: sellerId._id || null,
+                buyerId: user && user._id || null,
+                mobile: {
+                  countryCode: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].countryCode,
+                  mobile: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].mobile,
+                },
+                message: msg,
+                messageType: 'rfq',
+                requestId: rfp._id
+              })
+
+            })
+            // console.log("🚀 ~ file: buyerController.js ~ line 98 ~ QueData ~ QueData", QueData)
+            await queSMSBulkInsert(QueData)
+            skip += limit
+
+          } else status = false
+
+        } if (!status) {
+          console.log('No matching seller products--------------------------')
+        }
+
+        if (sellerIds && sellerIds.length) {
+          await updateRFP({ _id: rfp._id }, { sellerId: sellerIds })
+        }
+        console.log(" SMS count", totalInsertion)
+      } else {
+        console.log(' product not matching---------------')
+      }
+    }
+
+    return true
+
+  } catch (error) {
+    console.log(error)
+
+  }
+
+}
+
 
 module.exports.createRFP = async (req, res) => {
   try {
@@ -90,11 +182,12 @@ module.exports.createRFP = async (req, res) => {
         sellerId: sellerId || null
       }
       const rfp = await postRFP(rfpData)
+      const locationDetails = await getCity({ _id: location.city })
+      const _loc = locationDetails ? `${locationDetails.name}, ${locationDetails.state && locationDetails.state.name}` : ''
+
       if (sellerId && requestType === 1 && global.environment === "production") {
         const sellerData = await getSellerProfile(sellerId)
-        const locationDetails = await getCity({ _id: location.city })
         const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
-        const _loc = locationDetails ? `${locationDetails.name}, ${locationDetails.state && locationDetails.state.name}` : ''
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
           // console.log("🚀 ~ file: buyerController.js ~ line 94 ~ module.exports.createRFP= ~ locationDetails", locationDetails)
@@ -105,11 +198,14 @@ module.exports.createRFP = async (req, res) => {
           })
 
         }
+      } else if (!sellerId && requestType === 2) {
+
+        this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
+
       }
       respSuccess(res, "Your requirement has successfully submitted")
     } else {
       console.log(' not register buyer-----------------')
-      console.log(sellerId, requestType, 'testtttttttttttt')
       const userData = {
         name,
         email,
@@ -181,6 +277,10 @@ module.exports.createRFP = async (req, res) => {
             })
 
           }
+        } else if (!sellerId && requestType === 2) {
+
+          this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
+
         }
 
 
@@ -189,6 +289,7 @@ module.exports.createRFP = async (req, res) => {
     }
 
   } catch (error) {
+    console.log(error)
     respError(res, error.message)
   }
 }

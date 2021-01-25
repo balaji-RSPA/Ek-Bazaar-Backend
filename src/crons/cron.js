@@ -1,9 +1,22 @@
+const { reject } = require('lodash');
 const _ = require('lodash');
 
 const { sellers, mastercollections, sellerProducts } = require('../modules')
 const { getAllSellers, getUpdatedSellerDetails, getSellerProductDetails, addProductDetails } = sellers
 const { updateMaster } = mastercollections
 const { getSellerProducts, updateSellerProducts } = sellerProducts
+
+exports.sendQueSms = async (req, res) => new Promise((resolve, reject) => {
+
+    try {
+
+
+
+    } catch (error) {
+
+    }
+
+})
 
 const masterMapData = (val, type) => new Promise((resolve, reject) => {
     // console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", JSON.stringify(val.sellerId))
