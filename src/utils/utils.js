@@ -5,8 +5,13 @@ const bcrypt = require('bcrypt');
 const fs = require("fs")
 const AWS = require('aws-sdk')
 const {
-  bcryptSalt
+  bcryptSalt,
+  MailgunKeys
 } = require('./globalConstants');
+const mailgun = require('mailgun-js')({
+  apiKey: MailgunKeys.mailgunAPIKey,
+  domain: MailgunKeys.mailgunDomain
+});
 const {
   JWTTOKEN,
   awsKeys
@@ -85,3 +90,18 @@ module.exports.uploadToDOSpace = (req) => {
 
 
 }
+/**
+ * send mail
+ */
+module.exports.sendMail = (data)=> {
+  try{
+    mailgun.messages().send(data, (error, body) => {
+    if(error){
+      throw error;
+    }
+      console.log(body);
+    })
+  }catch(err){
+    console.log(err, "=============Mail not send======================")
+  }
+} 

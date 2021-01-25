@@ -1,5 +1,8 @@
-const { Buyers, RFP } = require("../models");
-
+const {
+  Buyers,
+  RFP
+} = require("../models");
+const User = require('../../config/tenderdb').userModel
 module.exports.postRFP = (data) => new Promise((resolve, reject) => {
   RFP.create(data)
     .then(doc => {
@@ -109,4 +112,38 @@ module.exports.getRFP = (query) => new Promise((resolve, reject) => {
       resolve(doc)
     })
     .catch(error => reject(error))
+})
+/**
+ * 
+ * Email verification code  
+ */
+exports.getUserFromUserHash = (hashcode) => new Promise((resolve, reject) => {
+  console.log(hashcode,"=============dfhjdsfhg")
+  User.find({
+      "userHash.encryptedData": hashcode
+    }, {
+      _id: 0,
+      userHash: 1
+    })
+    .then(doc => {
+      console.log(doc, 'userHashCode')
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+})
+
+exports.updateEmailVerification = (hash, newData) => new Promise((resolve, reject) => {
+
+  User.update({
+      'userHash.encryptedData': hash
+    }, {
+      $set: {
+        isEmailVerified: 2,
+        email: newData.userEmail
+      }
+    }, {
+      new: true
+    }).then((doc) => resolve(doc))
+    .catch(reject)
+
 })

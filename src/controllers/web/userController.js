@@ -3,12 +3,33 @@ const _ = require('lodash')
 const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword } = require("../../utils/utils");
+const { createToken, encodePassword,sendMail } = require("../../utils/utils");
 const { sellers, buyers, mastercollections } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
 const { deleteSellerProducts } = require('../../modules/sellerProductModule')
+const {
+  MailgunKeys,
+  fromEmail
+} = require('../../utils/globalConstants')
 const bcrypt = require("bcrypt");
+
+const nodemailer = require('nodemailer')
+const mg = require('nodemailer-mailgun-transport');
+const crypto = require('crypto')
+const {
+  activateAccount
+} = require('../../utils/templates/activeteAccount/activateAccount')
+const {
+  emailVerified
+} = require('../../utils/templates/accountActivated/emailVerified')
+const {
+  sendSingleMail
+} = require('../../utils/mailgunService')
+const algorithm = 'aes-256-ctr'
+const key = crypto.randomBytes(32);
+const iv = crypto.randomBytes(16);
+
 const {
   handleUserSession,
   getAccessToken,
@@ -23,12 +44,44 @@ const {
   addSeller,
   addbusinessDetails
 } = sellers;
-const { getBuyer, addBuyer, updateBuyer } = buyers;
+const {
+  getBuyer,
+  addBuyer,
+  updateBuyer,
+  getUserFromUserHash,
+  updateEmailVerification
+
+} = buyers;
 const { getMaster, addMaster, updateMaster } = mastercollections
 const { sms } = require("../../utils/globalConstants")
 // const {username, password, senderID, smsURL} = sms
 
 const isProd = process.env.NODE_ENV === "production"
+
+
+function encrypt(text) {
+
+  const cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  return {
+    iv: iv.toString('hex'),
+    encryptedData: encrypted.toString('hex')
+  };
+
+}
+
+function decrypt(text) {
+
+  console.log(text, '9999999999')
+  const iv = Buffer.from(text.iv, 'hex');
+  const encryptedText = Buffer.from(text.encryptedData, 'hex');
+  const decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), iv);
+  let decrypted = decipher.update(encryptedText);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString();
+
+}
 
 module.exports.getAccessToken = async (req, res) => {
   try {
@@ -240,6 +293,7 @@ module.exports.updateUser = async (req, res) => {
         profileUpdate: true,
       }
     }
+    userData.userHash = encrypt(userData.email)
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);
@@ -248,7 +302,6 @@ module.exports.updateUser = async (req, res) => {
       buyerData.countryCode = _buyer.mobile[0].countryCode;
     }
     delete buyerData && buyerData._id;
-    console.log(buyerData,"=====================hwjgejwgr hjgwrgwrjh whrjhgw")
     buyer = await updateBuyer({ userId: userID }, buyerData);
 
     if (business) {
@@ -281,8 +334,56 @@ module.exports.updateUser = async (req, res) => {
     //   keywords
     // }
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
-
     if (user && buyer && seller) {
+      let {
+        token
+      } = req.headers.authorization.split('|')[1]
+      token = token || req.token
+      // req.body.userHash = encrypt(user.email)
+      const alteredToken = token.split('.').join('!')
+      const auth = {
+        auth: {
+          api_key: MailgunKeys.mailgunAPIKey,
+          domain: MailgunKeys.mailgunDomain
+        }
+        // proxy: 'http://user:pass@localhost:8080' // optional proxy, default is false
+      }
+
+      const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+      const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
+      const template = await activateAccount(link)
+
+      const message = {
+        from: MailgunKeys.senderMail,
+        to: user.email, // An array if you have multiple recipients.
+        // cc:'second@domain.com',
+        // bcc:'secretagent@company.gov',
+        subject: 'Ekbazaar email verification',
+        'h:Reply-To': MailgunKeys.replyMail,
+        html: template
+      }
+
+      nodemailerMailgun.sendMail(message, (err, info) => {
+
+        if (err) {
+
+          console.log(`Error: ${err}`);
+
+        } else {
+
+          console.log(`Response: ${info}`);
+
+        }
+
+      });
+
+      //   const data = {
+      //     from: `${fromEmail.fromEmailName} <${MailgunKeys.senderMail}>`,
+      //     to: user.email,
+      //     subject: 'Hello',
+      //     text: 'Testing some Mailgun awesomeness!'
+      //   };
+      // await sendMail(data);
       respSuccess(res, { seller, buyer }, "Updated Successfully");
     } else {
       respError(res, "Failed to update");
@@ -291,6 +392,37 @@ module.exports.updateUser = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+exports.verifiedEmail = async (req, res) => {
+
+  try {
+
+    const {
+      encryptedData
+    } = req.body
+    const user = await getUserFromUserHash(encryptedData)
+    console.log(user,"================ajsdkgas")
+    // let hash;
+    // if (user.length) hash = user[0].userHash
+    // const userEmail = decrypt(hash)
+    // const data = await updateEmailVerification(encryptedData, {
+    //   userEmail: userEmail
+    // })
+    // const template = await emailVerified("https://tradebazaar.tech-active.com")
+    // const message = {
+    //   subject: "Email verified",
+    //   html: template
+    // }
+    // await sendSingleMail(userEmail, message)
+    // return respSuccess(res)
+
+  } catch (error) {
+
+    return respError(res, error)
+
+  }
+
+}
 
 module.exports.forgetPassword = async (req, res) => {
   try {
