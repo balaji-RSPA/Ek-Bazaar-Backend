@@ -12,6 +12,8 @@ const {
   awsKeys
 } = require("./globalConstants");
 
+const axios = require("axios")
+
 const {
   endpoint,
   accessKeyId,
@@ -19,6 +21,17 @@ const {
   region,
   Bucket
 } = awsKeys
+
+
+exports.sendSMS = async (mobile, message) => {
+  const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+  const resp = await axios.post(url, {
+    mobile,
+    message
+  })
+  // console.log(resp, ' oooooooooooooooooooooooo')
+  return resp
+}
 
 exports.getReqIP = (req) => {
   console.log(req.headers.reqip);
@@ -31,9 +44,9 @@ exports.getReqUrl = (req) => {
 
 exports.createToken = (deviceId = "", id) =>
   jwt.sign({
-      deviceId,
-      ...id,
-    },
+    deviceId,
+    ...id,
+  },
     JWTTOKEN
     /* ,
      {
@@ -51,34 +64,34 @@ exports.encodePassword = (password) => {
  */
 module.exports.uploadToDOSpace = (req) => {
   // try {
-    const spacesEndpoint = new AWS.Endpoint(endpoint);
-    const s3 = new AWS.S3({
-      endpoint: spacesEndpoint,
-      accessKeyId,
-      secretAccessKey
-    });
-    var params = {
-      Body: req.body,
-      Bucket,
-      Key: req.Key,
-      ACL: 'public-read'
-    };
-    return new Promise((resolve, reject) => {
-      s3.upload(params, function (err, data) {
-        if (err) reject(err)
-        else {
-          resolve(data)
-        }
-      })
+  const spacesEndpoint = new AWS.Endpoint(endpoint);
+  const s3 = new AWS.S3({
+    endpoint: spacesEndpoint,
+    accessKeyId,
+    secretAccessKey
+  });
+  var params = {
+    Body: req.body,
+    Bucket,
+    Key: req.Key,
+    ACL: 'public-read'
+  };
+  return new Promise((resolve, reject) => {
+    s3.upload(params, function (err, data) {
+      if (err) reject(err)
+      else {
+        resolve(data)
+      }
     })
+  })
 
-    // s3.upload(params, function (err, data) {
-    //   if (err) {
-    //     return (err)
-    //   } else {
-    //     return data;
-    //   }
-    // })
+  // s3.upload(params, function (err, data) {
+  //   if (err) {
+  //     return (err)
+  //   } else {
+  //     return data;
+  //   }
+  // })
   // } catch (error) {
   //   return error
   // }

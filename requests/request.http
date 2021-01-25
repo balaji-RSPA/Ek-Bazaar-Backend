@@ -2,15 +2,19 @@
 POST  http://localhost:8070/api/buyer/rfp HTTP/1.1
 content-type: application/json
 
-{ "name": "Ramesh",
-  "email": "aszdfsdf@SDF.FGH",
-  "mobile": { "countryCode": "+91", "mobile": "1234567890" },
-  "location":
-   { "city": "5fef1c72d64695ca915a0863",
-     "state": "5fef140c1b6975b1633effc4" },
-  "productDetails": { "name": "rice", "quantity": "123", "weight": "Kilos" },
-  "requestType": 2,
-  "sellerId": null }
+# { "name": "Ramesh",
+#   "email": "aszdfsdf@SDF.FGH",
+#   "mobile": { "countryCode": "+91", "mobile": "1234567890" },
+#   "location":
+#    { "city": "5fef1c72d64695ca915a0863",
+#      "state": "5fef140c1b6975b1633effc4" },
+#   "productDetails": { "name": "rice", "quantity": "123", "weight": "Kilos" },
+#   "requestType": 2,
+#   "sellerId": null }
+
+###
+GET  http://localhost:8070/sendQueSms HTTP/1.1
+content-type: application/json
 
 ###
 GET  http://localhost:8070/api/updateCityAlias HTTP/1.1

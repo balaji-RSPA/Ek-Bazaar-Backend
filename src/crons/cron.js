@@ -1,18 +1,44 @@
 const { reject } = require('lodash');
 const _ = require('lodash');
 
-const { sellers, mastercollections, sellerProducts } = require('../modules')
+const { sellers, mastercollections, sellerProducts, SMSQue } = require('../modules')
 const { getAllSellers, getUpdatedSellerDetails, getSellerProductDetails, addProductDetails } = sellers
 const { updateMaster } = mastercollections
 const { getSellerProducts, updateSellerProducts } = sellerProducts
+const { getQueSMS, updateQueSMS } = SMSQue
+const { sendSMS } = require('../utils/utils')
 
-exports.sendQueSms = async (req, res) => new Promise((resolve, reject) => {
+exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => {
 
     try {
 
+        console.log(' cron testingf')
+        const updateIds = []
+        const result = await getQueSMS({ status: true }, { skip: 0, limit: 10 })
+        // console.log("🚀 ~ file: cron.js ~ line 16 ~ exports.sendQueSms= ~ result", result)
+        if (result && result.length) {
 
+            for (let index = 0; index < result.length; index++) {
+                const seller = result[index];
+
+                const data = await sendSMS(seller.mobile.mobile, seller.message)
+                updateIds.push(seller._id)
+                console.log(index, ' index')
+
+            }
+
+            if (updateIds && updateIds.length) {
+                await updateQueSMS({ _id: { $in: updateIds } }, { status: false })
+                console.log('-----------  SMS QUE Ids UPDATED ----------------')
+            }
+        } else {
+            console.log(' --------------- NO SMS IN QUEUE ----------------------')
+        }
+        resolve()
 
     } catch (error) {
+        console.log(error)
+        reject()
 
     }
 

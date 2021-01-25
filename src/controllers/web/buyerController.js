@@ -78,12 +78,13 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
           if (seller[0] && seller[0].length) {
             // totalInsertion += seller[3]
             const sellers = seller[0]
-            const QueData = sellers.map((v, index) => {
 
+            const QueData = sellers.filter(v => v._source.sellerId.mobile && v._source.sellerId.mobile.length).map(v => {
               const sellerId = v._source.sellerId
               const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
               totalInsertion++
               sellerIds.push(sellerId._id)
+
               return ({
                 sellerId: sellerId._id || null,
                 buyerId: user && user._id || null,
@@ -92,11 +93,31 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
                   mobile: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].mobile,
                 },
                 message: msg,
-                messageType: 'rfq',
+                messageType: 'rfp',
                 requestId: rfp._id
               })
-
             })
+
+            // const QueData = sellers.filter((v, index) => {
+
+            //   const sellerId = v._source.sellerId
+            //   const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
+            //   totalInsertion++
+            //   sellerIds.push(sellerId._id)
+
+            //   return ({
+            //     sellerId: sellerId._id || null,
+            //     buyerId: user && user._id || null,
+            //     mobile: {
+            //       countryCode: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].countryCode,
+            //       mobile: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].mobile,
+            //     },
+            //     message: msg,
+            //     messageType: 'rfp',
+            //     requestId: rfp._id
+            //   })
+
+            // })
             // console.log("🚀 ~ file: buyerController.js ~ line 98 ~ QueData ~ QueData", QueData)
             await queSMSBulkInsert(QueData)
             skip += limit
