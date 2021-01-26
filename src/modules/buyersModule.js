@@ -118,22 +118,20 @@ module.exports.getRFP = (query) => new Promise((resolve, reject) => {
  * Email verification code  
  */
 exports.getUserFromUserHash = (hashcode) => new Promise((resolve, reject) => {
-  console.log(hashcode,"=============dfhjdsfhg")
   User.find({
       "userHash.encryptedData": hashcode
     }, {
       _id: 0,
-      userHash: 1
+      userHash: 1,
+      mobile:1
     })
     .then(doc => {
-      console.log(doc, 'userHashCode')
       resolve(doc)
     })
     .catch(error => reject(error))
 })
 
 exports.updateEmailVerification = (hash, newData) => new Promise((resolve, reject) => {
-
   User.update({
       'userHash.encryptedData': hash
     }, {
@@ -143,7 +141,7 @@ exports.updateEmailVerification = (hash, newData) => new Promise((resolve, rejec
       }
     }, {
       new: true
-    }).then((doc) => resolve(doc))
+    })
+    .then((doc) => resolve(doc))
     .catch(reject)
-
 })

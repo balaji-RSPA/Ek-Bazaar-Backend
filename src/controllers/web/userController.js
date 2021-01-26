@@ -26,7 +26,7 @@ const {
 const {
   sendSingleMail
 } = require('../../utils/mailgunService')
-const algorithm = 'aes-256-ctr'
+const algorithm = 'aes-256-cbc'
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
 
@@ -66,21 +66,20 @@ function encrypt(text) {
   encrypted = Buffer.concat([encrypted, cipher.final()]);
   return {
     iv: iv.toString('hex'),
-    encryptedData: encrypted.toString('hex')
+    encryptedData: encrypted.toString('hex'),
+    // key : key.toString('hex')
   };
 
 }
 
 function decrypt(text) {
-
-  console.log(text, '9999999999')
   const iv = Buffer.from(text.iv, 'hex');
+  // const enKey = Buffer.from(text.key, 'hex')
   const encryptedText = Buffer.from(text.encryptedData, 'hex');
   const decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), iv);
   let decrypted = decipher.update(encryptedText);
   decrypted = Buffer.concat([decrypted, decipher.final()]);
   return decrypted.toString();
-
 }
 
 module.exports.getAccessToken = async (req, res) => {
@@ -346,7 +345,6 @@ module.exports.updateUser = async (req, res) => {
           api_key: MailgunKeys.mailgunAPIKey,
           domain: MailgunKeys.mailgunDomain
         }
-        // proxy: 'http://user:pass@localhost:8080' // optional proxy, default is false
       }
 
       const nodemailerMailgun = nodemailer.createTransport(mg(auth));
@@ -401,20 +399,24 @@ exports.verifiedEmail = async (req, res) => {
       encryptedData
     } = req.body
     const user = await getUserFromUserHash(encryptedData)
-    console.log(user,"================ajsdkgas")
-    // let hash;
-    // if (user.length) hash = user[0].userHash
-    // const userEmail = decrypt(hash)
-    // const data = await updateEmailVerification(encryptedData, {
-    //   userEmail: userEmail
-    // })
-    // const template = await emailVerified("https://tradebazaar.tech-active.com")
-    // const message = {
-    //   subject: "Email verified",
-    //   html: template
-    // }
-    // await sendSingleMail(userEmail, message)
-    // return respSuccess(res)
+    let hash;
+    if (user.length) {hash = user[0].userHash}
+    const userEmail = decrypt(hash)
+    const data = await updateEmailVerification(encryptedData, {
+      userEmail: userEmail
+    })
+    if(data.ok === 1){
+      let mobileVal = user[0].mobile.toString();
+      await updateBuyer({"mobile" : mobileVal }, { isEmailVerified : true })
+      await updateSeller({"mobile.mobile" : mobileVal }, {isEmailVerified : true})
+    }
+    const template = await emailVerified("https://tradebazaar.tech-active.com")
+    const message = {
+      subject: "Email verified",
+      html: template
+    }
+    await sendSingleMail(userEmail, message)
+    return respSuccess(res)
 
   } catch (error) {
 
