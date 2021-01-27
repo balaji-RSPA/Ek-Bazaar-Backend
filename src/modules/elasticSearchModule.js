@@ -499,15 +499,13 @@ exports.searchFromElastic = (query, range, aggs) =>
 
     const { skip, limit } = range;
     aggs = aggs || {}
-
-
     const body = {
       size: limit || 10,
       from: skip || 0,
       query,
       ...aggs,/* ,
       highlight, */
-      sort: { "sellerId._id.keyword": "desc" }
+      sort: { "userId._id.keyword": "desc" }
     };
 
     const searchQuery = {
@@ -522,7 +520,8 @@ exports.searchFromElastic = (query, range, aggs) =>
         resolve([
           results.hits.hits,
           count,
-          results.aggregations
+          results.aggregations/*,
+          // results.hits.total*/
         ]);
       })
       .catch(error => reject(error))
@@ -577,11 +576,11 @@ exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, 
     highlight, */
     // sort: { "_id": "desc" }
   } : {
-    from: skip || 0,
-    size: 10000,
-    query,
-    ...aggs
-  };
+      from: skip || 0,
+      size: 10000,
+      query,
+      ...aggs
+    };
   console.log("exports.getSuggestions -> body", body)
   const searchQuery = {
     index: process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions",

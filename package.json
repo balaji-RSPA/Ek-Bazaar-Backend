@@ -31,10 +31,13 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "logger": "0.0.1",
+    "mailgun-js": "^0.22.0",
     "moment": "^2.29.1",
     "mongoose": "^5.10.9",
     "node-cron": "^2.0.3",
     "node-machine-id": "^1.1.12",
+    "nodemailer": "^6.4.17",
+    "nodemailer-mailgun-transport": "^2.0.2",
     "nodemon": "^2.0.6",
     "winston": "^3.3.3"
   }

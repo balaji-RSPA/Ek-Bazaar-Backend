@@ -1,7 +1,19 @@
-const { Buyers, RFP } = require("../models");
-
+const {
+  Buyers,
+  RFP
+} = require("../models");
+const User = require('../../config/tenderdb').userModel
 module.exports.postRFP = (data) => new Promise((resolve, reject) => {
   RFP.create(data)
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+
+})
+
+module.exports.updateRFP = (query, data) => new Promise((resolve, reject) => {
+  RFP.findOneAndUpdate(query, data, { new: true, upsert: true })
     .then(doc => {
       resolve(doc)
     })
@@ -63,9 +75,6 @@ module.exports.getAllBuyers = (searchQuery, skip, limit) =>
         { mobile: { $regex: searchQuery, $options: 'i' } }
       ]
     } : {};
-    // Object.keys(searchQuery).forEach((el)=>{
-    //   searchQry[el] = { $regex: `${searchQuery[el]}`, $options: 'i' }
-    // })
     Buyers.find(searchQry)
       .skip(skip)
       .limit(limit)
@@ -92,14 +101,56 @@ module.exports.getBuyerAdmin = (query) =>
       })
       .catch((error) => reject(error));
   });
+// /**
+//    * Create RFP
+//   */
+// module.exports.postRFP = (data) => new Promise((resolve, reject) => {
+//   RFP.create(data)
+//     .then(doc => {
+//       resolve(doc)
+//     })
+//     .catch(error => reject(error))
+
+// })
 /**
-   * Get RFP detail
-  */
-module.exports.postRFP = (data) => new Promise((resolve, reject) => {
-  RFP.create(data)
+ * Get Specific RFP
+ */
+module.exports.getRFP = (query) => new Promise((resolve, reject) => {
+  RFP.find(query)
     .then(doc => {
       resolve(doc)
     })
     .catch(error => reject(error))
+})
+/**
+ * 
+ * Email verification code  
+ */
+exports.getUserFromUserHash = (hashcode) => new Promise((resolve, reject) => {
+  User.find({
+      "userHash.encryptedData": hashcode
+    }, {
+      _id: 0,
+      userHash: 1,
+      mobile:1
+    })
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+})
 
+exports.updateEmailVerification = (hash, newData) => new Promise((resolve, reject) => {
+  User.update({
+      'userHash.encryptedData': hash
+    }, {
+      $set: {
+        isEmailVerified: 2,
+        email: newData.userEmail
+      }
+    }, {
+      new: true
+    })
+    .then((doc) => resolve(doc))
+    .catch(reject)
 })

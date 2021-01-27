@@ -93,8 +93,8 @@ module.exports.getAllCategories = (query, searchQuery, skip, limit) =>
           // },
         },
       })
-      .skip(skip)
-      .limit(limit)
+      // .skip(skip)
+      // .limit(limit)
       .then((doc) => {
         resolve(doc);
       })

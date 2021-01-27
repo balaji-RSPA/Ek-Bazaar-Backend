@@ -11,10 +11,10 @@ exports.ADMIN_JWT_ADMIN_SECRET = "tech-ekbazaar-admin";
 
 // mailgun test credential
 exports.MailgunKeys = {
-  senderMail: "",
-  replyMail: "",
-  mailgunAPIKey: "",
-  mailgunDomain: "",
+  senderMail: "admin@communications.ekbazaar.com",
+  replyMail: "no-reply@communications.ekbazaar.com",
+  mailgunAPIKey: "key-c956636404963d0492622caa1cdc6082",
+  mailgunDomain: "communications.ekbazaar.com",
 };
 exports.fromEmail = {
   fromEmailName: "EkBazaar",
@@ -43,7 +43,7 @@ exports.moduleTypes = {
 };
 
 exports.sms = {
-  smsURL: 'https://http.myvfirst.com/smpp/sendsms',
+  smsURL: 'http://203.212.70.200/smpp/sendsms',
   username: 'cn14604',
   password: 'Admin@14604',
   senderID: 'EKBZAR'

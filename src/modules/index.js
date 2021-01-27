@@ -8,6 +8,7 @@ const subscriptionPlan = require('./subscriptionPlanModule')
 const mastercollections = require('./masterModule')
 const sellerProducts = require('./sellerProductModule')
 const RemoveListing = require('./removeListingModule')
+const SMSQue = require('./smsQueModule')
 
 module.exports = {
     location,
@@ -19,5 +20,6 @@ module.exports = {
     subscriptionPlan,
     mastercollections,
     sellerProducts,
-    RemoveListing
+    RemoveListing,
+    SMSQue
 }
