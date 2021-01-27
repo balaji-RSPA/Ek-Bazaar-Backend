@@ -14,7 +14,7 @@ const { tradeDb } = config
 
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
 const { deleteRecords } = require('./src/controllers/web/userController')
-const { updateSelleProfileChangesToProducts, updateKeywords } = require('./src/crons/cron')
+const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms } = require('./src/crons/cron')
 
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
@@ -56,8 +56,8 @@ app.get('/', function (req, res) {
 })
 
 async function indexing() {
-  // await checkIndices()
-  // await putMapping()
+  await checkIndices()
+  await putMapping()
   // await l1CheckIndices()
   // await l1PutMapping()
   // await l2CheckIndices()
@@ -121,20 +121,31 @@ async function indexing() {
 //   // res.send('Its delete records  live')
 // })
 
-// app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+  // console.log('Home page')
+  try {
+    const result = await updateSelleProfileChangesToProducts()
+  } catch (error) {
+
+  }
+  // res.send('Its delete records  live')
+})
+
+// app.get('/updateKeywords', async function (req, res) {
 //   // console.log('Home page')
 //   try {
-//     const result = await updateSelleProfileChangesToProducts()
+//     const result = await updateKeywords()
 //   } catch (error) {
 
 //   }
 //   // res.send('Its delete records  live')
 // })
 
-// app.get('/updateKeywords', async function (req, res) {
+
+// app.get('/sendQueSms', async function (req, res) {
 //   // console.log('Home page')
 //   try {
-//     const result = await updateKeywords()
+//     const result = await sendQueSms()
 //   } catch (error) {
 
 //   }
@@ -159,14 +170,14 @@ server.on('listening', () => {
 
 });
 
-// if (env.NODE_ENV === "production") {
+if (env.NODE_ENV === "production1") {
 
-//   const cstToJson = cron.schedule('* * * * *', async () => {
-//     cstToJson.stop()
-//     console.log('@@@@@ cstToJson file cron start @@@@@', new Date());
-//     await updateKeywords()
-//     console.log('@@@@@ cstToJson file cron completed @@@@@', new Date())
-//     cstToJson.start()
-//   })
-//   cstToJson.start()
-// }
+  const queSms = cron.schedule('* * * * *', async () => {
+    queSms.stop()
+    console.log('@@@@@ queSms file cron start @@@@@', new Date());
+    await sendQueSms()
+    console.log('@@@@@ queSms file cron completed @@@@@', new Date())
+    queSms.start()
+  })
+  queSms.start()
+}

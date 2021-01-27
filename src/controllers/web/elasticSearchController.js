@@ -70,21 +70,13 @@ module.exports.serachSeller = async (req, res) => {
       if (_states[0].length && _states[0][0]._source)
         states = _states[0][0]._source
       console.log("module.exports.serachSeller -> states", states)
-      // let cities = await getAllCities({});
-      // cities = cities.map((city) => ({ name: city.name, id: city._id, state: city.state }));
-      // let states = await getAllStates();
-      // states = states.map((state) => ({ name: state.name, id: state._id }));
-      // for (let i = 0; i < newKeyword.length; i++) {
-      //   let _keyword = newKeyword[i]
 
-      //   /* matched service_type && state || city */
-      //   let index = -1
-
-      //   index = cities.findIndex((city) => city.name == _keyword);
-      //   if (index !== -1 && city === "") city = cities[index];
-      //   index = states.findIndex((state) => state.name.includes(_keyword));
-      //   if (index !== -1 && state === "") state = states[index];
-      // }
+      if (cities && cities.alias) {
+        console.log("module.exports.serachSeller -> cities.alias", cities.alias)
+        // const xyz = newKeyword.findIndex(item => item === cities.alias.filter(city => newKeyword.filter(word => word === city)[0])[0])
+        newKeyword.splice(newKeyword.findIndex(item => item === cities.alias.filter(city => newKeyword.filter(word => word === city)[0])[0]), 1)
+        console.log("module.exports.serachSeller -> newKeyword", newKeyword)
+      }
 
       newKeyword = newKeyword.join(" ");
 
@@ -167,20 +159,34 @@ module.exports.serachSeller = async (req, res) => {
 module.exports.searchSuggestion = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
+    console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
 
-    const { skip, limit, search } = reqQuery
+    const { skip, limit, search, product } = reqQuery
     if (search !== 'undefined' && search) {
       const query = {
-        "wildcard": {
-          "name": {
-            "value": search + "*",
-            "boost": 1.0,
-            "rewrite": "constant_score"
+        "match_phrase_prefix": {
+          "name": search.toLowerCase()
+        }
+        // "wildcard": {
+        //   "name": {
+        //     "value": search + "*",
+        //     "boost": 1.0,
+        //     "rewrite": "constant_score"
+        //   }
+        // }
+      }
+      const aggs = {
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "name.keyword"
+            }
           }
         }
       }
-      let suggestions = await getSuggestions(query, { skip, limit })
-      return respSuccess(res, suggestions[0])
+      let suggestions = await getSuggestions(query, { skip, limit }, product, aggs)
+      console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length - 1])
+      return respSuccess(res, suggestions[0], suggestions[1]["products"])
     } else {
       const query = {
         // "query": {
@@ -191,9 +197,19 @@ module.exports.searchSuggestion = async (req, res) => {
         }
         // }
       }
-      let suggestions = await getSuggestions(query, { skip, limit })
+      const aggs = {
+        "aggs": {
+          "products": {
+            "cardinality": {
+              "field": "name.keyword"
+            }
+          }
+        }
+      }
+      let suggestions = await getSuggestions(query, { skip, limit }, null, aggs)
+      console.log("module.exports.searchSuggestion -> suggestions", suggestions)
 
-      return respSuccess(res, suggestions[0])
+      return respSuccess(res, suggestions[0], suggestions[1]["products"])
     }
 
   } catch (error) {

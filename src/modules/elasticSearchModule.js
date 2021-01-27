@@ -499,8 +499,6 @@ exports.searchFromElastic = (query, range, aggs) =>
 
     const { skip, limit } = range;
     aggs = aggs || {}
-
-
     const body = {
       size: limit || 10,
       from: skip || 0,
@@ -522,7 +520,8 @@ exports.searchFromElastic = (query, range, aggs) =>
         resolve([
           results.hits.hits,
           count,
-          results.aggregations
+          results.aggregations/*,
+          // results.hits.total*/
         ]);
       })
       .catch(error => reject(error))
@@ -565,15 +564,24 @@ exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
   esClient.update(newData).then(resolve).catch(reject);
 });
 
-exports.getSuggestions = (query, range) => new Promise((resolve, reject) => {
+exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, reject) => {
   const { skip, limit } = range;
-  const body = {
-    size: limit || 10,
+  console.log("exports.getSuggestions -> limit", limit)
+  aggs = aggs || {}
+  let body = !product ? {
+    size: limit || 20,
     from: skip || 0,
-    query,/* ,
-      highlight, */
+    query,
+    ...aggs/* ,
+    highlight, */
     // sort: { "_id": "desc" }
-  };
+  } : {
+      from: skip || 0,
+      size: 10000,
+      query,
+      ...aggs
+    };
+  console.log("exports.getSuggestions -> body", body)
   const searchQuery = {
     index: process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions",
     body,
@@ -584,6 +592,7 @@ exports.getSuggestions = (query, range) => new Promise((resolve, reject) => {
       // const { count } = await this.getCounts(query); // To get exact count
       resolve([
         results.hits.hits,
+        results.aggregations
         // count,
       ]);
     })

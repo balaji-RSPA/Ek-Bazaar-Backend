@@ -45,6 +45,8 @@ const {
 const {
   updateESDoc
 } = require('./elasticSearchModule')
+// const { reject } = require('lodash')
+// const Seller = require('../models/sellersSchema')
 
 // module.exports.checkSellerExistOrNot = (mobile) =>
 //   new Promise((resolve, reject) => {
@@ -261,6 +263,7 @@ module.exports.getUserProfile = (id) =>
         name: 1,
         email: 1,
         mobile: 1,
+        preferredLanguage: 1,
         isPhoneVerified: 1,
         isMobileVerified: 1,
         // _id: -1,
@@ -1204,11 +1207,9 @@ exports.structureSellerData = async (seller) => {
   // console.log("location", finalData)
 }
 
-module.exports.getSellerVal = (id) =>
+module.exports.getSellerVal = (query) =>
   new Promise((resolve, reject) => {
-    Sellers.findOne({
-      _id: id
-    })
+    Sellers.findOne(query)
       .lean()
       .then((doc) => {
         resolve(doc)
@@ -1417,3 +1418,11 @@ module.exports.getUpdatedSellerDetails = (query, skip, limit) => new Promise((re
     })
     .catch((error) => reject(error))
 })
+
+// module.exports.updateMany = (query1,query2) => new Promise((resolve, reject) => {
+//   Sellers.updateMany(query1,query2)
+//     .then((doc) => {
+//       resolve(doc)
+//     })
+//     .catch((error) => reject(error))
+// })

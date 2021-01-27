@@ -17,20 +17,20 @@ function dbConnection() {
     serverSelectionTimeoutMS: 10000,
     // reconnectTries: 30,
   };
-  if (env.NODE_ENV === 'production') {
+  // if (env.NODE_ENV === 'production') {
 
-    url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
-    options = {
-      ...options,
-      keepAlive: true,
-      replicaSet: `${tradeDb.replicaName}`,
-      // useMongoClient: true,
-    }
-  } else {
-
-    url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}:${tradeDb.port}/${tradeDb.database}`;
-
+  url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+  options = {
+    ...options,
+    keepAlive: true,
+    replicaSet: `${tradeDb.replicaName}`,
+    // useMongoClient: true,
   }
+  // } else {
+
+  // url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}:${tradeDb.port}/${tradeDb.database}`;
+
+  // }
   if (env) {
 
     // url = `mongodb://${tradedb.user}:${tradedb.password}@${tradedb.host}:${tradedb.port}/${tradedb.database}`

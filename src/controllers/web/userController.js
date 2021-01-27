@@ -28,10 +28,7 @@ const { getMaster, addMaster, updateMaster } = mastercollections
 const { sms } = require("../../utils/globalConstants")
 // const {username, password, senderID, smsURL} = sms
 
-const smsURL = 'https://http.myvfirst.com/smpp/sendsms'
-const username = 'cn14604'
-const password = 'Admin@14604'
-const senderID = 'EKBZAR'
+const isProd = process.env.NODE_ENV === "production"
 
 module.exports.getAccessToken = async (req, res) => {
   try {
@@ -77,9 +74,8 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "A seller with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-
-    if (process.env.NODE_ENV === "production") {
-
+    const otp = 1234;
+    if(isProd) {
       const url = "https://api.ekbazaar.com/api/v1/sendOTP"
       const resp = await axios.post(url, {
         mobile
@@ -87,13 +83,9 @@ module.exports.sendOtp = async (req, res) => {
 
       if (resp.data.success)
         return respSuccess(res, { otp: resp.data.data.otp });
+    } else return respSuccess(res, { otp });
 
-    } else {
-
-      const otp = 1234;
-      return respSuccess(res, { otp });
-
-    }
+    // console.log(resp.data, ' pppppppppppppppppppp')
 
   } catch (error) {
     return respError(res, error.message);
@@ -242,7 +234,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
-    if (_seller && _seller.sellerProductId.length) {
+    if (_seller && _seller.sellerProductId && _seller.sellerProductId.length) {
       sellerData = {
         ...sellerData,
         profileUpdate: true,
@@ -256,6 +248,7 @@ module.exports.updateUser = async (req, res) => {
       buyerData.countryCode = _buyer.mobile[0].countryCode;
     }
     delete buyerData && buyerData._id;
+    console.log(buyerData,"=====================hwjgejwgr hjgwrgwrjh whrjhgw")
     buyer = await updateBuyer({ userId: userID }, buyerData);
 
     if (business) {
@@ -290,7 +283,7 @@ module.exports.updateUser = async (req, res) => {
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     if (user && buyer && seller) {
-      respSuccess(res, { seller, buyer }, "Updated Seccessfully");
+      respSuccess(res, { seller, buyer }, "Updated Successfully");
     } else {
       respError(res, "Failed to update");
     }
