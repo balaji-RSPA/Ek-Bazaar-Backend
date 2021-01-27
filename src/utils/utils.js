@@ -13,6 +13,7 @@ const {
 } = require("./globalConstants");
 
 const axios = require("axios")
+const { capitalizeFirstLetter } = require('./helpers')
 
 const {
   endpoint,
@@ -29,8 +30,12 @@ exports.sendSMS = async (mobile, message) => {
     mobile,
     message
   })
-  // console.log(resp, ' oooooooooooooooooooooooo')
   return resp
+}
+
+exports.messageContent = (productDetails, _loc, name) => {
+  const message = `You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(productDetails.name)},${productDetails.quantity} ${capitalizeFirstLetter(productDetails.weight)} from ${_loc}.\nDetails below: ${capitalizeFirstLetter(name)} -\nTo view buyer contact details please register or login to trade.ekbazaar.com/signup\nEkbazaar-Trade https://www.trade.ekbazaar.com`;
+  return message
 }
 
 exports.getReqIP = (req) => {

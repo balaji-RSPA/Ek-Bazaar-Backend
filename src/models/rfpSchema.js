@@ -93,6 +93,10 @@ const rfpSchema = new Schema(
     requestType: {
       type: Number,
       default: null
+    },
+    totalCount: {
+      type: Number,
+      default: 0
     }
   },
   {

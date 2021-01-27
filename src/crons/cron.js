@@ -45,7 +45,7 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
 })
 
 const masterMapData = (val, type) => new Promise((resolve, reject) => {
-    // console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", JSON.stringify(val.sellerId))
+    console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", JSON.stringify(val.sellerId))
     const _Scity = [];
     let serviceProductData;
     if (val.serviceCity && val.serviceCity.length) {
@@ -150,19 +150,20 @@ exports.updateSelleProfileChangesToProducts = async (req, res) => new Promise(as
 
         console.log(' updates eller------')
         const result = await getUpdatedSellerDetails({ profileUpdate: true }, 0, 1)
+        console.log("🚀 ~ file: cron.js ~ line 153 ~ exports.updateSelleProfileChangesToProducts= ~ result", result)
         for (let index = 0; index < result.length; index++) {
             const seller = result[index];
             // const products = seller.sellerProductId
             const products = await getSellerProductDetails({ _id: { $in: seller.sellerProductId } })
 
-            // console.log("🚀 ~ file: cron.js ~ line 12 ~ exports.updateSelleProfileChangesToProducts= ~ result", JSON.stringify(products))
+            console.log("🚀 ~ file: cron.js ~ line 12 ~ exports.updateSelleProfileChangesToProducts= ~ result", JSON.stringify(products))
             for (let i = 0; i < products.length; i++) {
                 const pro = products[index];
 
                 const formateData = await masterMapData(pro, 'insert')
-                const updateResult = await addProductDetails({ _id: pro._id }, { keywords: formateData.keywords })
-                const masResult = await updateMaster({ _id: pro._id }, { sellerId: formateData.sellerId })
-                console.log("🚀 ~ file: cron.js ~ line 115 ~ exports.updateSelleProfileChangesToProducts= ~ formateData", JSON.stringify(formateData.sellerId))
+                // const updateResult = await addProductDetails({ _id: pro._id }, { keywords: formateData.keywords })
+                // const masResult = await updateMaster({ _id: pro._id }, { sellerId: formateData.sellerId })
+                console.log("🚀 ~ file: cron.js ~ line 115 ~ exports.updateSelleProfileChangesToProducts= ~ formateData", JSON.stringify(formateData))
             }
 
 

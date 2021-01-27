@@ -43,7 +43,7 @@ exports.moduleTypes = {
 };
 
 exports.sms = {
-  smsURL: 'https://http.myvfirst.com/smpp/sendsms',
+  smsURL: 'http://203.212.70.200/smpp/sendsms',
   username: 'cn14604',
   password: 'Admin@14604',
   senderID: 'EKBZAR'

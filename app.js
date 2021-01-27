@@ -121,15 +121,15 @@ async function indexing() {
 //   // res.send('Its delete records  live')
 // })
 
-// app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
-//   // console.log('Home page')
-//   try {
-//     const result = await updateSelleProfileChangesToProducts()
-//   } catch (error) {
+app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+  // console.log('Home page')
+  try {
+    const result = await updateSelleProfileChangesToProducts()
+  } catch (error) {
 
-//   }
-//   // res.send('Its delete records  live')
-// })
+  }
+  // res.send('Its delete records  live')
+})
 
 // app.get('/updateKeywords', async function (req, res) {
 //   // console.log('Home page')
