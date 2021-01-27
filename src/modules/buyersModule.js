@@ -9,6 +9,15 @@ module.exports.postRFP = (data) => new Promise((resolve, reject) => {
 
 })
 
+module.exports.updateRFP = (query, data) => new Promise((resolve, reject) => {
+  RFP.findOneAndUpdate(query, data, { new: true, upsert: true })
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+
+})
+
 module.exports.checkBuyerExistOrNot = (query) =>
   new Promise((resolve, reject) => {
     Buyers.find(query)
@@ -63,9 +72,6 @@ module.exports.getAllBuyers = (searchQuery, skip, limit) =>
         { mobile: { $regex: searchQuery, $options: 'i' } }
       ]
     } : {};
-    // Object.keys(searchQuery).forEach((el)=>{
-    //   searchQry[el] = { $regex: `${searchQuery[el]}`, $options: 'i' }
-    // })
     Buyers.find(searchQry)
       .skip(skip)
       .limit(limit)
@@ -92,14 +98,24 @@ module.exports.getBuyerAdmin = (query) =>
       })
       .catch((error) => reject(error));
   });
+// /**
+//    * Create RFP
+//   */
+// module.exports.postRFP = (data) => new Promise((resolve, reject) => {
+//   RFP.create(data)
+//     .then(doc => {
+//       resolve(doc)
+//     })
+//     .catch(error => reject(error))
+
+// })
 /**
-   * Get RFP detail
-  */
-module.exports.postRFP = (data) => new Promise((resolve, reject) => {
-  RFP.create(data)
+ * Get Specific RFP
+ */
+module.exports.getRFP = (query) => new Promise((resolve, reject) => {
+  RFP.find(query)
     .then(doc => {
       resolve(doc)
     })
     .catch(error => reject(error))
-
 })

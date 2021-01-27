@@ -36,57 +36,57 @@ const productDetailsSchema = new Schema({
         price: {
             type: String,
             trim: true,
-            default: null
+            // default: null
         },
         unit: {
             type: String,
             trim: true,
-            default: null
+            // default: null
         }
     },
     minmumOrderQty: {
         quantity: {
             type: String,
             trim: true,
-            default: null
+            // default: null
         },
         unit: {
             type: String,
             trim: true,
-            default: null
+            // default: null
         }
     },
     deliveryTime: {
         deliveryTime: {
             type: String,
             trim: true,
-            default: null
+            // default: null
         },
         unit: {
             type: String,
             trim: true,
-            default: null
+            // default: null
         }
     },
     packagingDetails: {
         packagingDetail: {
             type: String,
             trim: true,
-            default: null
+            // default: null
         },
         packagingUnit: {
             type: String,
             trim: true,
-            default: null
+            // default: null
         }
     },
     countryOfOrigin: {
         type: nameSchema,
-        default: null
+        // default: null
     },
     regionOfOrigin: {
         type: nameSchema,
-        default: null
+        // default: null
     },
     productDescription: {
         type: String,
@@ -102,48 +102,48 @@ const productDetailsSchema = new Schema({
             name: {
                 type: String,
                 trim: true,
-                default: null
+                // default: null
             },
             code: {
                 type: String,
                 trim: true,
-                default: null
+                // default: null
             },
         },
         image2: {
             name: {
                 type: String,
                 trim: true,
-                default: null
+                // default: null
             },
             code: {
                 type: String,
                 trim: true,
-                default: null
+                // default: null
             },
         },
         image3: {
             name: {
                 type: String,
                 trim: true,
-                default: null
+                // default: null
             },
             code: {
                 type: String,
                 trim: true,
-                default: null
+                // default: null
             },
         },
         image4: {
             name: {
                 type: String,
                 trim: true,
-                default: null
+                // default: null
             },
             code: {
                 type: String,
                 trim: true,
-                default: null
+                // default: null
             },
         }
     }
@@ -181,6 +181,18 @@ const categorySchema = new Schema({
 
 const mobileSchema = new Schema({
     mobile: {
+        type: String,
+        trim: true
+    },
+    countryCode: {
+        type: String,
+        trim: true,
+        default: null
+    }
+})
+
+const telephoneSchema = new Schema({
+    telephone: {
         type: String,
         trim: true
     },
@@ -266,13 +278,25 @@ const masterCollectionSchema = new Schema(
                 type: Boolean,
                 default: false
             },
+            telephone: {
+                type: [telephoneSchema],
+                default: null
+            },
+            country: {
+                type: Object,
+                default: null
+            },
+            status: {
+                type: Boolean,
+                default: true
+            },
             deactivateAccount: {
                 type: Boolean,
                 default: false
             },
             businessName: {
                 type: String,
-                default: false
+                default: null
             },
         },
         userId: {

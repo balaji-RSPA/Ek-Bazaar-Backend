@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T12:45:48.557Z"}
+=======
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-15T21:12:52.890Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-15T21:13:42.691Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-15T21:14:31.433Z"}
@@ -493,4 +496,13 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-21T15:21:23.662Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-22T06:34:51.761Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-22T14:34:39.024Z"}
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-27T09:47:43.561Z"}
+=======
+>>>>>>> sprint-01
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:07:18.369Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:16:02.325Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:34:32.259Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T07:40:18.063Z"}
+>>>>>>> staging
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T09:48:05.716Z"}
