@@ -11,10 +11,10 @@ exports.ADMIN_JWT_ADMIN_SECRET = "tech-ekbazaar-admin";
 
 // mailgun test credential
 exports.MailgunKeys = {
-  senderMail: "",
-  replyMail: "",
-  mailgunAPIKey: "",
-  mailgunDomain: "",
+  senderMail: "admin@communications.ekbazaar.com",
+  replyMail: "no-reply@communications.ekbazaar.com",
+  mailgunAPIKey: "key-c956636404963d0492622caa1cdc6082",
+  mailgunDomain: "communications.ekbazaar.com",
 };
 exports.fromEmail = {
   fromEmailName: "EkBazaar",
