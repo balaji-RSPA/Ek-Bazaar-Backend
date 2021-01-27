@@ -41,7 +41,9 @@ const {
   addSellerProduct,
   findEstablishment,
   getSellerProduct,
-  getSellerProductDetails
+  getSellerProductDetails,
+  // getUpdatedSellerDetails,
+  updateMany
 } = sellers
 const {
   getParentCat,
@@ -309,7 +311,7 @@ module.exports.deleteSellerProduct = async (req, res) => {
     let result
     let sellerProduct = await deleteSellerProduct(req.body.id)
     const masterDelete = await deleteMasterProduct(req.body.id)
-    let findSeller = await getSellerVal(sellerProduct.sellerId)
+    let findSeller = await getSellerVal({_id : sellerProduct.sellerId})
     if (findSeller) {
       let objVal = mongoose.Types.ObjectId(req.body.id);
       let arrVal = _.findIndex(findSeller.sellerProductId, objVal);
@@ -700,6 +702,36 @@ module.exports.getFilteredCities = async (req, res) => {
     respError(res, error.message)
   }
 }
+
+// module.exports.filterSellerUpdateStatus = async(req,res) =>{
+//   try{
+//     let queryMobile = {};
+//     let {query} = req.body;
+//     if(query.mobile && query.countryCode){
+//       queryMobile = {
+//         $and: [{
+//           "mobile.countryCode": query.countryCode,
+//           "mobile.mobile": query.mobile
+//           }]
+//         }
+//         delete query.mobile;
+//         delete query.countryCode;
+//       }
+//       query = {
+//         $or: [{...query,queryMobile}]
+//       }
+//     let findSeller = await updateMany(query, {
+//           $set: {
+//             "status": false
+//           }
+//         }
+//       )
+//     respSuccess(res,"Successfully updated")
+//   }catch(error){
+//    respError(res, error.message)
+//   }
+// }
+
 
 getlevelTwoCategories = async (element, userId, serviceType) => {
 
