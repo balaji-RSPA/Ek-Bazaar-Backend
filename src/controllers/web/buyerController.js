@@ -90,7 +90,7 @@ module.exports.createRFP = async (req, res) => {
         sellerId: sellerId || null
       }
       const rfp = await postRFP(rfpData)
-      if (sellerId && requestType === 1) {
+      if (sellerId && requestType === 1 && global.environment === "production") {
         const sellerData = await getSellerProfile(sellerId)
         const locationDetails = await getCity({ _id: location.city })
         const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
@@ -166,7 +166,7 @@ module.exports.createRFP = async (req, res) => {
         const result1 = await handleUserSession(user._id, finalData)
         const rfp = await postRFP(rfpData)
 
-        if (sellerId && requestType === 1) {
+        if (sellerId && requestType === 1 && global.environment === "production") {
           const sellerData = await getSellerProfile(sellerId)
           const locationDetails = await getCity({ _id: location.city })
           const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''

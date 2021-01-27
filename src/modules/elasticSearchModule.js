@@ -507,7 +507,7 @@ exports.searchFromElastic = (query, range, aggs) =>
       query,
       ...aggs,/* ,
       highlight, */
-      sort: { "sellerId._id.keyword": "desc" }
+      sort: { "userId._id.keyword": "desc" }
     };
 
     const searchQuery = {
