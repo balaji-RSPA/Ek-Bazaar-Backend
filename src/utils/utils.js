@@ -27,6 +27,13 @@ const { sms } = require('./globalConstants')
 const { username, password, senderID, smsURL } = sms
 
 
+exports.sendBulkSMS = async (mobile, message) => {
+  console.log('bulk sms', mobile, message)
+  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message}&dlr-mask=19&dlr-url&category=bulk`
+  const result = await axios.get(sendsmsuri)
+  return result
+}
+
 exports.sendSMS = async (mobile, message) => {
   // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
   // const resp = await axios.post(url, {

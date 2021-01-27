@@ -74,6 +74,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         const Searchquery = result.query, limit = 1000
         let skip = 0, status = true, totalInsertion = 0
         const sellerIds = []
+        let msg = ''
 
         while (status) {
 
@@ -87,7 +88,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
               const sellerId = v._source.sellerId
               // const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
 
-              const msg = messageContent(productDetails, _loc, name)
+              msg = messageContent(productDetails, _loc, name)
 
               totalInsertion++
               sellerIds.push(sellerId._id)
@@ -136,7 +137,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         }
 
         if (sellerIds && sellerIds.length) {
-          await updateRFP({ _id: rfp._id }, { sellerId: sellerIds, totalCount: totalInsertion })
+          await updateRFP({ _id: rfp._id }, { sellerId: sellerIds, totalCount: totalInsertion, message: msg })
         }
         console.log(" SMS count", totalInsertion)
       } else {
