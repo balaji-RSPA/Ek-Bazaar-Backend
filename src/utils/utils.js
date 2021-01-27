@@ -24,6 +24,8 @@ const {
   region,
   Bucket
 } = awsKeys
+const nodemailer = require('nodemailer')
+const mg = require('nodemailer-mailgun-transport');
 
 exports.getReqIP = (req) => {
   console.log(req.headers.reqip);
@@ -93,15 +95,27 @@ module.exports.uploadToDOSpace = (req) => {
 /**
  * send mail
  */
-module.exports.sendMail = (data)=> {
-  try{
-    mailgun.messages().send(data, (error, body) => {
-    if(error){
-      throw error;
+module.exports.sendMail = (message) => {
+
+  const auth = {
+    auth: {
+      api_key: MailgunKeys.mailgunAPIKey,
+      domain: MailgunKeys.mailgunDomain
     }
-      console.log(body);
-    })
-  }catch(err){
-    console.log(err, "=============Mail not send======================")
   }
-} 
+  const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+
+  nodemailerMailgun.sendMail(message, (err, info) => {
+
+    if (err) {
+
+      console.log(`Error: ${err}`);
+
+    } else {
+
+      console.log(`Response: ${info}`);
+
+    }
+
+  });
+}

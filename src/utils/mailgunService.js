@@ -1,21 +1,18 @@
 const nodemailer = require("nodemailer");
 const mg = require("nodemailer-mailgun-transport");
 const {
-  mailgunAPIKey,
-  mailgunDomain,
-  senderMail,
-  replyMail,
+MailgunKeys
 } = require("./globalConstants");
 
 module.exports.sendSingleMail = (email, message) => new Promise((resolve, reject) => {
   try {
-    message.from = senderMail;
+    message.from = MailgunKeys.senderMail;
     message.to = email
-    message["h:Reply-To"] = replyMail;
+    message["h:Reply-To"] = MailgunKeys.replyMail;
     const auth = {
       auth: {
-        api_key: mailgunAPIKey,
-        domain: mailgunDomain,
+        api_key: MailgunKeys.mailgunAPIKey,
+        domain: MailgunKeys.mailgunDomain,
       },
       // proxy: 'http://user:pass@localhost:8080' // optional proxy, default is false
     };
@@ -30,7 +27,6 @@ module.exports.sendSingleMail = (email, message) => new Promise((resolve, reject
       }
     });
   } catch (error) {
-    console.error(error, 'error aya re baba')
     reject(error)
   }
 });

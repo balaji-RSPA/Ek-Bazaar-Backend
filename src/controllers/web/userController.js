@@ -14,8 +14,6 @@ const {
 } = require('../../utils/globalConstants')
 const bcrypt = require("bcrypt");
 
-const nodemailer = require('nodemailer')
-const mg = require('nodemailer-mailgun-transport');
 const crypto = require('crypto')
 const {
   activateAccount
@@ -261,7 +259,6 @@ module.exports.updateUser = async (req, res) => {
     const { userID } = req;
     const _buyer = req.body.buyer || {}
     let { name, email, business, location, type, sellerType } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 178 ~ module.exports.updateUser= ~ req.body", req.body)
 
     let userData = {
       name: _buyer && _buyer.name || name,
@@ -276,7 +273,6 @@ module.exports.updateUser = async (req, res) => {
       ..._buyer
     };
     let _seller = await getSeller(userID)
-    console.log("🚀 ~ file: userController.js ~ line 193 ~ module.exports.updateUser= ~ _seller", _seller)
     let sellerData
     sellerData = {
       name,
@@ -333,6 +329,7 @@ module.exports.updateUser = async (req, res) => {
     //   keywords
     // }
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
+   
     if (user && buyer && seller) {
       let {
         token
@@ -340,15 +337,9 @@ module.exports.updateUser = async (req, res) => {
       token = token || req.token
       // req.body.userHash = encrypt(user.email)
       const alteredToken = token.split('.').join('!')
-      const auth = {
-        auth: {
-          api_key: MailgunKeys.mailgunAPIKey,
-          domain: MailgunKeys.mailgunDomain
-        }
-      }
-
-      const nodemailerMailgun = nodemailer.createTransport(mg(auth));
-      const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
+      const url = req.get('origin');
+      // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
+      const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
       const template = await activateAccount(link)
 
       const message = {
@@ -360,29 +351,8 @@ module.exports.updateUser = async (req, res) => {
         'h:Reply-To': MailgunKeys.replyMail,
         html: template
       }
-
-      nodemailerMailgun.sendMail(message, (err, info) => {
-
-        if (err) {
-
-          console.log(`Error: ${err}`);
-
-        } else {
-
-          console.log(`Response: ${info}`);
-
-        }
-
-      });
-
-      //   const data = {
-      //     from: `${fromEmail.fromEmailName} <${MailgunKeys.senderMail}>`,
-      //     to: user.email,
-      //     subject: 'Hello',
-      //     text: 'Testing some Mailgun awesomeness!'
-      //   };
-      // await sendMail(data);
-      respSuccess(res, { seller, buyer }, "Updated Successfully");
+      await sendMail(message)
+      respSuccess(res, { seller, buyer }, "Updated Successfully and check your email to activate your email");
     } else {
       respError(res, "Failed to update");
     }
@@ -410,7 +380,9 @@ exports.verifiedEmail = async (req, res) => {
       await updateBuyer({"mobile" : mobileVal }, { isEmailVerified : true })
       await updateSeller({"mobile.mobile" : mobileVal }, {isEmailVerified : true})
     }
-    const template = await emailVerified("https://tradebazaar.tech-active.com")
+    const url = req.get('origin');
+    // const template = await emailVerified("https://tradebazaar.tech-active.com")
+    const template = await emailVerified(url)
     const message = {
       subject: "Email verified",
       html: template
@@ -419,7 +391,6 @@ exports.verifiedEmail = async (req, res) => {
     return respSuccess(res)
 
   } catch (error) {
-
     return respError(res, error)
 
   }
