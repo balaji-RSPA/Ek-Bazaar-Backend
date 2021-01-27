@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-15T21:12:52.890Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-15T21:13:42.691Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-15T21:14:31.433Z"}
@@ -823,3 +824,45 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-27T07:14:50.393Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-27T07:14:58.033Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-27T07:15:01.002Z"}
+=======
+{"error":{},"level":"error","message":"uncaughtException: await is only valid in async function\n/home/active41/Desktop/trade/trade_api/src/utils/utils.js:28\n  const resp = await axios.post(url, {\n               ^^^^^\n\nSyntaxError: await is only valid in async function\n    at Module._compile (internal/modules/cjs/loader.js:723:23)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)\n    at Module.load (internal/modules/cjs/loader.js:653:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:593:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:585:3)\n    at Module.require (internal/modules/cjs/loader.js:692:17)\n    at require (internal/modules/cjs/helpers.js:25:18)\n    at Object.<anonymous> (/home/active41/Desktop/trade/trade_api/src/controllers/web/sellersController.js:11:5)\n    at Module._compile (internal/modules/cjs/loader.js:778:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)","stack":"/home/active41/Desktop/trade/trade_api/src/utils/utils.js:28\n  const resp = await axios.post(url, {\n               ^^^^^\n\nSyntaxError: await is only valid in async function\n    at Module._compile (internal/modules/cjs/loader.js:723:23)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)\n    at Module.load (internal/modules/cjs/loader.js:653:32)\n    at tryModuleLoad (internal/modules/cjs/loader.js:593:12)\n    at Function.Module._load (internal/modules/cjs/loader.js:585:3)\n    at Module.require (internal/modules/cjs/loader.js:692:17)\n    at require (internal/modules/cjs/helpers.js:25:18)\n    at Object.<anonymous> (/home/active41/Desktop/trade/trade_api/src/controllers/web/sellersController.js:11:5)\n    at Module._compile (internal/modules/cjs/loader.js:778:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)","exception":true,"date":"Mon Jan 25 2021 18:43:56 GMT+0530 (India Standard Time)","process":{"pid":992254,"uid":1000,"gid":1000,"cwd":"/home/active41/Desktop/trade/trade_api","execPath":"/usr/bin/node","version":"v10.19.0","argv":["/usr/bin/node","/home/active41/Desktop/trade/trade_api/app.js"],"memoryUsage":{"rss":53673984,"heapTotal":21536768,"heapUsed":14336776,"external":298517}},"os":{"loadavg":[0.79541015625,0.77880859375,0.7783203125],"uptime":630566},"trace":[{"column":23,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":723,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":789,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":653,"method":"load","native":false},{"column":12,"file":"internal/modules/cjs/loader.js","function":"tryModuleLoad","line":593,"method":null,"native":false},{"column":3,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":585,"method":"_load","native":false},{"column":17,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":692,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":25,"method":null,"native":false},{"column":5,"file":"/home/active41/Desktop/trade/trade_api/src/controllers/web/sellersController.js","function":null,"line":11,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":778,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":789,"method":".js","native":false}],"timestamp":"2021-01-25T13:13:56.920Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:14:14.567Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:15:31.066Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:16:45.364Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:17:53.045Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:18:29.513Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:19:52.788Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:21:23.427Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:22:50.497Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:22:55.086Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:22:59.457Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:24:06.334Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:24:45.607Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:24:54.044Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:26:49.949Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-25T13:27:05.427Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T04:58:31.180Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:20:22.810Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:21:40.690Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:21:52.030Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:22:12.305Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:23:45.364Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:24:30.343Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:51:37.793Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:57:23.801Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T05:59:38.871Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:00:01.281Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:02:08.275Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:03:25.121Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:08:22.594Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:09:23.103Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:11:40.960Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:12:26.892Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:13:20.502Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:13:36.960Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:24:04.719Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T06:42:11.043Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T07:03:54.222Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T07:04:05.071Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-27T07:11:51.248Z"}
+>>>>>>> staging

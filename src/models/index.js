@@ -19,6 +19,8 @@ const ProductsSubCategories = require("./productsSubCategoriesSchema")
 const SubscriptionPlan = require('./subscriptionPlanSchema')
 const MasterCollection = require('./MasterCollectionSchema')
 const RemoveListing = require('./removeListingSchema')
+const SMSQue = require('./SMSQueSchema')
+// const Users = require('./user')
 
 module.exports = {
     Cities,
@@ -41,5 +43,7 @@ module.exports = {
     ProductsSubCategories,
     SubscriptionPlan,
     MasterCollection,
-    RemoveListing
+    RemoveListing,
+    SMSQue
+    // Users
 }

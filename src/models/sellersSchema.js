@@ -93,6 +93,18 @@ const serviceSchema = new Schema({
   }]
 })
 
+const telephoneSchema = new Schema({
+  telephone: {
+    type: String,
+    trim: true
+  },
+  countryCode: {
+    type: String,
+    trim: true,
+    default: null
+  }
+})
+
 const sellersSchema = new Schema(
   {
     userId: {
@@ -141,10 +153,6 @@ const sellersSchema = new Schema(
       default: false
     },
     paidSeller: {
-      type: Boolean,
-      default: false
-    },
-    international: {
       type: Boolean,
       default: false
     },
@@ -250,8 +258,28 @@ const sellersSchema = new Schema(
       type: Boolean,
       default: false
     },
-    status:{
-      type:Boolean,
+    flag: {
+      type: Number,
+      default: 1,
+    },
+    international: {
+      type: Boolean,
+      default: false
+    },
+    telephone: {
+      type: [telephoneSchema],
+      default: null
+    },
+    website: {
+      type: String,
+      default: null
+    },
+    country: {
+      type: Object,
+      default: null
+    },
+    status: {
+      type: Boolean,
       default: true
     }
   },

@@ -12,6 +12,15 @@ module.exports.postRFP = (data) => new Promise((resolve, reject) => {
 
 })
 
+module.exports.updateRFP = (query, data) => new Promise((resolve, reject) => {
+  RFP.findOneAndUpdate(query, data, { new: true, upsert: true })
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+
+})
+
 module.exports.checkBuyerExistOrNot = (query) =>
   new Promise((resolve, reject) => {
     Buyers.find(query)
@@ -92,17 +101,17 @@ module.exports.getBuyerAdmin = (query) =>
       })
       .catch((error) => reject(error));
   });
-/**
-   * Create RFP
-  */
-module.exports.postRFP = (data) => new Promise((resolve, reject) => {
-  RFP.create(data)
-    .then(doc => {
-      resolve(doc)
-    })
-    .catch(error => reject(error))
+// /**
+//    * Create RFP
+//   */
+// module.exports.postRFP = (data) => new Promise((resolve, reject) => {
+//   RFP.create(data)
+//     .then(doc => {
+//       resolve(doc)
+//     })
+//     .catch(error => reject(error))
 
-})
+// })
 /**
  * Get Specific RFP
  */

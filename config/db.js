@@ -19,16 +19,16 @@ function dbConnection() {
   };
   // if (env.NODE_ENV === 'production') {
 
-    url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
-    options = {
-      ...options,
-      keepAlive: true,
-      replicaSet: `${tradeDb.replicaName}`,
-      // useMongoClient: true,
-    }
+  url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+  options = {
+    ...options,
+    keepAlive: true,
+    replicaSet: `${tradeDb.replicaName}`,
+    // useMongoClient: true,
+  }
   // } else {
 
-    // url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}:${tradeDb.port}/${tradeDb.database}`;
+  // url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}:${tradeDb.port}/${tradeDb.database}`;
 
   // }
   if (env) {
@@ -58,6 +58,7 @@ if (env) {
   } else if (env.NODE_ENV === 'staging') {
 
     host = 'tradebazaarapi.tech-active.com:5085'
+    // host = 'searchtradetemp.tech-active.com:5085'
 
   } else if (env.NODE_ENV === 'production') {
 
