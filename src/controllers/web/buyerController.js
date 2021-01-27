@@ -219,14 +219,11 @@ module.exports.createRFP = async (req, res) => {
         const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
-          // console.log("🚀 ~ file: buyerController.js ~ line 94 ~ module.exports.createRFP= ~ locationDetails", locationDetails)
           const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
           // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
           // const resp = await axios.post(url, {
           //   mobile: constsellerContactNo.mobile,
           //   message: messageContent(productDetails, _loc, name)
-
-          //   // message: `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
           // })
 
         }
@@ -306,8 +303,6 @@ module.exports.createRFP = async (req, res) => {
             // const resp = await axios.post(url, {
             //   mobile: constsellerContactNo.mobile,
             //   message: messageContent(productDetails, _loc, name)
-
-            //   // message: `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
             // })
 
           }

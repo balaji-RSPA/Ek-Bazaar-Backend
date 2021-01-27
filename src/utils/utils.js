@@ -5,13 +5,8 @@ const bcrypt = require('bcrypt');
 const fs = require("fs")
 const AWS = require('aws-sdk')
 const {
-  bcryptSalt,
-  MailgunKeys
+  bcryptSalt
 } = require('./globalConstants');
-const mailgun = require('mailgun-js')({
-  apiKey: MailgunKeys.mailgunAPIKey,
-  domain: MailgunKeys.mailgunDomain
-});
 const {
   JWTTOKEN,
   awsKeys
@@ -27,15 +22,12 @@ const {
   region,
   Bucket
 } = awsKeys
-const nodemailer = require('nodemailer')
-const mg = require('nodemailer-mailgun-transport');
 
 const { sms } = require('./globalConstants')
 const { username, password, senderID, smsURL } = sms
 
 
 exports.sendSMS = async (mobile, message) => {
-  console.log(username, password, senderID, smsURL, ' uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu')
   // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
   // const resp = await axios.post(url, {
   //   mobile,
@@ -117,31 +109,4 @@ module.exports.uploadToDOSpace = (req) => {
   // }
 
 
-}
-/**
- * send mail
- */
-module.exports.sendMail = (message) => {
-
-  const auth = {
-    auth: {
-      api_key: MailgunKeys.mailgunAPIKey,
-      domain: MailgunKeys.mailgunDomain
-    }
-  }
-  const nodemailerMailgun = nodemailer.createTransport(mg(auth));
-
-  nodemailerMailgun.sendMail(message, (err, info) => {
-
-    if (err) {
-
-      console.log(`Error: ${err}`);
-
-    } else {
-
-      console.log(`Response: ${info}`);
-
-    }
-
-  });
 }
