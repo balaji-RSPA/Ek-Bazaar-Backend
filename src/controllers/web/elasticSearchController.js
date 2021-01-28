@@ -159,7 +159,7 @@ module.exports.serachSeller = async (req, res) => {
 module.exports.searchSuggestion = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
-    console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
+    // console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
 
     const { skip, limit, search, product } = reqQuery
     if (search !== 'undefined' && search) {
@@ -185,7 +185,7 @@ module.exports.searchSuggestion = async (req, res) => {
         }
       }
       let suggestions = await getSuggestions(query, { skip, limit }, product, aggs)
-      console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length - 1])
+      // console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length - 1])
       return respSuccess(res, suggestions[0], suggestions[1]["products"])
     } else {
       const query = {
@@ -207,7 +207,7 @@ module.exports.searchSuggestion = async (req, res) => {
         }
       }
       let suggestions = await getSuggestions(query, { skip, limit }, null, aggs)
-      console.log("module.exports.searchSuggestion -> suggestions", suggestions)
+      // console.log("module.exports.searchSuggestion -> suggestions", suggestions)
 
       return respSuccess(res, suggestions[0], suggestions[1]["products"])
     }
