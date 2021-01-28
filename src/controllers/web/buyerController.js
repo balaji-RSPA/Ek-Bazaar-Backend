@@ -45,15 +45,21 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
   try {
 
 
-    if (productDetails.name !== 'undefined' && productDetails.name) {
-      const query = {
-        "term": {
-          "name.keyword": productDetails.name
-        }
-      }
-      let suggestions = await getSuggestions(query, {}, '', '')
-      const pro = suggestions && suggestions.length && suggestions[0] && suggestions[0].length && suggestions[0][0]._source || '';
+    if (productDetails.name !== 'undefined' && productDetails.name && productDetails.name.name) {
+      // const query = {
+      //   "term": {
+      //     "name.keyword": productDetails.name
+      //   }
+      // }
+      // let suggestions = await getSuggestions(query, {}, '', '')
+      // const pro = suggestions && suggestions.length && suggestions[0] && suggestions[0].length && suggestions[0][0]._source || '';
       // console.log("🚀 ~ file: buyerController.js ~ line 50 ~ module.exports.queSmsData= ~ pro", pro)
+
+      const pro = {
+        id: productDetails.name && productDetails.name.id,
+        search: productDetails.name && productDetails.name.search || ''
+      }
+      // console.log("🚀 ~ file: buyerController.js ~ line 58 ~ module.exports.queSmsData= ~ pro", pro, productDetails.name.name)
       if (pro) {
         let parentId, productId, secondaryId, primaryId, level5Id = ''
         if (pro.search === 'level1')
@@ -68,7 +74,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
           level5Id = pro.id
 
         const reqQuery = {
-          parentId, productId, secondaryId, primaryId, level5Id
+          parentId, productId, secondaryId, primaryId, level5Id, userId: true
         }
         const result = await sellerSearch(reqQuery);
         const Searchquery = result.query, limit = 1000
@@ -81,12 +87,10 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
           const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs);
 
           if (seller[0] && seller[0].length) {
-            // totalInsertion += seller[3]
-            const sellers = seller[0]
 
+            const sellers = seller[0]
             const QueData = sellers.filter(v => v._source.sellerId.mobile && v._source.sellerId.mobile.length).map(v => {
               const sellerId = v._source.sellerId
-              // const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
 
               msg = messageContent(productDetails, _loc, name)
 
@@ -106,27 +110,6 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
               })
             })
 
-            // const QueData = sellers.filter((v, index) => {
-
-            //   const sellerId = v._source.sellerId
-            //   const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
-            //   totalInsertion++
-            //   sellerIds.push(sellerId._id)
-
-            //   return ({
-            //     sellerId: sellerId._id || null,
-            //     buyerId: user && user._id || null,
-            //     mobile: {
-            //       countryCode: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].countryCode,
-            //       mobile: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].mobile,
-            //     },
-            //     message: msg,
-            //     messageType: 'rfp',
-            //     requestId: rfp._id
-            //   })
-
-            // })
-            // console.log("🚀 ~ file: buyerController.js ~ line 98 ~ QueData ~ QueData", QueData)
             await queSMSBulkInsert(QueData)
             skip += limit
 

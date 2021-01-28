@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-28T05:17:55.986Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-28T08:34:10.279Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-28T08:34:33.551Z"}
@@ -44,3 +45,7 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-28T13:21:07.240Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-28T13:23:35.156Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-28T13:36:03.439Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-28T13:34:07.558Z"}
+>>>>>>> staging
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-28T13:42:27.616Z"}
