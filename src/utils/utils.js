@@ -5,13 +5,8 @@ const bcrypt = require('bcrypt');
 const fs = require("fs")
 const AWS = require('aws-sdk')
 const {
-  bcryptSalt,
-  MailgunKeys
+  bcryptSalt
 } = require('./globalConstants');
-const mailgun = require('mailgun-js')({
-  apiKey: MailgunKeys.mailgunAPIKey,
-  domain: MailgunKeys.mailgunDomain
-});
 const {
   JWTTOKEN,
   awsKeys
@@ -27,17 +22,29 @@ const {
   region,
   Bucket
 } = awsKeys
-const nodemailer = require('nodemailer')
-const mg = require('nodemailer-mailgun-transport');
 
+const { sms } = require('./globalConstants')
+const { username, password, senderID, smsURL } = sms
+
+
+exports.sendBulkSMS = async (mobile, message) => {
+  console.log('bulk sms', mobile, message)
+  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message}&dlr-mask=19&dlr-url&category=bulk`
+  const result = await axios.get(sendsmsuri)
+  return result
+}
 
 exports.sendSMS = async (mobile, message) => {
-  const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-  const resp = await axios.post(url, {
-    mobile,
-    message
-  })
-  return resp
+  // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+  // const resp = await axios.post(url, {
+  //   mobile,
+  //   message
+  // })
+  // return resp
+
+  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message}&dlr-mask=19&dlr-url`
+  const result = await axios.get(sendsmsuri)
+  return result
 }
 
 exports.messageContent = (productDetails, _loc, name) => {
@@ -109,31 +116,4 @@ module.exports.uploadToDOSpace = (req) => {
   // }
 
 
-}
-/**
- * send mail
- */
-module.exports.sendMail = (message) => {
-
-  const auth = {
-    auth: {
-      api_key: MailgunKeys.mailgunAPIKey,
-      domain: MailgunKeys.mailgunDomain
-    }
-  }
-  const nodemailerMailgun = nodemailer.createTransport(mg(auth));
-
-  nodemailerMailgun.sendMail(message, (err, info) => {
-
-    if (err) {
-
-      console.log(`Error: ${err}`);
-
-    } else {
-
-      console.log(`Response: ${info}`);
-
-    }
-
-  });
 }

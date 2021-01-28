@@ -504,9 +504,9 @@ exports.searchFromElastic = (query, range, aggs) =>
       from: skip || 0,
       query,
       ...aggs,/* ,
-        highlight, */
-      sort: { "sellerId._id.keyword": "desc" }
-    }
+      highlight, */
+      sort: { "userId._id.keyword": "desc" }
+    };
 
     const searchQuery = {
       index: INDEXNAME,

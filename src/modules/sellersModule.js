@@ -264,6 +264,7 @@ module.exports.getUserProfile = (id) =>
         email: 1,
         mobile: 1,
         preferredLanguage: 1,
+        password: 1,
         isPhoneVerified: 1,
         isMobileVerified: 1,
         // _id: -1,
@@ -446,8 +447,6 @@ module.exports.getSeller = (id, chkStock) =>
     })
       .populate('sellerProductId')
       .populate('sellerType', 'name')
-      // .populate('sellerType.cities.city', 'name')
-      // .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
       .populate({
@@ -548,30 +547,53 @@ exports.getSellerProfile = (id) =>
     Sellers.find({
       _id: id
     })
-      .populate("primaryCatId")
-      .populate("sellerType")
-      .populate("busenessId")
-      .populate("statutoryId")
-      .populate("sellerContactId")
-      .populate("sellerCompanyId")
-      .populate("establishmentId")
+      // .populate("primaryCatId")
+      .populate('sellerProductId')
+      .populate('sellerType', 'name')
+      .populate('busenessId')
+      .populate('statutoryId')
       .populate({
-        path: "sellerProductId",
-        model: "sellerproducts",
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.city location.state location.country",
+          // model: Cities
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.state",
+          model: States,
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.country",
+          model: Countries,
+        }
+      })
+      .populate('sellerCompanyId')
+      .populate('establishmentId')
+
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
         populate: {
           path: "parentCategoryId",
-          select: "name",
           model: ParentCategory.collection.name
-        }
+        },
       })
       .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
         populate: {
           path: "primaryCategoryId",
-          select: "name",
           model: PrimaryCategory.collection.name
-        }
+        },
       })
       .populate({
         path: 'sellerProductId',
@@ -579,7 +601,7 @@ exports.getSellerProfile = (id) =>
         populate: {
           path: "secondaryCategoryId",
           model: SecondaryCategory.collection.name
-        }
+        },
       })
       .populate({
         path: 'sellerProductId',
@@ -587,7 +609,7 @@ exports.getSellerProfile = (id) =>
         populate: {
           path: "poductId",
           model: Products.collection.name
-        }
+        },
       })
       .populate({
         path: 'sellerProductId',
@@ -595,7 +617,21 @@ exports.getSellerProfile = (id) =>
         populate: {
           path: "productSubcategoryId",
           model: ProductsSubCategories.collection.name
-        }
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
       })
       .populate("location.city", "name")
       .populate("location.state", "name")
