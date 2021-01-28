@@ -10,3 +10,15 @@ exports.create = (query) =>
       })
       .catch(reject)
   })
+exports.listAll = (query) =>
+  new Promise((resolve, reject) => {
+  const skip = parseInt(query.skip);
+  const limit = parseInt(query.limit);
+    RemoveListing.find({})
+    .skip(skip)
+    .limit(limit)
+    .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+  })

@@ -130,6 +130,9 @@ module.exports.getBuyerAdmin = (query) =>
  */
 module.exports.getRFP = (query) => new Promise((resolve, reject) => {
   RFP.find(query)
+     .populate({
+       path: 'buyerDetails.location.state buyerDetails.location.city'
+     })
     .then(doc => {
       resolve(doc)
     })

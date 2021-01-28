@@ -423,10 +423,13 @@ module.exports.updateBuyerPassword = async (req, res) => {
 module.exports.getRFPS = async (req, res) => {
   try {
     const {
-      sellerId
-    } = req.params;
+      userID
+    } = req;
+    // const {
+    //   sellerId
+    // } = req.params;
     const RFP = await getRFP({
-      sellerId
+      sellerId: userID
     });
     respSuccess(res, RFP);
   } catch (error) {
