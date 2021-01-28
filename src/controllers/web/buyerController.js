@@ -44,7 +44,6 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
 
   try {
 
-
     if (productDetails.name !== 'undefined' && productDetails.name && productDetails.name.name) {
       // const query = {
       //   "term": {
@@ -59,7 +58,6 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         id: productDetails.name && productDetails.name.id,
         search: productDetails.name && productDetails.name.search || ''
       }
-      // console.log("🚀 ~ file: buyerController.js ~ line 58 ~ module.exports.queSmsData= ~ pro", pro, productDetails.name.name)
       if (pro) {
         let parentId, productId, secondaryId, primaryId, level5Id = ''
         if (pro.search === 'level1')
