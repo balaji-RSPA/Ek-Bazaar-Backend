@@ -30,7 +30,7 @@ const removeListingSchema = new Schema({
     countryCode:{
       type: String,
       trim: true,
-      required: true,
+      default:null
     }
   },
   reason: {
