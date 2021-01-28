@@ -21,6 +21,19 @@ module.exports.updateRFP = (query, data) => new Promise((resolve, reject) => {
 
 })
 
+module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
+  const skip = range.skip || 0
+  const limit = range.limit || 1
+  RFP.find(query)
+    .skip(skip)
+    .limit(limit)
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+
+})
+
 module.exports.checkBuyerExistOrNot = (query) =>
   new Promise((resolve, reject) => {
     Buyers.find(query)
@@ -128,12 +141,12 @@ module.exports.getRFP = (query) => new Promise((resolve, reject) => {
  */
 exports.getUserFromUserHash = (hashcode) => new Promise((resolve, reject) => {
   User.find({
-      "userHash.encryptedData": hashcode
-    }, {
-      _id: 0,
-      userHash: 1,
-      mobile:1
-    })
+    "userHash.encryptedData": hashcode
+  }, {
+    _id: 0,
+    userHash: 1,
+    mobile: 1
+  })
     .then(doc => {
       resolve(doc)
     })
@@ -142,15 +155,15 @@ exports.getUserFromUserHash = (hashcode) => new Promise((resolve, reject) => {
 
 exports.updateEmailVerification = (hash, newData) => new Promise((resolve, reject) => {
   User.update({
-      'userHash.encryptedData': hash
-    }, {
-      $set: {
-        isEmailVerified: 2,
-        email: newData.userEmail
-      }
-    }, {
-      new: true
-    })
+    'userHash.encryptedData': hash
+  }, {
+    $set: {
+      isEmailVerified: 2,
+      email: newData.userEmail
+    }
+  }, {
+    new: true
+  })
     .then((doc) => resolve(doc))
     .catch(reject)
 })

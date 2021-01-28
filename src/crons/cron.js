@@ -1,12 +1,13 @@
 const { reject } = require('lodash');
 const _ = require('lodash');
 
-const { sellers, mastercollections, sellerProducts, SMSQue } = require('../modules')
+const { sellers, mastercollections, sellerProducts, SMSQue, buyers } = require('../modules')
 const { getAllSellers, getUpdatedSellerDetails, getSellerProductDetails, addProductDetails } = sellers
 const { updateMaster } = mastercollections
 const { getSellerProducts, updateSellerProducts } = sellerProducts
 const { getQueSMS, updateQueSMS } = SMSQue
-const { sendSMS } = require('../utils/utils')
+const { getRFPData, updateRFP } = buyers
+const { sendSMS, sendBulkSMS } = require('../utils/utils')
 
 exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => {
 
@@ -14,25 +15,46 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
 
         console.log(' cron testingf')
         const updateIds = []
-        const result = await getQueSMS({ status: true }, { skip: 0, limit: 10 })
-        // console.log("🚀 ~ file: cron.js ~ line 16 ~ exports.sendQueSms= ~ result", result)
+        // const result = await getQueSMS({ status: true }, { skip: 0, limit: 10 })
+        const result = await getRFPData({ status: true }, { skip: 0, limit: 1 })
+        console.log("🚀 ~ file: cron.js ~ line 16 ~ exports.sendQueSms= ~ result", result)
         if (result && result.length) {
+            const limit = 100
+            const message = result[0].message
+            const queSms = await getQueSMS({ status: true, messageType: "rfp", requestId: result[0]._id }, { skip: 0, limit: 100 })
+            if (queSms && queSms.length) {
 
-            for (let index = 0; index < result.length; index++) {
-                const seller = result[index];
 
-                const data = await sendSMS(seller.mobile.mobile, seller.message)
-                updateIds.push(seller._id)
-                console.log(index, ' index')
+                let mobile = queSms && queSms.map((v) => {
+                    updateIds.push(v._id)
+                    return (v.mobile.mobile)
+                }).toString()
+                mobile = '9916905753,9916905753'
+                await sendBulkSMS(mobile, message)
+                // for (let index = 0; index < queSms.length; index++) {
+                //     const seller = queSms[index];
 
+                //     const data = await sendSMS(seller.mobile.mobile, seller.message)
+                //     updateIds.push(seller._id)
+                //     console.log(index, ' index')
+
+                // }
+
+                if (updateIds && updateIds.length) {
+                    await updateQueSMS({ _id: { $in: updateIds } }, { status: false })
+                    console.log('-----------  SMS QUE Ids UPDATED ----------------')
+                }
+                if (queSms.length < limit) {
+                    await updateRFP({ _id: result[0]._id }, { status: false })
+                    console.log('------------- RFP Updated -------------')
+                }
+            } else {
+                await updateRFP({ _id: result[0]._id }, { status: false })
+                console.log('------------- RFP Updated Else-------------')
             }
 
-            if (updateIds && updateIds.length) {
-                await updateQueSMS({ _id: { $in: updateIds } }, { status: false })
-                console.log('-----------  SMS QUE Ids UPDATED ----------------')
-            }
         } else {
-            console.log(' --------------- NO SMS IN QUEUE ----------------------')
+            console.log(' --------------- NO RFP SMS IN QUEUE ----------------------')
         }
         resolve()
 

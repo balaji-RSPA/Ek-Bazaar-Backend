@@ -19,7 +19,7 @@ const { getProductByName } = category
 const { sellerSearch, searchFromElastic, getSuggestions } = elastic
 const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile } = sellers
 const { getCity } = location
-const { createToken, messageContent } = require("../../utils/utils");
+const { createToken, messageContent, sendSMS } = require("../../utils/utils");
 const { queSMSBulkInsert, getQueSMS } = SMSQue
 
 const { sms } = require("../../utils/globalConstants")
@@ -74,6 +74,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         const Searchquery = result.query, limit = 1000
         let skip = 0, status = true, totalInsertion = 0
         const sellerIds = []
+        let msg = ''
 
         while (status) {
 
@@ -87,7 +88,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
               const sellerId = v._source.sellerId
               // const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
 
-              const msg = messageContent(productDetails, _loc, name)
+              msg = messageContent(productDetails, _loc, name)
 
               totalInsertion++
               sellerIds.push(sellerId._id)
@@ -136,7 +137,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         }
 
         if (sellerIds && sellerIds.length) {
-          await updateRFP({ _id: rfp._id }, { sellerId: sellerIds, totalCount: totalInsertion })
+          await updateRFP({ _id: rfp._id }, { sellerId: sellerIds, totalCount: totalInsertion, message: msg })
         }
         console.log(" SMS count", totalInsertion)
       } else {
@@ -219,14 +220,12 @@ module.exports.createRFP = async (req, res) => {
         const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
-          // console.log("🚀 ~ file: buyerController.js ~ line 94 ~ module.exports.createRFP= ~ locationDetails", locationDetails)
-          const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-          const resp = await axios.post(url, {
-            mobile: constsellerContactNo.mobile,
-            message: messageContent(productDetails, _loc, name)
-
-            // message: `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
-          })
+          const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
+          // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+          // const resp = await axios.post(url, {
+          //   mobile: constsellerContactNo.mobile,
+          //   message: messageContent(productDetails, _loc, name)
+          // })
 
         }
       } else if (!sellerId && requestType === 2) {
@@ -300,13 +299,12 @@ module.exports.createRFP = async (req, res) => {
           const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
           if (constsellerContactNo && constsellerContactNo.mobile) {
             console.log('message sending...........')
-            const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-            const resp = await axios.post(url, {
-              mobile: constsellerContactNo.mobile,
-              message: messageContent(productDetails, _loc, name)
-
-              // message: `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
-            })
+            const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
+            // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+            // const resp = await axios.post(url, {
+            //   mobile: constsellerContactNo.mobile,
+            //   message: messageContent(productDetails, _loc, name)
+            // })
 
           }
         } else if (!sellerId && requestType === 2) {

@@ -142,15 +142,15 @@ app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
 // })
 
 
-// app.get('/sendQueSms', async function (req, res) {
-//   // console.log('Home page')
-//   try {
-//     const result = await sendQueSms()
-//   } catch (error) {
+app.get('/sendQueSms', async function (req, res) {
+  // console.log('Home page')
+  try {
+    const result = await sendQueSms()
+  } catch (error) {
 
-//   }
-//   // res.send('Its delete records  live')
-// })
+  }
+  // res.send('Its delete records  live')
+})
 
 app.use(router)
 

@@ -97,6 +97,14 @@ const rfpSchema = new Schema(
     totalCount: {
       type: Number,
       default: 0
+    },
+    message: {
+      type: String,
+      default: null
+    },
+    status: {
+      type: Boolean,
+      default: true
     }
   },
   {
