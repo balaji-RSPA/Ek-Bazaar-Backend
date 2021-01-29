@@ -5,7 +5,7 @@ module.exports.getMaster = (reqQuery, range) => new Promise((resolve, reject) =>
 
     const skip = parseInt(range.skip) || 0;
     const limit = parseInt(range.limit) || 100;
-    console.log("🚀 ~ file: masterModule.js ~ line 5 ~ module.exports.getMaster= ~ reqQuery", reqQuery, range)
+    // console.log("🚀 ~ file: masterModule.js ~ line 5 ~ module.exports.getMaster= ~ reqQuery", reqQuery, range)
 
     MasterCollection.find(reqQuery)
         .skip(skip).
