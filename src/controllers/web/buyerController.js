@@ -11,6 +11,7 @@ const {
   getBuyer,
   updateBuyer,
   getAllBuyers,
+  getRFPData,
   getRFP,
   updateBuyerPassword,
   updateRFP
@@ -404,17 +405,30 @@ module.exports.updateBuyerPassword = async (req, res) => {
  * get RFPs
  */
 module.exports.getRFPS = async (req, res) => {
+  console.log(req.params,"=============")
   try {
     const {
-      userID
+      userID,
+      params
     } = req;
+    let obj = {
+      skip: parseInt(params.skip),
+      limit: parseInt(params.limit)
+    }
     // const {
     //   sellerId
     // } = req.params;
-    const RFP = await getRFP({
+    const RFP = await getRFPData({
+      sellerId: userID
+    }, obj);
+    let totalCount = await getRFP({
       sellerId: userID
     });
-    respSuccess(res, RFP);
+    totalCount = totalCount.length;
+    respSuccess(res, {
+      RFP,
+      totalCount
+    });
   } catch (error) {
     respError(res, error.message);
   }

@@ -27,6 +27,9 @@ module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
   RFP.find(query)
     .skip(skip)
     .limit(limit)
+    .populate({
+      path: 'buyerDetails.location.city buyerDetails.location.state'
+    })
     .then(doc => {
       resolve(doc)
     })
@@ -126,13 +129,10 @@ module.exports.getBuyerAdmin = (query) =>
 
 // })
 /**
- * Get Specific RFP
+ * Get Specific RFP Without limit
  */
 module.exports.getRFP = (query) => new Promise((resolve, reject) => {
   RFP.find(query)
-     .populate({
-       path: 'buyerDetails.location.state buyerDetails.location.city'
-     })
     .then(doc => {
       resolve(doc)
     })
