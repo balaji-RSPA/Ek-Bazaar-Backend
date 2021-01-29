@@ -205,7 +205,7 @@ module.exports.addPrimaryCategories = async (req, res) => {
             const element = reqData[index];
             const primaryCategory = await getPrimaryCat({ vendorId: element.vendorId })
             if (!primaryCategory) {
-                console.log("unque level2 record")
+                // console.log("unque level2 record")
                 const query = {
                     vendorId: element.parentId.toString()
                 }
@@ -285,7 +285,7 @@ module.exports.addSecondaryCategories = async (req, res) => {
             const element = reqData[index];
             const secondaryCategory = await getSecondaryCat({ vendorId: element.vendorId })
             if (!secondaryCategory) {
-                console.log("unique level2 record")
+                // console.log("unique level2 record")
                 const query = {
                     vendorId: element.primaryCatId.toString()
                 }
@@ -299,14 +299,14 @@ module.exports.addSecondaryCategories = async (req, res) => {
                 const updateData = {
                     secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
                 }
-                console.log(index, '------', element.primaryCatId, '---', element.l1, 'Count-----')
+                // console.log(index, '------', element.primaryCatId, '---', element.l1, 'Count-----')
                 await updatePrimaryCategory(parentCat._id, updateData)
             } else {
                 console.log("duplicate level2 record")
             }
 
         }
-        console.log('COmpleted +++++++++++++')
+        // console.log('COmpleted +++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
 
     } catch (error) {
@@ -367,9 +367,9 @@ module.exports.addBulkProducts = async (req, res) => {
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
             const _product = await getProductCat({ vendorId: element.vendorId })
-            console.log("🚀 ~ file: categoryController.js ~ line 323 ~ module.exports.addBulkProducts= ~ _product", _product)
+            // console.log("🚀 ~ file: categoryController.js ~ line 323 ~ module.exports.addBulkProducts= ~ _product", _product)
             if (!_product) {
-                console.log("unique level4 record")
+                // console.log("unique level4 record")
                 const query = {
                     vendorId: element.secondaryId.toString()
                 }
@@ -383,7 +383,7 @@ module.exports.addBulkProducts = async (req, res) => {
                     const updateData = {
                         productId: parentCat.productId.concat(result._id)
                     }
-                    console.log(index, "COunt----", element.l1, element.vendorId)
+                    // console.log(index, "COunt----", element.l1, element.vendorId)
                     await updateSecondaryCategory(parentCat._id, updateData)
                 }
             } else {
@@ -391,7 +391,7 @@ module.exports.addBulkProducts = async (req, res) => {
             }
 
         }
-        console.log('Completed +++++++++++++++')
+        // console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
 
     } catch (error) {
@@ -409,12 +409,12 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
             const element = reqData[index];
             const productSubCategories = await getProductSubcategory({ vendorId: element.vendorId })
             if (!productSubCategories) {
-                console.log("unique level5 record")
+                // console.log("unique level5 record")
                 const query = {
                     vendorId: element.productId.toString()
                 }
                 const parentCat = await getProductCat(query)
-                console.log("🚀 ~ file: categoryController.js ~ line 346 ~ module.exports.addBulkProductSubCategories= ~ parentCat", parentCat)
+                // console.log("🚀 ~ file: categoryController.js ~ line 346 ~ module.exports.addBulkProductSubCategories= ~ parentCat", parentCat)
                 if (parentCat) {
                     const productData = {
                         ...element,
@@ -422,11 +422,11 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
                         productId: parentCat._id
                     }
                     const result = await addProductSubCategory(productData)
-                    console.log("🚀 ~ file: categoryController.js ~ line 354 ~ module.exports.addBulkProductSubCategories= ~ result", result)
+                    // console.log("🚀 ~ file: categoryController.js ~ line 354 ~ module.exports.addBulkProductSubCategories= ~ result", result)
                     const updateData = {
                         subCategoryId: parentCat.subCategoryId.concat(result._id)
                     }
-                    console.log(index, "COunt----", element.l1, element.vendorId)
+                    // console.log(index, "COunt----", element.l1, element.vendorId)
                     await updateProductCategory(parentCat._id, updateData)
                 }
             } else {
@@ -522,7 +522,7 @@ module.exports.getRelatedCategories = async (req, res) => {
 
     try {
         const id = req.params.id
-        console.log("module.exports.getRelatedCategories -> id", id)
+        // console.log("module.exports.getRelatedCategories -> id", id)
         const result = await getPrimaryCategory(id)
         respSuccess(res, result)
 
@@ -542,7 +542,7 @@ module.exports.deleteSellers = async (req, res) => {
                 $in: data.map(d => d.name)
             }
         }
-        console.log(query, "query......................")
+        // console.log(query, "query......................")
         const sellers = await deleteSellers(query)
         console.log(sellers, "user deleted")
         respSuccess(res, sellers, `sellers deleted successfully`)
@@ -559,7 +559,7 @@ module.exports.deletel4 = async (req, res) => {
                 $in: data.map(d => d.vendorId)
             }
         }
-        console.log(query, "query......................")
+        // console.log(query, "query......................")
         const l4 = await deletel4(query)
         console.log(l4, "products deleted")
         respSuccess(res, l4, `l4 deleted successfully`)

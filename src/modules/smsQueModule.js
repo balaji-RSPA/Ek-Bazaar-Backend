@@ -14,8 +14,20 @@ module.exports.getQueSMS = (query, range) => new Promise((resolve, reject) => {
     const skip = range.skip || 0
     const limit = range.limit || 100
     SMSQue.find(query)
+        .skip(skip)
+        .limit(limit)
         .then((doc) => {
             resolve(doc)
         })
         .catch(reject)
+})
+
+module.exports.updateQueSMS = (query, data) => new Promise((resolve, reject) => {
+    SMSQue.updateMany(query, data, {
+        new: true
+    })
+        .then((doc) => {
+            resolve(doc)
+        })
+        .catch((error) => reject(error))
 })

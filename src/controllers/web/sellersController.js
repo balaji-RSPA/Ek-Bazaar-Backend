@@ -64,13 +64,13 @@ module.exports.getSeller = async (req, res) => {
     } = req
     const reqQuery = camelcaseKeys(req.query)
     const { id, elastic } = reqQuery
-    console.log("module.exports.getSeller -> req.query", reqQuery)
+    // console.log("module.exports.getSeller -> req.query", reqQuery)
     if (elastic === 'true') {
 
       const result = await sellerSearch(reqQuery)
       const { query } = result
       const seller = await searchFromElastic(query, { limit: 1, skip: 0 })
-      console.log("module.exports.getSeller -> seller", seller)
+      // console.log("module.exports.getSeller -> seller", seller)
       respSuccess(res, {
         total: seller[1],
         data: seller[0]
@@ -103,7 +103,7 @@ module.exports.updateSeller = async (req, res) => {
       GstNumber,
       IeCode,
     } = req.body
-    console.log("🚀 ~ file: sellersController.js ~ line 84 ~ module.exports.updateSeller= ~ req.body", req.body)
+    // console.log("🚀 ~ file: sellersController.js ~ line 84 ~ module.exports.updateSeller= ~ req.body", req.body)
     const {
       userID
     } = req
@@ -555,7 +555,7 @@ module.exports.updateSellerProduct = async (req, res) => {
       body,
       files
     } = req
-    // console.log('update poroduct---', req.body)
+    console.log('update poroduct---', JSON.parse(body.productDetails))
     let updateDetail
     if (body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
@@ -568,6 +568,7 @@ module.exports.updateSellerProduct = async (req, res) => {
           region: val.state && val.state.region
         }))
       }
+
       // /* need to optimize the below code*/
       if (files && files.document) {
         let data = {
@@ -592,8 +593,6 @@ module.exports.updateSellerProduct = async (req, res) => {
           name: files.image1.name,
           code: _image1.Location
         }
-        // productDetails.productDetails.image.image1.name = files.image1.name;
-        // productDetails.productDetails.image.image1.code = _image1.Location;
       }
 
       if (files && files.image2) {
@@ -606,8 +605,6 @@ module.exports.updateSellerProduct = async (req, res) => {
           name: files.image2.name,
           code: _image2.Location
         }
-        // productDetails.productDetails.image.image2.name = files.image2.name;
-        // productDetails.productDetails.image.image2.code = _image2.Location;
       }
 
       if (files && files.image3) {
@@ -620,8 +617,6 @@ module.exports.updateSellerProduct = async (req, res) => {
           name: files.image3.name,
           code: _image3.Location
         }
-        // productDetails.productDetails.image.image3.name = files.image3.name;
-        // productDetails.productDetails.image.image3.code = _image3.Location;
       }
 
       if (files && files.image4) {
@@ -634,10 +629,9 @@ module.exports.updateSellerProduct = async (req, res) => {
           name: files.image4.name,
           code: _image4.Location
         }
-        // productDetails.productDetails.image.image4.name = files.image4.name;
-        // productDetails.productDetails.image.image4.code = _image4.Location;
       }
       /* till here*/
+
       updateDetail = await addProductDetails(productDetails._id, productDetails);
     }
     if (body.id && body.imageType) {
@@ -683,6 +677,7 @@ module.exports.getSellerProduct = async (req, res) => {
   try {
     const { sellerProductId } = req.body
     let sellerProduct = await getSellerProduct({ _id: sellerProductId })
+    // console.log("module.exports.getSellerProduct -> sellerProduct", sellerProduct)
     respSuccess(res, sellerProduct)
   } catch (error) {
     respError(res, error.message)
