@@ -418,6 +418,7 @@ exports.sellerSearch = async (reqQuery) => {
   }
 
   if (parentId) {
+  console.log("exports.sellerSearch -> parentId", parentId)
 
     // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
     const categoryMatch = {
@@ -428,12 +429,12 @@ exports.sellerSearch = async (reqQuery) => {
     query.bool.must.push(categoryMatch);
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": "sellerId._id.keyword"
           }
         }
       }
@@ -566,7 +567,7 @@ exports.updateESDoc = async (_id, doc) => new Promise((resolve, reject) => {
 
 exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, reject) => {
   const { skip, limit } = range;
-  console.log("exports.getSuggestions -> limit", limit)
+  // console.log("exports.getSuggestions -> limit", limit)
   aggs = aggs || {}
   let body = !product ? {
     size: limit || 20,
@@ -581,7 +582,7 @@ exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, 
       query,
       ...aggs
     };
-  console.log("exports.getSuggestions -> body", body)
+  // console.log("exports.getSuggestions -> body", body)
   const searchQuery = {
     index: process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions",
     body,
