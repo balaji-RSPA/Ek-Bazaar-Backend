@@ -630,7 +630,39 @@ exports.getSellerProfile = (id) =>
         path: 'sellerProductId',
         model: 'sellerproducts',
         populate: {
+          path: 'productDetails.cityOfOrigin',
+          // model: "cities"
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
           path: 'productDetails.countryOfOrigin',
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.sellingStates',
+          model: "states"
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.sellingCities',
+          model: "cities"
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.sellingCountries',
+          model: "countries"
         },
       })
       .populate("location.city", "name")
@@ -845,7 +877,7 @@ module.exports.addCompanyDetails = (sellerId, data) =>
       upsert: true
     })
       .then((doc) => {
-        console.log(doc)
+        // console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -853,7 +885,7 @@ module.exports.addCompanyDetails = (sellerId, data) =>
 
 module.exports.addContactDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
-    console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
+    // console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
     SellersContact.findOneAndUpdate({
       sellerId
     }, {
@@ -863,7 +895,7 @@ module.exports.addContactDetails = (sellerId, data) =>
       upsert: true
     })
       .then((doc) => {
-        console.log(doc)
+        // console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -918,7 +950,7 @@ module.exports.addStatutoryDetails = (sellerId, data) =>
       upsert: true
     })
       .then((doc) => {
-        console.log(doc)
+        // console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -1007,7 +1039,7 @@ exports.structureSellerData = async (seller) => {
     Level_5 = Level_5.split(',')
     // console.log("🚀 ~ file: sellersModule.js ~ line 663 ~ exports.structureSellerData= ~ Level_5", Level_5)
     levelFive = await getLevelFiveCategoryList(Level_5)
-    console.log("🚀 ~ file: sellersModule.js ~ line 677 ~ exports.structureSellerData= ~ levelFive", levelFive)
+    // console.log("🚀 ~ file: sellersModule.js ~ line 677 ~ exports.structureSellerData= ~ levelFive", levelFive)
   }
   // else {
   if (typeof Level_4 === 'number') Level_4 = `${Level_4}`
@@ -1017,7 +1049,7 @@ exports.structureSellerData = async (seller) => {
   // console.log("🚀 ~ file: sellersModule.js ~ line 678 ~ exports.structureSellerData= ~ levelFour", levelFour)
   // }
 
-  console.log(' working ------------------')
+  // console.log(' working ------------------')
 
   let sellerType = await checkAndAddSellerType({
     name: capitalizeFirstLetter(Service_Type),
@@ -1384,6 +1416,21 @@ module.exports.getSellerProduct = (query) =>
       })
       .populate({
         path: 'productDetails.regionOfOrigin'
+      })
+      .populate({
+        path: 'productDetails.cityOfOrigin'
+      })
+      .populate({
+          path: 'productDetails.sellingStates',
+          // model: "states"
+      })
+      .populate({
+          path: 'productDetails.sellingCities',
+          // model: "cities"
+      })
+      .populate({
+          path: 'productDetails.sellingCountries',
+          // model: "countries"
       })
       .populate("sellerId")
       // .populate({
