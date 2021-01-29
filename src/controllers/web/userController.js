@@ -3,7 +3,7 @@ const _ = require('lodash')
 const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword,sendMail } = require("../../utils/utils");
+const { createToken, encodePassword, sendMail } = require("../../utils/utils");
 const { sellers, buyers, mastercollections } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
@@ -125,7 +125,7 @@ module.exports.sendOtp = async (req, res) => {
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
     const otp = 1234;
-    if(isProd) {
+    if (isProd) {
       const url = "https://api.ekbazaar.com/api/v1/sendOTP"
       const resp = await axios.post(url, {
         mobile
@@ -329,7 +329,7 @@ module.exports.updateUser = async (req, res) => {
     //   keywords
     // }
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
-   
+
     if (user && buyer && seller) {
       let {
         token
@@ -370,15 +370,15 @@ exports.verifiedEmail = async (req, res) => {
     } = req.body
     const user = await getUserFromUserHash(encryptedData)
     let hash;
-    if (user.length) {hash = user[0].userHash}
+    if (user.length) { hash = user[0].userHash }
     const userEmail = decrypt(hash)
     const data = await updateEmailVerification(encryptedData, {
       userEmail: userEmail
     })
-    if(data.ok === 1){
+    if (data.ok === 1) {
       let mobileVal = user[0].mobile.toString();
-      await updateBuyer({"mobile" : mobileVal }, { isEmailVerified : true })
-      await updateSeller({"mobile.mobile" : mobileVal }, {isEmailVerified : true})
+      await updateBuyer({ "mobile": mobileVal }, { isEmailVerified: true })
+      await updateSeller({ "mobile.mobile": mobileVal }, { isEmailVerified: true })
     }
     const url = req.get('origin');
     // const template = await emailVerified("https://tradebazaar.tech-active.com")

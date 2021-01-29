@@ -75,7 +75,7 @@ module.exports.serachSeller = async (req, res) => {
         console.log("module.exports.serachSeller -> cities.alias", cities.alias)
         // const xyz = newKeyword.findIndex(item => item === cities.alias.filter(city => newKeyword.filter(word => word === city)[0])[0])
         newKeyword.splice(newKeyword.findIndex(item => item === cities.alias.filter(city => newKeyword.filter(word => word === city)[0])[0]), 1)
-        console.log("module.exports.serachSeller -> newKeyword", newKeyword)
+        // console.log("module.exports.serachSeller -> newKeyword", newKeyword)
       }
 
       newKeyword = newKeyword.join(" ");
@@ -90,11 +90,11 @@ module.exports.serachSeller = async (req, res) => {
 
       const result = await sellerSearch(reqQuery);
       query = result.query
-      console.log("module.exports.serachSeller -> query", query)
+      // console.log("module.exports.serachSeller -> query", query)
       let { aggs, catId } = result;
-      console.log("module.exports.serachSeller -> aggs", aggs)
+      // console.log("module.exports.serachSeller -> aggs", aggs)
       const seller = await searchFromElastic(query, range, aggs);
-      console.log("module.exports.serachSeller -> seller", seller)
+      // console.log("module.exports.serachSeller -> seller", seller)
       // const product = await getProductByName({ name: { $regex: reg, $options: "si" } })
       // let primaryCatId, relatedCat, secCat, primCat
 
