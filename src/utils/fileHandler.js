@@ -71,7 +71,7 @@ exports.deleteFileFromS3 = (filePath) => new Promise((resolve, reject) => {
 
     if (err) {
 
-      console.log('File deleted successfully');
+      // console.log('File deleted successfully');
       return reject(err)
 
     }
