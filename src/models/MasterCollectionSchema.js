@@ -69,16 +69,18 @@ const productDetailsSchema = new Schema({
         }
     },
     packagingDetails: {
-        packagingDetail: {
-            type: String,
-            trim: true,
-            // default: null
-        },
-        packagingUnit: {
-            type: String,
-            trim: true,
-            // default: null
-        }
+        type: Object,
+        default: null
+        // packagingDetail: {
+        //     type: String,
+        //     trim: true,
+        //     // default: null
+        // },
+        // packagingUnit: {
+        //     type: String,
+        //     trim: true,
+        //     // default: null
+        // }
     },
     countryOfOrigin: {
         type: nameSchema,
@@ -87,6 +89,18 @@ const productDetailsSchema = new Schema({
     regionOfOrigin: {
         type: nameSchema,
         // default: null
+    },
+    cityOfOrigin: {
+        type: nameSchema,
+    },
+    sellingCountries: {
+        type: [nameSchema]
+    },
+    sellingStates: {
+        type: [nameSchema]
+    },
+    sellingCities: {
+        type: [nameSchema]
     },
     productDescription: {
         type: String,
@@ -97,6 +111,10 @@ const productDetailsSchema = new Schema({
         trim: true,
     },
     document: documentSchema,
+    documentName: {
+        type: String,
+        trim: true
+    },
     image: {
         image1: {
             name: {

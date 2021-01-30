@@ -116,17 +116,20 @@ const productDetailsSchema = new Schema({
     }
   },
   packagingDetails: {
-    packagingDetail: {
-      type: String,
-      trim: true,
-      default: null
-    },
-    packagingUnit: {
-      type: String,
-      trim: true,
-      default: null
-    }
+    type: Object,
+    default: null
+    // packagingDetail: {
+    //   type: String,
+    //   trim: true,
+    //   default: null
+    // },
+    // packagingUnit: {
+    //   type: String,
+    //   trim: true,
+    //   default: null
+    // }
   },
+  // packagingDetails: Object,
   countryOfOrigin: {
     type: ObjectId,
     ref: Countries,
@@ -137,6 +140,26 @@ const productDetailsSchema = new Schema({
     ref: States,
     default: null,
   },
+  cityOfOrigin: {
+    type: ObjectId,
+    ref: City,
+    default: null,
+  },
+  sellingCountries: [{
+    type: ObjectId,
+    ref: Countries,
+    // default: ,
+  }],
+  sellingStates: [{
+    type: ObjectId,
+    ref: States,
+    // default: [],
+  }],
+  sellingCities: [{
+    type: ObjectId,
+    ref: City,
+    // default: [],
+  }],
   productDescription: {
     type: String,
     trim: true,
@@ -162,6 +185,11 @@ const productDetailsSchema = new Schema({
     trim: true,
   },
   document: documentSchema,
+  documentName: {
+    type: String,
+    trim: true,
+    default: null
+  },
   image: {
     image1: {
       name: {
@@ -215,25 +243,25 @@ const productDetailsSchema = new Schema({
 });
 
 const serviceCitiesSchema = new Schema({
-    city: {
-      type: ObjectId,
-      ref: City,
-      default: null
-    },
-    state: {
-      type: ObjectId,
-      ref: States,
-      default: null
-    },
-    country: {
-      type: ObjectId,
-      ref: Countries,
-      default: null
-    },
-    region: {
-      type: String,
-      default: null
-    }
+  city: {
+    type: ObjectId,
+    ref: City,
+    default: null
+  },
+  state: {
+    type: ObjectId,
+    ref: States,
+    default: null
+  },
+  country: {
+    type: ObjectId,
+    ref: Countries,
+    default: null
+  },
+  region: {
+    type: String,
+    default: null
+  }
 })
 
 const sellerProductSchema = new Schema(
