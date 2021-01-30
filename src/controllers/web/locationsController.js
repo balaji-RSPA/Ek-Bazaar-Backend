@@ -132,17 +132,22 @@ module.exports.uploadNewCities = async (req, res) => {
         }
         const result = await getCity(query)
         // console.log("🚀 ~ file: locationsController.js ~ line 83 ~ module.exports.uploadNewCities= ~ result", result)
-        if (result) {
+        if (!result) {
           const stateRes = await checkState({ name: element.State })
           // console.log("🚀 ~ file: locationsController.js ~ line 86 ~ module.exports.uploadNewCities= ~ stateRes", stateRes)
           if (stateRes) {
             const uploadData = {
               country: '5e312f978acbee60ab54de08',
               state: stateRes._id || null,
-              name: element.City
+              name: element.City,
+              alias: [element.City.toLowerCase()]
             }
-            const newCity = await updateCity({ _id: result._id }, uploadData)
+            console.log(uploadData, ' data----------------')
+            // const newCity = await updateCity({ _id: result._id }, uploadData)
+            const newCity = await addCity(uploadData)
             console.log(index + '---' + element.City, ' new City-----------')
+          } else {
+            console.log('--------- NO state -------------')
           }
 
         } else {

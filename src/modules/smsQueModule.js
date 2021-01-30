@@ -13,6 +13,7 @@ module.exports.queSMSBulkInsert = (data) => new Promise((resolve, reject) => {
 module.exports.getQueSMS = (query, range) => new Promise((resolve, reject) => {
     const skip = range.skip || 0
     const limit = range.limit || 100
+    // console.log(query)
     SMSQue.find(query)
         .skip(skip)
         .limit(limit)

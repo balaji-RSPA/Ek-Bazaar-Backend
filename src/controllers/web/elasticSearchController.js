@@ -28,7 +28,7 @@ module.exports.addSellerBulkIndex = async (req, res) => {
 module.exports.serachSeller = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query);
-    console.log("module.exports.serachSeller -> reqQuery", reqQuery)
+    // console.log("module.exports.serachSeller -> reqQuery", reqQuery)
     if (reqQuery.secondaryId) {
       const secCat = await getSecondaryCategory(reqQuery.secondaryId);
       if (secCat) {
@@ -45,7 +45,7 @@ module.exports.serachSeller = async (req, res) => {
       newKeyword = newKeyword.replace(" in ", " ");
       newKeyword = newKeyword.replace(",", "")
       newKeyword = newKeyword.split(" ");
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 48 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
+      // console.log("🚀 ~ file: elasticSearchController.js ~ line 48 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
 
       const range = {
         skip: parseInt(skip),
@@ -57,25 +57,25 @@ module.exports.serachSeller = async (req, res) => {
 
       const citiesQuery = await sellerSearch({ cityFromKeyWord: keyword })
       let { query } = citiesQuery
-      console.log("module.exports.serachSeller -> query", query)
+      // console.log("module.exports.serachSeller -> query", query)
       const _cities = await getAllCitiesElastic(query)
-      console.log("module.exports.serachSeller -> _cities", _cities)
+      // console.log("module.exports.serachSeller -> _cities", _cities)
       if (_cities[0].length && _cities[0][0]._source)
         cities = _cities[0][0]._source
-      console.log("module.exports.serachSeller -> cities", cities)
+      // console.log("module.exports.serachSeller -> cities", cities)
       const statesQuery = await sellerSearch({ stateFromKeyWord: keyword })
       query = statesQuery.query
       const _states = await getAllStatesElastic(query)
-      console.log("module.exports.serachSeller -> _states", _states[0][0])
+      // console.log("module.exports.serachSeller -> _states", _states[0][0])
       if (_states[0].length && _states[0][0]._source)
         states = _states[0][0]._source
-      console.log("module.exports.serachSeller -> states", states)
+      // console.log("module.exports.serachSeller -> states", states)
 
       if (cities && cities.alias) {
-        console.log("module.exports.serachSeller -> cities.alias", cities.alias)
+        // console.log("module.exports.serachSeller -> cities.alias", cities.alias)
         // const xyz = newKeyword.findIndex(item => item === cities.alias.filter(city => newKeyword.filter(word => word === city)[0])[0])
         newKeyword.splice(newKeyword.findIndex(item => item === cities.alias.filter(city => newKeyword.filter(word => word === city)[0])[0]), 1)
-        console.log("module.exports.serachSeller -> newKeyword", newKeyword)
+        // console.log("module.exports.serachSeller -> newKeyword", newKeyword)
       }
 
       newKeyword = newKeyword.join(" ");
@@ -90,11 +90,11 @@ module.exports.serachSeller = async (req, res) => {
 
       const result = await sellerSearch(reqQuery);
       query = result.query
-      console.log("module.exports.serachSeller -> query", query)
+      // console.log("module.exports.serachSeller -> query", query)
       let { aggs, catId } = result;
-      console.log("module.exports.serachSeller -> aggs", aggs)
+      // console.log("module.exports.serachSeller -> aggs", aggs)
       const seller = await searchFromElastic(query, range, aggs);
-      console.log("module.exports.serachSeller -> seller", seller)
+      // console.log("module.exports.serachSeller -> seller", seller)
       // const product = await getProductByName({ name: { $regex: reg, $options: "si" } })
       // let primaryCatId, relatedCat, secCat, primCat
 

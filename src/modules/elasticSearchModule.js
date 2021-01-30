@@ -150,7 +150,8 @@ exports.bulkStoreInElastic = (foundDoc) =>
 
 exports.sellerSearch = async (reqQuery) => {
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword } = reqQuery
+  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId } = reqQuery
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ userId", userId)
   let catId = ''
   let query = {
     bool: {
@@ -162,6 +163,19 @@ exports.sellerSearch = async (reqQuery) => {
   };
   let aggs = {
 
+  }
+
+  if (userId) {
+    query.bool.must.push({
+      "exists": {
+        "field": "userId"
+      }
+    })
+    query.bool.must_not.push({
+      "term": {
+        "userId.name.keyword": ""
+      }
+    })
   }
 
   if (cityFromKeyWord) {

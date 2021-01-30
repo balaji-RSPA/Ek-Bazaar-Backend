@@ -27,6 +27,13 @@ const { sms } = require('./globalConstants')
 const { username, password, senderID, smsURL } = sms
 
 
+exports.sendBulkSMS = async (mobile, message) => {
+  console.log('bulk sms', mobile, message)
+  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message}&dlr-mask=19&dlr-url&category=bulk`
+  const result = await axios.get(sendsmsuri)
+  return result
+}
+
 exports.sendSMS = async (mobile, message) => {
   // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
   // const resp = await axios.post(url, {
@@ -41,7 +48,7 @@ exports.sendSMS = async (mobile, message) => {
 }
 
 exports.messageContent = (productDetails, _loc, name) => {
-  const message = `You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(productDetails.name)},${productDetails.quantity} ${capitalizeFirstLetter(productDetails.weight)} from ${_loc}.\nDetails below: ${capitalizeFirstLetter(name)} -\nTo view buyer contact details please register or login to trade.ekbazaar.com/signup\nEkbazaar-Trade https://www.trade.ekbazaar.com`;
+  const message = `You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(productDetails.name.name)},${productDetails.quantity} ${capitalizeFirstLetter(productDetails.weight)} from ${_loc}.\nDetails below: ${capitalizeFirstLetter(name)} -\nTo view buyer contact details please register or login to trade.ekbazaar.com/signup\nEkbazaar-Trade https://www.trade.ekbazaar.com`;
   return message
 }
 
