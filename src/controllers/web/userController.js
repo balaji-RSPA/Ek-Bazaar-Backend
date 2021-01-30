@@ -3,7 +3,7 @@ const _ = require('lodash')
 const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendMail } = require("../../utils/utils");
+const { createToken, encodePassword } = require("../../utils/utils");
 const { sellers, buyers, mastercollections } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
@@ -288,7 +288,9 @@ module.exports.updateUser = async (req, res) => {
         profileUpdate: true,
       }
     }
-    userData.userHash = encrypt(userData.email)
+    if (userData && userData.email){
+      userData.userHash = encrypt(userData.email)
+    } 
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);
@@ -331,28 +333,38 @@ module.exports.updateUser = async (req, res) => {
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     if (user && buyer && seller) {
-      let {
-        token
-      } = req.headers.authorization.split('|')[1]
-      token = token || req.token
-      // req.body.userHash = encrypt(user.email)
-      const alteredToken = token.split('.').join('!')
-      const url = req.get('origin');
-      // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
-      const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
-      const template = await activateAccount(link)
+      if(user.email){
+        let {
+          token
+        } = req.headers.authorization.split('|')[1]
+        token = token || req.token
+        // req.body.userHash = encrypt(user.email)
+        const alteredToken = token.split('.').join('!')
+        const url = req.get('origin');
+        // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
+        const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
+        const template = await activateAccount(link)
 
-      const message = {
-        from: MailgunKeys.senderMail,
-        to: user.email, // An array if you have multiple recipients.
-        // cc:'second@domain.com',
-        // bcc:'secretagent@company.gov',
-        subject: 'Ekbazaar email verification',
-        'h:Reply-To': MailgunKeys.replyMail,
-        html: template
+        const message = {
+          subject: 'Ekbazaar email verification',
+          html: template
+        }
+
+        // const message = {
+        //   from: MailgunKeys.senderMail,
+        //   to: user.email, // An array if you have multiple recipients.
+        //   // cc:'second@domain.com',
+        //   // bcc:'secretagent@company.gov',
+        //   subject: 'Ekbazaar email verification',
+        //   'h:Reply-To': MailgunKeys.replyMail,
+        //   html: template
+        // }
+        await sendSingleMail(user.email, message)
       }
-      await sendMail(message)
-      respSuccess(res, { seller, buyer }, "Updated Successfully and check your email to activate your email");
+      respSuccess(res, {
+        seller,
+        buyer
+      }, user.email ? "Updated Successfully and check your email to activate your email" : "Updated Successfully");
     } else {
       respError(res, "Failed to update");
     }
