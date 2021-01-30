@@ -1,3 +1,4 @@
+const camelcaseKeys = require("camelcase-keys");
 const { location } = require("../../modules");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const _ = require('lodash')
@@ -21,6 +22,8 @@ const {
 
 module.exports.getAllCities = async (req, res) => {
   try {
+    const reqQuery = camelcaseKeys(req.query)
+    console.log("module.exports.getAllCities -> req.query", reqQuery)
     const cities = await getAllCities(req.query);
     respSuccess(res, cities);
   } catch (error) {
