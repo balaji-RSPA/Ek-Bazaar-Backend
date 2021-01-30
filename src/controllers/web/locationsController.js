@@ -1,3 +1,4 @@
+const camelcaseKeys = require("camelcase-keys");
 const { location } = require("../../modules");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const _ = require('lodash')
@@ -21,6 +22,8 @@ const {
 
 module.exports.getAllCities = async (req, res) => {
   try {
+    const reqQuery = camelcaseKeys(req.query)
+    console.log("module.exports.getAllCities -> req.query", reqQuery)
     const cities = await getAllCities(req.query);
     respSuccess(res, cities);
   } catch (error) {
@@ -132,17 +135,22 @@ module.exports.uploadNewCities = async (req, res) => {
         }
         const result = await getCity(query)
         // console.log("🚀 ~ file: locationsController.js ~ line 83 ~ module.exports.uploadNewCities= ~ result", result)
-        if (result) {
+        if (!result) {
           const stateRes = await checkState({ name: element.State })
           // console.log("🚀 ~ file: locationsController.js ~ line 86 ~ module.exports.uploadNewCities= ~ stateRes", stateRes)
           if (stateRes) {
             const uploadData = {
               country: '5e312f978acbee60ab54de08',
               state: stateRes._id || null,
-              name: element.City
+              name: element.City,
+              alias: [element.City.toLowerCase()]
             }
-            const newCity = await updateCity({ _id: result._id }, uploadData)
+            console.log(uploadData, ' data----------------')
+            // const newCity = await updateCity({ _id: result._id }, uploadData)
+            const newCity = await addCity(uploadData)
             console.log(index + '---' + element.City, ' new City-----------')
+          } else {
+            console.log('--------- NO state -------------')
           }
 
         } else {

@@ -136,6 +136,7 @@ exports.getAllCities = (reqQuery) =>
           },
         },
       };
+      if(reqQuery.stateId) match["$match"]["state"] = reqQuery.stateId
     }
 
     const execQuery = Cities.aggregate([

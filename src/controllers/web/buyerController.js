@@ -11,13 +11,14 @@ const {
   getBuyer,
   updateBuyer,
   getAllBuyers,
+  getRFPData,
   getRFP,
   updateBuyerPassword,
   updateRFP
 } = buyers;
 const { getProductByName } = category
 const { sellerSearch, searchFromElastic, getSuggestions } = elastic
-const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile } = sellers
+const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile, checkSellerExist, updateSeller } = sellers
 const { getCity } = location
 const { createToken, messageContent, sendSMS } = require("../../utils/utils");
 const { queSMSBulkInsert, getQueSMS } = SMSQue
@@ -44,16 +45,20 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
 
   try {
 
-
-    if (productDetails.name !== 'undefined' && productDetails.name) {
-      const query = {
-        "term": {
-          "name.keyword": productDetails.name
-        }
-      }
-      let suggestions = await getSuggestions(query, {}, '', '')
-      const pro = suggestions && suggestions.length && suggestions[0] && suggestions[0].length && suggestions[0][0]._source || '';
+    if (productDetails.name !== 'undefined' && productDetails.name && productDetails.name.name) {
+      // const query = {
+      //   "term": {
+      //     "name.keyword": productDetails.name
+      //   }
+      // }
+      // let suggestions = await getSuggestions(query, {}, '', '')
+      // const pro = suggestions && suggestions.length && suggestions[0] && suggestions[0].length && suggestions[0][0]._source || '';
       // console.log("🚀 ~ file: buyerController.js ~ line 50 ~ module.exports.queSmsData= ~ pro", pro)
+
+      const pro = {
+        id: productDetails.name && productDetails.name.id,
+        search: productDetails.name && productDetails.name.search || ''
+      }
       if (pro) {
         let parentId, productId, secondaryId, primaryId, level5Id = ''
         if (pro.search === 'level1')
@@ -68,26 +73,25 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
           level5Id = pro.id
 
         const reqQuery = {
-          parentId, productId, secondaryId, primaryId, level5Id
+          parentId, productId, secondaryId, primaryId, level5Id, userId: true
         }
         const result = await sellerSearch(reqQuery);
         const Searchquery = result.query, limit = 1000
         let skip = 0, status = true, totalInsertion = 0
         const sellerIds = []
+        let msg = ''
 
         while (status) {
 
           const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs);
 
           if (seller[0] && seller[0].length) {
-            // totalInsertion += seller[3]
-            const sellers = seller[0]
 
+            const sellers = seller[0]
             const QueData = sellers.filter(v => v._source.sellerId.mobile && v._source.sellerId.mobile.length).map(v => {
               const sellerId = v._source.sellerId
-              // const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
 
-              const msg = messageContent(productDetails, _loc, name)
+              msg = messageContent(productDetails, _loc, name)
 
               totalInsertion++
               sellerIds.push(sellerId._id)
@@ -105,27 +109,6 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
               })
             })
 
-            // const QueData = sellers.filter((v, index) => {
-
-            //   const sellerId = v._source.sellerId
-            //   const msg = `You have an inquiry from EkBazaar.com for ${productDetails.name}, ${productDetails.quantity} ${productDetails.weight} from ${_loc}.\nDetails below: ${name} - ${mobile.mobile}\nNote: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`;
-            //   totalInsertion++
-            //   sellerIds.push(sellerId._id)
-
-            //   return ({
-            //     sellerId: sellerId._id || null,
-            //     buyerId: user && user._id || null,
-            //     mobile: {
-            //       countryCode: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].countryCode,
-            //       mobile: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].mobile,
-            //     },
-            //     message: msg,
-            //     messageType: 'rfp',
-            //     requestId: rfp._id
-            //   })
-
-            // })
-            // console.log("🚀 ~ file: buyerController.js ~ line 98 ~ QueData ~ QueData", QueData)
             await queSMSBulkInsert(QueData)
             skip += limit
 
@@ -136,7 +119,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         }
 
         if (sellerIds && sellerIds.length) {
-          await updateRFP({ _id: rfp._id }, { sellerId: sellerIds, totalCount: totalInsertion })
+          await updateRFP({ _id: rfp._id }, { sellerId: sellerIds, totalCount: totalInsertion, message: msg })
         }
         console.log(" SMS count", totalInsertion)
       } else {
@@ -161,22 +144,6 @@ module.exports.createRFP = async (req, res) => {
     const user = await checkUserExistOrNot({ mobile: mobile.mobile })
     console.log("~ user", user, productDetails)
     if (user && user.length) {
-      // const range = {
-      //   skip: 0,
-      //   limit: 5,
-      // };
-      // const productResult = await getProductByName({name: productDetails.name})
-      // const searchQuery = await sellerSearch({productId: productResult._id})
-      // const { query } = searchQuery;
-      // const seller = await searchFromElastic(query, range);
-      // const resp = {
-      //   total: seller[1],
-      //   data: seller[0],
-      // };
-      // seller[0].map((sell) => {
-      //   console.log(sell._source.email, '---------')
-      // })
-      // console.log("productResult", resp)
 
       const userData = {
         name,
@@ -197,6 +164,20 @@ module.exports.createRFP = async (req, res) => {
         buyer = await updateBuyer({ userId: user._id }, buyerData)
       else
         buyer = await addBuyer(buyerData)
+
+      const sellerData = {
+        name,
+        email: email || null,
+        // mobile,
+        location,
+        // sellerType: serviceType,
+        // userId: user._id,
+      };
+
+      const sellerExist = await checkSellerExist({ userId: user._id })
+      if (sellerExist && sellerExist !== '')
+        await updateSeller({ userId: user._id }, sellerData)
+
       const rfpData = {
         buyerId: buyer._id,
         buyerDetails: {
@@ -220,17 +201,16 @@ module.exports.createRFP = async (req, res) => {
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
           const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
-          // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-          // const resp = await axios.post(url, {
-          //   mobile: constsellerContactNo.mobile,
-          //   message: messageContent(productDetails, _loc, name)
-          // })
 
+        } else {
+          console.log(' no seller contact number')
         }
       } else if (!sellerId && requestType === 2) {
 
         this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
 
+      } else {
+        console.log(' Single contact beta user exist------------')
       }
       respSuccess(res, "Your requirement has successfully submitted")
     } else {
@@ -291,27 +271,23 @@ module.exports.createRFP = async (req, res) => {
         const result1 = await handleUserSession(user._id, finalData)
         const rfp = await postRFP(rfpData)
 
+        const locationDetails = await getCity({ _id: location.city })
+        const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
+
         if (sellerId && requestType === 1 && global.environment === "production") {
           const sellerData = await getSellerProfile(sellerId)
-          const locationDetails = await getCity({ _id: location.city })
           const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
-          const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
           if (constsellerContactNo && constsellerContactNo.mobile) {
             console.log('message sending...........')
             const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
-            // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-            // const resp = await axios.post(url, {
-            //   mobile: constsellerContactNo.mobile,
-            //   message: messageContent(productDetails, _loc, name)
-            // })
-
           }
         } else if (!sellerId && requestType === 2) {
 
           this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
 
+        } else {
+          console.log(' Single contact beta------------')
         }
-
 
         respSuccess(res, { token, buyer, seller }, "Your requirement has successfully submitted.")
       }
@@ -420,14 +396,30 @@ module.exports.updateBuyerPassword = async (req, res) => {
  * get RFPs
  */
 module.exports.getRFPS = async (req, res) => {
+  console.log(req.params,"=============")
   try {
     const {
-      sellerId
-    } = req.params;
-    const RFP = await getRFP({
-      sellerId
+      userID,
+      params
+    } = req;
+    let obj = {
+      skip: parseInt(params.skip),
+      limit: parseInt(params.limit)
+    }
+    // const {
+    //   sellerId
+    // } = req.params;
+    const RFP = await getRFPData({
+      sellerId: userID
+    }, obj);
+    let totalCount = await getRFP({
+      sellerId: userID
     });
-    respSuccess(res, RFP);
+    totalCount = totalCount.length;
+    respSuccess(res, {
+      RFP,
+      totalCount
+    });
   } catch (error) {
     respError(res, error.message);
   }
