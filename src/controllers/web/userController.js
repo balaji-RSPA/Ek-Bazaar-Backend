@@ -333,7 +333,7 @@ module.exports.updateUser = async (req, res) => {
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     if (user && buyer && seller) {
-      if(user.email){
+      if ( user.email && user.isEmailVerified === 1 ) {
         let {
           token
         } = req.headers.authorization.split('|')[1]
@@ -349,22 +349,12 @@ module.exports.updateUser = async (req, res) => {
           subject: 'Ekbazaar email verification',
           html: template
         }
-
-        // const message = {
-        //   from: MailgunKeys.senderMail,
-        //   to: user.email, // An array if you have multiple recipients.
-        //   // cc:'second@domain.com',
-        //   // bcc:'secretagent@company.gov',
-        //   subject: 'Ekbazaar email verification',
-        //   'h:Reply-To': MailgunKeys.replyMail,
-        //   html: template
-        // }
         await sendSingleMail(user.email, message)
       }
       respSuccess(res, {
         seller,
         buyer
-      }, user.email ? "Updated Successfully and check your email to activate your email" : "Updated Successfully");
+      }, user.email && user.isEmailVerified === 1 ? "Updated Successfully and check your email to activate your email" : "Updated Successfully");
     } else {
       respError(res, "Failed to update");
     }
