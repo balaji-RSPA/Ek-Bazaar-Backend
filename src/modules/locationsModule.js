@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const {ObjectId} = mongoose.Types
 const { States, Countries, Cities } = require("../models");
 
 module.exports.getAllStates = (skip, limit) =>
@@ -134,8 +134,11 @@ exports.getAllCities = (reqQuery) =>
             $regex: `^${search}`,
             $options: "i",
           },
-        },
+          // state: ObjectId()
+        }
       };
+      if(reqQuery.stateId) match["$match"]["state"] = ObjectId(reqQuery.stateId)
+      console.log("<<<---------------- match -------------->>>", match)
     }
 
     const execQuery = Cities.aggregate([
@@ -173,6 +176,7 @@ exports.getAllCities = (reqQuery) =>
 
     execQuery
       .then((cities) => {
+      console.log("cities", cities)
         resolve(cities);
       })
       .catch(reject);

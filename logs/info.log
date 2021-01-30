@@ -778,8 +778,38 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-29T13:24:00.006Z"}
 >>>>>>> staging
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-29T13:28:55.791Z"}
+<<<<<<< HEAD
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:19:46.177Z"}
+=======
 >>>>>>> sprint-01
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-29T13:29:40.060Z"}
+<<<<<<< HEAD
 >>>>>>> 285e1068a1899d5e05151019cb5856c4c09062bb
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-29T13:37:18.936Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:26:09.584Z"}
+=======
+<<<<<<< HEAD
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:20:41.182Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-29T13:34:53.954Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T06:59:47.190Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:07:31.634Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:12:22.878Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:15:44.592Z"}
+>>>>>>> staging
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:20:02.029Z"}
+>>>>>>> sprint-01
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:20:58.690Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:27:07.225Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:30:04.966Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:30:36.072Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:32:58.958Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:34:28.788Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:35:22.323Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:49:22.803Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:49:26.503Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:51:40.459Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:52:51.665Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T07:53:28.174Z"}
+>>>>>>> fa045f8a1607d82514a98d510f891a47b22d3533
+{"message":"Listening:8070","level":"info","timestamp":"2021-01-30T08:18:40.249Z"}
