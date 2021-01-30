@@ -23,7 +23,7 @@ const {
 module.exports.getAllCities = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
-    console.log("module.exports.getAllCities -> req.query", reqQuery)
+    // console.log("module.exports.getAllCities -> req.query", reqQuery)
     const cities = await getAllCities(req.query);
     respSuccess(res, cities);
   } catch (error) {
