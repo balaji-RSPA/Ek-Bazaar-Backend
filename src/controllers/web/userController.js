@@ -121,7 +121,7 @@ module.exports.sendOtp = async (req, res) => {
     const { mobile, reset } = req.body;
     const seller = await checkUserExistOrNot({ mobile });
     if (seller && seller.length && !reset) {
-      return respError(res, "A seller with this number already exist");
+      return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
     const otp = 1234;
