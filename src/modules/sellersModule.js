@@ -1406,7 +1406,8 @@ module.exports.listAllSellerProduct = (serviceType, searchQuery, skip, limit) =>
 * Get seller product detail
 * */
 module.exports.getSellerProduct = (query) =>
-  new Promise((resolve, reject) => {
+new Promise((resolve, reject) => {
+  console.log("query", query)
     SelleresProductList.findOne(query)
       .populate({
         path: 'serviceCity.city'
@@ -1421,24 +1422,15 @@ module.exports.getSellerProduct = (query) =>
         path: 'productDetails.cityOfOrigin'
       })
       .populate({
-          path: 'productDetails.sellingStates',
-          // model: "states"
+        path: 'productDetails.sellingStates',
       })
       .populate({
-          path: 'productDetails.sellingCities',
-          // model: "cities"
+        path: 'productDetails.sellingCities',
       })
       .populate({
-          path: 'productDetails.sellingCountries',
-          // model: "countries"
+        path: 'productDetails.sellingCountries',
       })
       .populate("sellerId")
-      // .populate({
-      //   path: "sellerId",
-      //   populate: {
-      //     busenessId
-      //   }
-      // })
       .populate({
         path: "sellerId",
         populate: "location.city location.state busenessId statutoryId sellerCompanyId sellerContactId sellerType"
@@ -1447,6 +1439,18 @@ module.exports.getSellerProduct = (query) =>
       .populate("parentCategoryId")
       .populate("primaryCategoryId")
       .populate("secondaryCategoryId")
+      // .populate({
+      //   path: "sellerId",
+      //   // model: "sellers",
+      //   populate: {
+      //     path: "sellerContactId",
+      //     // model: SellersContact,
+      //     populate: "location.city location.state",
+      //     // populate: {
+      //     //   path: "location.city location.state"
+      //     // }
+      //   }
+      // })
       .populate("poductId")
       .populate("productSubcategoryId")
       // .populate({
@@ -1456,6 +1460,7 @@ module.exports.getSellerProduct = (query) =>
       //   path: 'serviceCity.state'
       // })
       .then((doc) => {
+        console.log("doc", doc)
         resolve(doc)
       })
       .catch(reject)

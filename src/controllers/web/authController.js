@@ -38,6 +38,9 @@ exports.login = async (req, res) => {
     if (!user) {
       return respAuthFailed(res, undefined, "User not found");
     }
+    if (!user.password) {
+      return respAuthFailed(res, user, "Password is not set or is not yet available");
+    }
     if (userType === 'seller') {
 
       const seller = await sellers.getSeller(user._id);
