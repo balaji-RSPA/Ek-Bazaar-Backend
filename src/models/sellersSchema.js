@@ -138,6 +138,10 @@ const sellersSchema = new Schema(
       default: null,
       // required: true,
     },
+    isEmailSent: {
+      type: Boolean,
+      default: false,
+    },
     isEmailVerified: {
       type: Boolean,
       default: false,

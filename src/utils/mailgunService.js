@@ -4,10 +4,10 @@ const {
 MailgunKeys
 } = require("./globalConstants");
 
-module.exports.sendSingleMail = (email, message) => new Promise((resolve, reject) => {
+module.exports.sendSingleMail = (message) => new Promise((resolve, reject) => {
   try {
-    message.from = MailgunKeys.senderMail;
-    message.to = email
+    // message.from = MailgunKeys.senderMail;
+    // message.to = email
     message["h:Reply-To"] = MailgunKeys.replyMail;
     const auth = {
       auth: {
