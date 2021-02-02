@@ -396,7 +396,6 @@ module.exports.updateBuyerPassword = async (req, res) => {
  * get RFPs
  */
 module.exports.getRFPS = async (req, res) => {
-  console.log(req.params, "=============")
   try {
     const {
       userID,
@@ -410,10 +409,10 @@ module.exports.getRFPS = async (req, res) => {
     //   sellerId
     // } = req.params;
     const RFP = await getRFPData({
-      sellerId: userID
+      sellerId: params.SellerId
     }, obj);
     let totalCount = await getRFP({
-      sellerId: userID
+      sellerId: params.SellerId
     });
     totalCount = totalCount.length;
     respSuccess(res, {
