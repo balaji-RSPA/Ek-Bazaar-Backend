@@ -3,7 +3,7 @@ const _ = require('lodash')
 const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendMail } = require("../../utils/utils");
+const { createToken, encodePassword } = require("../../utils/utils");
 const { sellers, buyers, mastercollections } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
@@ -121,7 +121,7 @@ module.exports.sendOtp = async (req, res) => {
     const { mobile, reset } = req.body;
     const seller = await checkUserExistOrNot({ mobile });
     if (seller && seller.length && !reset) {
-      return respError(res, "A seller with this number already exist");
+      return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
     const otp = 1234;
@@ -207,7 +207,7 @@ module.exports.addUser = async (req, res) => {
       }
     }
     const masterResult = await addMaster(masterData)
-    console.log("🚀 ~ file: userController.js ~ line 141 ~ module.exports.addUser= ~ masterResult", masterResult)
+    // console.log("🚀 ~ file: userController.js ~ line 141 ~ module.exports.addUser= ~ masterResult", masterResult)
     // const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
     // const _seller = await updateSeller(seller._id, {
     //   busenessId: bsnsDtls._id,
@@ -288,7 +288,9 @@ module.exports.updateUser = async (req, res) => {
         profileUpdate: true,
       }
     }
-    userData.userHash = encrypt(userData.email)
+    if (userData && userData.email){
+      userData.userHash = encrypt(userData.email)
+    } 
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);
@@ -331,28 +333,28 @@ module.exports.updateUser = async (req, res) => {
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     if (user && buyer && seller) {
-      let {
-        token
-      } = req.headers.authorization.split('|')[1]
-      token = token || req.token
-      // req.body.userHash = encrypt(user.email)
-      const alteredToken = token.split('.').join('!')
-      const url = req.get('origin');
-      // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
-      const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
-      const template = await activateAccount(link)
+      if ( user.email && user.isEmailVerified === 1 ) {
+        let {
+          token
+        } = req.headers.authorization.split('|')[1]
+        token = token || req.token
+        // req.body.userHash = encrypt(user.email)
+        const alteredToken = token.split('.').join('!')
+        const url = req.get('origin');
+        // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
+        const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
+        const template = await activateAccount(link)
 
-      const message = {
-        from: MailgunKeys.senderMail,
-        to: user.email, // An array if you have multiple recipients.
-        // cc:'second@domain.com',
-        // bcc:'secretagent@company.gov',
-        subject: 'Ekbazaar email verification',
-        'h:Reply-To': MailgunKeys.replyMail,
-        html: template
+        const message = {
+          subject: 'Ekbazaar email verification',
+          html: template
+        }
+        await sendSingleMail(user.email, message)
       }
-      await sendMail(message)
-      respSuccess(res, { seller, buyer }, "Updated Successfully and check your email to activate your email");
+      respSuccess(res, {
+        seller,
+        buyer
+      }, user.email && user.isEmailVerified === 1 ? "Updated Successfully and check your email to activate your email" : "Updated Successfully");
     } else {
       respError(res, "Failed to update");
     }
@@ -456,7 +458,7 @@ module.exports.deleteRecords = async (req, res) => new Promise(async (resolve, r
 
   try {
 
-    console.log('delete ------')
+    // console.log('delete ------')
     const arr = ['5f97acc7b9a4b5524568716a', '5f97ace6b9a4b5524568716b', '5f97acf2b9a4b5524568716c', '5fa4fac96eb907267c7d15ce', '5fa5506e0524f35f355955f2',
       '5fa61d53520fd81fba4a1d6d', '5fb397c072e59028f0d17e32', '5fb39ad034d3932a93e0f079', '5fb46f021135863cd3c66664', '5fb5f268805ec7db145b4e58', '5fddfd218994761734d8011b',
       '5fe08558ad5cb94f153017d6', '5fe226ddcc99a97286d53e35', '5fe2271e30e98d73b97671ea']
@@ -469,7 +471,7 @@ module.exports.deleteRecords = async (req, res) => new Promise(async (resolve, r
       skip: req.skip,
       limit: req.limit
     }
-    console.log("🚀 ~ file: userController.js ~ line 312 ~ module.exports.deleteRecords ~ range", range)
+    // console.log("🚀 ~ file: userController.js ~ line 312 ~ module.exports.deleteRecords ~ range", range)
     const sellerType = await getSellerTypeAll(que, range)
     if (sellerType.length) {
       for (let i = 0; i < sellerType.length; i++) {
@@ -487,12 +489,12 @@ module.exports.deleteRecords = async (req, res) => new Promise(async (resolve, r
               $in: seller.sellerProductId
             }
           }
-          console.log(pQuery, 'length ::::::: ', pQuery.length, ' delete ids #####################################')
+          // console.log(pQuery, 'length ::::::: ', pQuery.length, ' delete ids #####################################')
           const delRec = await deleteSellerProducts(pQuery)
-          console.log(' seller pro delete --------------------------------------')
+          // console.log(' seller pro delete --------------------------------------')
           if (delRec) {
             const delSell = await deleteSellerRecord(seller._id)
-            console.log(delSell.name, ' seller delte +++++++++++++++++++++++++++++++++++++++++++++')
+            // console.log(delSell.name, ' seller delte +++++++++++++++++++++++++++++++++++++++++++++')
           }
         } else {
           console.log('not exist----------------------------')

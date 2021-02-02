@@ -32,11 +32,14 @@ exports.login = async (req, res) => {
     const { password, ipAddress, location, mobile, userType } = req.body;
     let user = await sellers.checkUserExistOrNot({ mobile });
     user = user[0]
-    if (!user.password) {
+    if (user && !user.password) {
       return respAuthFailed(res, user, "Password is not set or is not yet available");
     }
     if (!user) {
       return respAuthFailed(res, undefined, "User not found");
+    }
+    if (!user.password) {
+      return respAuthFailed(res, user, "Password is not set or is not yet available");
     }
     if (userType === 'seller') {
       const seller = await sellers.getSeller(user._id);

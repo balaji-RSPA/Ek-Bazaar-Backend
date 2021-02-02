@@ -288,6 +288,11 @@ const sellersSchema = new Schema(
     versionKey: false,
   }
 );
+sellersSchema.index({
+  email: 1
+}, {
+  sparse: true,
+})
 
 const Seller = model("sellers", sellersSchema);
 module.exports = Seller;
