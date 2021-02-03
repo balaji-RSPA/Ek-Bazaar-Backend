@@ -187,7 +187,7 @@ server.on('listening', () => {
 
 });
 
-if (env.NODE_ENV === "production1") {
+if (env.NODE_ENV === "production") {
 
   const planExpire = cron.schedule('* * * * *', async () => {
     planExpire.stop()
