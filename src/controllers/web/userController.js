@@ -358,7 +358,7 @@ module.exports.updateUser = async (req, res) => {
 
     if (user && buyer && seller) {
      
-      if((!buyer.isEmailSend && buyer.email)){
+      if(buyer.isEmailSend === false && buyer.email){
         seller.isEmailSent = true;
         buyer.isEmailSent = true
         const message = {

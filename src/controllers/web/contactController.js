@@ -30,15 +30,15 @@ module.exports.addContact = async (req, res) => {
     throw new Error(response.data.message)
   }else{
     result = response && response.data && response.data.data;
-  //  if(result){
-  //   const message = {
-  //     from: result.workEmail,
-  //     to: MailgunKeys.senderMail,
-  //     subject: 'Contact Us Enquiry',
-  //     html: `<p>${result.description}</p>`
-  //   }
-  //   await sendSingleMail(message)
-  //  } 
+   if (result && result.workEmail) {
+    const message = {
+      from: result.workEmail,
+      to: MailgunKeys.senderMail,
+      subject: 'Contact Us Enquiry',
+      html: `<p>${result.description}</p>`
+    }
+    await sendSingleMail(message)
+   } 
   }
    respSuccess(res, result, "Your request has been successfully submitted")
   } catch (error) {
