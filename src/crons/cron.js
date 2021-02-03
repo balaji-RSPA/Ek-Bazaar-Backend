@@ -34,7 +34,8 @@ exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) 
                     from: element.fromEmail,
                     to: element.toEmail
                 }
-                await sendSingleMail(message)
+                if (element.toEmail && element.fromEmail)
+                    await sendSingleMail(message)
 
             }
             if (updateIds && updateIds.length)
@@ -101,11 +102,9 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
 
     try {
 
-        // console.log(' cron testingf')
         const updateIds = []
         // const result = await getQueSMS({ status: true }, { skip: 0, limit: 10 })
         const result = await getRFPData({ status: true }, { skip: 0, limit: 1 })
-        // console.log("🚀 ~ file: cron.js ~ line 16 ~ exports.sendQueSms= ~ result", result)
         if (result && result.length) {
             const limit = 100
             const message = result[0].message
@@ -119,14 +118,6 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
                 }).toString()
                 mobile = '9916905753,9916905753'
                 await sendBulkSMS(mobile, message)
-                // for (let index = 0; index < queSms.length; index++) {
-                //     const seller = queSms[index];
-
-                //     const data = await sendSMS(seller.mobile.mobile, seller.message)
-                //     updateIds.push(seller._id)
-                //     console.log(index, ' index')
-
-                // }
 
                 if (updateIds && updateIds.length) {
                     await updateQueSMS({ _id: { $in: updateIds } }, { status: false })
@@ -155,7 +146,6 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
 })
 
 const masterMapData = (val, type) => new Promise((resolve, reject) => {
-    // console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", JSON.stringify(val.sellerId))
     const _Scity = [];
     let serviceProductData;
     if (val.serviceCity && val.serviceCity.length) {
