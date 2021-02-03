@@ -41,7 +41,7 @@ module.exports.deleteSubscriptionPlan = (query) =>
 /**
    * Get subscription plan
   */
- module.exports.getSubscriptionPlanDetail = (query) => new Promise((resolve, reject) => {
+module.exports.getSubscriptionPlanDetail = (query) => new Promise((resolve, reject) => {
   SubscriptionPlan.findOne(query)
     .then(doc => {
       resolve(doc)
@@ -51,8 +51,8 @@ module.exports.deleteSubscriptionPlan = (query) =>
 /**
    * Get All subscription plan
   */
- module.exports.getAllSubscriptionPlan = (skip,limit) => new Promise((resolve, reject) => {
-  SubscriptionPlan.find({})
+module.exports.getAllSubscriptionPlan = (query, skip, limit) => new Promise((resolve, reject) => {
+  SubscriptionPlan.find(query)
     .skip(skip)
     .limit(limit)
     .then(doc => {

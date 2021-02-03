@@ -12,6 +12,7 @@ const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema');
+const SellerPlans = require('./sellerPlanSchema')
 const { identity } = require("lodash");
 
 // const notificationSchema = new Schema({
@@ -281,6 +282,13 @@ const sellersSchema = new Schema(
     status: {
       type: Boolean,
       default: true
+    },
+    planId: {
+      type: ObjectId,
+      ref: SellerPlans
+    },
+    trialExtends: {
+      type: Number
     }
   },
   {

@@ -1,23 +1,111 @@
 const { reject } = require('lodash');
 const _ = require('lodash');
-
-const { sellers, mastercollections, sellerProducts, SMSQue, buyers } = require('../modules')
+const moment = require("moment");
+const { sellers, mastercollections, sellerProducts, SMSQue, buyers, SellerPlans, QueEmails } = require('../modules')
 const { getAllSellers, getUpdatedSellerDetails, getSellerProductDetails, addProductDetails } = sellers
 const { updateMaster } = mastercollections
 const { getSellerProducts, updateSellerProducts } = sellerProducts
 const { getQueSMS, updateQueSMS } = SMSQue
 const { getRFPData, updateRFP } = buyers
+const { bulkInserQemails, getQueEmail, updateQueEmails } = QueEmails
+const { getExpirePlans, updateSellerPlans } = SellerPlans
 const { sendSMS, sendBulkSMS } = require('../utils/utils')
+const {
+    MailgunKeys
+} = require("../utils/globalConstants");
+const { sendSingleMail } = require('../utils/mailgunService')
+
+
+
+exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) => {
+
+    try {
+
+        const result = await getQueEmail({ isSent: false }, 0, 10)
+        const updateIds = []
+        if (result && result.length) {
+
+            for (let index = 0; index < result.length; index++) {
+                const element = result[index];
+                updateIds.push(element._id)
+                const message = {
+                    subject: element.subject,
+                    html: element.body,
+                    from: element.fromEmail,
+                    to: element.toEmail
+                }
+                await sendSingleMail(message)
+
+            }
+            if (updateIds && updateIds.length)
+                await updateQueEmails({ _id: { $in: updateIds } }, { isSent: true })
+            console.log(updateIds, ' ------------------ Que Emails sent ----------- ')
+        } else {
+            console.log(' ---------- No Que Emails to send ------------------')
+        }
+        resolve()
+
+    } catch (error) {
+        console.log(error)
+        reject(error)
+    }
+
+})
+
+
+exports.getExpirePlansCron = async (req, res) =>
+    new Promise(async (resolve, reject) => {
+        try {
+            console.log('expired plans')
+            // const start = moment().startOf("day");
+            // const end = moment(start).endOf("day");
+            const sellerPlanIds = []
+            const emailData = []
+            const result = await getExpirePlans();
+            if (result.length > 0) {
+                for (let index = 0; index < result.length; index++) {
+                    const element = result[index];
+                    sellerPlanIds.push(element._id)
+                    if (element.email || element.email !== null) {
+                        const data = {
+                            type: "plan expiry",
+                            sellerId: element._id,
+                            userId: element.sellerId.userId,
+                            fromEmail: MailgunKeys.senderMail,
+                            toEmail: element.sellerId.email,
+                            name: element.sellerId.name,
+                            subject: "Trial Plan Expired",
+                            body: `Hi ${element.sellerId.name}<br/>We hope you have been enjoyed your plan.<br/>Unfortunately, your plan has expired.<br/>-- The Ekbazaar Team`,
+                        };
+                        emailData.push(data)
+                        console.log(emailData, ' email')
+                        console.log(sellerPlanIds, ' ids')
+                    }
+                }
+                await bulkInserQemails(emailData)
+                await updateSellerPlans({ _id: { $in: sellerPlanIds } }, { expireStatus: true })
+
+                console.log("expire plans inserted successfully");
+                resolve("done");
+            } else {
+                console.log("Plan no records found");
+                resolve("done");
+            }
+        } catch (error) {
+            console.log(error, " catche ------------");
+            reject(error);
+        }
+    });
 
 exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => {
 
     try {
 
-        console.log(' cron testingf')
+        // console.log(' cron testingf')
         const updateIds = []
         // const result = await getQueSMS({ status: true }, { skip: 0, limit: 10 })
         const result = await getRFPData({ status: true }, { skip: 0, limit: 1 })
-        console.log("🚀 ~ file: cron.js ~ line 16 ~ exports.sendQueSms= ~ result", result)
+        // console.log("🚀 ~ file: cron.js ~ line 16 ~ exports.sendQueSms= ~ result", result)
         if (result && result.length) {
             const limit = 100
             const message = result[0].message
@@ -67,7 +155,7 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
 })
 
 const masterMapData = (val, type) => new Promise((resolve, reject) => {
-    console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", JSON.stringify(val.sellerId))
+    // console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", JSON.stringify(val.sellerId))
     const _Scity = [];
     let serviceProductData;
     if (val.serviceCity && val.serviceCity.length) {

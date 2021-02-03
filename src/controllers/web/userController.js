@@ -4,7 +4,7 @@ const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
-const { sellers, buyers, mastercollections } = require("../../modules");
+const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
 const { deleteSellerProducts } = require('../../modules/sellerProductModule')
@@ -24,6 +24,8 @@ const {
 const {
   sendSingleMail
 } = require('../../utils/mailgunService')
+const { getSubscriptionPlanDetail } = subscriptionPlan
+const { createTrialPlan } = SellerPlans
 const algorithm = 'aes-256-cbc'
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
@@ -171,6 +173,7 @@ const getUserAgent = (userAgent) => {
 module.exports.addUser = async (req, res) => {
   try {
     const { password, mobile, ipAddress, preferredLanguage } = req.body;
+    const dateNow = new Date();
     req.body.password = encodePassword(password);
     const tenderUser = {
       countryCode: mobile.countryCode,
@@ -179,6 +182,7 @@ module.exports.addUser = async (req, res) => {
       password: req.body.password,
       preferredLanguage
     };
+
     const user = await addUser(tenderUser);
 
     req.body.userId = user._id;
@@ -206,13 +210,37 @@ module.exports.addUser = async (req, res) => {
         _id: seller.userId
       }
     }
-    const masterResult = await addMaster(masterData)
+    // const masterResult = await addMaster(masterData)
     // console.log("🚀 ~ file: userController.js ~ line 141 ~ module.exports.addUser= ~ masterResult", masterResult)
     // const bsnsDtls = await addbusinessDetails(seller._id, { name: business });
     // const _seller = await updateSeller(seller._id, {
     //   busenessId: bsnsDtls._id,
     // });
     if (seller && buyer) {
+      const trialPlan = await getSubscriptionPlanDetail({ planType: "trail", status: true })
+      if (trialPlan) {
+        const planData = {
+          name: trialPlan.type,
+          description: trialPlan.description,
+          features: trialPlan.features,
+          days: trialPlan.days,
+          extendTimes: trialPlan.numberOfExtends,
+          exprireDate: dateNow.setDate(dateNow.getDate() + parseInt(trialPlan.days)),
+          userId: seller.userId,
+          sellerId: seller._id,
+          isTrial: true,
+          planType: trialPlan.type,
+          extendDays: trialPlan.days
+        }
+        const planResult = await createTrialPlan(planData)
+        // console.log(planResult, 'planResult........................')
+        const planDatra = {
+          planId: planResult._id,
+          trialExtends: trialPlan.numberOfExtends,
+        }
+        const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
+
+      }
       const deviceId = machineIdSync();
       const userAgent = getUserAgent(req.useragent)
       const token = createToken(deviceId, { userId: seller.userId });
@@ -223,6 +251,7 @@ module.exports.addUser = async (req, res) => {
         deviceId,
         ipAddress
       }
+      console.log('account created-------------------')
 
       const result1 = await handleUserSession(seller.userId, finalData)
       return respSuccess(
@@ -233,6 +262,7 @@ module.exports.addUser = async (req, res) => {
     }
     return respError(res, "Account not Created");
   } catch (error) {
+    console.log(error)
     respError(res, error.message);
   }
 };
@@ -256,6 +286,7 @@ module.exports.getUserProfile = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   try {
+    console.log('-----------update seller -------------------')
     const { userID } = req;
     const _buyer = req.body.buyer || {}
     let { name, email, business, location, type, sellerType } = req.body;
@@ -288,9 +319,9 @@ module.exports.updateUser = async (req, res) => {
         profileUpdate: true,
       }
     }
-    if (userData && userData.email){
+    if (userData && userData.email) {
       userData.userHash = encrypt(userData.email)
-    } 
+    }
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode
     let seller = await updateSeller({ userId: userID }, sellerData);
@@ -333,7 +364,7 @@ module.exports.updateUser = async (req, res) => {
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     if (user && buyer && seller) {
-      if ( user.email && user.isEmailVerified === 1 ) {
+      if (user.email && user.isEmailVerified === 1) {
         let {
           token
         } = req.headers.authorization.split('|')[1]

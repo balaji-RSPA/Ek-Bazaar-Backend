@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {ObjectId} = mongoose.Types
+const { ObjectId } = mongoose.Types
 const { States, Countries, Cities } = require("../models");
 
 module.exports.getAllStates = (skip, limit) =>
@@ -106,8 +106,8 @@ module.exports.getCity = (query, id) =>
   });
 
 exports.getAllCities = (reqQuery) =>
-new Promise((resolve, reject) => {
-  console.log("reqQuery", reqQuery)
+  new Promise((resolve, reject) => {
+    // console.log("reqQuery", reqQuery)
     const skip = parseInt(reqQuery.skip) || 0;
     const limit = parseInt(reqQuery.limit) || 2000;
     const search = reqQuery.search || "";
@@ -138,9 +138,9 @@ new Promise((resolve, reject) => {
           // state: ObjectId()
         }
       };
-      if(reqQuery.stateId) match["$match"]["state"] = ObjectId(reqQuery.stateId)
+      if (reqQuery.stateId) match["$match"]["state"] = ObjectId(reqQuery.stateId)
     }
-    console.log("<<<---------------- match -------------->>>", match)
+    // console.log("<<<---------------- match -------------->>>", match)
 
     const execQuery = Cities.aggregate([
       match,
@@ -178,7 +178,7 @@ new Promise((resolve, reject) => {
 
     execQuery
       .then((cities) => {
-      // console.log("cities", cities)
+        // console.log("cities", cities)
         resolve(cities);
       })
       .catch(reject);
@@ -325,18 +325,18 @@ module.exports.getAllCitiesUpdate = (query) =>
         reject(error);
       });
   });
-module.exports.getSellerSelectedCities = (data)=>
+module.exports.getSellerSelectedCities = (data) =>
   new Promise((resolve, reject) => {
     Cities.find({
       _id: {
         $in: data
       }
     })
-    .populate('state')
-    .then((doc) => {
-      resolve(doc);
-    })
-    .catch((error) => {
-      reject(error);
-    });
+      .populate('state')
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
