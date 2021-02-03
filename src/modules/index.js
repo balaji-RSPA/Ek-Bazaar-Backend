@@ -9,6 +9,8 @@ const mastercollections = require('./masterModule')
 const sellerProducts = require('./sellerProductModule')
 const RemoveListing = require('./removeListingModule')
 const SMSQue = require('./smsQueModule')
+const SellerPlans = require('./sellerPlanModule')
+const QueEmails = require('./queEmailsModule')
 
 module.exports = {
     location,
@@ -21,5 +23,7 @@ module.exports = {
     mastercollections,
     sellerProducts,
     RemoveListing,
-    SMSQue
+    SMSQue,
+    SellerPlans,
+    QueEmails
 }

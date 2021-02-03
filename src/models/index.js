@@ -20,6 +20,8 @@ const SubscriptionPlan = require('./subscriptionPlanSchema')
 const MasterCollection = require('./MasterCollectionSchema')
 const RemoveListing = require('./removeListingSchema')
 const SMSQue = require('./SMSQueSchema')
+const SellerPlans = require('./sellerPlanSchema')
+const QueEmails = require('./queEmailSchema')
 // const Users = require('./user')
 
 module.exports = {
@@ -44,6 +46,8 @@ module.exports = {
     SubscriptionPlan,
     MasterCollection,
     RemoveListing,
-    SMSQue
+    SMSQue,
+    SellerPlans,
+    QueEmails
     // Users
 }

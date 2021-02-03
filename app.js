@@ -14,7 +14,7 @@ const { tradeDb } = config
 
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
 const { deleteRecords } = require('./src/controllers/web/userController')
-const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms } = require('./src/crons/cron')
+const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails } = require('./src/crons/cron')
 
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
@@ -54,6 +54,23 @@ app.get('/', function (req, res) {
   console.log('Home page')
   res.send('Its trade live')
 })
+
+// app.get('/getExpirePlansCron', async function (req, res) {
+//   try {
+//     const result = await getExpirePlansCron()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+// app.get('/sendQueEmails', async function (req, res) {
+//   try {
+//     const result = await sendQueEmails()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
 
 async function indexing() {
   await checkIndices()
@@ -170,13 +187,32 @@ server.on('listening', () => {
 
 });
 
-if (env.NODE_ENV === "production1") {
+if (env.NODE_ENV === "production") {
+
+  const planExpire = cron.schedule('* * * * *', async () => {
+    planExpire.stop()
+    console.log('-------------------- planExpire file cron start --------------------', new Date());
+    await getExpirePlansCron()
+    console.log('-------------------- planExpire file cron completed --------------------', new Date())
+    planExpire.start()
+  })
+  planExpire.start()
+
+  const queEmail = cron.schedule('* * * * *', async () => {
+    queEmail.stop()
+    console.log('-------------------- queEmail file cron start --------------------', new Date());
+    await sendQueEmails()
+    console.log('-------------------- queEmail file cron completed --------------------', new Date())
+    queEmail.start()
+  })
+  queEmail.start()
+
 
   const queSms = cron.schedule('* * * * *', async () => {
     queSms.stop()
-    console.log('@@@@@ queSms file cron start @@@@@', new Date());
+    console.log('-------------------- queSms file cron start --------------------', new Date());
     await sendQueSms()
-    console.log('@@@@@ queSms file cron completed @@@@@', new Date())
+    console.log('-------------------- queSms file cron completed --------------------', new Date())
     queSms.start()
   })
   queSms.start()

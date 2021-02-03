@@ -1,18 +1,74 @@
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { subscriptionPlan } = require("../../modules");
+const { subscriptionPlan, sellers, SellerPlans } = require("../../modules");
 const {
- getAllSubscriptionPlan
- } = subscriptionPlan;
+  getAllSubscriptionPlan,
+  getSubscriptionPlanDetail,
+} = subscriptionPlan;
+
+const { createTrialPlan } = SellerPlans
+
+const {
+  checkSellerExist,
+  updateSeller
+} = sellers
+
 
 /**
  * Get all subscription plan
 */
 module.exports.getAllSubscriptionPlan = async (req, res) => {
   try {
-    const { skip,limit } = req.body
-    const subscriptionPlan = await getAllSubscriptionPlan(skip,limit);
+    const { skip, limit } = req.body
+    const subscriptionPlan = await getAllSubscriptionPlan({}, skip, limit);
     respSuccess(res, subscriptionPlan);
   } catch (error) {
+    respError(res, error.message);
+  }
+};
+
+module.exports.acticateTrialPlan = async (req, res) => {
+  try {
+    const { sellerId } = req.body
+    const dateNow = new Date();
+    const seller = await checkSellerExist({ _id: sellerId })
+    if (seller) {
+
+      const trialPlan = await getSubscriptionPlanDetail({ planType: "trail", status: true })
+      if (trialPlan) {
+        const planData = {
+          name: trialPlan.type,
+          description: trialPlan.description,
+          features: trialPlan.features,
+          days: trialPlan.days,
+          extendTimes: trialPlan.numberOfExtends,
+          exprireDate: dateNow.setDate(dateNow.getDate() + parseInt(trialPlan.days)),
+          userId: seller.userId,
+          sellerId: seller._id,
+          isTrial: true,
+          planType: trialPlan.type,
+          extendDays: trialPlan.days
+        }
+        console.log(planData)
+        const planResult = await createTrialPlan(planData)
+        console.log(planResult, 'planResult........................')
+        const planDatra = {
+          planId: planResult._id,
+          trialExtends: trialPlan.numberOfExtends,
+        }
+        const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
+
+        respSuccess(res, 'Trial Plan Activated Successfully');
+      } else {
+        respSuccess(res, 'Please contact to support');
+      }
+
+    } else {
+      respSuccess(res, "Seller Not Exist");
+    }
+
+
+  } catch (error) {
+    console.log(error)
     respError(res, error.message);
   }
 };

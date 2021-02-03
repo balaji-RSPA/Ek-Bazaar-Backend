@@ -12,6 +12,7 @@ const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema');
+const SellerPlans = require('./sellerPlanSchema')
 const { identity } = require("lodash");
 
 // const notificationSchema = new Schema({
@@ -137,6 +138,10 @@ const sellersSchema = new Schema(
       trim: true,
       default: null,
       // required: true,
+    },
+    isEmailSent: {
+      type: Boolean,
+      default: false,
     },
     isEmailVerified: {
       type: Boolean,
@@ -281,6 +286,13 @@ const sellersSchema = new Schema(
     status: {
       type: Boolean,
       default: true
+    },
+    planId: {
+      type: ObjectId,
+      ref: SellerPlans
+    },
+    trialExtends: {
+      type: Number
     }
   },
   {
@@ -288,6 +300,11 @@ const sellersSchema = new Schema(
     versionKey: false,
   }
 );
+sellersSchema.index({
+  email: 1
+}, {
+  sparse: true,
+})
 
 const Seller = model("sellers", sellersSchema);
 module.exports = Seller;

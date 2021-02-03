@@ -6,6 +6,7 @@ const subscriptionPlan = require("../../controllers/web/subscriptionPlanControll
 /** 
  * Get all subscription plan
 */
-router.get("/subscriptionplan",subscriptionPlan.getAllSubscriptionPlan);
+router.get("/subscriptionplan", subscriptionPlan.getAllSubscriptionPlan);
+router.post("/acticateTrialPlan", subscriptionPlan.acticateTrialPlan);
 
 module.exports = router;

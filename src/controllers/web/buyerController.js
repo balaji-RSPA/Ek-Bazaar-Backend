@@ -16,6 +16,9 @@ const {
   updateBuyerPassword,
   updateRFP
 } = buyers;
+const {
+  sendSingleMail
+} = require('../../utils/mailgunService')
 const { getProductByName } = category
 const { sellerSearch, searchFromElastic, getSuggestions } = elastic
 const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile, checkSellerExist, updateSeller } = sellers
@@ -194,10 +197,22 @@ module.exports.createRFP = async (req, res) => {
       const rfp = await postRFP(rfpData)
       const locationDetails = await getCity({ _id: location.city })
       const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
-
-      if (sellerId && requestType === 1 && global.environment === "production") {
-        const sellerData = await getSellerProfile(sellerId)
-        const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+      const sellerDtl = await getSellerProfile(sellerId);
+      if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
+        const message = {
+          from: email,
+          to: sellerDtl[0].email,
+          subject: 'Successful Registration',
+          html: `<p>Your profile has been successfully registered</p>`
+        }
+        await sendSingleMail(message)
+      }else{
+        console.log('===================Email not found===================');
+      }
+      if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
+        // const sellerData = await getSellerProfile(sellerId)
+        // const constsellerContactNo = sellerDtl && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+        const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
           const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
@@ -408,17 +423,17 @@ module.exports.getRFPS = async (req, res) => {
     // const {
     //   sellerId
     // } = req.params;
-      const RFP = await getRFPData({
-        sellerId: params.SellerId
-      }, obj);
-      let totalCount = await getRFP({
-        sellerId: params.SellerId
-      });
-      totalCount = totalCount.length;
-      respSuccess(res, {
-        RFP,
-        totalCount
-      });
+    const RFP = await getRFPData({
+      sellerId: params.SellerId
+    }, obj);
+    let totalCount = await getRFP({
+      sellerId: params.SellerId
+    });
+    totalCount = totalCount.length;
+    respSuccess(res, {
+      RFP,
+      totalCount
+    });
   } catch (error) {
     respError(res, error.message);
   }

@@ -57,6 +57,10 @@ const buyerSchema = new Schema(
       default: null,
       // required: true,
     },
+    isEmailSent:{
+      type : Boolean,
+      default: false,
+    },
     countryCode: {
       type: String,
       required: true,
