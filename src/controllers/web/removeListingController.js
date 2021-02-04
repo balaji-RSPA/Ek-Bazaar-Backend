@@ -13,6 +13,15 @@ listAll
 module.exports.createRemoveListing = async (req, res) => {
   try {
     const removeListing = await create(req.body);
+    if (removeListing && removeListing.email) {
+      const message = {
+        from: removeListing.email,
+        to: MailgunKeys.senderMail,
+        subject: 'Remove my listing',
+        html: `<p>${removeListing.reason}</p>`
+      }
+      await sendSingleMail(message)
+    }
     respSuccess(res,"We will contact you within 7 working days and remove your listing");
   } catch (error) {
     respError(res, error.message);

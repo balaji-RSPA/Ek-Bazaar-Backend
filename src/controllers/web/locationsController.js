@@ -33,7 +33,18 @@ module.exports.getAllCities = async (req, res) => {
 
 module.exports.getAllStates = async (req, res) => {
   try {
-    const states = await getAllStates();
+    const reqQuery = camelcaseKeys(req.query)
+    const {sellingStates} = reqQuery
+    let states = await getAllStates();
+    if(sellingStates) {
+      const index = states.findIndex(item => item.name === "pan india")
+      console.log("module.exports.getAllStates -> index", index)
+      const state = states[index]
+      console.log("module.exports.getAllStates -> state", state)
+      state.name = "PAN India"
+      states.splice(index, 1)
+      states.unshift(state)
+    }
     respSuccess(res, states);
   } catch (error) {
     respError(res, error.message);

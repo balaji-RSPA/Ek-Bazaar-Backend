@@ -237,6 +237,7 @@ module.exports.checkUserExistOrNot = (query) =>
         isPhoneVerified: 1,
         isMobileVerified: 1,
         password: 1,
+        isEmailVerified : 1,
         // _id: -1,
       })
       .then((doc) => {
@@ -534,6 +535,7 @@ module.exports.getSeller = (id, chkStock) =>
       .populate('location.city', 'name')
       .populate('location.state', 'name')
       .populate('location.country', 'name')
+      .populate('planId')
       .lean()
       .then((doc) => {
         resolve(doc)
@@ -1406,8 +1408,8 @@ module.exports.listAllSellerProduct = (serviceType, searchQuery, skip, limit) =>
 * Get seller product detail
 * */
 module.exports.getSellerProduct = (query) =>
-new Promise((resolve, reject) => {
-  console.log("query", query)
+  new Promise((resolve, reject) => {
+    console.log("query", query)
     SelleresProductList.findOne(query)
       .populate({
         path: 'serviceCity.city'

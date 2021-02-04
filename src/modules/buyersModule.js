@@ -27,6 +27,7 @@ module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
   RFP.find(query)
     .skip(skip)
     .limit(limit)
+    .sort({_id: -1})
     .populate({
       path: 'buyerDetails.location.city buyerDetails.location.state'
     })

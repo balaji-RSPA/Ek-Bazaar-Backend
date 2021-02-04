@@ -3,7 +3,7 @@ const axios = require("axios")
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { buyers, sellers, category, elastic, location, SMSQue } = require("../../modules");
+const { buyers, sellers, category, elastic, location, SMSQue,QueEmails } = require("../../modules");
 const {
   postRFP,
   checkBuyerExistOrNot,
@@ -16,12 +16,16 @@ const {
   updateBuyerPassword,
   updateRFP
 } = buyers;
+const {
+  sendSingleMail
+} = require('../../utils/mailgunService')
 const { getProductByName } = category
 const { sellerSearch, searchFromElastic, getSuggestions } = elastic
 const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile, checkSellerExist, updateSeller } = sellers
 const { getCity } = location
 const { createToken, messageContent, sendSMS } = require("../../utils/utils");
 const { queSMSBulkInsert, getQueSMS } = SMSQue
+const { bulkInserQemails } = QueEmails;
 
 const { sms } = require("../../utils/globalConstants")
 const { username, password, senderID, smsURL } = sms
@@ -44,8 +48,8 @@ const getUserAgent = (userAgent) => {
 module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp) => {
 
   try {
-
-    if (productDetails.name !== 'undefined' && productDetails.name && productDetails.name.name) {
+       //productDetails.name !== 'undefined' 
+    if (productDetails && productDetails.name && productDetails.name.name) {
       // const query = {
       //   "term": {
       //     "name.keyword": productDetails.name
@@ -99,6 +103,12 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
               return ({
                 sellerId: sellerId._id || null,
                 buyerId: user && user._id || null,
+                userId : user && user._id || null,
+                name: name,
+                subject : "Product Enquiry",
+                body : "Need more details about product",
+                fromEmail : rfp && rfp.buyerDetails && rfp.buyerDetails.email,
+                toEmail : sellerId.email,
                 mobile: {
                   countryCode: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].countryCode,
                   mobile: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].mobile,
@@ -108,8 +118,8 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
                 requestId: rfp._id
               })
             })
-
             await queSMSBulkInsert(QueData)
+            await bulkInserQemails(QueData)
             skip += limit
 
           } else status = false
@@ -194,10 +204,20 @@ module.exports.createRFP = async (req, res) => {
       const rfp = await postRFP(rfpData)
       const locationDetails = await getCity({ _id: location.city })
       const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
-
-      if (sellerId && requestType === 1 && global.environment === "production") {
-        const sellerData = await getSellerProfile(sellerId)
-        const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+      const sellerDtl = await getSellerProfile(sellerId);
+      if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
+        const message = {
+          from: email,
+          to: sellerDtl[0].email,
+          subject: 'Successful Registration',
+          html: `<p>Your profile has been successfully registered</p>`
+        }
+        await sendSingleMail(message)
+      }
+      if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
+        // const sellerData = await getSellerProfile(sellerId)
+        // const constsellerContactNo = sellerDtl && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+        const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
           const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
@@ -206,7 +226,6 @@ module.exports.createRFP = async (req, res) => {
           console.log(' no seller contact number')
         }
       } else if (!sellerId && requestType === 2) {
-
         this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
 
       } else {
@@ -273,18 +292,25 @@ module.exports.createRFP = async (req, res) => {
 
         const locationDetails = await getCity({ _id: location.city })
         const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
-
-        if (sellerId && requestType === 1 && global.environment === "production") {
-          const sellerData = await getSellerProfile(sellerId)
-          const constsellerContactNo = sellerData && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+        const sellerDtl = await getSellerProfile(sellerId)
+        if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
+          const message = {
+            from: email,
+            to: sellerDtl[0].email,
+            subject: 'Successful Registration',
+            html: `<p>Your profile has been successfully registered</p>`
+          }
+          await sendSingleMail(message)
+        }
+        if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
+          // const sellerData = await getSellerProfile(sellerId)
+          const constsellerContactNo = sellerDtl && sellerDtl.length && sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
           if (constsellerContactNo && constsellerContactNo.mobile) {
             console.log('message sending...........')
             const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
           }
         } else if (!sellerId && requestType === 2) {
-
           this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
-
         } else {
           console.log(' Single contact beta------------')
         }
@@ -408,18 +434,34 @@ module.exports.getRFPS = async (req, res) => {
     // const {
     //   sellerId
     // } = req.params;
-      const RFP = await getRFPData({
-        sellerId: params.SellerId
-      }, obj);
-      let totalCount = await getRFP({
-        sellerId: params.SellerId
-      });
-      totalCount = totalCount.length;
-      respSuccess(res, {
-        RFP,
-        totalCount
-      });
+    const RFP = await getRFPData({
+      sellerId: params.SellerId
+    }, obj);
+    let totalCount = await getRFP({
+      sellerId: params.SellerId
+    });
+    totalCount = totalCount.length;
+    respSuccess(res, {
+      RFP,
+      totalCount
+    });
   } catch (error) {
     respError(res, error.message);
   }
 };
+// module.exports.queEmailData = async(productDetails,loc,user, name, mobile, rfp) => {
+//   let emailParams = {};
+//   try {
+//     emailParams.userId = user && user._id;
+//     emailParams.sellerId = rfp && rfp.sellerId;
+//     emailParams.name = name;
+//     emailParams.subject = "Product Enquiry";
+//     emailParams.body = "Need more details about product";
+//     emailParams.fromEmail = rfp && rfp.buyerDetails && rfp.buyerDetails.email;
+//     emailParams.toEmail ="";
+//     emailParams.type ="rfp";
+
+//   }catch(err){
+//      console.log(error)
+//   }     
+// }

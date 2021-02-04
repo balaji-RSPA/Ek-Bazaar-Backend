@@ -1,13 +1,13 @@
 const nodemailer = require("nodemailer");
 const mg = require("nodemailer-mailgun-transport");
 const {
-MailgunKeys
+  MailgunKeys
 } = require("./globalConstants");
 
-module.exports.sendSingleMail = (email, message) => new Promise((resolve, reject) => {
+module.exports.sendSingleMail = (message) => new Promise((resolve, reject) => {
   try {
-    message.from = MailgunKeys.senderMail;
-    message.to = email
+    // message.from = MailgunKeys.senderMail;
+    // message.to = email
     message["h:Reply-To"] = MailgunKeys.replyMail;
     const auth = {
       auth: {
@@ -34,12 +34,12 @@ module.exports.sendSingleMail = (email, message) => new Promise((resolve, reject
 module.exports.sendBulkMails = (message) => {
   try {
     // console.log(message, ":::::>>>>>>>>>");
-    message.from = senderMail;
+    message.from = senderMail; //Here message to is comma saprated with multiple email as a string
     message["h:Reply-To"] = replyMail;
     const auth = {
       auth: {
-        api_key: mailgunAPIKey,
-        domain: mailgunDomain,
+        api_key: MailgunKeys.mailgunAPIKey,
+        domain: MailgunKeys.mailgunDomain,
       },
       // proxy: 'http://user:pass@localhost:8080' // optional proxy, default is false
     };
