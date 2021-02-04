@@ -9,7 +9,7 @@ const removeListingSchema = new Schema({
   name: {
     type: String,
     trim: true,
-    required: true,
+    default: null,
   },
   url: {
     type: String,
@@ -19,7 +19,7 @@ const removeListingSchema = new Schema({
   company:{
    type: String,
    trim: true,
-   default:null
+   required: true,
   },
   mobile: {
     mobile:{

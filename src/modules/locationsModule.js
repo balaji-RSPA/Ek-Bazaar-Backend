@@ -106,7 +106,8 @@ module.exports.getCity = (query, id) =>
   });
 
 exports.getAllCities = (reqQuery) =>
-  new Promise((resolve, reject) => {
+new Promise((resolve, reject) => {
+  console.log("reqQuery", reqQuery)
     const skip = parseInt(reqQuery.skip) || 0;
     const limit = parseInt(reqQuery.limit) || 2000;
     const search = reqQuery.search || "";
@@ -138,8 +139,8 @@ exports.getAllCities = (reqQuery) =>
         }
       };
       if(reqQuery.stateId) match["$match"]["state"] = ObjectId(reqQuery.stateId)
-      console.log("<<<---------------- match -------------->>>", match)
     }
+    console.log("<<<---------------- match -------------->>>", match)
 
     const execQuery = Cities.aggregate([
       match,
@@ -177,7 +178,7 @@ exports.getAllCities = (reqQuery) =>
 
     execQuery
       .then((cities) => {
-      console.log("cities", cities)
+      // console.log("cities", cities)
         resolve(cities);
       })
       .catch(reject);
