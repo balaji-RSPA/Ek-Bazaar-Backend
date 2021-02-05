@@ -87,7 +87,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
 
         while (status) {
 
-          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs);
+          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs, {"sellerId.paidSeller": "desc"});
 
           if (seller[0] && seller[0].length) {
 
@@ -205,15 +205,15 @@ module.exports.createRFP = async (req, res) => {
       const locationDetails = await getCity({ _id: location.city })
       const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
       const sellerDtl = await getSellerProfile(sellerId);
-      if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
-        const message = {
-          from: email,
-          to: sellerDtl[0].email,
-          subject: 'Successful Registration',
-          html: `<p>Your profile has been successfully registered</p>`
-        }
-        await sendSingleMail(message)
-      }
+      // if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
+      //   const message = {
+      //     from: email,
+      //     to: sellerDtl[0].email,
+      //     subject: 'Successful Registration',
+      //     html: `<p>Your profile has been successfully registered</p>`
+      //   }
+      //   await sendSingleMail(message)
+      // }
       if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
         // const sellerData = await getSellerProfile(sellerId)
         // const constsellerContactNo = sellerDtl && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''

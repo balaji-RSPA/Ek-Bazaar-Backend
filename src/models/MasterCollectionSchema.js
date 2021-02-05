@@ -316,6 +316,13 @@ const masterCollectionSchema = new Schema(
                 type: String,
                 default: null
             },
+            planExpired: {
+                type: Boolean,
+                default: false
+            },
+            planExpireDate: {
+                type: Date
+            }
         },
         userId: {
             type: nameSchema,
