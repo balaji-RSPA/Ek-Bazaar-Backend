@@ -43,7 +43,7 @@ const queEmailSchema = new Schema({
         type: Boolean,
         default: false
     },
-    type: {
+    messageType: {
         type: String,
         default: null
     },
