@@ -372,6 +372,7 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
   val.sellerId && val.sellerId.location && delete val.sellerId.location._id
 
   let keywords = []
+  val.panIndia ? keywords.push("Pan India") : ""
   keywords.push(val.sellerId.name.toLowerCase())
   keywords.push(val.serviceType && val.serviceType.name.toLowerCase())
   keywords.push(val.parentCategoryId && val.parentCategoryId.length && val.parentCategoryId[0].name.toLowerCase())
@@ -681,6 +682,7 @@ module.exports.updateSellerProduct = async (req, res) => {
     }
     if (updateDetail) {
       const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
+      updatedProduct[0]["panIndia"] = body.panIndia
       const masterData = await masterMapData(updatedProduct[0], 'update')
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
       const masResult = await updateMaster({ _id: updateDetail._id }, masterData)
