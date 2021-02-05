@@ -11,6 +11,7 @@ const RemoveListing = require('./removeListingModule')
 const SMSQue = require('./smsQueModule')
 const SellerPlans = require('./sellerPlanModule')
 const QueEmails = require('./queEmailsModule')
+const SellerPlanLogs = require('./sellerPlanLogModule')
 
 module.exports = {
     location,
@@ -25,5 +26,6 @@ module.exports = {
     RemoveListing,
     SMSQue,
     SellerPlans,
-    QueEmails
+    QueEmails,
+    SellerPlanLogs
 }

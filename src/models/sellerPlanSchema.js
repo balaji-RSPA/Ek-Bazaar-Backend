@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
-// const Seller = require('./sellersSchema')
-// const Users = require('./user');
 
 const sellerPlanSchema = new Schema({
     name: {
@@ -63,6 +61,10 @@ const sellerPlanSchema = new Schema({
     extendDays: {
         type: Array,
         default: null
+    },
+    subscriptionId: {
+        type: ObjectId,
+        ref: 'subscriptionPlan'
     }
 }, {
     versionKey: false,

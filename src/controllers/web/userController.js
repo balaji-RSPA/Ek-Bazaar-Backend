@@ -4,7 +4,7 @@ const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
-const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans } = require("../../modules");
+const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans, SellerPlanLogs } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
 const { deleteSellerProducts } = require('../../modules/sellerProductModule')
@@ -53,6 +53,7 @@ const {
 
 } = buyers;
 const { getMaster, addMaster, updateMaster } = mastercollections
+const { addSellerPlanLog } = SellerPlanLogs
 const { sms } = require("../../utils/globalConstants")
 // const {username, password, senderID, smsURL} = sms
 
@@ -243,6 +244,18 @@ module.exports.addUser = async (req, res) => {
     if (seller && buyer) {
       const trialPlan = await getSubscriptionPlanDetail({ planType: "trail", status: true })
       if (trialPlan) {
+        const sellerDetails = {
+          sellerId: seller._id,
+          userId: seller.userId,
+          name: seller.name || null,
+          email: seller.email || null,
+          mobile: seller.mobile || null,
+          sellerType: seller.sellerType || null,
+          paidSeller: seller.paidSeller,
+          planId: seller.planId,
+          trialExtends: seller.trialExtends
+
+        }
         const planData = {
           name: trialPlan.type,
           description: trialPlan.description,
@@ -254,15 +267,29 @@ module.exports.addUser = async (req, res) => {
           sellerId: seller._id,
           isTrial: true,
           planType: trialPlan.type,
-          extendDays: trialPlan.days
+          extendDays: trialPlan.days,
+          subscriptionId: trialPlan._id
         }
+
         const planResult = await createTrialPlan(planData)
-        // console.log(planResult, 'planResult........................')
         const planDatra = {
           planId: planResult._id,
           trialExtends: trialPlan.numberOfExtends,
         }
         const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
+
+        const planLog = {
+          sellerId: seller._id,
+          userId: seller.userId,
+          sellerPlanId: sellerUpdate.planId,
+          subscriptionId: trialPlan._id,
+          sellerDetails: { ...sellerDetails },
+          planDetails: {
+            ...planData,
+            exprireDate: new Date(planData.exprireDate)
+          }
+        }
+        const log = await addSellerPlanLog(planLog)
 
       }
       const deviceId = machineIdSync();
