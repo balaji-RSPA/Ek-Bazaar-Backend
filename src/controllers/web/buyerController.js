@@ -209,8 +209,8 @@ module.exports.createRFP = async (req, res) => {
         const message = {
           from: email,
           to: sellerDtl[0].email,
-          subject: 'Successful Registration',
-          html: `<p>Your profile has been successfully registered</p>`
+          subject: 'Product Enquiry',
+          html: `<p>Somebody has enquired about the product</p>`
         }
         await sendSingleMail(message)
       }
@@ -297,8 +297,8 @@ module.exports.createRFP = async (req, res) => {
           const message = {
             from: email,
             to: sellerDtl[0].email,
-            subject: 'Successful Registration',
-            html: `<p>Your profile has been successfully registered</p>`
+            subject: 'Product Enquiry',
+            html: `<p>Somebody has enquired about the product</p>`
           }
           await sendSingleMail(message)
         }
