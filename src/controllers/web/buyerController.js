@@ -87,7 +87,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
 
         while (status) {
 
-          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs);
+          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs, {"sellerId.paidSeller": "desc"});
 
           if (seller[0] && seller[0].length) {
 
