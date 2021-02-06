@@ -310,7 +310,6 @@ module.exports.getUserProfile = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   try {
-    console.log('-----------update seller -------------------')
     const { userID } = req;
     const _buyer = req.body.buyer || {}
     let { name, email, business, location, type, sellerType } = req.body;
