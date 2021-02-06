@@ -324,6 +324,7 @@ module.exports.updateUser = async (req, res) => {
       email,
       location,
       userId: userID,
+      mobile: _buyer.mobile || _seller.mobile,
       ..._buyer
     };
     let _seller = await getSeller(userID)
