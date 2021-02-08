@@ -493,6 +493,7 @@ module.exports.forgetPassword = async (req, res) => {
 module.exports.updateNewPassword = async (req, res) => {
   try {
     let { password, currentPassword } = req.body;
+    let checkPassword = password;
     password = encodePassword(password);
     const { userID } = req;
     // console.log("req.body", req.body, userID)
@@ -500,6 +501,10 @@ module.exports.updateNewPassword = async (req, res) => {
 
     const curntPwd = findUser && findUser.length && findUser[0].password
     const comparePass = await bcrypt.compare(currentPassword, curntPwd);
+    const compareCurrentOldPass = await bcrypt.compare(checkPassword, curntPwd);
+    if (compareCurrentOldPass){
+      return respError(res, "Entered password is same as old password, try to enter different password")
+    }
     if (!comparePass) {
       return respError(res, "Current pasword is not correct")
     }
