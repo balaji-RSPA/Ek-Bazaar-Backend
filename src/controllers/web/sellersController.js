@@ -659,8 +659,10 @@ module.exports.updateSellerProduct = async (req, res) => {
     }
     if (updateDetail) {
       const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
+      // console.log("🚀 ~ file: sellersController.js ~ line 662 ~ module.exports.updateSellerProduct= ~ updatedProduct", updatedProduct[0]["productDetails"])
       updatedProduct[0]["panIndia"] = body.panIndia
       const masterData = await masterMapData(updatedProduct[0], 'update')
+      console.log("🚀 ~ file: sellersController.js ~ line 665 ~ module.exports.updateSellerProduct= ~ masterData", masterData)
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
       const masResult = await updateMaster({ _id: updateDetail._id }, masterData)
     }
