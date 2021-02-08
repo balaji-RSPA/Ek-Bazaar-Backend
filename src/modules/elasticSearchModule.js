@@ -317,6 +317,7 @@ exports.sellerSearch = async (reqQuery) => {
   }
 
   if (productId) {
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 320 ~ exports.sellerSearch= ~ productId", productId)
     // const categoryId = await getCatId({_id: productId }, '_id')
     // catId = categoryId
     const categoryMatch = {
@@ -509,7 +510,7 @@ exports.sellerSearch = async (reqQuery) => {
 
 }
 
-exports.searchFromElastic = (query, range, aggs) =>
+exports.searchFromElastic = (query, range, aggs, sort) =>
   new Promise((resolve, reject) => {
 
     const { skip, limit } = range;
@@ -520,7 +521,24 @@ exports.searchFromElastic = (query, range, aggs) =>
       query,
       ...aggs,/* ,
       highlight, */
-      sort: { "userId._id.keyword": "desc" }
+      // sort: sort || { "userId._id.keyword": "desc" }
+      sort: [
+        // {
+        //   "sellerId.planExpired": {
+        //     "order": "desc"
+        //   }
+        // },
+        {
+          "sellerId.paidSeller": {
+            "order": "desc"
+          }
+        },
+        {
+          "userId._id.keyword": {
+            "order": "desc"
+          }
+        }
+      ]
     };
 
     const searchQuery = {

@@ -310,24 +310,25 @@ module.exports.getUserProfile = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   try {
-    console.log('-----------update seller -------------------')
     const { userID } = req;
     const _buyer = req.body.buyer || {}
-    let { name, email, business, location, type, sellerType } = req.body;
+    console.log('-----------update seller -------------------', req.body)
+    let { name, email, business, location, mobile, type, sellerType } = req.body;
 
     let userData = {
       name: _buyer && _buyer.name || name,
       city: _buyer && _buyer.location && _buyer.location.city || location.city || null,
       email: _buyer && _buyer.email || email || null,
     };
+    let _seller = await getSeller(userID)
     let buyerData = {
       name,
       email,
       location,
       userId: userID,
+      // mobile: _buyer.mobile || _seller.mobile,
       ..._buyer
     };
-    let _seller = await getSeller(userID)
     let sellerData
     sellerData = {
       name,
@@ -337,6 +338,11 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
+    if((_buyer.mobile && _buyer.mobile.length) ||(mobile && mobile.length)) {
+      buyerData.mobile = _buyer.mobile[0]["mobile"] || mobile[0]["mobile"]
+      buyerData.mobile = _buyer.mobile[0]["countryCode"] || mobile[0]["countryCode"]
+      sellerData.mobile = _buyer.mobile || mobile
+    }
     if (_seller && _seller.sellerProductId && _seller.sellerProductId.length) {
       sellerData = {
         ...sellerData,

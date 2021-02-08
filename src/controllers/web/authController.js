@@ -46,8 +46,12 @@ exports.login = async (req, res) => {
       const seller = await sellers.getSeller(user._id);
       if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true)) 
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
-      
-
+       else if(seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
+        const data = {
+          mobile: [{mobile: user.mobile, countryCode: user.countryCode}]
+        }
+        await sellers.updateSeller({userId: user._id}, data)
+      }
     } else if (userType === 'buyer') {
 
       const buyer = await buyers.getBuyer(user._id);

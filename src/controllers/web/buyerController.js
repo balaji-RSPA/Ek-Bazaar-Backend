@@ -87,7 +87,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
 
         while (status) {
 
-          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs);
+          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs, {"sellerId.paidSeller": "desc"});
 
           if (seller[0] && seller[0].length) {
 
@@ -209,8 +209,8 @@ module.exports.createRFP = async (req, res) => {
         const message = {
           from: email,
           to: sellerDtl[0].email,
-          subject: 'Successful Registration',
-          html: `<p>Your profile has been successfully registered</p>`
+          subject: 'Product Enquiry',
+          html: `<p>Somebody has enquired about the product</p>`
         }
         await sendSingleMail(message)
       }
@@ -297,8 +297,8 @@ module.exports.createRFP = async (req, res) => {
           const message = {
             from: email,
             to: sellerDtl[0].email,
-            subject: 'Successful Registration',
-            html: `<p>Your profile has been successfully registered</p>`
+            subject: 'Product Enquiry',
+            html: `<p>Somebody has enquired about the product</p>`
           }
           await sendSingleMail(message)
         }
