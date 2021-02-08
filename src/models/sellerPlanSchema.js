@@ -65,6 +65,9 @@ const sellerPlanSchema = new Schema({
     subscriptionId: {
         type: ObjectId,
         ref: 'subscriptionPlan'
+    },
+    groupType: {
+        type: Number
     }
 }, {
     versionKey: false,

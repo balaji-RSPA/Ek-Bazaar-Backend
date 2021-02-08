@@ -23,6 +23,9 @@ const SMSQue = require('./SMSQueSchema')
 const SellerPlans = require('./sellerPlanSchema')
 const QueEmails = require('./queEmailSchema')
 const SellerPlanLog = require('./sellerPlansLogSchema')
+const Payments = require('./paymentSchema')
+const Orders = require('./ordersSchema')
+const OrdersPlans = require('./orderPlanSchema')
 // const Users = require('./user')
 
 module.exports = {
@@ -50,6 +53,8 @@ module.exports = {
     SMSQue,
     SellerPlans,
     QueEmails,
-    SellerPlanLog
-    // Users
+    SellerPlanLog,
+    Payments,
+    Orders,
+    OrdersPlans
 }

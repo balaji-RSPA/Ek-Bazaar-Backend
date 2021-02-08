@@ -13,7 +13,7 @@ const config = require('./config/config')
 const { tradeDb } = config
 
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
-const { razorPay } = require('./src/controllers/web/paymentController')
+const { captureRazorPayPayment } = require('./src/controllers/web/paymentController')
 const { deleteRecords } = require('./src/controllers/web/userController')
 const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails } = require('./src/crons/cron')
 
@@ -73,9 +73,9 @@ app.get('/', function (req, res) {
 //   // res.send('Its delete records  live')
 // })
 
-app.post('/razorPay', async function (req, res) {
+app.post('/capture/:paymentId', async function (req, res) {
   try {
-    const result = await razorPay(req, res)
+    const result = await captureRazorPayPayment(req, res)
   } catch (error) {
 
   }

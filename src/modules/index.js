@@ -12,6 +12,8 @@ const SMSQue = require('./smsQueModule')
 const SellerPlans = require('./sellerPlanModule')
 const QueEmails = require('./queEmailsModule')
 const SellerPlanLogs = require('./sellerPlanLogModule')
+const Orders = require('./ordersModule')
+const Payments = require('./paymentModule')
 
 module.exports = {
     location,
@@ -27,5 +29,7 @@ module.exports = {
     SMSQue,
     SellerPlans,
     QueEmails,
-    SellerPlanLogs
+    SellerPlanLogs,
+    Orders,
+    Payments
 }

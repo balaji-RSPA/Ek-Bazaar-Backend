@@ -1,9 +1,39 @@
 const mongoose = require('mongoose')
 const { SellerPlans } = require('../models')
 const moment = require("moment");
+
 module.exports.createTrialPlan = (query) =>
     new Promise((resolve, reject) => {
         SellerPlans.create(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch((error) => reject(error))
+    })
+
+module.exports.createPlan = (query) =>
+    new Promise((resolve, reject) => {
+        SellerPlans.create(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch((error) => reject(error))
+    })
+
+module.exports.updateSellerPlan = (query, data) =>
+    new Promise((resolve, reject) => {
+        SellerPlans.findOneAndUpdate(query, {
+            $set: data
+        })
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch((error) => reject(error))
+    })
+
+module.exports.getSellerPlan = (query) =>
+    new Promise((resolve, reject) => {
+        SellerPlans.findOne(query)
             .then((doc) => {
                 resolve(doc)
             })

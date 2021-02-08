@@ -85,7 +85,7 @@ const orderSchema = new Schema({
         default: null
     },
     sellerDetails: {
-        type: sellerDetailsSchema,
+        type: Object/* sellerDetailsSchema */,
         default: null
     },
     sellerPlanId: {
@@ -101,7 +101,7 @@ const orderSchema = new Schema({
     orderPlanId: {
         type: [ObjectId],
         ref: OrdersPlans,
-        required: true
+        // required: true
     },
     price: {
         type: Number,
@@ -121,7 +121,7 @@ const orderSchema = new Schema({
     },
     paymentId: {
         type: ObjectId,
-        required: true
+        // required: true
     },
     paymentStatus: {
         type: Boolean,

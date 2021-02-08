@@ -12,23 +12,23 @@ const sellerPlanLogSchema = new Schema({
     sellerId: {
         type: ObjectId,
         ref: 'sellers',
-        required: true
+        // required: true
     },
     sellerPlanId: {
         type: ObjectId,
-        required: true
+        // required: true
     },
     subscriptionId: {
         type: ObjectId,
-        required: true
+        // required: true
     },
     sellerDetails: {
         type: Object,
-        required: true
+        // required: true
     },
     planDetails: {
         type: Object,
-        required: true
+        // required: true
     }
 }, {
     versionKey: false,

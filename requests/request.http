@@ -55,6 +55,24 @@ content-type: application/json
 
 
 ###
+POST http://localhost:8070/api/captureRazorPayPayment/pay_GYxHn6MTVYl5Bd HTTP/1.1
+content-type: application/json
+
+{
+  "paymentResponse": "response",
+  "sellerId": "601404b6d7bfc7fbf5f46f31",
+  "userId": "601404b6d7bfc7fbf5f46f2f",
+  "subscriptionId": "5feed474c163b01f45413ad7",
+  "orderDetails": {
+    "name": "ramesh shettenor",
+    "gst": "7481259632141"
+  },
+  "paymentId": "pay_GYxHn6MTVYl5Bd"
+}
+                            
+
+
+###
 POST http://localhost:8070/api/statesBulkInsert HTTP/1.1
 content-type: application/json
 

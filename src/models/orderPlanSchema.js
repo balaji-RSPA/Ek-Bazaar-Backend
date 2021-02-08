@@ -49,7 +49,7 @@ const orderPlanSchema = new Schema({
     },
     popularity: {//Most Popular, popular, less popular
         type: String,
-        required: true
+        // required: true
     },
     billingType: {//billed quarterly,billed yearly,billed monthly
         type: String,
