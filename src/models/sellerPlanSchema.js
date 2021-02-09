@@ -68,6 +68,10 @@ const sellerPlanSchema = new Schema({
     },
     groupType: {
         type: Number
+    },
+    createdOn: {
+        type: Date,
+        default: new Date()
     }
 }, {
     versionKey: false,

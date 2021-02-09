@@ -268,7 +268,8 @@ module.exports.addUser = async (req, res) => {
           isTrial: true,
           planType: trialPlan.type,
           extendDays: trialPlan.days,
-          subscriptionId: trialPlan._id
+          subscriptionId: trialPlan._id,
+          createdOn: new Date(dateNow)
         }
 
         const planResult = await createTrialPlan(planData)

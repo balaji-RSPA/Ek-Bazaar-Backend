@@ -52,6 +52,9 @@ exports.sms = {
 exports.accessModules = Object.values(this.moduleTypes);
 
 exports.razorPayCredentials = {
-  key_id: 'rzp_test_jCeoTVbZGMSzfn',
-  key_secret: 'V8BiRAAeeqxBVheb0xWIBL8E',
+  // key_id: 'rzp_test_jCeoTVbZGMSzfn',
+  // key_secret: 'V8BiRAAeeqxBVheb0xWIBL8E',
+
+  key_id: 'rzp_test_PYGivNOLb4gHKa',
+  key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
 }

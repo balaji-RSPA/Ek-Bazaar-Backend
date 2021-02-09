@@ -22,6 +22,10 @@ const paymentSchema = new Schema({
     },
     paymentResponse: {
         type: Object
+    },
+    paymentSuccess: {
+        type: Boolean,
+        default: null
     }
 }, {
     versionKey: false,

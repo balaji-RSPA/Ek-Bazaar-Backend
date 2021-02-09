@@ -103,6 +103,10 @@ const orderSchema = new Schema({
         ref: OrdersPlans,
         // required: true
     },
+    gst: {
+        type: Number,
+        default: null
+    },
     price: {
         type: Number,
         default: null
