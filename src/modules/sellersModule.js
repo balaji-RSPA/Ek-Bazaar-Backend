@@ -1487,10 +1487,15 @@ module.exports.getSellerProductDetails = (query) =>
         }
       })
       .populate({
-        path: 'serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId productSubcategoryId serviceCity.city serviceCity.country serviceCity.state',
+        path: 'serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId productSubcategoryId serviceCity.city serviceCity.country serviceCity.state productDetails.regionOfOrigin productDetails.countryOfOrigin productDetails.cityOfOrigin productDetails.sellingCountries productDetails.sellingStates productDetails.sellingCities',
         select: 'name vendorId'
       })
+      .populate({
+        path: 'productDetails.regionOfOrigin productDetails.countryOfOrigin productDetails.cityOfOrigin productDetails.sellingCountries productDetails.sellingStates productDetails.sellingCities',
+        select: 'name'
+      })
       .then((doc) => {
+        // console.log("🚀 ~ file: sellersModule.js ~ line 1498 ~ .then ~ doc", doc)
         resolve(doc)
       })
       .catch(reject)
