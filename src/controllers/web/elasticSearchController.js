@@ -161,9 +161,9 @@ module.exports.serachSeller = async (req, res) => {
 module.exports.searchSuggestion = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
-    // console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
+    console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
 
-    const { skip, limit, search, product } = reqQuery
+    const { skip, limit, search, product, group } = reqQuery
     if (search !== 'undefined' && search) {
       const query = {
         "match_phrase_prefix": {

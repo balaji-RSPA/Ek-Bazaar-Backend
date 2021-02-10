@@ -3,6 +3,10 @@ const { Schema, model, Types } = mongoose
 const { ObjectId } = Types
 
 const subscriptionPlanSchema = new Schema({
+  groupType: {
+    type: Number,
+    required: true
+  },
   type: {//Quarterly,Yearly,Full Bazaar
     type: String,
     trim: true,

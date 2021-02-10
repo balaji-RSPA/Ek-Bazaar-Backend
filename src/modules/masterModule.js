@@ -64,3 +64,13 @@ module.exports.deleteMasterProduct = (data) =>
             })
             .catch(reject)
     })
+
+module.exports.updateMasterBulkProducts = (query, data) => new Promise((resolve, reject) => {
+    MasterCollection.updateMany(query, data, {
+        new: true
+    })
+        .then((doc) => {
+            resolve(doc)
+        })
+        .catch((error) => reject(error))
+})

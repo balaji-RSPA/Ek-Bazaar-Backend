@@ -11,6 +11,9 @@ const RemoveListing = require('./removeListingModule')
 const SMSQue = require('./smsQueModule')
 const SellerPlans = require('./sellerPlanModule')
 const QueEmails = require('./queEmailsModule')
+const SellerPlanLogs = require('./sellerPlanLogModule')
+const Orders = require('./ordersModule')
+const Payments = require('./paymentModule')
 
 module.exports = {
     location,
@@ -25,5 +28,8 @@ module.exports = {
     RemoveListing,
     SMSQue,
     SellerPlans,
-    QueEmails
+    QueEmails,
+    SellerPlanLogs,
+    Orders,
+    Payments
 }
