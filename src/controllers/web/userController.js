@@ -127,7 +127,7 @@ module.exports.sendOtp = async (req, res) => {
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
     const otp = 1234;
-    const checkUser = seller && seller.length && seller[0].isEmailVerified === 2;
+    const checkUser = seller && seller.length && seller[0].email && seller[0].isEmailVerified === 2;
     if (isProd) {
       const url = "https://api.ekbazaar.com/api/v1/sendOTP"
       const resp = await axios.post(url, {
@@ -143,6 +143,8 @@ module.exports.sendOtp = async (req, res) => {
             html: `<p>Your OTP is : <strong>${resp.data.data.otp}</strong></p>`
           }
           await sendSingleMail(message)
+        }else{
+          console.log("=======Email is not verified yet================")
         }
         return respSuccess(res, {
           otp: resp.data.data.otp
@@ -158,6 +160,8 @@ module.exports.sendOtp = async (req, res) => {
           html: `<p>Your OTP is : <strong>${otp}</strong></p>`
         }
         await sendSingleMail(message)
+      }else{
+        console.log("=======Email is not verified yet================")
       }
       return respSuccess(res, {
         otp
