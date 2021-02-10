@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Razorpay = require('razorpay')
 const axios = require("axios")
 const request = require('request');
-const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category } = require("../../modules");
+const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
 const { MailgunKeys, razorPayCredentials } = require('../../utils/globalConstants')
 const {
@@ -20,6 +20,8 @@ const { addOrders, updateOrder } = Orders
 const { addPayment, updatePayment } = Payments
 const { addSellerPlanLog } = SellerPlanLogs
 const { getAllSellerTypes } = category
+const { updateSellerProducts } = sellerProducts
+const { updateMasterBulkProducts } = mastercollections
 
 
 module.exports.createRazorPayOrder = async (req, res) => {
@@ -208,8 +210,12 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
 
                     await addSellerPlanLog(planLog)
-                    if (deleteProduct === true) {
+                    if (deleteProduct === true && seller.sellerProductId && seller.sellerProductId.length) {
+                        updateSellerProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
+                        updateMasterBulkProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
+                        console.log('--- Old Service Type Product Status changed-------')
                         // update product deleta status true
+
                     }
 
 

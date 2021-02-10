@@ -372,6 +372,10 @@ const masterCollectionSchema = new Schema(
             type: Number,
             default: null,
         },
+        isDeleted: {
+            type: Boolean,
+            default: false
+        },
     },
     {
         timestamps: true,

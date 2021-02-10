@@ -329,6 +329,10 @@ const sellerProductSchema = new Schema(
       type: Number,
       default: 1
     },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    },
   },
   {
     timestamps: true,
