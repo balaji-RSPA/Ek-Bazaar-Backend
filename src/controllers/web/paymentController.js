@@ -218,7 +218,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             from: MailgunKeys.senderMail,
                             to: seller.email,
                             subject: 'Ekbazaar Subscription activated successfully',
-                            html: `<p>Your Subscription plan activated successfully!</p><br><p>Plan Type: ${planDetails.type}</p><br><p>Price/Month : ${pricePerMonth}</p><br><p>Price : ${price}</p><br><p>GST : ${gstValue}</p><br><p>Total : ${totalAmount}</p>`
+                            html: `<p>Your Subscription plan activated successfully!</p><p>Service type: ${currentGroup === 1 ? "Manufacturers/Traders" : currentGroup === 2 ? "Farmer" : " Service"}</p><p>Plan Type: ${planDetails.type}</p><p>Price/Month : ${pricePerMonth}</p><p>Price : ${price}</p><p>GST(18%) : ${gstAmount}</p><p>Total : ${totalAmount}</p>`
                         }
                         await sendSingleMail(message)
                         await updateOrder({ _id: OrdersData._id }, { isEmailSent: true })
