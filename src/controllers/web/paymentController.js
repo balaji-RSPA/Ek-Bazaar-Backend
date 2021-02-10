@@ -41,10 +41,10 @@ module.exports.createRazorPayOrder = async (req, res) => {
             const gstAmount = (parseInt(price) * gstValue) / 100
             const totalAmount = parseInt(price) + gstAmount
 
-            const result = await instance.orders.create({ amount: (2/* totalAmount */ * 100).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
+            const result = await instance.orders.create({ amount: (/* totalAmount *  */100).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
             // console.log(result, 'create Order')
 
-            respSuccess(res, result)
+            respSuccess(res, { ...result, key_id: razorPayCredentials.key_id })
         }
 
 
@@ -63,7 +63,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
         const dateNow = new Date();
         const gstValue = 18
         let deleteProduct = false
-        console.log(req.body, ' bbbbbbbbbbbbbbbb')
+        console.log(req.body, ' order details--------')
         // console.log(req.params, ' pppppppppppppppppp')
         let seller = await getSellerProfile(sellerId)
         const planDetails = await getSubscriptionPlanDetail({ _id: subscriptionId })
@@ -79,13 +79,14 @@ module.exports.captureRazorPayPayment = async (req, res) => {
             const price = pricePerMonth * parseInt(months)
             const gstAmount = (parseInt(price) * gstValue) / 100
             const totalAmount = parseInt(price) + gstAmount
+
             console.log(months, "-------", pricePerMonth, "-------", price, "-------", gstAmount, "-------", totalAmount)
 
             request({
                 method: 'POST',
                 url: `https://${razorPayCredentials.key_id}:${razorPayCredentials.key_secret}@api.razorpay.com/v1/payments/${req.params.paymentId}/capture`,
                 form: {
-                    amount: 200,//totalAmount,
+                    amount: (/* totalAmount *  */100),
                     currency: 'INR'
                 }
             }, async function (error, response, body) {
@@ -233,25 +234,11 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         paymentSuccess: false
                     }
                     const payment = await addPayment(paymentJson)
-                    return respSuccess(res, { payment: false })
+                    return respSuccess(res, { payment: false }, 'Payment failed')
                 }
             });
         } else
-            return respSuccess(res, { payment: false })
-
-        // request({
-        //     method: 'POST',
-        //     url: `https://rzp_test_jCeoTVbZGMSzfn:V8BiRAAeeqxBVheb0xWIBL8E@api.razorpay.com/v1/payments/${req.params.paymentId}/capture`,
-        //     form: {
-        //         amount: 100,
-        //         currency: 'INR'
-        //     }
-        // }, function (error, response, body) {
-        //     console.log('Status:', response.statusCode);
-        //     console.log('Headers:', JSON.stringify(response.headers));
-        //     console.log('Response:', body);
-        //     respSuccess(res, body)
-        // });
+            return respSuccess(res, { payment: false }, 'Payment failed')
 
     } catch (error) {
         console.log(error)
