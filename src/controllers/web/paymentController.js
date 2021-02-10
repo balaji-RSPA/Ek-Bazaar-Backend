@@ -41,7 +41,7 @@ module.exports.createRazorPayOrder = async (req, res) => {
             const gstAmount = (parseInt(price) * gstValue) / 100
             const totalAmount = parseInt(price) + gstAmount
 
-            const result = await instance.orders.create({ amount: (/* totalAmount *  */100).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
+            const result = await instance.orders.create({ amount: (totalAmount * 100).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
             // console.log(result, 'create Order')
 
             respSuccess(res, { ...result, key_id: razorPayCredentials.key_id })
@@ -86,7 +86,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                 method: 'POST',
                 url: `https://${razorPayCredentials.key_id}:${razorPayCredentials.key_secret}@api.razorpay.com/v1/payments/${req.params.paymentId}/capture`,
                 form: {
-                    amount: (/* totalAmount *  */100),
+                    amount: (totalAmount * 100),
                     currency: 'INR'
                 }
             }, async function (error, response, body) {
