@@ -116,7 +116,7 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
                     updateIds.push(v._id)
                     return (v.mobile.mobile)
                 }).toString()
-                mobile = '9916905753,9916905753'
+                // mobile = '9916905753,9916905753'
                 await sendBulkSMS(mobile, message)
 
                 if (updateIds && updateIds.length) {
