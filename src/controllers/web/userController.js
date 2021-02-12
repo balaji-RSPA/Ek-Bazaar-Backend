@@ -473,6 +473,17 @@ module.exports.updateUser = async (req, res) => {
   }
 };
 
+exports.updateUserLanguage = async (req, res) => {
+  try {
+    const { userID } = req;
+    const user = await updateUser({ _id: userID }, req.body);
+    console.log("🚀 ~ file: userController.js ~ line 480 ~ exports.updateUserLanguage= ~ user", user)
+    respSuccess(res)
+  } catch (error) {
+    respError(res, error.message)
+  }
+}
+
 exports.verifiedEmail = async (req, res) => {
 
   try {
