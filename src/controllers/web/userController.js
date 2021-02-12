@@ -110,10 +110,10 @@ module.exports.checkUserExistOrNot = async (req, res) => {
   try {
     const { mobile } = req.body;
     const seller = await checkUserExistOrNot({ mobile });
-    if (seller) {
-      respSuccess(res);
+    if (seller && seller.length) {
+      respSuccess(res, "User with number already exist");
     }
-    respError(res, "No User found with this number");
+    return respError(res, "No User found with this number");
   } catch (error) {
     respError(res, error.message);
   }
@@ -472,6 +472,17 @@ module.exports.updateUser = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+exports.updateUserLanguage = async (req, res) => {
+  try {
+    const { userID } = req;
+    const user = await updateUser({ _id: userID }, req.body);
+    console.log("🚀 ~ file: userController.js ~ line 480 ~ exports.updateUserLanguage= ~ user", user)
+    respSuccess(res)
+  } catch (error) {
+    respError(res, error.message)
+  }
+}
 
 exports.verifiedEmail = async (req, res) => {
 
