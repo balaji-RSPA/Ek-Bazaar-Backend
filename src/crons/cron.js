@@ -21,7 +21,7 @@ exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) 
 
     try {
 
-        const result = await getQueEmail({ isSent: false }, 0, 10)
+        const result = await getQueEmail({ isSent: false }, 0, 20)
         const updateIds = []
         if (result && result.length) {
 
@@ -116,7 +116,7 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
                     updateIds.push(v._id)
                     return (v.mobile.mobile)
                 }).toString()
-                mobile = '9916905753,9916905753'
+                // mobile = '9916905753,9916905753'
                 await sendBulkSMS(mobile, message)
 
                 if (updateIds && updateIds.length) {

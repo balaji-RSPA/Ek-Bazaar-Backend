@@ -29,8 +29,10 @@ const { username, password, senderID, smsURL } = sms
 
 exports.sendBulkSMS = async (mobile, message) => {
   console.log('bulk sms', mobile, message)
-  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message}&dlr-mask=19&dlr-url&category=bulk`
+  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&category=bulk`
+  // const sendsmsuri = smsURL + "?username=" + username + "&password=" + password + "&to=" + mobile + "&from=" + senderID + "&text=" + message.replace("&", "and") + "&category=bulk"
   const result = await axios.get(sendsmsuri)
+  console.log("🚀 ~ file: utils.js ~ line 35 ~ exports.sendBulkSMS= ~ result", result)
   return result
 }
 
@@ -42,8 +44,10 @@ exports.sendSMS = async (mobile, message) => {
   // })
   // return resp
 
-  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message}&dlr-mask=19&dlr-url`
+  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&dlr-mask=19&dlr-url`
   const result = await axios.get(sendsmsuri)
+  console.log("🚀 ~ file: utils.js ~ line 50 ~ exports.sendSMS= ~ result", result)
+  return result
   return result
 }
 
