@@ -30,7 +30,7 @@ const { updateSellerProducts } = sellerProducts
 const { updateMasterBulkProducts } = mastercollections
 const { getInvoiceNumber, updateInvoiceNumber, addInvoiceNumber } = InvoiceNumber
 
-module.exports.createPdf = async (seller, plan, orderDetails) => new Promise((resolve, reject) => {
+const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, reject) => {
 
 
     try {
@@ -307,7 +307,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
 
                     // Generate invoice
-                    const invoice = await this.createPdf(seller, _p_details, order_details)
+                    const invoice = await createPdf(seller, _p_details, order_details)
                     console.log(invoice, ' Invoice file path')
 
                     await addSellerPlanLog(planLog)
