@@ -148,15 +148,15 @@ async function indexing() {
 //   // res.send('Its delete records  live')
 // })
 
-app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
-  // console.log('Home page')
-  try {
-    const result = await updateSelleProfileChangesToProducts()
-  } catch (error) {
+// app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await updateSelleProfileChangesToProducts()
+//   } catch (error) {
 
-  }
-  // res.send('Its delete records  live')
-})
+//   }
+//   // res.send('Its delete records  live')
+// })
 
 // app.get('/updateKeywords', async function (req, res) {
 //   // console.log('Home page')
@@ -169,15 +169,15 @@ app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
 // })
 
 
-app.get('/sendQueSms', async function (req, res) {
-  // console.log('Home page')
-  try {
-    const result = await sendQueSms()
-  } catch (error) {
+// app.get('/sendQueSms', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await sendQueSms()
+//   } catch (error) {
 
-  }
-  // res.send('Its delete records  live')
-})
+//   }
+//   // res.send('Its delete records  live')
+// })
 
 app.use(router)
 
@@ -196,39 +196,8 @@ server.on('listening', () => {
   Logger.info(`Listening:${server.address().port}`)
 
 });
-if (env.NODE_ENV === "staging" || env.NODE_ENV === "production"){
 
-   const planExpire = cron.schedule('* * * * *', async () => {
-    planExpire.stop()
-    console.log('-------------------- planExpire file cron start --------------------', new Date());
-    await getExpirePlansCron()
-    console.log('-------------------- planExpire file cron completed --------------------', new Date())
-    planExpire.start()
-  })
-  planExpire.start()
-
-}
-
-if (env.NODE_ENV === "production" ) {
-
-  // const planExpire = cron.schedule('* * * * *', async () => {
-  //   planExpire.stop()
-  //   console.log('-------------------- planExpire file cron start --------------------', new Date());
-  //   await getExpirePlansCron()
-  //   console.log('-------------------- planExpire file cron completed --------------------', new Date())
-  //   planExpire.start()
-  // })
-  // planExpire.start()
-
-  const queEmail = cron.schedule('* * * * *', async () => {
-    queEmail.stop()
-    console.log('-------------------- queEmail file cron start --------------------', new Date());
-    await sendQueEmails()
-    console.log('-------------------- queEmail file cron completed --------------------', new Date())
-    queEmail.start()
-  })
-  queEmail.start()
-
+if (env.NODE_ENV === "production") {
 
   const queSms = cron.schedule('* * * * *', async () => {
     queSms.stop()
@@ -238,4 +207,25 @@ if (env.NODE_ENV === "production" ) {
     queSms.start()
   })
   queSms.start()
+}
+
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+
+  const planExpire = cron.schedule('* * * * *', async () => {
+    planExpire.stop()
+    console.log('-------------------- planExpire file cron start --------------------', new Date());
+    await getExpirePlansCron()
+    console.log('-------------------- planExpire file cron completed --------------------', new Date())
+    planExpire.start()
+  })
+  planExpire.start()
+
+  const queEmail = cron.schedule('* * * * *', async () => {
+    queEmail.stop()
+    console.log('-------------------- queEmail file cron start --------------------', new Date());
+    await sendQueEmails()
+    console.log('-------------------- queEmail file cron completed --------------------', new Date())
+    queEmail.start()
+  })
+  queEmail.start()
 }
