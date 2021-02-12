@@ -3,7 +3,12 @@ const _ = require('lodash')
 const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword } = require("../../utils/utils");
+const {
+  createToken,
+  encodePassword,
+  sendSMS
+} = require("../../utils/utils");
+const { sendOtp , successfulRegistration,businessProfileIncomplete } = require("../../utils/templates/smsTemplate/smsTemplate");
 const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans, SellerPlanLogs } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
@@ -122,35 +127,37 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile, reset } = req.body;
+    const otp = Math.floor(1000 + Math.random() * 9000);
     const seller = await checkUserExistOrNot({ mobile });
+    const { otpMessage } = sendOtp({reset,otp});
+
     if (seller && seller.length && !reset) {
       return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-    const otp = 1234;
+    
     const checkUser = seller && seller.length && seller[0].email && seller[0].isEmailVerified === 2;
     if (isProd) {
-      const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-      const resp = await axios.post(url, {
-        mobile
-      })
-      if (resp.data.success) {
-        if (checkUser) {
+      // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+      // const resp = await axios.post(url, {
+      //   mobile
+      // })
+      let response = await sendSMS(mobile, otpMessage);
+      if (response && response.data && response.data.otp && checkUser) {
           //send email
           const message = {
             from: MailgunKeys.senderMail,
             to: seller[0].email,
             subject: 'Forgot Password OTP',
-            html: `<p>Your OTP is : <strong>${resp.data.data.otp}</strong></p>`
+            html: `<p>Your OTP is : <strong>${response.data.otp}</strong></p>`
           }
           await sendSingleMail(message)
         }else{
-          console.log("=======Email is not verified yet================")
-        }
-        return respSuccess(res, {
-          otp: resp.data.data.otp
-        }, checkUser ? 'Your OTP has been send successfully, check your email or sms' : "");
+         console.log("=======Email is not verified yet================")
       }
+      return respSuccess(res, {
+        otp: resp.data.data.otp
+      }, checkUser ? 'Your OTP has been send successfully, check your email or sms' : "");
     } else {
       if (checkUser) {
         //send email
@@ -344,8 +351,7 @@ module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
     const _buyer = req.body.buyer || {}
-    console.log('-----------update seller -------------------', req.body)
-    let { name, email, business, location, mobile, type, sellerType } = req.body;
+    let { name, email, business, location, mobile, type, sellerType,userType } = req.body;
 
     let userData = {
       name: _buyer && _buyer.name || name,
@@ -427,15 +433,22 @@ module.exports.updateUser = async (req, res) => {
 
     if (user && buyer && seller) {
 
+      // console.log(user, "-----11", buyer, "----------22", seller) userType
       if (buyer.isEmailSend === false && buyer.email) {
+        const { successfulMessage } = successfulRegistration({userType});
         seller.isEmailSent = true;
-        buyer.isEmailSent = true
+        buyer.isEmailSent = true;
+        otp
         const message = {
           from: MailgunKeys.senderMail,
           to: buyer.email,
           subject: 'Successful Registration',
           html: `<p>Your profile has been successfully registered</p>`
         }
+        // if (userType === 'seller'){
+        //   await sendSMS(mobile, businessProfileIncomplete())
+        // }
+        await sendSMS(mobile, successfulMessage);
         await sendSingleMail(message)
         await updateBuyer({ _id: buyer._id }, buyer);
         await updateSeller({ _id: seller._id }, seller);

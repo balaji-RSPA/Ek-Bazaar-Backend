@@ -28,6 +28,7 @@ const { queSMSBulkInsert, getQueSMS } = SMSQue
 const { bulkInserQemails } = QueEmails;
 
 const { sms } = require("../../utils/globalConstants")
+const { RFQOneToOne,RFQOneToOneBuyer }  = require("../../utils/templates/smsTemplate/smsTemplate")
 const { username, password, senderID, smsURL } = sms
 
 const getUserAgent = (userAgent) => {
@@ -95,7 +96,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
             const QueData = sellers.filter(v => v._source.sellerId.mobile && v._source.sellerId.mobile.length).map(v => {
               const sellerId = v._source.sellerId
 
-              msg = messageContent(productDetails, _loc, name)
+              msg = RFQOneToOne(productDetails, _loc, name)
 
               totalInsertion++
               sellerIds.push(sellerId._id)
@@ -220,14 +221,14 @@ module.exports.createRFP = async (req, res) => {
         const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
-          const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
-
+           await sendSMS(constsellerContactNo.mobile, RFQOneToOne({productDetails, _loc, name}))
+           await sendSMS(mobile, RFQOneToOneBuyer())
         } else {
           console.log(' no seller contact number')
         }
       } else if (!sellerId && requestType === 2) {
         this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
-
+        await sendSMS(mobile, RFQOneToOneBuyer())
       } else {
         console.log(' Single contact beta user exist------------')
       }
@@ -307,10 +308,13 @@ module.exports.createRFP = async (req, res) => {
           const constsellerContactNo = sellerDtl && sellerDtl.length && sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
           if (constsellerContactNo && constsellerContactNo.mobile) {
             console.log('message sending...........')
-            const response = await sendSMS(constsellerContactNo.mobile, messageContent(productDetails, _loc, name))
+            await sendSMS(constsellerContactNo.mobile, RFQOneToOne({productDetails, _loc, name}))
+            await sendSMS(mobile, RFQOneToOneBuyer())
+
           }
         } else if (!sellerId && requestType === 2) {
-          this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
+         this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
+         await sendSMS(mobile, RFQOneToOneBuyer())
         } else {
           console.log(' Single contact beta------------')
         }
