@@ -196,10 +196,9 @@ server.on('listening', () => {
   Logger.info(`Listening:${server.address().port}`)
 
 });
+if (env.NODE_ENV === "staging" || env.NODE_ENV === "production"){
 
-if (env.NODE_ENV === "production") {
-
-  const planExpire = cron.schedule('* * * * *', async () => {
+   const planExpire = cron.schedule('* * * * *', async () => {
     planExpire.stop()
     console.log('-------------------- planExpire file cron start --------------------', new Date());
     await getExpirePlansCron()
@@ -207,6 +206,19 @@ if (env.NODE_ENV === "production") {
     planExpire.start()
   })
   planExpire.start()
+
+}
+
+if (env.NODE_ENV === "production" ) {
+
+  // const planExpire = cron.schedule('* * * * *', async () => {
+  //   planExpire.stop()
+  //   console.log('-------------------- planExpire file cron start --------------------', new Date());
+  //   await getExpirePlansCron()
+  //   console.log('-------------------- planExpire file cron completed --------------------', new Date())
+  //   planExpire.start()
+  // })
+  // planExpire.start()
 
   const queEmail = cron.schedule('* * * * *', async () => {
     queEmail.stop()
