@@ -237,7 +237,7 @@ module.exports.checkUserExistOrNot = (query) =>
         isPhoneVerified: 1,
         isMobileVerified: 1,
         password: 1,
-        isEmailVerified : 1,
+        isEmailVerified: 1,
         // _id: -1,
       })
       .then((doc) => {
@@ -447,7 +447,7 @@ module.exports.getSeller = (id, chkStock) =>
       userId: id
     })
       .populate('sellerProductId')
-      .populate('sellerType', 'name')
+      .populate('sellerType')
       .populate('busenessId')
       .populate('statutoryId')
       .populate({
@@ -551,7 +551,7 @@ exports.getSellerProfile = (id) =>
     })
       // .populate("primaryCatId")
       .populate('sellerProductId')
-      .populate('sellerType', 'name')
+      .populate('sellerType'/* , 'name' */)
       .populate('busenessId')
       .populate('statutoryId')
       .populate({

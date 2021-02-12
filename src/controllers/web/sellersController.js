@@ -10,6 +10,7 @@ const {
   uploadToDOSpace
 } = require("../../utils/utils")
 const mongoose = require('mongoose');
+const Razorpay = require('razorpay')
 
 const {
   sellers,
@@ -57,6 +58,28 @@ const { getFilteredCities, getSellerSelectedCities } = location;
 const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct } = mastercollections
 const { updateSellerProducts } = sellerProducts
 
+// module.exports.razorPay = async (req, res) => {
+
+//   try {
+
+//     var instance = new Razorpay({
+//       key_id: 'rzp_test_jCeoTVbZGMSzfn',
+//       key_secret: 'V8BiRAAeeqxBVheb0xWIBL8E',
+//     });
+//     console.log(req.body, 'test')
+//     const result = await instance.orders.create({ amount: (1 * 100).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 1 })
+//     console.log(result, 'create Order')
+
+//     respSuccess(res, result)
+
+
+//   } catch (error) {
+//     console.log(error)
+//     respError(error)
+
+//   }
+
+// }
 module.exports.getSeller = async (req, res) => {
   try {
     const {
@@ -311,7 +334,7 @@ module.exports.deleteSellerProduct = async (req, res) => {
     let result
     let sellerProduct = await deleteSellerProduct(req.body.id)
     const masterDelete = await deleteMasterProduct(req.body.id)
-    let findSeller = await getSellerVal({_id : sellerProduct.sellerId})
+    let findSeller = await getSellerVal({ _id: sellerProduct.sellerId })
     if (findSeller) {
       let objVal = mongoose.Types.ObjectId(req.body.id);
       let arrVal = _.findIndex(findSeller.sellerProductId, objVal);
