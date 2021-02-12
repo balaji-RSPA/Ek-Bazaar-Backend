@@ -110,10 +110,10 @@ module.exports.checkUserExistOrNot = async (req, res) => {
   try {
     const { mobile } = req.body;
     const seller = await checkUserExistOrNot({ mobile });
-    if (seller) {
-      respSuccess(res);
+    if (seller && seller.length) {
+      respSuccess(res, "User with number already exist");
     }
-    respError(res, "No User found with this number");
+    return respError(res, "No User found with this number");
   } catch (error) {
     respError(res, error.message);
   }
