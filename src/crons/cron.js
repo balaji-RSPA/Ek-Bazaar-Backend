@@ -75,7 +75,7 @@ exports.getExpirePlansCron = async (req, res) =>
                             fromEmail: MailgunKeys.senderMail,
                             toEmail: element.sellerId.email,
                             name: element.sellerId.name,
-                            subject: "Trial Plan Expired",
+                            subject: "Plan Expired",
                             body: `Hi ${element.sellerId.name}<br/>We hope you have been enjoyed your plan.<br/>Unfortunately, your plan has expired.<br/>-- The Ekbazaar Team`,
                         };
                         emailData.push(data)
