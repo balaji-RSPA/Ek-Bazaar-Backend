@@ -148,15 +148,15 @@ async function indexing() {
 //   // res.send('Its delete records  live')
 // })
 
-app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
-  // console.log('Home page')
-  try {
-    const result = await updateSelleProfileChangesToProducts()
-  } catch (error) {
+// app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await updateSelleProfileChangesToProducts()
+//   } catch (error) {
 
-  }
-  // res.send('Its delete records  live')
-})
+//   }
+//   // res.send('Its delete records  live')
+// })
 
 // app.get('/updateKeywords', async function (req, res) {
 //   // console.log('Home page')
@@ -169,15 +169,15 @@ app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
 // })
 
 
-app.get('/sendQueSms', async function (req, res) {
-  // console.log('Home page')
-  try {
-    const result = await sendQueSms()
-  } catch (error) {
+// app.get('/sendQueSms', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await sendQueSms()
+//   } catch (error) {
 
-  }
-  // res.send('Its delete records  live')
-})
+//   }
+//   // res.send('Its delete records  live')
+// })
 
 app.use(router)
 
@@ -199,6 +199,19 @@ server.on('listening', () => {
 
 if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
 
+
+  const queSms = cron.schedule('* * * * *', async () => {
+    queSms.stop()
+    console.log('-------------------- queSms file cron start --------------------', new Date());
+    await sendQueSms()
+    console.log('-------------------- queSms file cron completed --------------------', new Date())
+    queSms.start()
+  })
+  queSms.start()
+}
+
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+
   const planExpire = cron.schedule('* * * * *', async () => {
     planExpire.stop()
     console.log('-------------------- planExpire file cron start --------------------', new Date());
@@ -217,13 +230,4 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   })
   queEmail.start()
 
-
-  const queSms = cron.schedule('* * * * *', async () => {
-    queSms.stop()
-    console.log('-------------------- queSms file cron start --------------------', new Date());
-    await sendQueSms()
-    console.log('-------------------- queSms file cron completed --------------------', new Date())
-    queSms.start()
-  })
-  queSms.start()
 }

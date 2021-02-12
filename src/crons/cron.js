@@ -21,7 +21,7 @@ exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) 
 
     try {
 
-        const result = await getQueEmail({ isSent: false }, 0, 10)
+        const result = await getQueEmail({ isSent: false }, 0, 20)
         const updateIds = []
         if (result && result.length) {
 
@@ -75,7 +75,7 @@ exports.getExpirePlansCron = async (req, res) =>
                             fromEmail: MailgunKeys.senderMail,
                             toEmail: element.sellerId.email,
                             name: element.sellerId.name,
-                            subject: "Trial Plan Expired",
+                            subject: "Plan Expired",
                             body: `Hi ${element.sellerId.name}<br/>We hope you have been enjoyed your plan.<br/>Unfortunately, your plan has expired.<br/>-- The Ekbazaar Team`,
                         };
                         emailData.push(data)
@@ -116,7 +116,7 @@ exports.sendQueSms = async (req, res) => new Promise(async (resolve, reject) => 
                     updateIds.push(v._id)
                     return (v.mobile.mobile)
                 }).toString()
-                mobile = '9916905753,9916905753'
+                // mobile = '9916905753,9916905753'
                 await sendBulkSMS(mobile, message)
 
                 if (updateIds && updateIds.length) {
