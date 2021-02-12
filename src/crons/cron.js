@@ -21,7 +21,7 @@ exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) 
 
     try {
 
-        const result = await getQueEmail({ isSent: false }, 0, 10)
+        const result = await getQueEmail({ isSent: false }, 0, 20)
         const updateIds = []
         if (result && result.length) {
 
