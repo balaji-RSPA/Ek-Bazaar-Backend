@@ -1,3 +1,4 @@
+const moment = require('moment');
 
   module.exports.successfulRegistration = (params) => {
     const successfulMessage = params.userType === 'buyer' ?
@@ -31,3 +32,5 @@
   module.exports.businessProfileIncomplete = () => `Dear Customer,\n\nPlease complete your business profile to receive enquiries from buyers. https://www.trade.ekbazaar.com/seller/seller-central`;
 
   module.exports.businessProfileComplete = () => `Dear Customer,\n\n Thank you for completing your business profile. You are now eligible to receive enquiries from buyers.`;
+  
+  module.exports.planExpiry = (date) => `Dear Customer,\n\n Your free trial is coming to a close and will end on ${moment(date).format("Do MMMM ,YYYY")}. Please subscribe to continue enjoying the benefits. Thank you. Ekbazaar-Trade https://www.trade.ekbazaar.com/seller/seller-central/seller-account`
