@@ -7,7 +7,7 @@ const {
   respError,
   respAuthFailed,
 } = require("../../utils/respHadler");
-const { createToken } = require("../../utils/utils");
+const { createToken, encodePassword } = require("../../utils/utils");
 // const {
 //   handleUserSession, getSessionCount, handleUserLogoutSession
 // } = require('../../modules/sessionModules')
@@ -32,33 +32,35 @@ exports.login = async (req, res) => {
     const { password, ipAddress, location, mobile, userType } = req.body;
     let user = await sellers.checkUserExistOrNot({ mobile });
     user = user[0]
-    if (user && !user.password) {
-      return respAuthFailed(res, user, "Password is not set or is not yet available");
-    }
     if (!user) {
       return respAuthFailed(res, undefined, "User not found");
     }
-    if (!user.password) {
-      return respAuthFailed(res, user, "Password is not set or is not yet available");
+    else if (user && !user.password && userType === 'buyer') {
+      const _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
+      console.log("🚀 ~ file: authController.js ~ line 40 ~ exports.login= ~ _user", _user)
+      user = await sellers.checkUserExistOrNot({ mobile });
+      user = user[0]
+      console.log("🚀 ~ file: authController.js ~ line 42 ~ exports.login= ~ user", user)
+    } else if (user && !user.password && userType === 'seller') {
+      return respAuthFailed(res, undefined, "User not found");
     }
     if (userType === 'seller') {
 
       const seller = await sellers.getSeller(user._id);
-      if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true)) 
+      if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
-       else if(seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
+      else if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
         const data = {
-          mobile: [{mobile: user.mobile, countryCode: user.countryCode}]
+          mobile: [{ mobile: user.mobile, countryCode: user.countryCode }]
         }
-        await sellers.updateSeller({userId: user._id}, data)
+        await sellers.updateSeller({ userId: user._id }, data)
       }
     } else if (userType === 'buyer') {
 
       const buyer = await buyers.getBuyer(user._id);
       if (buyer && buyer.deactivateAccount.status === true)
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
-    
-      }
+    }
 
     const result = await bcrypt.compare(password, user.password);
     if (result) {
