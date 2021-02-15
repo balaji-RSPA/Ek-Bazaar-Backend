@@ -3,7 +3,7 @@ const axios = require("axios")
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { buyers, sellers, category, elastic, location, SMSQue,QueEmails } = require("../../modules");
+const { buyers, sellers, category, elastic, location, SMSQue, QueEmails } = require("../../modules");
 const {
   postRFP,
   checkBuyerExistOrNot,
@@ -49,7 +49,7 @@ const getUserAgent = (userAgent) => {
 module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp) => {
 
   try {
-       //productDetails.name !== 'undefined' 
+    //productDetails.name !== 'undefined' 
     if (productDetails && productDetails.name && productDetails.name.name) {
       // const query = {
       //   "term": {
@@ -88,7 +88,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
 
         while (status) {
 
-          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs, {"sellerId.paidSeller": "desc"});
+          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs, { "sellerId.paidSeller": "desc" });
 
           if (seller[0] && seller[0].length) {
 
@@ -104,12 +104,12 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
               return ({
                 sellerId: sellerId._id || null,
                 buyerId: user && user._id || null,
-                userId : user && user._id || null,
+                userId: user && user._id || null,
                 name: name,
-                subject : "Product Enquiry",
-                body : "Need more details about product",
-                fromEmail : rfp && rfp.buyerDetails && rfp.buyerDetails.email,
-                toEmail : sellerId.email,
+                subject: "Product Enquiry",
+                body: "Need more details about product",
+                fromEmail: rfp && rfp.buyerDetails && rfp.buyerDetails.email,
+                toEmail: sellerId.email,
                 mobile: {
                   countryCode: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].countryCode,
                   mobile: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].mobile,

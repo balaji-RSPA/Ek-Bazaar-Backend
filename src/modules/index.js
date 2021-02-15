@@ -14,6 +14,7 @@ const QueEmails = require('./queEmailsModule')
 const SellerPlanLogs = require('./sellerPlanLogModule')
 const Orders = require('./ordersModule')
 const Payments = require('./paymentModule')
+const InvoiceNumber = require('./invoiceNumberModule')
 
 module.exports = {
     location,
@@ -31,5 +32,6 @@ module.exports = {
     QueEmails,
     SellerPlanLogs,
     Orders,
-    Payments
+    Payments,
+    InvoiceNumber
 }

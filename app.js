@@ -13,7 +13,7 @@ const config = require('./config/config')
 const { tradeDb } = config
 
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
-const { captureRazorPayPayment } = require('./src/controllers/web/paymentController')
+const { captureRazorPayPayment, createPdf } = require('./src/controllers/web/paymentController')
 const { deleteRecords } = require('./src/controllers/web/userController')
 const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails } = require('./src/crons/cron')
 
@@ -179,6 +179,16 @@ async function indexing() {
 //   // res.send('Its delete records  live')
 // })
 
+app.get('/createPdf', async function (req, res) {
+  // console.log('Home page')
+  try {
+    const result = await createPdf()
+  } catch (error) {
+
+  }
+  // res.send('Its delete records  live')
+})
+
 app.use(router)
 
 server.listen(tradeDb.server_port);
@@ -197,7 +207,7 @@ server.on('listening', () => {
 
 });
 
-if (env.NODE_ENV === "production") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
 
 
   const queSms = cron.schedule('* * * * *', async () => {

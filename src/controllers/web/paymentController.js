@@ -1,14 +1,20 @@
 const mongoose = require('mongoose');
+const path = require("path")
 const Razorpay = require('razorpay')
 const axios = require("axios")
 const request = require('request');
-const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections } = require("../../modules");
+const pdf = require("pdf-creator-node");
+const moment = require('moment')
+const fs = require('fs');
+const { capitalizeFirstLetter } = require('../../utils/helpers')
+const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
 const { MailgunKeys, razorPayCredentials } = require('../../utils/globalConstants')
 const {
     respSuccess,
     respError
 } = require('../../utils/respHadler');
+const { uploadToDOSpace } = require('../../utils/utils')
 const { addOrdersPlans } = require('../../modules/ordersModule');
 const {
     getSubscriptionPlanDetail,
@@ -22,6 +28,92 @@ const { addSellerPlanLog } = SellerPlanLogs
 const { getAllSellerTypes } = category
 const { updateSellerProducts } = sellerProducts
 const { updateMasterBulkProducts } = mastercollections
+const { getInvoiceNumber, updateInvoiceNumber, addInvoiceNumber } = InvoiceNumber
+
+const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, reject) => {
+
+
+    try {
+        // console.log(, 'pdf')
+
+        const sellerDetails = {
+            name: orderDetails && orderDetails.sellerDetails && capitalizeFirstLetter(orderDetails.sellerDetails.name) || seller.name,
+            city: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.city.name) || '',
+            state: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.state.name) || '',
+            country: seller && seller.location && seller.location.country && capitalizeFirstLetter(seller.location.country.name) || '',
+            gstNo: orderDetails && orderDetails.gstNo || ''
+        }
+
+        const orderData = {
+            planType: plan && plan.type || '',
+            pricePerMonth: plan && plan.price || '',
+            // months: '3',
+            features: plan && plan.features,
+            gstAmount: orderDetails && orderDetails.gstAmount,
+            amount: orderDetails && orderDetails.total,
+            total: orderDetails && orderDetails.total,
+            invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
+            expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
+            invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
+            currency: orderDetails && orderDetails.currency || ''
+
+        }
+        const html = fs.readFileSync(path.resolve(__dirname, '../../..', 'src/utils/templates/invoice', 'invoiceTemplate.html'), 'utf8');
+        const options = {
+            format: "A4",
+            orientation: "portrait",
+            border: "10mm",
+            header: {
+                // height: "45mm",
+                contents: '<div style="text-align: center;">Ekbazaar</div>'
+            },
+            "footer": {
+                // "height": "28mm",
+                "contents": {
+                    // first: 'Cover page',
+                    2: 'Second page', // Any page number is working. 1-based index
+                    default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+                    // last: 'Last Page'
+                }
+            }
+        }
+
+        const details = {
+            orderData: { ...orderData },
+            sellerDetails: { ...sellerDetails }
+        }
+        const invoiceFileName = orderDetails && orderDetails.invoiceNo.toString() + '-invoice.pdf'
+        const document = {
+            html: html,
+            data: {
+                details: details
+            },
+            path: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName)
+        };
+        pdf.create(document, options)
+            .then(async (res) => {
+                console.log(res)
+                const output = `invoice-${orderDetails && orderDetails.invoiceNo}.pdf`
+                const invoice = fs.readFileSync(res.filename);
+                let data = {
+                    Key: `${seller._id}/${orderDetails && orderDetails.invoiceNo}/${output}`,
+                    body: invoice
+                }
+                const multidoc = await uploadToDOSpace(data)
+                resolve({ ...multidoc, attachement: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName) })
+
+            })
+            .catch(error => {
+                console.error(error)
+            });
+
+    } catch (error) {
+        console.log(error)
+        respError(error)
+
+    }
+
+})
 
 
 module.exports.createRazorPayOrder = async (req, res) => {
@@ -64,9 +156,9 @@ module.exports.captureRazorPayPayment = async (req, res) => {
         const { sellerId, subscriptionId, orderDetails, userId, paymentResponse } = req.body
         const dateNow = new Date();
         const gstValue = 18
+        const currency = 'INR'
         let deleteProduct = false
         console.log(req.body, ' order details--------')
-        // console.log(req.params, ' pppppppppppppppppp')
         let seller = await getSellerProfile(sellerId)
         const planDetails = await getSubscriptionPlanDetail({ _id: subscriptionId })
         if (planDetails && seller && seller.length) {
@@ -102,6 +194,10 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     sellerId: seller._id,
                 }
                 if (response.statusCode === 200) {
+                    const invoiceNumner = await getInvoiceNumber({ id: 1 })
+                    const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
+                    await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
+
                     const sellerDetails = {
                         name: orderDetails.name,
                         email: seller.email,
@@ -113,7 +209,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     const paymentJson = {
                         ...userData,
                         paymentResponse: paymentResponse,
-                        paymentDetails: JSON.parse(body),
+                        paymentDetails: null/* JSON.parse(body) */,
                         paymentSuccess: true
                     }
                     const _p_details = {
@@ -132,7 +228,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         groupType: planDetails.groupType,
                         billingType: planDetails.billingType,
                         priceUnit: planDetails.priceUnit,
-                        type: planDetails.type,
+                        type: planDetails.type
                     }
                     const payment = await addPayment(paymentJson)
                     const planData = {
@@ -142,9 +238,9 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         createdOn: new Date()
                     }
 
-                    const orderdetails = {
+                    const order_details = {
                         ...userData,
-                        invoiceNo: '',
+                        invoiceNo: _invoice,
                         invoicePath: '',
                         gstNo: orderDetails && orderDetails.gst || null,
                         sellerDetails: {
@@ -161,9 +257,10 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         // paymentId: '', // payment collection id
                         // paymentStatus: '',
                         ipAddress: orderDetails && orderDetails.ipAddress || null,
+                        currency: currency
                         // isEmailSent: ''
                     }
-                    const OrdersData = await addOrders(orderdetails)
+                    const OrdersData = await addOrders(order_details)
 
                     const orderItem = {
                         ...userData,
@@ -209,6 +306,10 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     }
                     const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
 
+                    // Generate invoice
+                    const invoice = await createPdf(seller, _p_details, order_details)
+                    console.log(invoice, ' Invoice file path')
+
                     await addSellerPlanLog(planLog)
                     if (deleteProduct === true && seller.sellerProductId && seller.sellerProductId.length) {
                         updateSellerProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
@@ -218,16 +319,22 @@ module.exports.captureRazorPayPayment = async (req, res) => {
 
                     }
 
+                    const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
 
                     if (seller && seller.email) {
                         const message = {
                             from: MailgunKeys.senderMail,
                             to: seller.email,
                             subject: 'Ekbazaar Subscription activated successfully',
-                            html: `<p>Your Subscription plan activated successfully!</p><p>Service type: ${currentGroup === 1 ? "Manufacturers/Traders" : currentGroup === 2 ? "Farmer" : " Service"}</p><p>Plan Type: ${planDetails.type}</p><p>Price/Month : ${pricePerMonth}</p><p>Price : ${price}</p><p>GST(18%) : ${gstAmount}</p><p>Total : ${totalAmount}</p>`
+                            html: `<p>Your Subscription plan activated successfully!</p><p>Service type: ${currentGroup === 1 ? "Manufacturers/Traders" : currentGroup === 2 ? "Farmer" : " Service"}</p><p>Plan Type: ${planDetails.type}</p><p>Price/Month : ${pricePerMonth}</p><p>Price : ${price}</p><p>GST(18%) : ${gstAmount}</p><p>Total : ${totalAmount}</p>`,
+                            attachments: [{   // stream as an attachment
+                                filename: 'invoice.pdf',
+                                path: invoicePath
+                            }]
                         }
                         await sendSingleMail(message)
-                        await updateOrder({ _id: OrdersData._id }, { isEmailSent: true })
+                        await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
+                        // fs.unlinkSync(invoicePath)
                     }
                     console.log('------------------ Payment done ---------')
                     return respSuccess(res, { payment: true }, 'subscription activated successfully!')
