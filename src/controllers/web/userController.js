@@ -29,6 +29,8 @@ const {
 const {
   sendSingleMail
 } = require('../../utils/mailgunService')
+const {commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
+const { emailSuccessfulRegistration } = require('../../utils/templates/emailTemplate/emailTemplateContent');
 const { getSubscriptionPlanDetail } = subscriptionPlan
 const { createTrialPlan } = SellerPlans
 const algorithm = 'aes-256-cbc'
@@ -149,7 +151,12 @@ module.exports.sendOtp = async (req, res) => {
             from: MailgunKeys.senderMail,
             to: seller[0].email,
             subject: 'Forgot Password OTP',
-            html: `<p>Your OTP is : <strong>${response.data.otp}</strong></p>`
+            html: commonTemplate({
+              image: '/images/registrationthanks.png',
+              title: 'Dummy',
+              body: 'ok ok',
+              link: 'www.google.com'
+            })
           }
           await sendSingleMail(message)
         }else{
@@ -165,7 +172,12 @@ module.exports.sendOtp = async (req, res) => {
           from: MailgunKeys.senderMail,
           to: seller[0].email,
           subject: 'Forgot Password OTP',
-          html: `<p>Your OTP is : <strong>${otp}</strong></p>`
+          html: commonTemplate({
+            image: '/images/registrationthanks.png',
+            title: 'Dummy',
+            content: 'ok ok',
+            link: 'www.google.com'
+          })
         }
         await sendSingleMail(message)
       }else{
@@ -432,22 +444,20 @@ module.exports.updateUser = async (req, res) => {
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     if (user && buyer && seller) {
-
       // console.log(user, "-----11", buyer, "----------22", seller) userType
-      if (buyer.isEmailSend === false && buyer.email) {
+      if (buyer.isEmailSent === false && buyer.email) {
         const { successfulMessage } = successfulRegistration({userType});
         seller.isEmailSent = true;
         buyer.isEmailSent = true;
-        otp
+        // otp
+        let emailMessage = emailSuccessfulRegistration({name : user.name})
         const message = {
           from: MailgunKeys.senderMail,
           to: buyer.email,
           subject: 'Successful Registration',
-          html: `<p>Your profile has been successfully registered</p>`
+          html: commonTemplate(emailMessage)
         }
-        // if (userType === 'seller'){
-        //   await sendSMS(mobile, businessProfileIncomplete())
-        // }
+        console.log(message,"=========================")
         await sendSMS(mobile, successfulMessage);
         await sendSingleMail(message)
         await updateBuyer({ _id: buyer._id }, buyer);

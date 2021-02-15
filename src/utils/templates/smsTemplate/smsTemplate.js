@@ -34,3 +34,7 @@ const moment = require('moment');
   module.exports.businessProfileComplete = () => `Dear Customer,\n\n Thank you for completing your business profile. You are now eligible to receive enquiries from buyers.`;
   
   module.exports.planExpiry = (date) => `Dear Customer,\n\n Your free trial is coming to a close and will end on ${moment(date).format("Do MMMM ,YYYY")}. Please subscribe to continue enjoying the benefits. Thank you. Ekbazaar-Trade https://www.trade.ekbazaar.com/seller/seller-central/seller-account`
+
+  module.exports.planSubscription = (params) => `Dear Customer,\n\n Thank you for subscribing to Ekbazaar.com.\nPlan:${params.plan} \nValid From:${moment().format("DD/MM/YYYY")} \nValid Till:${moment(params.till).format("DD/MM/YYYY")} \nAmount Paid:${params.currency}-${params.amount} Click <a href = ${params.url}>${params.name}</a> to download your invoice.`
+
+  module.exports.planChanged = (params) => `Dear Customer,\n\nYour plan has been changed from ${moment().format("DD/MM/YYYY")} to ${moment(params.till).format("DD/MM/YYYY")}. \nValid From:${moment(params.from).format("DD/MM/YYYY")} \nValid Till:${moment(params.till).format("DD/MM/YYYY")} \nAmount Paid:${params.currency}-${params.amount} Click <a href = ${params.url}>${params.name}</a> to download your invoice.Thank you for choosing Ekbazaar.com.`

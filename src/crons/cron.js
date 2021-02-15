@@ -63,25 +63,33 @@ exports.getExpirePlansCron = async (req, res) =>
             // const end = moment(start).endOf("day");
             const sellerPlanIds = []
             const emailData = []
+            const smsData = []
             const result = await getExpirePlans();
             if (result.length > 0) {
                 for (let index = 0; index < result.length; index++) {
                     const element = result[index];
                     sellerPlanIds.push(element._id)
+                    if (element && element.sellerId && element.sellerId.mobile && element.sellerId.mobile.length && element.sellerId.mobile[0]) {
+                        const data2 = {
+                           sellerId: element._id,
+                           requestId: element._id,
+                            mobile:{
+                                mobile:element.sellerId.mobile[0].mobile, 
+                                countryCode:element.sellerId.mobile[0].countryCode 
+                            },
+                            message: planExpiry(element.exprireDate),
+                            messageType: "plan expiry",
+                        }
+                        smsData.push(data2);
+                    }
                     if (element.email || element.email !== null) {
                         const data = {
-                            messageType: "plan expiry",
+                            type: "plan expiry",
                             sellerId: element._id,
-                            requestId : element._id,
                             userId: element.sellerId.userId,
                             fromEmail: MailgunKeys.senderMail,
                             toEmail: element.sellerId.email,
-                            mobile:{
-                                mobile:element.sellerId?.mobile[0]?.mobile, 
-                                countryCode:element.sellerId?.mobile[0]?.countryCode 
-                            },
                             name: element.sellerId.name,
-                            message : planExpiry(element.exprireDate),
                             subject: "Plan Expired",
                             body: `Hi ${element.sellerId.name}<br/>We hope you have been enjoyed your plan.<br/>Unfortunately, your plan has expired.<br/>-- The Ekbazaar Team`,
                         };
@@ -90,7 +98,7 @@ exports.getExpirePlansCron = async (req, res) =>
                         console.log(sellerPlanIds, ' ids')
                     }
                 }
-                await queSMSBulkInsert(emailData)
+                await queSMSBulkInsert(smsData)
                 await bulkInserQemails(emailData)
                 await updateSellerPlans({ _id: { $in: sellerPlanIds } }, { expireStatus: true })
 
