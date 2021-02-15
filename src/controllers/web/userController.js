@@ -110,8 +110,11 @@ module.exports.checkUserExistOrNot = async (req, res) => {
   try {
     const { mobile } = req.body;
     const seller = await checkUserExistOrNot({ mobile });
+    console.log("🚀 ~ file: userController.js ~ line 113 ~ module.exports.checkUserExistOrNot= ~ seller", seller)
     if (seller && seller.length) {
-      respSuccess(res, "User with number already exist");
+      if(seller[0]["password"]) seller[0]["password"] = true
+      else seller[0]["password"] = false
+      return respSuccess(res, seller[0], "User with number already exist");
     }
     return respError(res, "No User found with this number");
   } catch (error) {

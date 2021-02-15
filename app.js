@@ -207,7 +207,7 @@ server.on('listening', () => {
 
 });
 
-if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "stagingg") {
 
 
   const queSms = cron.schedule('* * * * *', async () => {
@@ -220,7 +220,7 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   queSms.start()
 }
 
-if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "stagingg") {
 
   const planExpire = cron.schedule('* * * * *', async () => {
     planExpire.stop()
