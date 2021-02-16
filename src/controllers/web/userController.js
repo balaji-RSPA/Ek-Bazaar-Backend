@@ -30,7 +30,11 @@ const {
   sendSingleMail
 } = require('../../utils/mailgunService')
 const {commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
-const { emailSuccessfulRegistration } = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const {
+  emailSuccessfulRegistration,
+  otpVerification,
+  passwordUpdate
+} = require('../../utils/templates/emailTemplate/emailTemplateContent');
 const { getSubscriptionPlanDetail } = subscriptionPlan
 const { createTrialPlan } = SellerPlans
 const algorithm = 'aes-256-cbc'
@@ -149,17 +153,13 @@ module.exports.sendOtp = async (req, res) => {
       // })
       let response = await sendSMS(mobile, otpMessage);
       if (response && response.data && response.data.otp && checkUser) {
+         const otpMessage = otpVerification({otp:response.data.otp});
           //send email
           const message = {
             from: MailgunKeys.senderMail,
             to: seller[0].email,
-            subject: 'Forgot Password OTP',
-            html: commonTemplate({
-              image: '/images/registrationthanks.png',
-              title: 'Dummy',
-              body: 'ok ok',
-              link: 'www.google.com'
-            })
+            subject: 'OTP Verification',
+            html: commonTemplate(otpMessage)
           }
           await sendSingleMail(message)
         }else{
@@ -170,19 +170,15 @@ module.exports.sendOtp = async (req, res) => {
       }, checkUser ? 'Your OTP has been send successfully, check your email or sms' : "");
     } else {
       if (checkUser) {
-        //send email
-        const message = {
-          from: MailgunKeys.senderMail,
-          to: seller[0].email,
-          subject: 'Forgot Password OTP',
-          html: commonTemplate({
-            image: '/images/registrationthanks.png',
-            title: 'Dummy',
-            content: 'ok ok',
-            link: 'www.google.com'
-          })
-        }
-        await sendSingleMail(message)
+          const otpMessage = otpVerification({otp:otp});
+          //send email
+          const message = {
+            from: MailgunKeys.senderMail,
+            to: seller[0].email,
+            subject: 'OTP Verification',
+            html: commonTemplate(otpMessage)
+          }
+          await sendSingleMail(message)
       }else{
         console.log("=======Email is not verified yet================")
       }
@@ -456,17 +452,15 @@ module.exports.updateUser = async (req, res) => {
         let emailMessage = emailSuccessfulRegistration({name : user.name})
         const message = {
           from: MailgunKeys.senderMail,
-          to: buyer.email,
+          to: user.email,
           subject: 'Successful Registration',
           html: commonTemplate(emailMessage)
         }
-        console.log(message,"=========================")
-        await sendSMS(mobile, successfulMessage);
+        // await sendSMS(mobile, successfulMessage);
         await sendSingleMail(message)
         await updateBuyer({ _id: buyer._id }, buyer);
         await updateSeller({ _id: seller._id }, seller);
       }
-
       if (user.email && user.isEmailVerified === 1) {
         let {
           token
@@ -578,12 +572,13 @@ module.exports.updateNewPassword = async (req, res) => {
       return respError(res, "Current pasword is not correct")
     }
     const user = await updateUser({ _id: userID }, { password });
-    if (user && user.email) {
+    if (user && user.email && user.name) {
+      const updatePasswordMsg = passwordUpdate({name:user.name})
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
         subject: 'Password Update',
-        html: `<p>Your password has been successfully updated</p>`
+        html: commonTemplate(updatePasswordMsg)
       }
       await sendSingleMail(message)
     }

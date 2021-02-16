@@ -1,3 +1,13 @@
+const {
+    imageURLS
+} = require('../../globalConstants')
+const {
+    logo,
+    facebook,
+    twitter,
+    linkedIn
+} = imageURLS;
+
 exports.activateAccount = (link) => new Promise((resolve, reject) => {
     if (link) {
         const html = `<!DOCTYPE html>
@@ -188,7 +198,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                        width="100%" style="max-width: 680px;">
                     <tr>
                         <td style="padding: 42px 0; text-align: center">
-                            <img src="https://ekbazaar.tech-active.com/assets/images/Logo-Final.png" aria-hidden="true" width="108"
+                            <img src=${logo} aria-hidden="true" width="108"
                                  height="63" alt="logo"
                                  border="0"
                                  style="height: auto; transform:scale(2); font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
@@ -270,11 +280,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                     <tr>
                         <td style="padding:40px 10px 20px 10px; width: 100%;font-size: 12px; font-family: sans-serif; line-height:18px; text-align: center; color: #888888;"
                             class="x-gmail-data-detectors">
-                            <webversion style="color:#cccccc; text-decoration:underline; font-weight: bold;">
-                                View as a Web Page
-                            </webversion>
-                            <br><br>
-                            Copyright 2019 © EkBazaar.com, All rights reserved.<br> #23 Siva Arcade, 2nd Floor, BTM Layout, Bengaluru Karnataka 560029
+                             Copyright 2021© EkBazaar.com, All rights reserved.
                         </td>
                     </tr>
                     <tr>
@@ -288,21 +294,21 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                                             href="https://www.htmlemailtemplates.net/startup-emails-vol2"
                                             style="color:#499df3;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:100%;text-decoration:none"
                                             target="_blank">
-                                        <img src="http://cdn.htmlemailtemplates.net/images/vol2/facebook.png"
+                                        <img src=${facebook}
                                              width="32" class=""
                                              style="max-width:100%;height:auto;border:none"></a></td>
                                     <td align="center" style="padding:0 10px 0 10px"><a
                                                 href="https://www.htmlemailtemplates.net/startup-emails-vol2"
                                                 style="color:#499df3;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:100%;text-decoration:none"
                                                 target="_blank">
-                                            <img src="http://cdn.htmlemailtemplates.net/images/vol2/twitter.png"
+                                            <img src=${twitter}
                                                  width="30" class=""
                                                  style="max-width:100%;height:auto;border:none"></a></td>
                                     <td align="center" style="padding:0 10px 0 10px"><a
                                                 href="https://www.htmlemailtemplates.net/startup-emails-vol2"
                                                 style="color:#499df3;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:100%;text-decoration:none"
                                                 target="_blank">
-                                            <img src="http://cdn.htmlemailtemplates.net/images/vol2/linkedin.png"
+                                            <img src=${linkedIn}
                                                  width="30" class=""
                                                  style="max-width:100%;height:auto;border:none"></a></td>
                                 </tr>
