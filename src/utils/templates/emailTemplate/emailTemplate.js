@@ -1,16 +1,15 @@
 const {
+  emailFooter
+} = require('./commonTemplateFooter');
+const {
+  emailBody
+} = require('./emailBody');
+const {
     imageURLS
 } = require('../../globalConstants')
-const {
-    logo,
-    facebook,
-    twitter,
-    linkedIn
-} = imageURLS;
-
-exports.activateAccount = (link) => new Promise((resolve, reject) => {
-    if (link) {
-        const html = `<!DOCTYPE html>
+const {logo,facebook,twitter,linkedIn} = imageURLS;
+exports.commonTemplate = (params) => {
+  const html = `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="utf-8">
@@ -206,75 +205,8 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                     </tr>
                 </table>
                 <!-- Email Header : END -->
-        
-                <!-- Email Body : BEGIN -->
-                <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center"
-                       width="100%" style="max-width: 680px;" class="email-container">
-        
-                    
-            <!-- Email Body : BEGIN -->
-            <tr>
-                <td bgcolor="#ffffff">
-                    <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"
-                           width="100%">
-                        <tbody>
-                        <tr>
-                            <td style="padding: 40px 40px 20px 40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:20px; font-weight:600; letter-spacing:0.07em; line-height:2em;">
-                                Activate your Account
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0px 16.66% 10px 16.66%; text-align: center; display: block;">
-                                <img style="width: 100%"
-                                     src="http://cdn.htmlemailtemplates.net/images/vol2/registration-flow.png"
-                                     alt="Activate Your Account">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#ffffff">
-                                <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"
-                                       width="100%">
-                                    <tbody>
-                                    <tr>
-                                        <td style="padding:40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:13.5px; font-weight:300; letter-spacing:0.07em; line-height:2em;">
-                                            Thank you for registering with us. In order to activate your account please
-                                            click the button below.
-                                            <br><br>
-                                            <!-- Button : BEGIN -->
-                                            <table role="presentation" aria-hidden="true" cellspacing="0"
-                                                   cellpadding="0" border="0"
-                                                   align="center" style="margin: auto">
-                                                <tbody>
-                                                <tr>
-                                                    <td style="border-radius: 3px; background: #222222; text-align: center;"
-                                                        class="button-td">
-                                                        <a href=${link}
-                                                           style="background: #3225A7; border: 15px solid #3225A7; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;"
-                                                           class="button-a">
-                                                            <span style="color:#ffffff;" class="button-link">&nbsp;&nbsp;&nbsp;&nbsp;ACTIVATE ACCOUNT&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                            <!-- Button : END -->
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-        
-            <!-- Email Body : END -->
-        
-        
-                </table>
-                <!-- Email Body : END -->
-        
-                <!-- Email Footer : BEGIN -->
+               ${emailBody(params)}
+               <!-- Email Footer : BEGIN -->
                 <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center"
                        width="100%" style="max-width: 680px;">
                     <tr>
@@ -311,7 +243,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                                             <img src=${linkedIn}
                                                  width="30" class=""
                                                  style="max-width:100%;height:auto;border:none"></a></td>
-                                </tr>
+                                    </tr>
                                 </tbody>
                             </table>
                         </td>
@@ -319,14 +251,12 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                     <tr>
                         <td style="padding: 20px 10px;width: 100%;font-size: 12px; font-family: sans-serif; line-height:18px; text-align: center; color: #888888;"
                             class="x-gmail-data-detectors">
-        You received this email because you signed up for this                    <br><br>
+                             You received this email because you signed up for this<br><br>
                             <unsubscribe style="color:#888888; text-decoration:underline;font-size: 14px;color: #3225A7;">unsubscribe</unsubscribe>
                         </td>
                     </tr>
                 </table>
                 <!-- Email Footer : END -->
-        
-                <!--[if mso]>
                 </td>
                 </tr>
                 </table>
@@ -335,8 +265,13 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
         </center>
         </body>
         </html>`
-        resolve(html)
-    } else {
-        reject('link is not present')
-    }
-})
+  return html;
+}
+// new Promise((resolve, reject) => {
+//   if (link) {
+
+//     resolve(html)
+//   } else {
+//     reject('link is not present')
+//   }
+// })
