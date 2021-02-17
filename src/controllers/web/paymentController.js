@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const pdf = require("pdf-creator-node");
+const fs = require('fs');
 const Razorpay = require('razorpay')
 const axios = require("axios")
 const request = require('request');
@@ -24,17 +26,80 @@ const { updateSellerProducts } = sellerProducts
 const { updateMasterBulkProducts } = mastercollections
 
 
-module.exports.createRazorPayOrder = async (req, res) => {
+module.exports.generateinvoice = async(req, res) => {
+
+    try {
+        console.log('test')
+        const html = fs.readFileSync('./invoice.html', 'utf8');
+        console.log("module.exports.generateinvoice -> html", html)
+        const options = {
+            format: "A3",
+            orientation: "portrait",
+            border: "10mm",
+            header: {
+                height: "45mm",
+                contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
+            },
+            "footer": {
+                "height": "28mm",
+                "contents": {
+                    first: 'Cover page',
+                    2: 'Second page', // Any page number is working. 1-based index
+                    default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+                    last: 'Last Page'
+                }
+            }
+        }
+
+        var users = [{
+                name: "Shyam",
+                age: "26"
+            },
+            {
+                name: "Navjot",
+                age: "26"
+            },
+            {
+                name: "Vitthal",
+                age: "26"
+            }
+        ]
+        var document = {
+            html: html,
+            data: {
+                users: users
+            },
+            path: "./output.pdf"
+        };
+
+        pdf.create(document, options)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(error => {
+                console.error(error)
+            });
+
+    } catch (error) {
+
+        console.log(error)
+        respError(error)
+    }
+
+}
+
+
+module.exports.createRazorPayOrder = async(req, res) => {
 
     try {
 
         var instance = new Razorpay({
             key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
-            key_secret: razorPayCredentials.key_secret,//'V8BiRAAeeqxBVheb0xWIBL8E',
+            key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
         });
         const { planId } = req.body
         const planDetails = await getSubscriptionPlanDetail({ _id: planId })
-        // console.log(planDetails, 'test')
+            // console.log(planDetails, 'test')
         if (planDetails) {
             const gstValue = 18
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
@@ -44,9 +109,9 @@ module.exports.createRazorPayOrder = async (req, res) => {
             const totalAmount = parseInt(price) + gstAmount
 
             const result = await instance.orders.create({ amount: (totalAmount * 100).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
-            // console.log(result, 'create Order')
+                // console.log(result, 'create Order')
 
-            respSuccess(res, { ...result, key_id: razorPayCredentials.key_id })
+            respSuccess(res, {...result, key_id: razorPayCredentials.key_id })
         }
 
 
@@ -58,7 +123,7 @@ module.exports.createRazorPayOrder = async (req, res) => {
 
 }
 
-module.exports.captureRazorPayPayment = async (req, res) => {
+module.exports.captureRazorPayPayment = async(req, res) => {
 
     try {
         const { sellerId, subscriptionId, orderDetails, userId, paymentResponse } = req.body
@@ -66,7 +131,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
         const gstValue = 18
         let deleteProduct = false
         console.log(req.body, ' order details--------')
-        // console.log(req.params, ' pppppppppppppppppp')
+            // console.log(req.params, ' pppppppppppppppppp')
         let seller = await getSellerProfile(sellerId)
         const planDetails = await getSubscriptionPlanDetail({ _id: subscriptionId })
         if (planDetails && seller && seller.length) {
@@ -91,7 +156,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     amount: (totalAmount * 100),
                     currency: 'INR'
                 }
-            }, async function (error, response, body) {
+            }, async function(error, response, body) {
 
                 console.log('Status:', response.statusCode);
                 // console.log('Headers:', JSON.stringify(response.headers));
@@ -201,7 +266,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         ...userData,
                         sellerPlanId: sellerPlanDetails._id,
                         subscriptionId: planDetails._id,
-                        sellerDetails: { ...sellerDetails },
+                        sellerDetails: {...sellerDetails },
                         planDetails: {
                             ..._p_details,
                             exprireDate: new Date(_p_details.exprireDate)
@@ -214,7 +279,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         updateSellerProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
                         updateMasterBulkProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
                         console.log('--- Old Service Type Product Status changed-------')
-                        // update product deleta status true
+                            // update product deleta status true
 
                     }
 
