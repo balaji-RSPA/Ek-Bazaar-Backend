@@ -456,7 +456,7 @@ module.exports.updateUser = async (req, res) => {
           subject: 'Successful Registration',
           html: commonTemplate(emailMessage)
         }
-        // await sendSMS(mobile, successfulMessage);
+        await sendSMS(mobile, successfulMessage);
         await sendSingleMail(message)
         await updateBuyer({ _id: buyer._id }, buyer);
         await updateSeller({ _id: seller._id }, seller);

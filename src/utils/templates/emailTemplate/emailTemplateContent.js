@@ -1,3 +1,4 @@
+const { LexModelBuildingService } = require('aws-sdk');
 const moment = require('moment');
 module.exports.emailSuccessfulRegistration = (params) => {
   let message = {
@@ -51,6 +52,26 @@ module.exports.invoiceContent = (params) => {
     buttonName: 'VIEW FULL INVOICE',
     buttonLink: 'google.com',
     extracontent1: `<p style="text-align: center">Thank you for choosing EkBazaar</p>`
+  }
+  return message;
+}
+module.exports.planExpired = (params)=>{
+  let message = {
+    title: 'Plan Expired',
+    image: 'https://ekbazaar.tech-active.com/assets/images/planExpired.png',
+    body: '<p>Your free trial plan has expired on 5th November 2021.</p><p>You can continue using our services by simply completing your subscription.</p>',
+    buttonName: 'SUBSCRIBE',
+    buttonLink:'google.com'
+  }
+  return message;
+}
+module.exports.planExpiring = (params)=>{
+  let message = {
+    title: 'Plan Expiring',
+    image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
+    body: '<p>Thank you for joining Ekbazaar. We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is coming to a close and will officially end on 4th November 2021.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>',
+    buttonName: 'PRICING PLANS',
+    buttonLink: 'google.com'
   }
   return message;
 }

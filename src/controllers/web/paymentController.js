@@ -322,19 +322,19 @@ module.exports.captureRazorPayPayment = async (req, res) => {
 
                     }
 
-                    // const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
-                    // const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
-                    // if (checkMobile) {
-                    //     const msgData = {
-                    //        plan:_p_details.planType,
-                    //        currency : currency,
-                    //        amount : totalAmount,
-                    //        url: invoicePath,
-                    //        name: order_details.invoiceNo.toString() + '-invoice.pdf',
-                    //        till: _p_details.exprireDate
-                    //     }
-                    //     await sendSMS(seller.mobile[0].mobile, planSubscription(msgData))
-                    // }
+                    const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
+                    const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
+                    if (checkMobile) {
+                        const msgData = {
+                           plan:_p_details.planType,
+                           currency : currency,
+                           amount : totalAmount,
+                           url: invoicePath,
+                           name: order_details.invoiceNo.toString() + '-invoice.pdf',
+                           till: _p_details.exprireDate
+                        }
+                        await sendSMS(seller.mobile[0].mobile, planSubscription(msgData))
+                    }
 
                     if (seller && seller.email) {
                         let invoiceEmailMsg = invoiceContent({
@@ -348,10 +348,10 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             to: seller.email,
                             subject: 'Ekbazaar Subscription activated successfully',
                             html: commonTemplate(invoiceEmailMsg),
-                            // attachments: [{   // stream as an attachment
-                            //     filename: 'invoice.pdf',
-                            //     path: invoicePath
-                            // }]
+                            attachments: [{   // stream as an attachment
+                                filename: 'invoice.pdf',
+                                path: invoicePath
+                            }]
                         }
                         await sendSingleMail(message)
                         await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
