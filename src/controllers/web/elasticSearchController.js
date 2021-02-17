@@ -163,19 +163,18 @@ module.exports.searchSuggestion = async (req, res) => {
     const reqQuery = camelcaseKeys(req.query)
     console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
 
-    const { skip, limit, search, product, group } = reqQuery
-    if (search !== 'undefined' && search) {
+    const { skip, limit, search, product, group, sellerId, productId } = reqQuery
+    console.log("🚀 ~ file: elasticSearchController.js ~ line 167 ~ module.exports.searchSuggestion= ~ sellerId", productId)
+
+    if(productId && productId !== '' && productId !== 'undefined') {
       const query = {
-        "match_phrase_prefix": {
-          "name": search.toLowerCase()
+        "bool": {
+          "must": {
+            "match": {
+              "id": productId
+            }
+          }
         }
-        // "wildcard": {
-        //   "name": {
-        //     "value": search + "*",
-        //     "boost": 1.0,
-        //     "rewrite": "constant_score"
-        //   }
-        // }
       }
       const aggs = {
         "aggs": {
@@ -189,16 +188,9 @@ module.exports.searchSuggestion = async (req, res) => {
       let suggestions = await getSuggestions(query, { skip, limit }, product, aggs)
       // console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length - 1])
       return respSuccess(res, suggestions[0], suggestions[1]["products"])
-    } else {
-      const query = {
-        // "query": {
-        "bool": {
-          "must": {
-            "match_all": {}
-          }
-        }
-        // }
-      }
+    } else if (sellerId && sellerId !== '' && sellerId !== 'undefined') {
+      const result = await sellerSearch({ elastic: true, id: sellerId });
+      const { query, catId } = result;
       const aggs = {
         "aggs": {
           "products": {
@@ -208,11 +200,96 @@ module.exports.searchSuggestion = async (req, res) => {
           }
         }
       }
-      let suggestions = await getSuggestions(query, { skip, limit }, null, aggs)
-      // console.log("module.exports.searchSuggestion -> suggestions", suggestions)
+      const sellers = await searchFromElastic(query, { skip: 0, limit: 1000 }, aggs);
+      let _sellers = sellers && sellers.length && sellers[0].length && sellers[0].map(elem => ({ _id: elem._id, ...elem._source }))
+      const suggestions = []
+      _sellers.forEach(elem => {
+        if (elem.productSubcategoryId && elem.productSubcategoryId.length) {
+          suggestions.push(...elem.productSubcategoryId.map(item => ({ _source: { ...item, search: "level5" } })))
+        } else if (elem.poductId && elem.poductId.length) {
+          suggestions.push(...elem.poductId.map(item => ({
+            _source: { ...item, search: "level4" },
+            _index: 'trade-live.mastercollections',
+            _type: '_doc',
+            _id: item.id,
+          })))
+        } else if (elem.secondaryCategoryId && elem.secondaryCategoryId.length) {
+          suggestions.push(...elem.secondaryCategoryId.map(item => ({
+            _source: { ...item, search: "level3" },
+            _index: 'trade-live.mastercollections',
+            _type: '_doc',
+            _id: item.id,
+          })))
+        } else if (elem.primaryCategoryId && elem.primaryCategoryId.length) {
+          suggestions.push(...elem.primaryCategoryId.map(item => ({
+            _source: { ...item, search: "level2" },
+            _index: 'trade-live.mastercollections',
+            _type: '_doc',
+            _id: item.id,
+          })))
+        } else if (elem.parentCategoryId && elem.parentCategoryId.length) {
+          suggestions.push(...elem.parentCategoryId.map(item => ({
+            _source: { ...item, search: "level1" },
+            _index: 'trade-live.mastercollections',
+            _type: '_doc',
+            _id: item.id,
+          })))
+        }
+      })
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
+      return respSuccess(res, suggestions, sellers[1]["products"])
+    } else {
+      if (search !== 'undefined' && search) {
+        const query = {
+          "match_phrase_prefix": {
+            "name": search.toLowerCase()
+          }
+          // "wildcard": {
+          //   "name": {
+          //     "value": search + "*",
+          //     "boost": 1.0,
+          //     "rewrite": "constant_score"
+          //   }
+          // }
+        }
+        const aggs = {
+          "aggs": {
+            "products": {
+              "cardinality": {
+                "field": "name.keyword"
+              }
+            }
+          }
+        }
+        let suggestions = await getSuggestions(query, { skip, limit }, product, aggs)
+        // console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length - 1])
+        return respSuccess(res, suggestions[0], suggestions[1]["products"])
+      } else {
+        const query = {
+          // "query": {
+          "bool": {
+            "must": {
+              "match_all": {}
+            }
+          }
+          // }
+        }
+        const aggs = {
+          "aggs": {
+            "products": {
+              "cardinality": {
+                "field": "name.keyword"
+              }
+            }
+          }
+        }
+        let suggestions = await getSuggestions(query, { skip, limit }, null, aggs)
+        // console.log("module.exports.searchSuggestion -> suggestions", suggestions)
 
-      return respSuccess(res, suggestions[0], suggestions[1]["products"])
+        return respSuccess(res, suggestions[0], suggestions[1]["products"])
+      }
     }
+
 
   } catch (error) {
     respError(res, error.message)

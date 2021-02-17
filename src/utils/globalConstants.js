@@ -48,6 +48,8 @@ exports.sms = {
   password: 'Admin@14604',
   senderID: 'EKBZAR'
 }
+const {NODE_ENV} = process.env
+exports.siteUrl =  NODE_ENV === "production" ? "https://www.trade.ebazaar.com" : "http://tradebazaar.tech-active.com"
 
 exports.accessModules = Object.values(this.moduleTypes);
 
