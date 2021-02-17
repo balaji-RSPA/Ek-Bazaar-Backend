@@ -33,6 +33,7 @@ const { getAllSellerTypes } = category
 const { updateSellerProducts } = sellerProducts
 const { updateMasterBulkProducts } = mastercollections
 const { getInvoiceNumber, updateInvoiceNumber, addInvoiceNumber } = InvoiceNumber
+const isProd = process.env.NODE_ENV === 'production';
 
 const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, reject) => {
 
@@ -322,14 +323,14 @@ module.exports.captureRazorPayPayment = async (req, res) => {
 
                     }
 
-                    const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
+                    // const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
                     const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
-                    if (checkMobile) {
+                    if (checkMobile && isProd) {
                         const msgData = {
                            plan:_p_details.planType,
                            currency : currency,
                            amount : totalAmount,
-                           url: invoicePath,
+                           url: invoice.Location,
                            name: order_details.invoiceNo.toString() + '-invoice.pdf',
                            till: _p_details.exprireDate
                         }
@@ -340,7 +341,8 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         let invoiceEmailMsg = invoiceContent({
                             plan: _p_details.planType,
                             till: _p_details.exprireDate,
-                            price: totalAmount
+                            price: totalAmount,
+                            invoiceLink: invoice.Location
                         });
                         // `<p>Your Subscription plan activated successfully!</p><p>Service type: ${currentGroup === 1 ? "Manufacturers/Traders" : currentGroup === 2 ? "Farmer" : " Service"}</p><p>Plan Type: ${planDetails.type}</p><p>Price/Month : ${pricePerMonth}</p><p>Price : ${price}</p><p>GST(18%) : ${gstAmount}</p><p>Total : ${totalAmount}</p>`
                         const message = {
@@ -350,7 +352,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             html: commonTemplate(invoiceEmailMsg),
                             attachments: [{   // stream as an attachment
                                 filename: 'invoice.pdf',
-                                path: invoicePath
+                                path: invoice.Location
                             }]
                         }
                         await sendSingleMail(message)
