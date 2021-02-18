@@ -14,11 +14,11 @@ const {
     respSuccess,
     respError
 } = require('../../utils/respHadler');
-const { uploadToDOSpace,sendSMS } = require('../../utils/utils')
+const { uploadToDOSpace, sendSMS } = require('../../utils/utils')
 const { addOrdersPlans } = require('../../modules/ordersModule');
 const { planSubscription } = require('../../utils/templates/smsTemplate/smsTemplate')
 const { invoiceContent } = require('../../utils/templates/emailTemplate/emailTemplateContent');
-const { commonTemplate }  = require('../../utils/templates/emailTemplate/emailTemplate')
+const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate')
 
 const {
     getSubscriptionPlanDetail,
@@ -34,7 +34,7 @@ const { updateSellerProducts } = sellerProducts
 const { updateMasterBulkProducts } = mastercollections
 const { getInvoiceNumber, updateInvoiceNumber, addInvoiceNumber } = InvoiceNumber
 
-const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, reject) => {
+const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, reject) => {
 
 
     try {
@@ -54,8 +54,8 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             // months: '3',
             features: plan && plan.features,
             gstAmount: orderDetails && orderDetails.gstAmount,
-            amount: orderDetails && orderDetails.total,
-            total: orderDetails && orderDetails.total,
+            amount: plan && plan.totalPlanPrice,
+            orderTotal: orderDetails && orderDetails.total,
             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
             expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
@@ -83,8 +83,8 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
         }
 
         const details = {
-            orderData: { ...orderData },
-            sellerDetails: { ...sellerDetails }
+            orderData: {...orderData },
+            sellerDetails: {...sellerDetails }
         }
         const invoiceFileName = orderDetails && orderDetails.invoiceNo.toString() + '-invoice.pdf'
         const document = {
@@ -95,7 +95,7 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             path: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName)
         };
         pdf.create(document, options)
-            .then(async (res) => {
+            .then(async(res) => {
                 console.log(res)
                 const output = `invoice-${orderDetails && orderDetails.invoiceNo}.pdf`
                 const invoice = fs.readFileSync(res.filename);
@@ -104,7 +104,7 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
                     body: invoice
                 }
                 const multidoc = await uploadToDOSpace(data)
-                resolve({ ...multidoc, attachement: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName) })
+                resolve({...multidoc, attachement: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName) })
 
             })
             .catch(error => {
@@ -120,17 +120,17 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
 })
 
 
-module.exports.createRazorPayOrder = async (req, res) => {
+module.exports.createRazorPayOrder = async(req, res) => {
 
     try {
 
         var instance = new Razorpay({
             key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
-            key_secret: razorPayCredentials.key_secret,//'V8BiRAAeeqxBVheb0xWIBL8E',
+            key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
         });
         const { planId } = req.body
         const planDetails = await getSubscriptionPlanDetail({ _id: planId })
-        // console.log(planDetails, 'test')
+            // console.log(planDetails, 'test')
         if (planDetails) {
             const gstValue = 18
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
@@ -140,9 +140,9 @@ module.exports.createRazorPayOrder = async (req, res) => {
             const totalAmount = parseInt(price) + gstAmount
 
             const result = await instance.orders.create({ amount: (totalAmount * 100).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
-            // console.log(result, 'create Order')
+                // console.log(result, 'create Order')
 
-            respSuccess(res, { ...result, key_id: razorPayCredentials.key_id })
+            respSuccess(res, {...result, key_id: razorPayCredentials.key_id })
         }
 
 
@@ -154,7 +154,7 @@ module.exports.createRazorPayOrder = async (req, res) => {
 
 }
 
-module.exports.captureRazorPayPayment = async (req, res) => {
+module.exports.captureRazorPayPayment = async(req, res) => {
 
     try {
         const { sellerId, subscriptionId, orderDetails, userId, paymentResponse } = req.body
@@ -187,7 +187,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     amount: (totalAmount * 100),
                     currency: 'INR'
                 }
-            }, async function (error, response, body) {
+            }, async function(error, response, body) {
 
                 console.log('Status:', response.statusCode);
                 // console.log('Headers:', JSON.stringify(response.headers));
@@ -213,7 +213,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     const paymentJson = {
                         ...userData,
                         paymentResponse: paymentResponse,
-                        paymentDetails: null/* JSON.parse(body) */,
+                        paymentDetails: null /* JSON.parse(body) */ ,
                         paymentSuccess: true
                     }
                     const _p_details = {
@@ -262,7 +262,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         // paymentStatus: '',
                         ipAddress: orderDetails && orderDetails.ipAddress || null,
                         currency: currency
-                        // isEmailSent: ''
+                            // isEmailSent: ''
                     }
                     const OrdersData = await addOrders(order_details)
 
@@ -302,15 +302,15 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         ...userData,
                         sellerPlanId: sellerPlanDetails._id,
                         subscriptionId: planDetails._id,
-                        sellerDetails: { ...sellerDetails },
+                        sellerDetails: {...sellerDetails },
                         planDetails: {
                             ..._p_details,
                             exprireDate: new Date(_p_details.exprireDate)
                         }
                     }
                     const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
-                    // Generate invoice
-                    const invoice = await createPdf(seller, _p_details, order_details)
+                        // Generate invoice
+                    const invoice = await createPdf(seller, {..._p_details, totalPlanPrice: price, pricePerMonth }, order_details)
                     console.log(invoice, ' Invoice file path')
 
                     await addSellerPlanLog(planLog)
@@ -318,7 +318,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         updateSellerProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
                         updateMasterBulkProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
                         console.log('--- Old Service Type Product Status changed-------')
-                        // update product deleta status true
+                            // update product deleta status true
 
                     }
 
@@ -326,12 +326,12 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
                     if (checkMobile) {
                         const msgData = {
-                           plan:_p_details.planType,
-                           currency : currency,
-                           amount : totalAmount,
-                           url: invoicePath,
-                           name: order_details.invoiceNo.toString() + '-invoice.pdf',
-                           till: _p_details.exprireDate
+                            plan: _p_details.planType,
+                            currency: currency,
+                            amount: totalAmount,
+                            url: invoicePath,
+                            name: order_details.invoiceNo.toString() + '-invoice.pdf',
+                            till: _p_details.exprireDate
                         }
                         await sendSMS(seller.mobile[0].mobile, planSubscription(msgData))
                     }
@@ -348,14 +348,14 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             to: seller.email,
                             subject: 'Ekbazaar Subscription activated successfully',
                             html: commonTemplate(invoiceEmailMsg),
-                            attachments: [{   // stream as an attachment
+                            attachments: [{ // stream as an attachment
                                 filename: 'invoice.pdf',
                                 path: invoicePath
                             }]
                         }
                         await sendSingleMail(message)
                         await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
-                        // fs.unlinkSync(invoicePath)
+                            // fs.unlinkSync(invoicePath)
                     }
                     console.log('------------------ Payment done ---------')
                     return respSuccess(res, { payment: true }, 'subscription activated successfully!')
