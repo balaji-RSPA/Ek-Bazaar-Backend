@@ -1,16 +1,11 @@
 const mongoose = require('mongoose');
-<<<<<<< HEAD
 const pdf = require("pdf-creator-node");
 const fs = require('fs');
-=======
 const path = require("path")
->>>>>>> staging
 const Razorpay = require('razorpay')
 const axios = require("axios")
 const request = require('request');
-const pdf = require("pdf-creator-node");
 const moment = require('moment')
-const fs = require('fs');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
@@ -51,7 +46,9 @@ const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, rej
             city: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.city.name) || '',
             state: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.state.name) || '',
             country: seller && seller.location && seller.location.country && capitalizeFirstLetter(seller.location.country.name) || '',
-            gstNo: orderDetails && orderDetails.gstNo || ''
+            gstNo: orderDetails && orderDetails.gstNo || '',
+            address: orderDetails && orderDetails.address || '',
+            pincode: orderDetails && orderDetails.pincode || '',
         }
 
         const orderData = {
@@ -125,71 +122,6 @@ const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, rej
 
 })
 
-<<<<<<< HEAD
-module.exports.generateinvoice = async(req, res) => {
-
-    try {
-        console.log('test')
-        const html = fs.readFileSync('./invoice.html', 'utf8');
-        console.log("module.exports.generateinvoice -> html", html)
-        const options = {
-            format: "A3",
-            orientation: "portrait",
-            border: "10mm",
-            header: {
-                height: "45mm",
-                contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
-            },
-            "footer": {
-                "height": "28mm",
-                "contents": {
-                    first: 'Cover page',
-                    2: 'Second page', // Any page number is working. 1-based index
-                    default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
-                    last: 'Last Page'
-                }
-            }
-        }
-
-        var users = [{
-                name: "Shyam",
-                age: "26"
-            },
-            {
-                name: "Navjot",
-                age: "26"
-            },
-            {
-                name: "Vitthal",
-                age: "26"
-            }
-        ]
-        var document = {
-            html: html,
-            data: {
-                users: users
-            },
-            path: "./output.pdf"
-        };
-
-        pdf.create(document, options)
-            .then(res => {
-                console.log(res)
-            })
-            .catch(error => {
-                console.error(error)
-            });
-
-    } catch (error) {
-
-        console.log(error)
-        respError(error)
-    }
-
-}
-
-=======
->>>>>>> staging
 
 module.exports.createRazorPayOrder = async(req, res) => {
 
@@ -234,10 +166,6 @@ module.exports.captureRazorPayPayment = async(req, res) => {
         const currency = 'INR'
         let deleteProduct = false
         console.log(req.body, ' order details--------')
-<<<<<<< HEAD
-            // console.log(req.params, ' pppppppppppppppppp')
-=======
->>>>>>> staging
         let seller = await getSellerProfile(sellerId)
         const planDetails = await getSubscriptionPlanDetail({ _id: subscriptionId })
         if (planDetails && seller && seller.length) {
@@ -267,7 +195,6 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                 console.log('Status:', response.statusCode);
                 // console.log('Headers:', JSON.stringify(response.headers));
                 console.log('Response:', body);
-                // respSuccess(res, body)
                 const userData = {
                     userId: seller.userId,
                     sellerId: seller._id,
@@ -288,7 +215,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                     const paymentJson = {
                         ...userData,
                         paymentResponse: paymentResponse,
-                        paymentDetails: null /* JSON.parse(body) */ ,
+                        paymentDetails: JSON.parse(body),
                         paymentSuccess: true
                     }
                     const _p_details = {
@@ -322,6 +249,8 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         invoiceNo: _invoice,
                         invoicePath: '',
                         gstNo: orderDetails && orderDetails.gst || null,
+                        address: orderDetails && orderDetails.address || null,
+                        pincode: orderDetails && orderDetails.pincode || null,
                         sellerDetails: {
                             ...sellerDetails
                         },
@@ -404,7 +333,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                             plan: _p_details.planType,
                             currency: currency,
                             amount: totalAmount,
-                            url: invoice.Location,
+                            url: invoice && invoice.Location || null,
                             name: order_details.invoiceNo.toString() + '-invoice.pdf',
                             till: _p_details.exprireDate
                         }
@@ -429,6 +358,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                                 path: invoice.Location
                             }]
                         }
+                        console.log(seller.email, 'emai-----------------')
                         await sendSingleMail(message)
                         await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
                             // fs.unlinkSync(invoicePath)
