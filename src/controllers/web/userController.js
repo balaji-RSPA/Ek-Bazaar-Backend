@@ -444,20 +444,23 @@ module.exports.updateUser = async (req, res) => {
 
     if (user && buyer && seller) {
       // console.log(user, "-----11", buyer, "----------22", seller) userType
+      const url = req.get('origin');
       if (buyer.isEmailSent === false && buyer.email) {
         const { successfulMessage } = successfulRegistration({userType});
         seller.isEmailSent = true;
         buyer.isEmailSent = true;
         // otp
-        let emailMessage = emailSuccessfulRegistration({name : user.name})
+        let emailMessage = emailSuccessfulRegistration({name : user.name,url:url})
         const message = {
           from: MailgunKeys.senderMail,
           to: user.email,
           subject: 'Successful Registration',
           html: commonTemplate(emailMessage)
         }
-        await sendSMS(mobile, successfulMessage);
         await sendSingleMail(message)
+        if (isProd){
+          await sendSMS(mobile, successfulMessage);
+        }
         await updateBuyer({ _id: buyer._id }, buyer);
         await updateSeller({ _id: seller._id }, seller);
       }
@@ -468,7 +471,6 @@ module.exports.updateUser = async (req, res) => {
         token = token || req.token
         // req.body.userHash = encrypt(user.email)
         const alteredToken = token.split('.').join('!')
-        const url = req.get('origin');
         // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
         const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
         const template = await activateAccount(link)
@@ -525,7 +527,7 @@ exports.verifiedEmail = async (req, res) => {
     }
     const url = req.get('origin');
     // const template = await emailVerified("https://tradebazaar.tech-active.com")
-    const template = await emailVerified(url)
+    const template = await emailVerified({link : url,name:user[0].name})
     const message = {
       from: MailgunKeys.senderMail,
       to: userEmail,
@@ -555,6 +557,7 @@ module.exports.forgetPassword = async (req, res) => {
 
 module.exports.updateNewPassword = async (req, res) => {
   try {
+    const url = req.get('origin');
     let { password, currentPassword } = req.body;
     let checkPassword = password;
     password = encodePassword(password);
@@ -573,7 +576,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({name:user.name})
+      const updatePasswordMsg = passwordUpdate({name:user.name,url:url})
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,

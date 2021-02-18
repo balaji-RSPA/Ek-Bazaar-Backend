@@ -11,7 +11,7 @@ exports.ADMIN_JWT_ADMIN_SECRET = "tech-ekbazaar-admin";
 
 // mailgun test credential
 exports.MailgunKeys = {
-  senderMail: "chandra@active.agency",
+  senderMail: "admin@communications.ekbazaar.com",
   replyMail: "no-reply@communications.ekbazaar.com",
   mailgunAPIKey: "key-c956636404963d0492622caa1cdc6082",
   mailgunDomain: "communications.ekbazaar.com",
@@ -48,6 +48,8 @@ exports.sms = {
   password: 'Admin@14604',
   senderID: 'EKBZAR'
 }
+const {NODE_ENV} = process.env
+exports.siteUrl =  NODE_ENV === "production" ? "https://www.trade.ebazaar.com" : "http://tradebazaar.tech-active.com"
 
 exports.accessModules = Object.values(this.moduleTypes);
 

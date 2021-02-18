@@ -8,9 +8,11 @@ const { getSellerProducts, updateSellerProducts } = sellerProducts
 const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue
 const { getRFPData, updateRFP } = buyers
 const { bulkInserQemails, getQueEmail, updateQueEmails } = QueEmails
-const { getExpirePlans, updateSellerPlans } = SellerPlans
+const { getExpirePlans, updateSellerPlans,getAboutToexpirePlan } = SellerPlans
 const { sendSMS, sendBulkSMS } = require('../utils/utils')
 const { planExpiry } = require('../utils/templates/smsTemplate/smsTemplate');
+const { commonTemplate } = require('../utils/templates/emailTemplate/emailTemplate');
+const { planExpired,planExpiring } = require('../utils/templates/emailTemplate/emailTemplateContent');
 const {
     MailgunKeys
 } = require("../utils/globalConstants");
@@ -21,24 +23,49 @@ const { sendSingleMail } = require('../utils/mailgunService')
 exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) => {
 
     try {
-
+        let url = '';
+        if (process.env.NODE_ENV === "production"){
+          url = `https://ekbazaar.tech-active.com`
+        }else if(process.env.NODE_ENV === 'development'){
+         url = `http://localhost:8085`
+        }else if(process.env.NODE_ENV === 'staging'){
+          url = `http://ekbazaar.tech-active.com`
+        }
         const result = await getQueEmail({ isSent: false }, 0, 20)
         const updateIds = []
         if (result && result.length) {
 
             for (let index = 0; index < result.length; index++) {
                 const element = result[index];
+                let message
                 updateIds.push(element._id)
-                const message = {
-                    subject: element.subject,
-                    html: element.body,
-                    from: element.fromEmail,
-                    to: element.toEmail
+                if (element.messageType === 'plan_expiry' || element.messageType === 'plan expiry'){
+                   let expiryMessage = planExpired({date : element.createdAt,url:url});
+                    message = {
+                        subject: element.subject,
+                        html: commonTemplate(expiryMessage),
+                        from: element.fromEmail,
+                        to: element.toEmail
+                    }
+                } else if (element.messageType === 'plan_abt_expire') {
+                    let expiringMessage = planExpiring({date : element.createdAt,url:url});
+                    message = {
+                        subject: element.subject,
+                        html: commonTemplate(expiringMessage),
+                        from: element.fromEmail,
+                        to: element.toEmail
+                    }
+                }else{
+                    message = {
+                        subject: element.subject,
+                        html: element.body,
+                        from: element.fromEmail,
+                        to: element.toEmail
+                    }
                 }
                 if (element.toEmail && element.fromEmail)
-                    await sendSingleMail(message)
-
-            }
+                  await sendSingleMail(message)
+                }
             if (updateIds && updateIds.length)
                 await updateQueEmails({ _id: { $in: updateIds } }, { isSent: true })
             console.log(updateIds, ' ------------------ Que Emails sent ----------- ')
@@ -63,28 +90,28 @@ exports.getExpirePlansCron = async (req, res) =>
             // const end = moment(start).endOf("day");
             const sellerPlanIds = []
             const emailData = []
-            const smsData = []
+            // const smsData = []
             const result = await getExpirePlans();
             if (result.length > 0) {
                 for (let index = 0; index < result.length; index++) {
                     const element = result[index];
                     sellerPlanIds.push(element._id)
-                    if (element && element.sellerId && element.sellerId.mobile && element.sellerId.mobile.length && element.sellerId.mobile[0]) {
-                        const data2 = {
-                           sellerId: element._id,
-                           requestId: element._id,
-                            mobile:{
-                                mobile:element.sellerId.mobile[0].mobile, 
-                                countryCode:element.sellerId.mobile[0].countryCode 
-                            },
-                            message: planExpiry(element.exprireDate),
-                            messageType: "plan expiry",
-                        }
-                        smsData.push(data2);
-                    }
-                    if (element.email || element.email !== null) {
+                    // if (element && element.sellerId && element.sellerId.mobile && element.sellerId.mobile.length && element.sellerId.mobile[0]) {
+                    //     const data2 = {
+                    //        sellerId: element._id,
+                    //        requestId: element._id,
+                    //         mobile:{
+                    //             mobile:element.sellerId.mobile[0].mobile, 
+                    //             countryCode:element.sellerId.mobile[0].countryCode 
+                    //         },
+                    //         message: planExpiry(element.exprireDate),
+                    //         messageType: "plan_expiry",
+                    //     }
+                    //     smsData.push(data2);
+                    // }
+                    if (element && element.sellerId && element.sellerId.email) {
                         const data = {
-                            type: "plan expiry",
+                            messageType: "plan_expiry",
                             sellerId: element._id,
                             userId: element.sellerId.userId,
                             fromEmail: MailgunKeys.senderMail,
@@ -98,7 +125,7 @@ exports.getExpirePlansCron = async (req, res) =>
                         console.log(sellerPlanIds, ' ids')
                     }
                 }
-                await queSMSBulkInsert(smsData)
+                // await queSMSBulkInsert(smsData)
                 await bulkInserQemails(emailData)
                 await updateSellerPlans({ _id: { $in: sellerPlanIds } }, { expireStatus: true })
 
@@ -291,6 +318,53 @@ exports.updateSelleProfileChangesToProducts = async (req, res) => new Promise(as
     }
 
 })
+
+exports.getAboutToExpirePlan = async (req,res) =>{
+
+    try{
+        const emailData = []
+        const smsData = []
+        const result = await getAboutToexpirePlan();
+        console.log(result,"========================")
+        for (let index = 0; index < result.length; index++) {
+            const element = result[index];
+            if (element && element.sellerId && element.sellerId.mobile && element.sellerId.mobile.length && element.sellerId.mobile[0]) {
+                const data2 = {
+                    sellerId: element._id,
+                    requestId: element._id,
+                    mobile: {
+                        mobile: element.sellerId.mobile[0].mobile,
+                        countryCode: element.sellerId.mobile[0].countryCode
+                    },
+                    message: planExpiry(element.exprireDate),
+                    messageType: "plan_abt_expire",
+                }
+                smsData.push(data2);
+            }
+            if (element && element.sellerId && element.sellerId.email) {
+                const data = {
+                    messageType: "plan_abt_expire",
+                    sellerId: element._id,
+                    userId: element.sellerId.userId,
+                    fromEmail: MailgunKeys.senderMail,
+                    toEmail: element.sellerId.email,
+                    name: element.sellerId.name,
+                    subject: "Plan About To Expire",
+                    // body: `Hi ${element.sellerId.name}<br/>We hope you have been enjoyed your plan.<br/>your plan is about to expire<br/>-- The Ekbazaar Team`,
+                };
+                emailData.push(data)
+            }
+        }
+        if (emailData.length){
+            await bulkInserQemails(emailData)
+        }
+        if (smsData.length){
+            await queSMSBulkInsert(smsData)
+        }   
+    }catch(error){
+     console.log("About to expire plan error:",error)
+    }
+}
 
 exports.updateKeywords = async (req, res) => new Promise(async (resolve, reject) => {
 

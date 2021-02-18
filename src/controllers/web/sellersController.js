@@ -583,6 +583,7 @@ module.exports.updateSellerProduct = async (req, res) => {
     let updateDetail
     if (body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
+      console.log("🚀 ~ file: sellersController.js ~ line 586 ~ module.exports.updateSellerProduct= ~ productDetails", files)
       let findCities = await getSellerSelectedCities(productDetails.serviceCity);
       if (findCities && findCities.length) {
         productDetails.serviceCity = findCities.map((val) => ({
@@ -600,9 +601,12 @@ module.exports.updateSellerProduct = async (req, res) => {
           body: files.document.data
         }
         const _document = await uploadToDOSpace(data)
+        let size = (files.document.size/1000).toFixed(1)
+        size = `${size} ${size < 1024 ? 'KB' : 'MB'}`;
         productDetails.productDetails.document = {
           name: files.document.name,
-          code: _document.Location
+          code: _document.Location,
+          size
         }
 
       }

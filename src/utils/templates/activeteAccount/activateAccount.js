@@ -220,7 +220,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                         <tbody>
                         <tr>
                             <td style="padding: 40px 40px 20px 40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:20px; font-weight:600; letter-spacing:0.07em; line-height:2em;">
-                                Activate your Account
+                                Email Verification
                             </td>
                         </tr>
                         <tr>
@@ -237,8 +237,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                                     <tbody>
                                     <tr>
                                         <td style="padding:40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:13.5px; font-weight:300; letter-spacing:0.07em; line-height:2em;">
-                                            Thank you for registering with us. In order to activate your account please
-                                            click the button below.
+                                            Please verify your email address by clicking on the button below and get notified on your account and interests.
                                             <br><br>
                                             <!-- Button : BEGIN -->
                                             <table role="presentation" aria-hidden="true" cellspacing="0"
@@ -251,7 +250,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                                                         <a href=${link}
                                                            style="background: #3225A7; border: 15px solid #3225A7; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;"
                                                            class="button-a">
-                                                            <span style="color:#ffffff;" class="button-link">&nbsp;&nbsp;&nbsp;&nbsp;ACTIVATE ACCOUNT&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                            <span style="color:#ffffff;" class="button-link">&nbsp;&nbsp;&nbsp;&nbsp;VERIFY EMAIL&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                                         </a>
                                                     </td>
                                                 </tr>

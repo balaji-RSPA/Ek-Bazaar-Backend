@@ -78,3 +78,21 @@ exports.getExpirePlans = () => new Promise((resolve, reject) => {
 
 })
 
+module.exports.getAboutToexpirePlan = () =>
+    new Promise((resolve, reject) => {
+        SellerPlans.find({
+            $and: [{
+                expireStatus: false,
+                exprireDate: {
+                     $gte: new Date(moment().subtract(2, 'day').endOf('day').format('YYYY-MM-DD')),
+                     $lte: new Date(moment().subtract(1, 'day').startOf('day').format('YYYY-MM-DD'))
+                }
+            }]
+        })
+        .populate('sellerId')
+        .then((doc) => {
+            resolve(doc)
+        })
+    .catch((error) => reject(error))
+    })
+

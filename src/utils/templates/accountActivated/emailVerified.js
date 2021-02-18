@@ -8,8 +8,8 @@ const {
     linkedIn
 } = imageURLS;
 
-exports.emailVerified = (link) => new Promise((resolve, reject) => {
-    if (link) {
+exports.emailVerified = (params) => new Promise((resolve, reject) => {
+    if (params.link) {
         const html = `<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -220,7 +220,7 @@ exports.emailVerified = (link) => new Promise((resolve, reject) => {
                             <tbody>
                             <tr>
                                 <td style="padding: 40px 40px 20px 40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:20px; font-weight:600; letter-spacing:0.07em; line-height:2em;">
-                                    Account Activated
+                                    Email Verified
                                 </td>
                             </tr>
                             <tr>
@@ -234,8 +234,8 @@ exports.emailVerified = (link) => new Promise((resolve, reject) => {
                             </tr>
                             <tr>
                                 <td style="padding: 15px 20px 40px 20px; text-align: center;  font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:13.5px; font-weight:300; letter-spacing:0.07em; line-height:2em;">
-                                    Thank you, your email has been verified. Your account is now active.<br>Please use the link
-                                    below to login to your account.
+                                    <p><strong>Hello ${params.name},</strong></p>
+                                     Thank you for verifying your email address.You will now receive email notifications on your account information and interests.
                                     <br><br>
                                     <!-- Button : BEGIN -->
                                     <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"
@@ -244,10 +244,10 @@ exports.emailVerified = (link) => new Promise((resolve, reject) => {
                                         <tr>
                                             <td style="border-radius: 3px; background: #222222; text-align: center;"
                                                 class="button-td">
-                                                <a href=${link}
+                                                <a href=${params.link}
                                                    style="background: #3225A7; border: 15px solid #3225A7; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;"
                                                    class="button-a">
-                                                    <span style="color:#ffffff;" class="button-link">LOGIN TO YOUR ACCOUNT</span>
+                                                    <span style="color:#ffffff;" class="button-link">GO TO EKBAZAAR</span>
                                                 </a>
                                             </td>
                                         </tr>
