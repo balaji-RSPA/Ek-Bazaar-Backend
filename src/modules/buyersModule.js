@@ -149,7 +149,8 @@ exports.getUserFromUserHash = (hashcode) => new Promise((resolve, reject) => {
   }, {
     _id: 0,
     userHash: 1,
-    mobile: 1
+    mobile: 1,
+    name:1
   })
     .then(doc => {
       resolve(doc)

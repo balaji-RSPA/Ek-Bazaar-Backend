@@ -38,7 +38,11 @@
     "node-machine-id": "^1.1.12",
     "nodemailer": "^6.4.17",
     "nodemailer-mailgun-transport": "^2.0.2",
+<<<<<<< HEAD
     "nodemon": "^2.0.7",
+=======
+    "nodemon": "^2.0.6",
+>>>>>>> staging
     "pdf-creator-node": "^1.4.2",
     "razorpay": "^2.0.6",
     "winston": "^3.3.3"

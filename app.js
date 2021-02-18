@@ -13,10 +13,15 @@ const config = require('./config/config')
 const { tradeDb } = config
 
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
-const { captureRazorPayPayment } = require('./src/controllers/web/paymentController')
+const { captureRazorPayPayment, createPdf } = require('./src/controllers/web/paymentController')
 const { deleteRecords } = require('./src/controllers/web/userController')
+<<<<<<< HEAD
 const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails } = require('./src/crons/cron')
 const { generateinvoice } = require('./src/controllers/web/paymentController')
+=======
+const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails,getAboutToExpirePlan } = require('./src/crons/cron')
+
+>>>>>>> staging
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
     // require('./config/db').elasticSearchConnect();
@@ -85,6 +90,14 @@ app.get('/generateinvoice', async function(req, res) {
 // app.get('/sendQueEmails', async function (req, res) {
 //   try {
 //     const result = await sendQueEmails()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+// app.get('/abouttoexpireplan', async function (req, res) {
+//   try {
+//     const result = await getAboutToExpirePlan()
 //   } catch (error) {
 
 //   }
@@ -166,6 +179,7 @@ async function indexing() {
 //   // res.send('Its delete records  live')
 // })
 
+<<<<<<< HEAD
 app.get('/updateSelleProfileChangesToProducts', async function(req, res) {
     // console.log('Home page')
     try {
@@ -175,6 +189,17 @@ app.get('/updateSelleProfileChangesToProducts', async function(req, res) {
     }
     // res.send('Its delete records  live')
 })
+=======
+// app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await updateSelleProfileChangesToProducts()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+>>>>>>> staging
 
 // app.get('/updateKeywords', async function (req, res) {
 //   // console.log('Home page')
@@ -187,11 +212,29 @@ app.get('/updateSelleProfileChangesToProducts', async function(req, res) {
 // })
 
 
+<<<<<<< HEAD
 app.get('/sendQueSms', async function(req, res) {
     // console.log('Home page')
     try {
         const result = await sendQueSms()
     } catch (error) {
+=======
+// app.get('/sendQueSms', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await sendQueSms()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+app.get('/createPdf', async function (req, res) {
+  // console.log('Home page')
+  try {
+    const result = await createPdf()
+  } catch (error) {
+>>>>>>> staging
 
     }
     // res.send('Its delete records  live')
@@ -215,8 +258,22 @@ server.on('listening', () => {
 
 });
 
-if (env.NODE_ENV === "production") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
 
+
+  const queSms = cron.schedule('* * * * *', async () => {
+    queSms.stop()
+    console.log('-------------------- queSms file cron start --------------------', new Date());
+    await sendQueSms()
+    console.log('-------------------- queSms file cron completed --------------------', new Date())
+    queSms.start()
+  })
+  queSms.start()
+}
+
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+
+<<<<<<< HEAD
     const planExpire = cron.schedule('* * * * *', async() => {
         planExpire.stop()
         console.log('-------------------- planExpire file cron start --------------------', new Date());
@@ -224,6 +281,14 @@ if (env.NODE_ENV === "production") {
         console.log('-------------------- planExpire file cron completed --------------------', new Date())
         planExpire.start()
     })
+=======
+  const planExpire = cron.schedule('* * * * *', async () => {
+    planExpire.stop()
+    console.log('-------------------- planExpire file cron start --------------------', new Date());
+    await getExpirePlansCron()
+    await getAboutToExpirePlan()
+    console.log('-------------------- planExpire file cron completed --------------------', new Date())
+>>>>>>> staging
     planExpire.start()
 
     const queEmail = cron.schedule('* * * * *', async() => {
@@ -235,6 +300,7 @@ if (env.NODE_ENV === "production") {
     })
     queEmail.start()
 
+<<<<<<< HEAD
 
     const queSms = cron.schedule('* * * * *', async() => {
         queSms.stop()
@@ -245,3 +311,6 @@ if (env.NODE_ENV === "production") {
     })
     queSms.start()
 }
+=======
+}
+>>>>>>> staging

@@ -9,6 +9,10 @@ const {
 const {
   MailgunKeys
 } = require('../../utils/globalConstants')
+ const {
+   contactus
+ } = require('../../utils/templates/emailTemplate/emailTemplateContent');
+ const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
 /**
  * Insert contact us enquires
  */
@@ -31,11 +35,12 @@ module.exports.addContact = async (req, res) => {
   }else{
     result = response && response.data && response.data.data;
    if (result && result.workEmail) {
+    const contactUsEmailMsg = contactus();
     const message = {
       from: result.workEmail,
       to: MailgunKeys.senderMail,
       subject: 'Contact Us Enquiry',
-      html: `<p>${result.description}</p>`
+      html: commonTemplate(contactUsEmailMsg)
     }
     await sendSingleMail(message)
    } 

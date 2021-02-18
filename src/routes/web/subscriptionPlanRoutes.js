@@ -8,5 +8,6 @@ const subscriptionPlan = require("../../controllers/web/subscriptionPlanControll
 */
 router.get("/subscriptionplan", subscriptionPlan.getAllSubscriptionPlan);
 router.post("/acticateTrialPlan", subscriptionPlan.acticateTrialPlan);
+router.get('/abouttoexpire', subscriptionPlan.getAboutToexpire);
 
 module.exports = router;
