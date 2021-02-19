@@ -16,7 +16,7 @@ const {
 } = require('../../utils/respHadler');
 const { uploadToDOSpace, sendSMS } = require('../../utils/utils')
 const { addOrdersPlans } = require('../../modules/ordersModule');
-const { planSubscription } = require('../../utils/templates/smsTemplate/smsTemplate')
+const { planSubscription, planChanged } = require('../../utils/templates/smsTemplate/smsTemplate')
 const { invoiceContent } = require('../../utils/templates/emailTemplate/emailTemplateContent');
 const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate')
 
@@ -170,10 +170,13 @@ module.exports.captureRazorPayPayment = async(req, res) => {
         const planDetails = await getSubscriptionPlanDetail({ _id: subscriptionId })
         if (planDetails && seller && seller.length) {
             seller = seller[0]
+            const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
             const existingGroup = seller.sellerType[0].group
             const currentGroup = planDetails.groupType
 
-            let sellerPlanDetails = seller && seller.planId ? await getSellerPlan({ _id: seller.planId }) : null
+            let sellerPlanDetails = seller && seller.planId ? await getSellerPlan({ _id: seller.planId }) : null;
+            const planTo = sellerPlanDetails && sellerPlanDetails.exprireDate;
+            const planFrom = sellerPlanDetails && sellerPlanDetails.createdAt;
 
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
             const pricePerMonth = planDetails && planDetails.price
@@ -279,7 +282,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                     const orderItemData = await addOrdersPlans(orderItem)
                     let sellerUpdate = {
                         paidSeller: true,
-                        sellerVerified: true
+                        sellerVerified: true,
                     }
                     console.log(existingGroup, '!==', currentGroup, ' Group equality check------')
                     if (existingGroup !== currentGroup) {
@@ -291,16 +294,15 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         }
                         deleteProduct = true
                     }
-                    const sellerUpdateData = await updateSeller({ _id: seller._id }, sellerUpdate)
                     const patmentUpdate = await updatePayment({ _id: payment._id }, { orderId: OrdersData._id })
 
                     if (sellerPlanDetails) {
-
-                        sellerPlanDetails = await updateSellerPlan({ _id: sellerPlanDetails._id }, planData)
-
+                        sellerPlanDetails = await updateSellerPlan({ _id: sellerPlanDetails._id }, planData);
                     } else {
                         sellerPlanDetails = await createPlan(planData)
+                        sellerUpdate.planId = sellerPlanDetails._id
                     }
+                    const sellerUpdateData = await updateSeller({ _id: seller._id }, sellerUpdate)
 
                     const planLog = {
                         ...userData,
@@ -327,8 +329,19 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                     }
 
                     // const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
-                    const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
-                    if (checkMobile && isProd) {
+                    if (checkMobile && isProd && planTo && planFrom) {
+                        const msgData = {
+                            plan: _p_details.planType,
+                            currency: currency,
+                            amount: totalAmount,
+                            url: invoice.Location,
+                            name: order_details.invoiceNo.toString() + '-invoice.pdf',
+                            till: _p_details.exprireDate,
+                            to: planTo,
+                            from: planFrom
+                        }
+                        await sendSMS(checkMobile, planChanged(msgData))
+                    } else if (checkMobile && isProd) {
                         const msgData = {
                             plan: _p_details.planType,
                             currency: currency,
@@ -337,7 +350,9 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                             name: order_details.invoiceNo.toString() + '-invoice.pdf',
                             till: _p_details.exprireDate
                         }
-                        await sendSMS(seller.mobile[0].mobile, planSubscription(msgData))
+                        await sendSMS(checkMobile, planSubscription(msgData))
+                    } else {
+                        console.log("================sms not send===========")
                     }
 
                     if (seller && seller.email) {
