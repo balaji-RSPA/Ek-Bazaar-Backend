@@ -136,7 +136,7 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile, reset } = req.body;
-    const otp = Math.floor(1000 + Math.random() * 9000);
+    const otp = 1234;
     const seller = await checkUserExistOrNot({ mobile });
     const { otpMessage } = sendOtp({reset,otp});
 
@@ -147,6 +147,7 @@ module.exports.sendOtp = async (req, res) => {
     
     const checkUser = seller && seller.length && seller[0].email && seller[0].isEmailVerified === 2;
     if (isProd) {
+      otp = Math.floor(1000 + Math.random() * 9000);
       // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
       // const resp = await axios.post(url, {
       //   mobile
