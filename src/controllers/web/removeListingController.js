@@ -5,6 +5,8 @@ const {
   respSuccess,
   respError
 } = require("../../utils/respHadler");
+const { sendSMS } = require('../../utils/utils');
+const { removeListingMsg } = require('../../utils/templates/smsTemplate/smsTemplate');
 const {
 create,
 listAll
@@ -13,6 +15,11 @@ listAll
 module.exports.createRemoveListing = async (req, res) => {
   try {
     const removeListing = await create(req.body);
+    if(removeListing && removeListing.mobile && removeListing.mobile.mobile){
+       await sendSMS(removeListing.mobile.mobile, removeListingMsg());
+    }else{
+      console.log("=============Invalid mobile================");
+    }
     if (removeListing && removeListing.email) {
       const message = {
         from: removeListing.email,

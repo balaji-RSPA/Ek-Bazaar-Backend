@@ -3,7 +3,12 @@ const _ = require('lodash')
 const axios = require("axios")
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword } = require("../../utils/utils");
+const {
+  createToken,
+  encodePassword,
+  sendSMS
+} = require("../../utils/utils");
+const { sendOtp , successfulRegistration,businessProfileIncomplete } = require("../../utils/templates/smsTemplate/smsTemplate");
 const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans, SellerPlanLogs } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
@@ -24,6 +29,12 @@ const {
 const {
   sendSingleMail
 } = require('../../utils/mailgunService')
+const {commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
+const {
+  emailSuccessfulRegistration,
+  otpVerification,
+  passwordUpdate
+} = require('../../utils/templates/emailTemplate/emailTemplateContent');
 const { getSubscriptionPlanDetail } = subscriptionPlan
 const { createTrialPlan } = SellerPlans
 const algorithm = 'aes-256-cbc'
@@ -125,45 +136,50 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile, reset } = req.body;
+    const otp = 1234;
     const seller = await checkUserExistOrNot({ mobile });
+    const { otpMessage } = sendOtp({reset,otp});
+
     if (seller && seller.length && !reset) {
       return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-    const otp = 1234;
+    
     const checkUser = seller && seller.length && seller[0].email && seller[0].isEmailVerified === 2;
     if (isProd) {
-      const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-      const resp = await axios.post(url, {
-        mobile
-      })
-      if (resp.data.success) {
-        if (checkUser) {
+      otp = Math.floor(1000 + Math.random() * 9000);
+      // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
+      // const resp = await axios.post(url, {
+      //   mobile
+      // })
+      let response = await sendSMS(mobile, otpMessage);
+      if (response && response.data && response.data.otp && checkUser) {
+         const otpMessage = otpVerification({otp:response.data.otp});
           //send email
           const message = {
             from: MailgunKeys.senderMail,
             to: seller[0].email,
-            subject: 'Forgot Password OTP',
-            html: `<p>Your OTP is : <strong>${resp.data.data.otp}</strong></p>`
+            subject: 'OTP Verification',
+            html: commonTemplate(otpMessage)
           }
           await sendSingleMail(message)
         }else{
-          console.log("=======Email is not verified yet================")
-        }
-        return respSuccess(res, {
-          otp: resp.data.data.otp
-        }, checkUser ? 'Your OTP has been send successfully, check your email or sms' : "");
+         console.log("=======Email is not verified yet================")
       }
+      return respSuccess(res, {
+        otp: resp.data.data.otp
+      }, checkUser ? 'Your OTP has been send successfully, check your email or sms' : "");
     } else {
       if (checkUser) {
-        //send email
-        const message = {
-          from: MailgunKeys.senderMail,
-          to: seller[0].email,
-          subject: 'Forgot Password OTP',
-          html: `<p>Your OTP is : <strong>${otp}</strong></p>`
-        }
-        await sendSingleMail(message)
+          const otpMessage = otpVerification({otp:otp});
+          //send email
+          const message = {
+            from: MailgunKeys.senderMail,
+            to: seller[0].email,
+            subject: 'OTP Verification',
+            html: commonTemplate(otpMessage)
+          }
+          await sendSingleMail(message)
       }else{
         console.log("=======Email is not verified yet================")
       }
@@ -347,8 +363,7 @@ module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
     const _buyer = req.body.buyer || {}
-    console.log('-----------update seller -------------------', req.body)
-    let { name, email, business, location, mobile, type, sellerType } = req.body;
+    let { name, email, business, location, mobile, type, sellerType,userType } = req.body;
 
     let userData = {
       name: _buyer && _buyer.name || name,
@@ -429,21 +444,24 @@ module.exports.updateUser = async (req, res) => {
     // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     if (user && buyer && seller) {
-
-      if (buyer.isEmailSend === false && buyer.email) {
+      // console.log(user, "-----11", buyer, "----------22", seller) userType
+      if (buyer.isEmailSent === false && buyer.email) {
+        const { successfulMessage } = successfulRegistration({userType});
         seller.isEmailSent = true;
-        buyer.isEmailSent = true
+        buyer.isEmailSent = true;
+        // otp
+        let emailMessage = emailSuccessfulRegistration({name : user.name})
         const message = {
           from: MailgunKeys.senderMail,
-          to: buyer.email,
+          to: user.email,
           subject: 'Successful Registration',
-          html: `<p>Your profile has been successfully registered</p>`
+          html: commonTemplate(emailMessage)
         }
+        await sendSMS(mobile, successfulMessage);
         await sendSingleMail(message)
         await updateBuyer({ _id: buyer._id }, buyer);
         await updateSeller({ _id: seller._id }, seller);
       }
-
       if (user.email && user.isEmailVerified === 1) {
         let {
           token
@@ -555,12 +573,13 @@ module.exports.updateNewPassword = async (req, res) => {
       return respError(res, "Current pasword is not correct")
     }
     const user = await updateUser({ _id: userID }, { password });
-    if (user && user.email) {
+    if (user && user.email && user.name) {
+      const updatePasswordMsg = passwordUpdate({name:user.name})
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
         subject: 'Password Update',
-        html: `<p>Your password has been successfully updated</p>`
+        html: commonTemplate(updatePasswordMsg)
       }
       await sendSingleMail(message)
     }

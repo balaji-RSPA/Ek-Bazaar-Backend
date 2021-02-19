@@ -60,3 +60,13 @@ exports.razorPayCredentials = {
   key_id: 'rzp_test_PYGivNOLb4gHKa',
   key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
 }
+exports.siteURL = "https://www.tenders.ekbazaar.com"
+exports.imageURLS = {
+  logo: "https://ekbazaar.tech-active.com/assets/images/Final.png",
+  facebook: "https://www.tenders.ekbazaar.com/assets/images/facebook.png",
+  twitter: "https://www.tenders.ekbazaar.com/assets/images/twitter.png",
+  linkedIn: "https://www.tenders.ekbazaar.com/assets/images/linkedin.png",
+  accountActivated: "https://www.tenders.ekbazaar.com/assets/images/accountactivated@2x.png",
+  registerationFlow: "https://www.tenders.ekbazaar.com/assets/images/registration-flow.png",
+  announcements: "https://www.tenders.ekbazaar.com/assets/images/announcement@2x.png"
+}
