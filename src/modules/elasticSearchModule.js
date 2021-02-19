@@ -165,6 +165,38 @@ exports.sellerSearch = async (reqQuery) => {
 
   }
 
+  const sellerActiveAccount = {
+    "bool": {
+      "should": [
+        {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "sellerId.deactivateAccount"
+                }
+              },
+              {
+                "term": {
+                  "sellerId.deactivateAccount": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "bool": {
+            "must_not": {
+              "exists": {
+                "field": "sellerId.deactivateAccount"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+
   if (userId) {
     query.bool.must.push({
       "exists": {
@@ -271,6 +303,7 @@ exports.sellerSearch = async (reqQuery) => {
           }
         }
       }
+      query.bool.filter.push(sellerActiveAccount)
     }
   }
 
@@ -311,14 +344,23 @@ exports.sellerSearch = async (reqQuery) => {
       },
     }
     query.bool.must.push(level5Search);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
+
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -336,14 +378,22 @@ exports.sellerSearch = async (reqQuery) => {
     };
 
     query.bool.must.push(categoryMatch);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -394,6 +444,7 @@ exports.sellerSearch = async (reqQuery) => {
         }
       }
     }
+    query.bool.filter.push(sellerActiveAccount)
   }
 
   if (secondaryId) {
@@ -404,14 +455,22 @@ exports.sellerSearch = async (reqQuery) => {
       },
     };
     query.bool.must.push(categoryMatch);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -427,14 +486,22 @@ exports.sellerSearch = async (reqQuery) => {
       },
     };
     query.bool.must.push(categoryMatch);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -451,14 +518,22 @@ exports.sellerSearch = async (reqQuery) => {
       },
     };
     query.bool.must.push(categoryMatch);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
     aggs = {
       "collapse": {
-        "field": "sellerId._id.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId._id.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -510,6 +585,7 @@ exports.sellerSearch = async (reqQuery) => {
         }
       }
     }
+    query.bool.filter.push(sellerActiveAccount)
   }
   return {
     query,

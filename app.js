@@ -215,7 +215,7 @@ server.on('listening', () => {
 
 });
 
-if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production") {
 
 
   const queSms = cron.schedule('* * * * *', async () => {
