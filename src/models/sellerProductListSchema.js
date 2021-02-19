@@ -21,6 +21,10 @@ const documentSchema = new Schema({
     type: String,
     trim: true,
   },
+  size: {
+    type: String,
+    default: null,
+  }
 });
 
 // const imageSchema = new Schema({

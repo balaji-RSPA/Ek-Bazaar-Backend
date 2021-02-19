@@ -281,6 +281,15 @@ exports.sellerSearch = async (reqQuery) => {
       }
     }
     query.bool.must.push(seller)
+    // aggs = {
+    //   "aggs": {
+    //     "products": {
+    //       "cardinality": {
+    //         "field": "name.keyword"
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   if (search) {
@@ -433,7 +442,7 @@ exports.sellerSearch = async (reqQuery) => {
   }
 
   if (parentId) {
-  console.log("exports.sellerSearch -> parentId", parentId)
+    console.log("exports.sellerSearch -> parentId", parentId)
 
     // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
     const categoryMatch = {

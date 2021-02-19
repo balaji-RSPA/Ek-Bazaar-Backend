@@ -5,11 +5,12 @@ const { sellers, mastercollections, sellerProducts, SMSQue, buyers, SellerPlans,
 const { getAllSellers, getUpdatedSellerDetails, getSellerProductDetails, addProductDetails } = sellers
 const { updateMaster } = mastercollections
 const { getSellerProducts, updateSellerProducts } = sellerProducts
-const { getQueSMS, updateQueSMS } = SMSQue
+const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue
 const { getRFPData, updateRFP } = buyers
 const { bulkInserQemails, getQueEmail, updateQueEmails } = QueEmails
 const { getExpirePlans, updateSellerPlans } = SellerPlans
 const { sendSMS, sendBulkSMS } = require('../utils/utils')
+const { planExpiry } = require('../utils/templates/smsTemplate/smsTemplate');
 const {
     MailgunKeys
 } = require("../utils/globalConstants");
@@ -62,11 +63,25 @@ exports.getExpirePlansCron = async (req, res) =>
             // const end = moment(start).endOf("day");
             const sellerPlanIds = []
             const emailData = []
+            const smsData = []
             const result = await getExpirePlans();
             if (result.length > 0) {
                 for (let index = 0; index < result.length; index++) {
                     const element = result[index];
                     sellerPlanIds.push(element._id)
+                    if (element && element.sellerId && element.sellerId.mobile && element.sellerId.mobile.length && element.sellerId.mobile[0]) {
+                        const data2 = {
+                           sellerId: element._id,
+                           requestId: element._id,
+                            mobile:{
+                                mobile:element.sellerId.mobile[0].mobile, 
+                                countryCode:element.sellerId.mobile[0].countryCode 
+                            },
+                            message: planExpiry(element.exprireDate),
+                            messageType: "plan expiry",
+                        }
+                        smsData.push(data2);
+                    }
                     if (element.email || element.email !== null) {
                         const data = {
                             type: "plan expiry",
@@ -83,6 +98,7 @@ exports.getExpirePlansCron = async (req, res) =>
                         console.log(sellerPlanIds, ' ids')
                     }
                 }
+                await queSMSBulkInsert(smsData)
                 await bulkInserQemails(emailData)
                 await updateSellerPlans({ _id: { $in: sellerPlanIds } }, { expireStatus: true })
 

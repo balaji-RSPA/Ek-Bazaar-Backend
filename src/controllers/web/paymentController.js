@@ -14,8 +14,12 @@ const {
     respSuccess,
     respError
 } = require('../../utils/respHadler');
-const { uploadToDOSpace } = require('../../utils/utils')
+const { uploadToDOSpace,sendSMS } = require('../../utils/utils')
 const { addOrdersPlans } = require('../../modules/ordersModule');
+const { planSubscription } = require('../../utils/templates/smsTemplate/smsTemplate')
+const { invoiceContent } = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const { commonTemplate }  = require('../../utils/templates/emailTemplate/emailTemplate')
+
 const {
     getSubscriptionPlanDetail,
 } = subscriptionPlan;
@@ -305,7 +309,6 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         }
                     }
                     const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
-
                     // Generate invoice
                     const invoice = await createPdf(seller, _p_details, order_details)
                     console.log(invoice, ' Invoice file path')
@@ -320,13 +323,31 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     }
 
                     const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
+                    const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
+                    if (checkMobile) {
+                        const msgData = {
+                           plan:_p_details.planType,
+                           currency : currency,
+                           amount : totalAmount,
+                           url: invoicePath,
+                           name: order_details.invoiceNo.toString() + '-invoice.pdf',
+                           till: _p_details.exprireDate
+                        }
+                        await sendSMS(seller.mobile[0].mobile, planSubscription(msgData))
+                    }
 
                     if (seller && seller.email) {
+                        let invoiceEmailMsg = invoiceContent({
+                            plan: _p_details.planType,
+                            till: _p_details.exprireDate,
+                            price: totalAmount
+                        });
+                        // `<p>Your Subscription plan activated successfully!</p><p>Service type: ${currentGroup === 1 ? "Manufacturers/Traders" : currentGroup === 2 ? "Farmer" : " Service"}</p><p>Plan Type: ${planDetails.type}</p><p>Price/Month : ${pricePerMonth}</p><p>Price : ${price}</p><p>GST(18%) : ${gstAmount}</p><p>Total : ${totalAmount}</p>`
                         const message = {
                             from: MailgunKeys.senderMail,
                             to: seller.email,
                             subject: 'Ekbazaar Subscription activated successfully',
-                            html: `<p>Your Subscription plan activated successfully!</p><p>Service type: ${currentGroup === 1 ? "Manufacturers/Traders" : currentGroup === 2 ? "Farmer" : " Service"}</p><p>Plan Type: ${planDetails.type}</p><p>Price/Month : ${pricePerMonth}</p><p>Price : ${price}</p><p>GST(18%) : ${gstAmount}</p><p>Total : ${totalAmount}</p>`,
+                            html: commonTemplate(invoiceEmailMsg),
                             attachments: [{   // stream as an attachment
                                 filename: 'invoice.pdf',
                                 path: invoicePath
