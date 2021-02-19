@@ -1,5 +1,6 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
+const _IS_PROD_ = global.environment === "production"
 
   module.exports.successfulRegistration = (params) => {
     const successfulMessage = params.userType === 'buyer' ?
@@ -22,8 +23,8 @@ const { capitalizeFirstLetter } = require('../../helpers')
 
   module.exports.RFQOneToOne = (params) =>`You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}.
     Details below: ${capitalizeFirstLetter(params.name)}-
-    To view buyer contact details please register or login to trade.ekbazaar.com/signup
-    Ekbazaar-Trade https://www.trade.ekbazaar.com`;
+    To view buyer contact details please register or login to ${_IS_PROD_ ? "https://www.trade.ekbazaar.com/signup" : "https://tradebazaar.com/signup"}
+    Ekbazaar-Trade ${_IS_PROD_ ? "https://www.trade.ekbazaar.com" : "https://tradebazaar.com"}`;
 
 
   module.exports.RFQOneToOneBuyer = () => `Dear Customer,\n\nThank you for submitting your requirement. We will get back to you soon.`;
@@ -38,4 +39,4 @@ const { capitalizeFirstLetter } = require('../../helpers')
 
   module.exports.planSubscription = (params) => `Dear Customer,\n\n Thank you for subscribing to Ekbazaar.com.\nPlan:${params.plan} \nValid From:${moment().format("DD/MM/YYYY")} \nValid Till:${moment(params.till).format("DD/MM/YYYY")} \nAmount Paid:${params.currency}-${params.amount} Click <a href = ${params.url}>${params.name}</a> to download your invoice.`
 
-  module.exports.planChanged = (params) => `Dear Customer,\n\nYour plan has been changed from ${moment().format("DD/MM/YYYY")} to ${moment(params.till).format("DD/MM/YYYY")}. \nValid From:${moment(params.from).format("DD/MM/YYYY")} \nValid Till:${moment(params.till).format("DD/MM/YYYY")} \nAmount Paid:${params.currency}-${params.amount} Click <a href = ${params.url}>${params.name}</a> to download your invoice.Thank you for choosing Ekbazaar.com.`
+  module.exports.planChanged = (params) => `Dear Customer,\n\nYour plan has been changed from ${moment(params.from).format("DD/MM/YYYY")} to ${moment(params.to).format("DD/MM/YYYY")}. \nValid From:${moment().format("DD/MM/YYYY")} \nValid Till:${moment(params.till).format("DD/MM/YYYY")} \nAmount Paid:${params.currency}-${params.amount} Click <a href = ${params.url}>${params.name}</a> to download your invoice.Thank you for choosing Ekbazaar.com.`

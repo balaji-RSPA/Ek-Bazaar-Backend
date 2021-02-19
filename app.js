@@ -15,7 +15,7 @@ const { tradeDb } = config
 const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
 const { captureRazorPayPayment, createPdf } = require('./src/controllers/web/paymentController')
 const { deleteRecords } = require('./src/controllers/web/userController')
-const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails } = require('./src/crons/cron')
+const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails,getAboutToExpirePlan } = require('./src/crons/cron')
 
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
@@ -67,6 +67,14 @@ app.get('/', function (req, res) {
 // app.get('/sendQueEmails', async function (req, res) {
 //   try {
 //     const result = await sendQueEmails()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+// app.get('/abouttoexpireplan', async function (req, res) {
+//   try {
+//     const result = await getAboutToExpirePlan()
 //   } catch (error) {
 
 //   }
@@ -225,6 +233,7 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
     planExpire.stop()
     console.log('-------------------- planExpire file cron start --------------------', new Date());
     await getExpirePlansCron()
+    await getAboutToExpirePlan()
     console.log('-------------------- planExpire file cron completed --------------------', new Date())
     planExpire.start()
   })

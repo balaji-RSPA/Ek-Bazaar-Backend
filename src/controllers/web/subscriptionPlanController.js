@@ -5,7 +5,10 @@ const {
   getSubscriptionPlanDetail,
 } = subscriptionPlan;
 
-const { createTrialPlan } = SellerPlans
+const {
+  createTrialPlan,
+  getAboutToexpirePlan
+} = SellerPlans
 
 const {
   checkSellerExist,
@@ -72,3 +75,11 @@ module.exports.acticateTrialPlan = async (req, res) => {
     respError(res, error.message);
   }
 };
+module.exports.getAboutToexpire = async(req,res)=>{
+  try{
+    const result = await getAboutToexpirePlan();
+    respSuccess(res, result, 'Notification for about to expire');
+  }catch(err){
+   respSuccess(res, "Something went wrong");
+  }
+}

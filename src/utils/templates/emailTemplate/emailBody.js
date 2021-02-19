@@ -65,8 +65,7 @@ module.exports.emailBody = (params) =>
                             </tr>
                             <tr>
                                 <td style="padding: 0px 16.66% 10px 16.66%; text-align: center; display: block;">
-                                    <img style="width: 100%"
-                                        src=${params.image}
+                                    <img src=${params.image}
                                         alt= ${params.title}>
                                 </td>
                             </tr>
