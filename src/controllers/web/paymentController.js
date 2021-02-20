@@ -373,7 +373,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                                 path: invoice.Location
                             }]
                         }
-                        console.log(seller.email, 'emai-----------------')
+                        console.log(seller.email, ' emai-----------------')
                         await sendSingleMail(message)
                         // fs.unlinkSync(invoicePath)
                     }
