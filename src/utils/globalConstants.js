@@ -53,12 +53,23 @@ exports.siteUrl =  NODE_ENV === "production" ? "https://www.trade.ebazaar.com" :
 
 exports.accessModules = Object.values(this.moduleTypes);
 
-exports.razorPayCredentials = {
+exports.razorPayCredentials = NODE_ENV === 'production'?
+  {
+    // Live
+    key_id: 'rzp_live_CTVuq0QYf0mDPH',
+    key_secret: 'KOY2qN10NCtcbgZmtpq87wOW',
+  }: {
+  // orbit
   // key_id: 'rzp_test_jCeoTVbZGMSzfn',
   // key_secret: 'V8BiRAAeeqxBVheb0xWIBL8E',
 
-  key_id: 'rzp_test_PYGivNOLb4gHKa',
-  key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
+  // akashay
+  // key_id: 'rzp_test_PYGivNOLb4gHKa',
+  // key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
+
+  // test
+  key_id: 'rzp_test_UZ9n6fsg5YF5wE',
+  key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
 }
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {

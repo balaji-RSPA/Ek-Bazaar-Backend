@@ -58,7 +58,7 @@ const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, rej
             features: plan && plan.features,
             gstAmount: orderDetails && orderDetails.gstAmount,
             amount: plan && plan.totalPlanPrice,
-            orderTotal: orderDetails && orderDetails.total,
+            orderTotal: orderDetails && orderDetails.total.toFixed(2),
             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
             expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
@@ -126,7 +126,6 @@ const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, rej
 module.exports.createRazorPayOrder = async(req, res) => {
 
     try {
-
         var instance = new Razorpay({
             key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
             key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
@@ -205,6 +204,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                 if (response.statusCode === 200) {
                     const invoiceNumner = await getInvoiceNumber({ id: 1 })
                     const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
+                    const planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
                     await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
 
                     const sellerDetails = {
@@ -230,7 +230,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         features: planDetails.features,
                         days: planDetails.days,
                         extendTimes: null,
-                        exprireDate: dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days)),
+                        exprireDate: planExpireDate,
                         isTrial: false,
                         planType: planDetails.type,
                         extendDays: planDetails.days,
@@ -375,9 +375,9 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         }
                         console.log(seller.email, 'emai-----------------')
                         await sendSingleMail(message)
-                        await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
-                            // fs.unlinkSync(invoicePath)
+                        // fs.unlinkSync(invoicePath)
                     }
+                    await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
                     console.log('------------------ Payment done ---------')
                     return respSuccess(res, { payment: true }, 'subscription activated successfully!')
                 } else {

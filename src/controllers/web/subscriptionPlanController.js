@@ -104,7 +104,7 @@ module.exports.getSellerOrders = async(req, res) => {
             limit
         })
         const ordersCount = await getOrdersCount({ userId })
-        console.log("module.exports.getSellerOrders -> result", result, ordersCount)
+        // console.log("module.exports.getSellerOrders -> result", result, ordersCount)
             // const result = await getAboutToexpirePlan();
         return respSuccess(res, {
             data: result,

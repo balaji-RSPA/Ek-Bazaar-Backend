@@ -128,6 +128,10 @@ const orderSchema = new Schema({
         type: Number,
         default: null
     },
+    currency: {
+        type: String,
+        default: null
+    },
     orderedOn: {
         type: Date,
         default: new Date()

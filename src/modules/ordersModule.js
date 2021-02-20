@@ -53,7 +53,12 @@ exports.getOrders = (query, range) =>
             .skip(skip)
             .limit(limit)
             .sort({ _id: -1 })
+            .populate({
+                path: 'orderPlanId',
+                model: 'orderplans'
+            })
             .populate('paymentId')
+            // .populate('orderPlanId')
             .then((doc) => {
                 resolve(doc)
             })
