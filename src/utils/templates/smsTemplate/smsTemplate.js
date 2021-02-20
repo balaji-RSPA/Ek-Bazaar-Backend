@@ -1,5 +1,5 @@
 const moment = require('moment');
-
+const { capitalizeFirstLetter } = require('../../helpers')
   module.exports.successfulRegistration = (params) => {
     const successfulMessage = params.userType === 'buyer' ?
       `Dear Customer,\n\nYour registration is successful.Thank you for choosing Ekbazaar.com.` :

@@ -1,4 +1,5 @@
 const moment = require('moment');
+const { capitalizeFirstLetter } = require('../../helpers')
 module.exports.emailSuccessfulRegistration = (params) => {
   let message = {
     title : 'Welcome',
@@ -71,6 +72,25 @@ module.exports.planExpiring = (params)=>{
     body: `<p>Thank you for joining Ekbazaar. We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is coming to a close and will officially end on ${moment(params.date).add(1, 'day').startOf('day').format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
     buttonName: 'PRICING PLANS',
     buttonLink: `${params.url}/pricing`
+  }
+  return message;
+}
+module.exports.RfpEnquiryReceived = (params) => {
+  let message = {
+    title: 'Enquiry Received',
+    image: 'https://ekbazaar.tech-active.com/assets/images/rfpEnquiryReceived.png',
+    body: `<p>You have an enquiry for (${capitalizeFirstLetter(params.productDetails.name.name)}, ${params.productDetails.quantity}${capitalizeFirstLetter(params.productDetails.weight)}) from (${params.location}) by (${capitalizeFirstLetter(params.name)}) on ${params.date}.</p>`,
+    buttonName: 'VIEW BUYER DETAILS',
+    buttonLink:'google.com',
+    extracontent1: `<p style="text-align: center">Thank you for choosing EkBazaar</p>`
+  }
+  return message;
+}
+module.exports.RfpEnquirySend = ()=>{
+  let message = {
+    title: 'Requirement Sent',
+    image: 'https://ekbazaar.tech-active.com/assets/images/success.png',
+    body: `<p>Thank you for submitting your requirements. The seller shall contact you on your shared contact details.</p>`,
   }
   return message;
 }
