@@ -88,6 +88,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         let skip = 0, status = true, totalInsertion = 0
         const sellerIds = []
         let msg = ''
+        let bdy = ''
 
         while (status) {
 
@@ -99,6 +100,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
             const QueData = sellers.filter(v => v._source.sellerId.mobile && v._source.sellerId.mobile.length).map(v => {
               const sellerId = v._source.sellerId
               msg = RFQOneToOne({productDetails, _loc, name})
+              bdy = RfpEnquiryReceived({productDetails, _loc, name});
 
               totalInsertion++
               sellerIds.push(sellerId._id)
@@ -109,7 +111,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
                 userId: user && user._id || null,
                 name: name,
                 subject: "Product Enquiry",
-                body: "Need more details about product",
+                body: bdy,
                 fromEmail: rfp && rfp.buyerDetails && rfp.buyerDetails.email,
                 toEmail: sellerId.email,
                 mobile: {
@@ -121,8 +123,8 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
                 requestId: rfp._id
               })
             })
-            await queSMSBulkInsert(QueData)
             await bulkInserQemails(QueData)
+            // await queSMSBulkInsert(QueData)
             skip += limit
 
           } else status = false
@@ -246,7 +248,7 @@ module.exports.createRFP = async (req, res) => {
         //   html: `<p>This is confirmation that your enquiry has been successfully send to the seller.</p>`
         // }
         // await sendSingleMail(message)
-        await sendSMS(mobile, RFQOneToOneBuyer())
+        // await sendSMS(mobile, RFQOneToOneBuyer())
       } else {
         console.log(' Single contact beta user exist------------')
       }
@@ -342,7 +344,7 @@ module.exports.createRFP = async (req, res) => {
         //   html: `<p>This is confirmation that your enquiry has been successfully send to the seller.</p>`
         // }
         // await sendSingleMail(message)
-         await sendSMS(mobile, RFQOneToOneBuyer())
+        //  await sendSMS(mobile, RFQOneToOneBuyer())
         } else {
           console.log(' Single contact beta------------')
         }
@@ -493,12 +495,10 @@ async function sendEmailBuyer(email){
   await sendSingleMail(message)
 }
 async function sendEmailSeller(params){
- let date = moment().format('Do MMM YYYY')
  let messagecontent = RfpEnquirySend({
-   location: params._loc,
+   _loc: params._loc,
    productDetails: params.productDetails,
-   name: params.name,
-   date: date
+   name: params.name
  });
  const message = {
    from: params.buyerEmail,

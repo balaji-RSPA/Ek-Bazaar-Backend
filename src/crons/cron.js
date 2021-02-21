@@ -39,30 +39,30 @@ exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) 
                 const element = result[index];
                 let message
                 updateIds.push(element._id)
-                if (element.messageType === 'plan_expiry' || element.messageType === 'plan expiry'){
-                   let expiryMessage = planExpired({date : element.createdAt,url:url});
+                // if (element.messageType === 'plan_expiry' || element.messageType === 'plan expiry'){
+                // //    let expiryMessage = planExpired({date : element.createdAt,url:url});
+                //     message = {
+                //         subject: element.subject,
+                //         html: commonTemplate(element.body),
+                //         from: element.fromEmail,
+                //         to: element.toEmail
+                //     }
+                // } else if (element.messageType === 'plan_abt_expire') {
+                //     let expiringMessage = planExpiring({date : element.createdAt,url:url});
+                //     message = {
+                //         subject: element.subject,
+                //         html: commonTemplate(expiringMessage),
+                //         from: element.fromEmail,
+                //         to: element.toEmail
+                //     }
+                // }else{
                     message = {
                         subject: element.subject,
-                        html: commonTemplate(expiryMessage),
+                        html: commonTemplate(element.body),
                         from: element.fromEmail,
                         to: element.toEmail
                     }
-                } else if (element.messageType === 'plan_abt_expire') {
-                    let expiringMessage = planExpiring({date : element.createdAt,url:url});
-                    message = {
-                        subject: element.subject,
-                        html: commonTemplate(expiringMessage),
-                        from: element.fromEmail,
-                        to: element.toEmail
-                    }
-                }else{
-                    message = {
-                        subject: element.subject,
-                        html: element.body,
-                        from: element.fromEmail,
-                        to: element.toEmail
-                    }
-                }
+                // }
                 if (element.toEmail && element.fromEmail)
                   await sendSingleMail(message)
                 }
@@ -109,6 +109,7 @@ exports.getExpirePlansCron = async (req, res) =>
                     //     }
                     //     smsData.push(data2);
                     // }
+                    // `Hi ${element.sellerId.name}<br/>We hope you have been enjoyed your plan.<br/>Unfortunately, your plan has expired.<br/>-- The Ekbazaar Team`,
                     if (element && element.sellerId && element.sellerId.email) {
                         const data = {
                             messageType: "plan_expiry",
@@ -118,7 +119,7 @@ exports.getExpirePlansCron = async (req, res) =>
                             toEmail: element.sellerId.email,
                             name: element.sellerId.name,
                             subject: "Plan Expired",
-                            body: `Hi ${element.sellerId.name}<br/>We hope you have been enjoyed your plan.<br/>Unfortunately, your plan has expired.<br/>-- The Ekbazaar Team`,
+                            body: planExpired({date : element.exprireDate})
                         };
                         emailData.push(data)
                         console.log(emailData, ' email')
@@ -325,7 +326,6 @@ exports.getAboutToExpirePlan = async (req,res) =>{
         const emailData = []
         const smsData = []
         const result = await getAboutToexpirePlan();
-        console.log(result,"========================")
         for (let index = 0; index < result.length; index++) {
             const element = result[index];
             if (element && element.sellerId && element.sellerId.mobile && element.sellerId.mobile.length && element.sellerId.mobile[0]) {
@@ -350,7 +350,7 @@ exports.getAboutToExpirePlan = async (req,res) =>{
                     toEmail: element.sellerId.email,
                     name: element.sellerId.name,
                     subject: "Plan About To Expire",
-                    // body: `Hi ${element.sellerId.name}<br/>We hope you have been enjoyed your plan.<br/>your plan is about to expire<br/>-- The Ekbazaar Team`,
+                    body: planExpiring({date:element.exprireDate}),
                 };
                 emailData.push(data)
             }
