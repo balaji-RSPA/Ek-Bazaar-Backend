@@ -239,6 +239,10 @@ module.exports.searchSuggestion = async (req, res) => {
       console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
       return respSuccess(res, suggestions, sellers[1]["products"])
     } else {
+      console.log("Suggestion search-----")
+      const others = []; // group - 1
+      const farmer = ["3"]; // group - 2
+      const service = ["35", "37", "40", "41", "42", "43", "44", "48", "56"]; // group - 3
       if (search !== 'undefined' && search) {
         const query = {
           "match_phrase_prefix": {

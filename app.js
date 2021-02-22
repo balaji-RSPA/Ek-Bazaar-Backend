@@ -16,7 +16,7 @@ const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersCont
 const { captureRazorPayPayment, createPdf } = require('./src/controllers/web/paymentController')
 const { deleteRecords } = require('./src/controllers/web/userController')
 const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
-
+const { updateLevel2l1Data, updateLevel3l1Data } = require('./src/controllers/web/testController')
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
     // require('./config/db').elasticSearchConnect();
@@ -30,7 +30,7 @@ const models = require('./src/models')
     // const Countries = models.Countries
 
 const { suggestions, level1, level2, level3, level4, level5, city, state, country, serviceType, tradeMaster } = require("./elasticsearch-mapping");
-const { checkIndices, putMapping } = suggestions
+const { checkIndices, putMapping, suggestionsMapping } = suggestions
 const l1CheckIndices = level1.checkIndices,
     l1PutMapping = level1.putMapping,
     l2CheckIndices = level2.checkIndices,
@@ -64,6 +64,32 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', function(req, res) {
     console.log('Home page')
     res.send('Its trade live')
+})
+
+// app.get('/updateLevel2l1Data', async function (req, res) {
+//   try {
+//       const result = await updateLevel2l1Data()
+//   } catch (error) {
+
+//   }
+//   res.send('Its delete records  live')
+// })
+// app.get('/updateLevel3l1Data', async function (req, res) {
+//   try {
+//       const result = await updateLevel3l1Data()
+//   } catch (error) {
+
+//   }
+//   res.send('Its delete records  live')
+// })
+
+app.get('/suggestionsMapping', async function (req, res) {
+  try {
+      const result = await suggestionsMapping()
+  } catch (error) {
+
+      res.send(error)
+  }
 })
 
 // app.get('/getExpirePlansCron', async function (req, res) {
