@@ -234,6 +234,7 @@ module.exports.checkUserExistOrNot = (query) =>
         name: 1,
         email: 1,
         mobile: 1,
+        countryCode: 1,
         isPhoneVerified: 1,
         isMobileVerified: 1,
         password: 1,

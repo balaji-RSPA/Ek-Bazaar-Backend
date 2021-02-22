@@ -1,4 +1,6 @@
 const moment = require('moment');
+const { capitalizeFirstLetter } = require('../../helpers')
+const _IS_PROD_ = global.environment === "production"
 
   module.exports.successfulRegistration = (params) => {
     const successfulMessage = params.userType === 'buyer' ?
@@ -21,8 +23,8 @@ const moment = require('moment');
 
   module.exports.RFQOneToOne = (params) =>`You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}.
     Details below: ${capitalizeFirstLetter(params.name)}-
-    To view buyer contact details please register or login to trade.ekbazaar.com/signup
-    Ekbazaar-Trade https://www.trade.ekbazaar.com`;
+    To view buyer contact details please register or login to ${_IS_PROD_ ? "https://www.trade.ekbazaar.com/signup" : "https://tradebazaar.com/signup"}
+    Ekbazaar-Trade ${_IS_PROD_ ? "https://www.trade.ekbazaar.com" : "https://tradebazaar.com"}`;
 
 
   module.exports.RFQOneToOneBuyer = () => `Dear Customer,\n\nThank you for submitting your requirement. We will get back to you soon.`;
