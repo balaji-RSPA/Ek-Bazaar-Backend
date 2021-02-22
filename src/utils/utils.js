@@ -27,16 +27,22 @@ const { sms, siteUrl } = require('./globalConstants')
 const { username, password, senderID, smsURL } = sms
 
 
-exports.sendBulkSMS = async (mobile, message) => {
+exports.sendBulkSMS = async (mobile, message) => new Promise((resolve, reject) => {
   console.log('bulk sms', mobile, message)
   const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&category=bulk`
   // const sendsmsuri = smsURL + "?username=" + username + "&password=" + password + "&to=" + mobile + "&from=" + senderID + "&text=" + message.replace("&", "and") + "&category=bulk"
-  const result = await axios.get(sendsmsuri)
-  console.log("🚀 ~ file: utils.js ~ line 35 ~ exports.sendBulkSMS= ~ result", result)
-  return result
-}
+  // const result = await axios.get(sendsmsuri)
+  // return result
+  axios.get(sendsmsuri)
+    .then(response => {
+      resolve(response)
+    })
+    .catch(error => {
+      resolve({ error: error.message })
+    })
+})
 
-exports.sendSMS = async (mobile, message) => {
+exports.sendSMS = async (mobile, message) => new Promise((resolve, reject) => {
   // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
   // const resp = await axios.post(url, {
   //   mobile,
@@ -44,9 +50,16 @@ exports.sendSMS = async (mobile, message) => {
   // })
   // return resp
   const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&dlr-mask=19&dlr-url`
-  const result = await axios.get(sendsmsuri)
-  return result
-}
+  // const result = await axios.get(sendsmsuri)
+  // return result
+  axios.get(sendsmsuri)
+    .then(response => {
+      resolve(response)
+    })
+    .catch(error => {
+      resolve({ error: error.message })
+    })
+})
 
 exports.messageContent = (productDetails, _loc, name) => {
   const message = `You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(productDetails.name.name)},${productDetails.quantity} ${capitalizeFirstLetter(productDetails.weight)} from ${_loc}.\nDetails below: ${capitalizeFirstLetter(name)} -\nTo view buyer contact details please register or login to ${siteUrl}/signup\nEkbazaar-Trade ${siteUrl}`;

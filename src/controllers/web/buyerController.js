@@ -81,7 +81,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
           level5Id = pro.id
 
         const reqQuery = {
-          parentId, productId, secondaryId, primaryId, level5Id, userId: true
+          parentId, productId, secondaryId, primaryId, level5Id, userId: true, findByEmail: true
         }
         const result = await sellerSearch(reqQuery);
         const Searchquery = result.query, limit = 1000
@@ -93,6 +93,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         while (status) {
 
           const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs, { "sellerId.paidSeller": "desc" });
+          console.log("🚀 ~ file: buyerController.js ~ line 92 ~ module.exports.queSmsData= ~ seller", seller && seller[0].length)
 
           if (seller[0] && seller[0].length) {
 
@@ -164,24 +165,26 @@ module.exports.createRFP = async (req, res) => {
         name,
         email,
       }
-      const user = await updateUser({ mobile: mobile.mobile }, userData)
+      // const user = await updateUser({ mobile: mobile.mobile }, userData)
       const buyerData = {
-        name,
-        email,
-        mobile: mobile.mobile,
-        countryCode: mobile.countryCode,
+        name: user[0]["name"],
+        email: user[0]["email"],
+        mobile: user[0]["mobile"],
+        countryCode: user[0]["countryCode"],
         location,
         userId: user._id
       }
       const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
       let buyer
-      if (exist && exist.length)
-        buyer = await updateBuyer({ userId: user._id }, buyerData)
+      if (exist && exist.length) {
+        buyer = exist[0]
+        console.log()
+      }
       else
         buyer = await addBuyer(buyerData)
 
       const sellerData = {
-        name,
+        // name,
         email: email || null,
         // mobile,
         location,
@@ -189,9 +192,9 @@ module.exports.createRFP = async (req, res) => {
         // userId: user._id,
       };
 
-      const sellerExist = await checkSellerExist({ userId: user._id })
-      if (sellerExist && sellerExist !== '')
-        await updateSeller({ userId: user._id }, sellerData)
+      // const sellerExist = await checkSellerExist({ userId: user._id })
+      // if (sellerExist && sellerExist !== '')
+      //   await updateSeller({ userId: user._id }, sellerData)
 
       const rfpData = {
         buyerId: buyer._id,
@@ -233,8 +236,8 @@ module.exports.createRFP = async (req, res) => {
         const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
-           await sendSMS(constsellerContactNo.mobile, RFQOneToOne({productDetails, _loc, name}))
-           await sendSMS(mobile, RFQOneToOneBuyer())
+          await sendSMS(constsellerContactNo.mobile, RFQOneToOne({ productDetails, _loc, name }))
+          await sendSMS(mobile.mobile, RFQOneToOneBuyer())
         } else {
           console.log(' no seller contact number')
         }
@@ -249,6 +252,9 @@ module.exports.createRFP = async (req, res) => {
         // }
         // await sendSingleMail(message)
         // await sendSMS(mobile, RFQOneToOneBuyer())
+
+        if (global.environment === "production")
+          await sendSMS(mobile.mobile, RFQOneToOneBuyer())
       } else {
         console.log(' Single contact beta user exist------------')
       }
@@ -330,11 +336,12 @@ module.exports.createRFP = async (req, res) => {
           const constsellerContactNo = sellerDtl && sellerDtl.length && sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
           if (constsellerContactNo && constsellerContactNo.mobile) {
             console.log('message sending...........')
-            await sendSMS(constsellerContactNo.mobile, RFQOneToOne({productDetails, _loc, name}))
-            await sendSMS(mobile, RFQOneToOneBuyer())
+            await sendSMS(constsellerContactNo.mobile, RFQOneToOne({ productDetails, _loc, name }))
+            await sendSMS(mobile.mobile, RFQOneToOneBuyer())
 
           }
         } else if (!sellerId && requestType === 2) {
+
          this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
          await sendEmailBuyer(email)
         // const message = {
@@ -345,6 +352,12 @@ module.exports.createRFP = async (req, res) => {
         // }
         // await sendSingleMail(message)
         //  await sendSMS(mobile, RFQOneToOneBuyer())
+
+          this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
+          if (global.environment === "production") {
+            const resp = await sendSMS(mobile.mobile, RFQOneToOneBuyer())
+            console.log("sent meassage response", resp)
+          }
         } else {
           console.log(' Single contact beta------------')
         }

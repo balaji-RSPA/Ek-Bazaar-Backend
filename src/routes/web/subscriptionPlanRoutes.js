@@ -5,10 +5,11 @@ const subscriptionPlan = require("../../controllers/web/subscriptionPlanControll
 
 /** 
  * Get all subscription plan
-*/
+ */
 router.get("/subscriptionplan", subscriptionPlan.getAllSubscriptionPlan);
 router.post("/acticateTrialPlan", subscriptionPlan.acticateTrialPlan);
 router.get('/abouttoexpire', subscriptionPlan.getAboutToexpire);
 router.get('/expiredplan', subscriptionPlan.getExpiredPlan);
+router.get('/getSellerOrders', subscriptionPlan.getSellerOrders);
 
 module.exports = router;

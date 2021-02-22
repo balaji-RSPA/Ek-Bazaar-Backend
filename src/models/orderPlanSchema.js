@@ -24,7 +24,7 @@ const orderPlanSchema = new Schema({
         ref: SubscriptionPlan,
         default: null
     },
-    type: {//Quarterly,Yearly,Full Bazaar
+    type: { //Quarterly,Yearly,Full Bazaar
         type: String,
         trim: true,
         required: true
@@ -43,15 +43,15 @@ const orderPlanSchema = new Schema({
         type: Number,
         required: true
     },
-    priceUnit: {//month,year
+    priceUnit: { //month,year
         type: String,
         required: true
     },
-    popularity: {//Most Popular, popular, less popular
+    popularity: { //Most Popular, popular, less popular
         type: String,
         // required: true
     },
-    billingType: {//billed quarterly,billed yearly,billed monthly
+    billingType: { //billed quarterly,billed yearly,billed monthly
         type: String,
         required: true
     },
@@ -63,6 +63,10 @@ const orderPlanSchema = new Schema({
         type: String,
         required: true
     },
+    exprireDate: {
+        type: Date,
+        default: null
+    }
 }, {
     versionKey: false,
     timestamps: true

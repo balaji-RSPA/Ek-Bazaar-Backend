@@ -27,7 +27,7 @@ module.exports.sendSingleMail = (message) => new Promise((resolve, reject) => {
       }
     });
   } catch (error) {
-    reject(error)
+    resolve("error")
   }
 });
 
