@@ -23,14 +23,6 @@ const { sendSingleMail } = require('../utils/mailgunService')
 exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) => {
 
     try {
-        let url = '';
-        if (process.env.NODE_ENV === "production"){
-          url = `https://ekbazaar.tech-active.com`
-        }else if(process.env.NODE_ENV === 'development'){
-         url = `http://localhost:8085`
-        }else if(process.env.NODE_ENV === 'staging'){
-          url = `http://ekbazaar.tech-active.com`
-        }
         const result = await getQueEmail({ isSent: false }, 0, 20)
         const updateIds = []
         if (result && result.length) {
@@ -91,6 +83,14 @@ exports.getExpirePlansCron = async (req, res) =>
             const sellerPlanIds = []
             const emailData = []
             // const smsData = []
+             let url = '';
+             if (process.env.NODE_ENV === "production") {
+                 url = `https://ekbazaar.tech-active.com`
+             } else if (process.env.NODE_ENV === 'development') {
+                 url = `http://localhost:8085`
+             } else if (process.env.NODE_ENV === 'staging') {
+                 url = `http://ekbazaar.tech-active.com`
+             }
             const result = await getExpirePlans();
             if (result.length > 0) {
                 for (let index = 0; index < result.length; index++) {
@@ -119,7 +119,7 @@ exports.getExpirePlansCron = async (req, res) =>
                             toEmail: element.sellerId.email,
                             name: element.sellerId.name,
                             subject: "Plan Expired",
-                            body: planExpired({date : element.exprireDate})
+                            body: planExpired({date : element.exprireDate,isTrial : element.isTrial,url:url})
                         };
                         emailData.push(data)
                         console.log(emailData, ' email')
@@ -325,6 +325,14 @@ exports.getAboutToExpirePlan = async (req,res) =>{
     try{
         const emailData = []
         const smsData = []
+        let url = '';
+        if (process.env.NODE_ENV === "production") {
+            url = `https://ekbazaar.tech-active.com`
+        } else if (process.env.NODE_ENV === 'development') {
+            url = `http://localhost:8085`
+        } else if (process.env.NODE_ENV === 'staging') {
+            url = `http://ekbazaar.tech-active.com`
+        }
         const result = await getAboutToexpirePlan();
         for (let index = 0; index < result.length; index++) {
             const element = result[index];
@@ -342,6 +350,9 @@ exports.getAboutToExpirePlan = async (req,res) =>{
                 smsData.push(data2);
             }
             if (element && element.sellerId && element.sellerId.email) {
+                 const date1 = moment();
+                 const date2 = moment(element.exprireDate);
+                 const dayDiff = date2.diff(date1, 'days');
                 const data = {
                     messageType: "plan_abt_expire",
                     sellerId: element._id,
@@ -350,7 +361,7 @@ exports.getAboutToExpirePlan = async (req,res) =>{
                     toEmail: element.sellerId.email,
                     name: element.sellerId.name,
                     subject: "Plan About To Expire",
-                    body: planExpiring({date:element.exprireDate}),
+                    body: planExpiring({date:element.exprireDate, isTrial : element.isTrial, url: url,dayDiff}),
                 };
                 emailData.push(data)
             }

@@ -33,9 +33,9 @@ module.exports.passwordUpdate = (params) => {
   }
   return message;
 }
-module.exports.contactus = () => {
+module.exports.contactus = (params) => {
   let message = {
-    title:'Support Request Received',
+    title:`Support Request Received ${params.id}`,
     image: 'https://ekbazaar.tech-active.com/assets/images/success.png',
     body: '<p>Your message has been received and will be soon answered by our support team.</p><br /><p>Thank you for choosing EkBazaar</p>',
   }
@@ -56,22 +56,52 @@ module.exports.invoiceContent = (params) => {
   return message;
 }
 module.exports.planExpired = (params)=>{
-  let message = {
-    title: 'Plan Expired',
-    image: 'https://ekbazaar.tech-active.com/assets/images/planExpired.png',
-    body: `<p>Your free trial plan has expired on ${moment(params.date).format("Do MMMM YYYY")}.</p><p>You can continue using our services by simply completing your subscription.</p>`,
-    buttonName: 'SUBSCRIBE',
-    buttonLink: `${params.url}`
+  let message = '';
+  if (params.isTrial) {
+    message = {
+      title: 'Plan Expired',
+      image: 'https://ekbazaar.tech-active.com/assets/images/planExpired.png',
+      body: `<p>Your free trial plan has expired on ${moment(params.date).format("Do MMMM YYYY")}.</p><p>You can continue using our services by simply completing your subscription.</p>`,
+      buttonName: 'SUBSCRIBE',
+      buttonLink: `${params.url}`
+    }
+  }else{
+    message = {
+      title: 'Plan Expired',
+      image: 'https://ekbazaar.tech-active.com/assets/images/planExpired.png',
+      body: `Your plan has expired. Please renew your plan`,
+      buttonName: 'SUBSCRIBE',
+      buttonLink: `${params.url}`
+    }
   }
   return message;
 }
 module.exports.planExpiring = (params)=>{
-  let message = {
-    title: 'Plan Expiring',
-    image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-    body: `<p>Thank you for joining Ekbazaar. We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is coming to a close and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
-    buttonName: 'PRICING PLANS',
-    buttonLink: `${params.url}/pricing`
+  let message = ''
+  if (params.isTrial) {
+    message = {
+      title: 'Plan Expiring',
+      image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
+      body: `<p>Thank you for joining Ekbazaar. We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is coming to a close and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
+      buttonName: 'PRICING PLANS',
+      buttonLink: `${params.url}/pricing`
+    }
+  }else if(params.days){
+    message = {
+      title: 'Plan Expiring',
+      image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
+      body: `<p>Thank you for joining Ekbazaar. Your plan is about to expire in ${params.days}days.Please renew your plan</p>`,
+      buttonName: 'PRICING PLANS',
+      buttonLink: `${params.url}/pricing`
+    }
+  }else{
+    message = {
+      title: 'Plan Expiring',
+      image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
+      body: `<p>Thank you for joining Ekbazaar. Your Plan is Expiring Today! Please Renew to access the benefits of a Subscriber</p>`,
+      buttonName: 'PRICING PLANS',
+      buttonLink: `${params.url}/pricing`
+    }
   }
   return message;
 }
