@@ -45,7 +45,7 @@ module.exports.invoiceContent = (params) => {
   let message = {
     title: '',
     image: 'https://ekbazaar.tech-active.com/assets/images/invoice.png',
-    body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. The credit card ending xxxxx has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
+    body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. The credit card ending x${params.cardNo} has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
     <p style="text-align: left">Plan       : ${params.plan}</p>
     <p style="text-align: left">Valid from : ${moment().format("Do MMM YYYY")}</p>
     <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
@@ -121,6 +121,28 @@ module.exports.RfpEnquirySend = ()=>{
     title: 'Requirement Sent',
     image: 'https://ekbazaar.tech-active.com/assets/images/success.png',
     body: `<p>Thank you for submitting your requirements. The seller shall contact you on your shared contact details.</p>`,
+  }
+  return message;
+}
+module.exports.planChangedEmail = (params) => {
+  let message = {
+    title: 'Plan Changed',
+    image: 'https://ekbazaar.tech-active.com/assets/images/planChanged.png',
+    body: `<p style="text-align: left">Your plan has been changed from ${params.oldPlanType} to ${params.newPlanType}.</p>
+    <p style="text-align: left">Valid from : ${moment().format("Do MMM YYYY")}</p>
+    <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>
+    `,
+    buttonName: 'VIEW YOUR PLAN',
+    buttonLink: `${params.url}/seller/seller-central/seller-account?skip=0&limit=10`,
+    extracontent1: `<p style="text-align: center">Thank you for choosing EK Bazaar. Have a good day.</p>`
+  }
+  return message;
+}
+module.exports.listingRemovalReq = () => {
+  let message = {
+    title: 'Listing Removal Request',
+    image: 'https://www.tenders.ekbazaar.com/assets/images/announcement.png',
+    body: `<p>Thank you.</p><p>We will contact you within 7 working days and remove your listing.</p>`,
   }
   return message;
 }
