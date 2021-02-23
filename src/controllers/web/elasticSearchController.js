@@ -239,8 +239,47 @@ module.exports.searchSuggestion = async (req, res) => {
       console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
       return respSuccess(res, suggestions, sellers[1]["products"])
     } else {
+      console.log("Suggestion search-----")
+      let query = {
+        bool: {
+          should: [],
+          must: [],
+          must_not: [],
+          filter: []
+        },
+      };
+      const others = []; // group - 1
+      const farmer = ["3"]; // group - 2
+      const service = ["35", "37", "40", "41", "42", "43", "44", "48", "56"]; // group - 3
+        qyery.bool.must.unshift({"bool": {"should": []}})
+      if (group === '2'){
+        for (let i = 0; i < farmer.length; i++) {
+          const _farmer = farmer[i]
+          const categoryMatch = {
+            "match": {
+              "l1": _farmer,
+            }
+          };
+          query.bool.must[0]["bool"]["should"].push(categoryMatch)
+        }
+
+      } else if (group === '3'){
+
+        for (let i = 0; i < service.length; i++) {
+          const _service = service[i]
+          const categoryMatch = {
+            "match": {
+              "l1": _service,
+            }
+          };
+            query.bool.must[0]["bool"]["should"].push(categoryMatch)
+        }
+      }else{
+
+      }
+
       if (search !== 'undefined' && search) {
-        const query = {
+        const searchQuery = {
           "match_phrase_prefix": {
             "name": search.toLowerCase()
           }
@@ -252,6 +291,8 @@ module.exports.searchSuggestion = async (req, res) => {
           //   }
           // }
         }
+        query.bool.must.push(searchQuery)
+
         const aggs = {
           "aggs": {
             "products": {
@@ -261,19 +302,22 @@ module.exports.searchSuggestion = async (req, res) => {
             }
           }
         }
+        console.log(JSON.stringify(query), ' --------------------')
+        console.log(JSON.stringify(aggs), ' -------------------- aggr')
         let suggestions = await getSuggestions(query, { skip, limit }, product, aggs)
         // console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length - 1])
         return respSuccess(res, suggestions[0], suggestions[1]["products"])
       } else {
-        const query = {
+        const searchQuery = {
           // "query": {
-          "bool": {
-            "must": {
+          // "bool": {
+          //   "must": {
               "match_all": {}
-            }
-          }
+          //   }
+          // }
           // }
         }
+        query.bool.must.push(searchQuery)
         const aggs = {
           "aggs": {
             "products": {
@@ -283,6 +327,7 @@ module.exports.searchSuggestion = async (req, res) => {
             }
           }
         }
+        console.log(JSON.stringify(query), ' -------------------- else')
         let suggestions = await getSuggestions(query, { skip, limit }, null, aggs)
         // console.log("module.exports.searchSuggestion -> suggestions", suggestions)
 
@@ -292,6 +337,7 @@ module.exports.searchSuggestion = async (req, res) => {
 
 
   } catch (error) {
+    console.log(error)
     respError(res, error.message)
   }
 }
