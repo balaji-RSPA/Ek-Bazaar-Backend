@@ -251,6 +251,7 @@ module.exports.searchSuggestion = async (req, res) => {
       const others = []; // group - 1
       const farmer = ["3"]; // group - 2
       const service = ["35", "37", "40", "41", "42", "43", "44", "48", "56"]; // group - 3
+        qyery.bool.must.unshift({"bool": {"should": []}})
       if (group === '2'){
         for (let i = 0; i < farmer.length; i++) {
           const _farmer = farmer[i]
@@ -259,7 +260,7 @@ module.exports.searchSuggestion = async (req, res) => {
               "l1": _farmer,
             }
           };
-          query.bool.must.push(categoryMatch)
+          query.bool.must[0]["bool"]["should"].push(categoryMatch)
         }
 
       } else if (group === '3'){
@@ -271,7 +272,7 @@ module.exports.searchSuggestion = async (req, res) => {
               "l1": _service,
             }
           };
-          query.bool.should.push(categoryMatch)
+            query.bool.must[0]["bool"]["should"].push(categoryMatch)
         }
       }else{
 

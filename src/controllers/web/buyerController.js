@@ -4,6 +4,9 @@ const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { buyers, sellers, category, elastic, location, SMSQue, QueEmails } = require("../../modules");
+const {RfpEnquirySend,RfpEnquiryReceived} = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
+const moment = require('moment');
 const {
   postRFP,
   checkBuyerExistOrNot,
@@ -27,8 +30,8 @@ const { createToken, messageContent, sendSMS } = require("../../utils/utils");
 const { queSMSBulkInsert, getQueSMS } = SMSQue
 const { bulkInserQemails } = QueEmails;
 
-const { sms } = require("../../utils/globalConstants")
-const { RFQOneToOne, RFQOneToOneBuyer } = require("../../utils/templates/smsTemplate/smsTemplate")
+const { sms,MailgunKeys } = require("../../utils/globalConstants")
+const { RFQOneToOne,RFQOneToOneBuyer }  = require("../../utils/templates/smsTemplate/smsTemplate")
 const { username, password, senderID, smsURL } = sms
 
 const getUserAgent = (userAgent) => {
@@ -46,7 +49,7 @@ const getUserAgent = (userAgent) => {
 
 }
 
-module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp) => {
+module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp, url) => {
 
   try {
     //productDetails.name !== 'undefined' 
@@ -59,7 +62,6 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
       // let suggestions = await getSuggestions(query, {}, '', '')
       // const pro = suggestions && suggestions.length && suggestions[0] && suggestions[0].length && suggestions[0][0]._source || '';
       // console.log("🚀 ~ file: buyerController.js ~ line 50 ~ module.exports.queSmsData= ~ pro", pro)
-
       const pro = {
         id: productDetails.name && productDetails.name.id,
         search: productDetails.name && productDetails.name.search || ''
@@ -76,7 +78,6 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
           productId = pro.id
         else if (pro.search === 'level5')
           level5Id = pro.id
-
         const reqQuery = {
           parentId, productId, secondaryId, primaryId, level5Id, userId: true, findByEmail: true
         }
@@ -85,19 +86,17 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
         let skip = 0, status = true, totalInsertion = 0
         const sellerIds = []
         let msg = ''
-
+        let bdy = ''
         while (status) {
-
           const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs, { "sellerId.paidSeller": "desc" });
           console.log("🚀 ~ file: buyerController.js ~ line 92 ~ module.exports.queSmsData= ~ seller", seller && seller[0].length)
-
+          
           if (seller[0] && seller[0].length) {
-
             const sellers = seller[0]
             const QueData = sellers.filter(v => v._source.sellerId.mobile && v._source.sellerId.mobile.length).map(v => {
               const sellerId = v._source.sellerId
-
-              msg = RFQOneToOne({ productDetails, _loc, name })
+              msg = RFQOneToOne({productDetails, _loc, name})
+              bdy = RfpEnquiryReceived({productDetails, _loc, name,url,sellerId : sellerId._id});
 
               totalInsertion++
               sellerIds.push(sellerId._id)
@@ -108,7 +107,7 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
                 userId: user && user._id || null,
                 name: name,
                 subject: "Product Enquiry",
-                body: "Need more details about product",
+                body: bdy,
                 fromEmail: rfp && rfp.buyerDetails && rfp.buyerDetails.email,
                 toEmail: sellerId.email,
                 mobile: {
@@ -120,8 +119,8 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
                 requestId: rfp._id
               })
             })
-            await queSMSBulkInsert(QueData)
             await bulkInserQemails(QueData)
+            // await queSMSBulkInsert(QueData)
             skip += limit
 
           } else status = false
@@ -154,6 +153,7 @@ module.exports.createRFP = async (req, res) => {
     const { mobile, name, email, location, productDetails, ipAddress, requestType, sellerId } = req.body
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
     const user = await checkUserExistOrNot({ mobile: mobile.mobile })
+    const url = req.get('origin');
     console.log("~ user", user, productDetails)
     if (user && user.length) {
 
@@ -210,13 +210,23 @@ module.exports.createRFP = async (req, res) => {
       const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
       const sellerDtl = await getSellerProfile(sellerId);
       if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
-        const message = {
-          from: email,
-          to: sellerDtl[0].email,
-          subject: 'Product Enquiry',
-          html: `<p>Somebody has enquired about the product</p>`
-        }
-        await sendSingleMail(message)
+        // const message = {
+        //   from: email,
+        //   to: sellerDtl[0].email,
+        //   subject: 'Product Enquiry',
+        //   html: `<p>Somebody has enquired about the product</p>`
+        // }
+        // await sendSingleMail(message)
+        await sendEmailSeller({
+          buyerEmail: email,
+          sellerEmail: sellerDtl[0].email,
+           sellerId: sellerDtl[0]._id,
+           url : url,
+          _loc,
+          productDetails,
+          name
+        })
+        await sendEmailBuyer(email)
       }
       if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
         // const sellerData = await getSellerProfile(sellerId)
@@ -230,7 +240,17 @@ module.exports.createRFP = async (req, res) => {
           console.log(' no seller contact number')
         }
       } else if (!sellerId && requestType === 2) {
-        this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
+        this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
+        await sendEmailBuyer(email)
+        // const message = {
+        //   from: MailgunKeys.senderMail,
+        //   to: email,
+        //   subject: 'Product Enquiry',
+        //   html: `<p>This is confirmation that your enquiry has been successfully send to the seller.</p>`
+        // }
+        // await sendSingleMail(message)
+        // await sendSMS(mobile, RFQOneToOneBuyer())
+
         if (global.environment === "production")
           await sendSMS(mobile.mobile, RFQOneToOneBuyer())
       } else {
@@ -299,13 +319,23 @@ module.exports.createRFP = async (req, res) => {
         const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
         const sellerDtl = await getSellerProfile(sellerId)
         if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
-          const message = {
-            from: email,
-            to: sellerDtl[0].email,
-            subject: 'Product Enquiry',
-            html: `<p>Somebody has enquired about the product</p>`
-          }
-          await sendSingleMail(message)
+          // const message = {
+          //   from: email,
+          //   to: sellerDtl[0].email,
+          //   subject: 'Product Enquiry',
+          //   html: `<p>Somebody has enquired about the product</p>`
+          // }
+          // await sendSingleMail(message)
+          await sendEmailSeller({
+            buyerEmail: email,
+            sellerEmail: sellerDtl[0].email,
+            sellerId: sellerDtl[0]._id,
+            url: url,
+            _loc,
+            productDetails,
+            name
+          })
+          await sendEmailBuyer(email)
         }
         if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
           // const sellerData = await getSellerProfile(sellerId)
@@ -317,7 +347,18 @@ module.exports.createRFP = async (req, res) => {
 
           }
         } else if (!sellerId && requestType === 2) {
-          this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
+
+         this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url )
+         await sendEmailBuyer(email)
+        // const message = {
+        //   from: MailgunKeys.senderMail,
+        //   to: email,
+        //   subject: 'Product Enquiry',
+        //   html: `<p>This is confirmation that your enquiry has been successfully send to the seller.</p>`
+        // }
+        // await sendSingleMail(message)
+        //  await sendSMS(mobile, RFQOneToOneBuyer())
+          // this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
           if (global.environment === "production") {
             const resp = await sendSMS(mobile.mobile, RFQOneToOneBuyer())
             console.log("sent meassage response", resp)
@@ -460,6 +501,27 @@ module.exports.getRFPS = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+async function sendEmailBuyer(email){
+  let messagecontent = RfpEnquirySend();
+  const message = {
+    from: MailgunKeys.senderMail,
+    to: email,
+    subject: 'Product Enquiry',
+    html: commonTemplate(messagecontent)
+  }
+  await sendSingleMail(message)
+}
+async function sendEmailSeller(params){
+ let messagecontent = RfpEnquiryReceived(params);
+ const message = {
+   from: params.buyerEmail,
+   to: params.sellerEmail,
+   subject: 'Product Enquiry',
+   html: commonTemplate(messagecontent)
+ }
+  await sendSingleMail(message)
+}
 // module.exports.queEmailData = async(productDetails,loc,user, name, mobile, rfp) => {
 //   let emailParams = {};
 //   try {

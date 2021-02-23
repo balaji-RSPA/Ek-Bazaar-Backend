@@ -6,8 +6,9 @@ const {
 } = subscriptionPlan;
 
 const {
-    createTrialPlan,
-    getAboutToexpirePlan
+  createTrialPlan,
+  getAboutToexpirePlan,
+  getExpirePlans
 } = SellerPlans
 
 const {
@@ -79,15 +80,22 @@ module.exports.acticateTrialPlan = async(req, res) => {
         respError(res, error.message);
     }
 };
-module.exports.getAboutToexpire = async(req, res) => {
-    try {
-        const result = await getAboutToexpirePlan();
-        respSuccess(res, result, 'Notification for about to expire');
-    } catch (err) {
-        respSuccess(res, "Something went wrong");
-    }
+module.exports.getAboutToexpire = async(req,res)=>{
+  try{
+    const result = await getAboutToexpirePlan();
+    respSuccess(res, result, 'Notification for about to expire');
+  }catch(err){
+   respSuccess(res, "Something went wrong");
+  }
 }
-
+module.exports.getExpiredPlan = async (req, res) => {
+  try {
+    const result = await getExpirePlans();
+    respSuccess(res, result, 'Notification for expired plan');
+  } catch (err) {
+    respSuccess(res, "Something went wrong");
+  }
+}
 module.exports.getSellerOrders = async(req, res) => {
     try {
         console.log(req.params, req.query, 'orders')
