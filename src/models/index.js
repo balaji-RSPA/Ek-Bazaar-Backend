@@ -27,6 +27,7 @@ const Payments = require('./paymentSchema')
 const Orders = require('./ordersSchema')
 const OrdersPlans = require('./orderPlanSchema')
 const InvoiceNumber = require('./invoiceNumberSchema')
+const Suggestions = require('./suggestionsSchema')
 // const Users = require('./user')
 
 module.exports = {
@@ -58,5 +59,6 @@ module.exports = {
     Payments,
     Orders,
     OrdersPlans,
-    InvoiceNumber
+    InvoiceNumber,
+    Suggestions
 }

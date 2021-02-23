@@ -43,6 +43,9 @@ const primaryCatSchema = new Schema(
     image: {
       type: { image }
     },
+    l1: {
+      type: String
+    },
 
   },
   {
