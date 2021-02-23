@@ -351,7 +351,7 @@ module.exports.mapLevel2Suggestions = function () {
 
         const documentCount = await PrimaryCategory.countDocuments()
         console.log("functionstructureLevel2Categories -> documentCount", documentCount)
-        let skip = 0, limit = 500
+        let skip = 0, limit = 1000
         for (skip; skip <= documentCount; skip += limit) {
             const level2 = await _getLevel2Categories({ skip, limit });
             console.log("module.exports.mapLevel2Suggestions -> level2", level2.length)
@@ -381,7 +381,7 @@ module.exports.mapLevel3Suggestions = function () {
 
         const documentCount = await SecondaryCategory.countDocuments()
         console.log("functionstructureLevel3Categories -> documentCount", documentCount)
-        let skip = 0, limit = 500
+        let skip = 0, limit = 1000
         for (skip; skip <= documentCount; skip += limit) {
             const level3 = await _getLevel3Categories({ skip, limit });
             const bulkBody = [];
