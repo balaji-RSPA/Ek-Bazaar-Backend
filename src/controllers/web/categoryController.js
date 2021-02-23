@@ -32,7 +32,8 @@ const {
     addProductSubCategory,
     getProductCat,
     updateProductCategory,
-    getProductSubcategory
+    getProductSubcategory,
+    createSuggestions
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const {
@@ -149,10 +150,18 @@ module.exports.addParentCategories = async (req, res) => {
 
         const reqData = req.body
         const result = await addParentCategories(reqData)
+        const suggestion = {
+            id: result[0]._id,
+            name: result[0].name,
+            search: "level1",
+            l1: result[0].vendorId,
+            vendorId: result[0].vendorId
+        }
+        const sugge = await createSuggestions(suggestion)
         respSuccess(res, result)
 
     } catch (error) {
-
+        console.log(error)
         respError(error)
 
     }
@@ -215,9 +224,18 @@ module.exports.addPrimaryCategories = async (req, res) => {
                 const parentCat = await getParentCat(query)
                 const primaryData = {
                     ...element,
+                    l1: parentCat.vendorId,
                     parentCatId: parentCat._id
                 }
                 const result = await addPrimaryCategory(primaryData)
+                const suggestion = {
+                    id: result._id,
+                    name: result.name,
+                    search: "level2",
+                    l1: result.l1,
+                    vendorId: result.vendorId
+                }
+                const sugge = await createSuggestions(suggestion)
                 const updateData = {
                     primaryCategotyId: parentCat.primaryCategotyId.concat(result._id)
                 }
@@ -231,7 +249,7 @@ module.exports.addPrimaryCategories = async (req, res) => {
         respSuccess(res, 'Uploaded Successfully')
 
     } catch (error) {
-
+        console.log(error)
         respError(error)
 
     }
@@ -298,6 +316,16 @@ module.exports.addSecondaryCategories = async (req, res) => {
                     primaryCatId: parentCat._id
                 }
                 const result = await addSecondaryCategory(secData)
+
+                const suggestion = {
+                    id: result._id,
+                    name: result.name,
+                    search: "level3",
+                    l1: result.l1,
+                    vendorId: result.vendorId
+                }
+                const sugge = await createSuggestions(suggestion)
+
                 const updateData = {
                     secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
                 }
@@ -382,6 +410,15 @@ module.exports.addBulkProducts = async (req, res) => {
                         secondaryId: parentCat._id
                     }
                     const result = await addProductCategory(productData)
+                    const suggestion = {
+                        id: result._id,
+                        name: result.name,
+                        search: "level4",
+                        l1: result.l1,
+                        vendorId: result.vendorId
+                    }
+                    const sugge = await createSuggestions(suggestion)
+
                     const updateData = {
                         productId: parentCat.productId.concat(result._id)
                     }
@@ -424,6 +461,15 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
                         productId: parentCat._id
                     }
                     const result = await addProductSubCategory(productData)
+                    const suggestion = {
+                        id: result._id,
+                        name: result.name,
+                        search: "level5",
+                        l1: result.l1,
+                        vendorId: result.vendorId
+                    }
+                    const sugge = await createSuggestions(suggestion)
+
                     // console.log("🚀 ~ file: categoryController.js ~ line 354 ~ module.exports.addBulkProductSubCategories= ~ result", result)
                     const updateData = {
                         subCategoryId: parentCat.subCategoryId.concat(result._id)

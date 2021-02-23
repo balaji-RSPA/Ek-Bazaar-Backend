@@ -45,7 +45,6 @@ const secondaryCatSchema = new Schema(
     },
     l1: {
       type: String,
-      default: true
     }
 
   },

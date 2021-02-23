@@ -587,6 +587,7 @@ exports.sellerSearch = async (reqQuery) => {
     }
     query.bool.filter.push(sellerActiveAccount)
   }
+  console.log(JSON.stringify(query), ' llllllllllllllllllll')
   return {
     query,
     aggs,
@@ -699,7 +700,7 @@ exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, 
       query,
       ...aggs
     };
-  // console.log("exports.getSuggestions -> body", body)
+  // console.log("exports.getSuggestions -> body", JSON.stringify(body))
   const searchQuery = {
     index: process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions",
     body,

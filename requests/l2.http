@@ -6,6 +6,7 @@ content-type: application/json
 #   {
 #     "vendorId": "LI1",
 #     "parentId": 12,
-#     "name": "Laboratory & Lab Equipment"
+#     "name": "Laboratory & Lab Equipment",
+#     "l1": "1"
 #   }
 # ]
