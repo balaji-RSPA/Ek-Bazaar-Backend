@@ -111,7 +111,7 @@ module.exports.RfpEnquiryReceived = (params) => {
     image: 'https://ekbazaar.tech-active.com/assets/images/rfpEnquiryReceived.png',
     body: `<p>You have an enquiry for (${capitalizeFirstLetter(params.productDetails.name.name)}, ${params.productDetails.quantity}${capitalizeFirstLetter(params.productDetails.weight)}) from (${params._loc}) by (${capitalizeFirstLetter(params.name)}) on ${moment().format('Do MMM YYYY')}.</p>`,
     buttonName: 'VIEW BUYER DETAILS',
-    buttonLink:'google.com',
+    buttonLink: `${params.url}/seller/seller-central/enquiry?sellerId=${params.sellerId}&skip=0&limit=10`,
     extracontent1: `<p style="text-align: center">Thank you for choosing EkBazaar</p>`
   }
   return message;
