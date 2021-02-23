@@ -9,6 +9,7 @@ const SubscriptionPlan = require('./subscriptionPlanSchema')
 const SellerPlans = require('./sellerPlanSchema')
 const Seller = require('./sellersSchema')
 const SellerTypes = require('./sellertTypesSchema')
+const Payments = require('./paymentSchema')
 
 const location = new Schema({
     city: {
@@ -84,8 +85,16 @@ const orderSchema = new Schema({
         type: String,
         default: null
     },
+    address: {
+        type: String,
+        default: null
+    },
+    pincode: {
+        type: String,
+        default: null
+    },
     sellerDetails: {
-        type: Object/* sellerDetailsSchema */,
+        type: Object /* sellerDetailsSchema */ ,
         default: null
     },
     sellerPlanId: {
@@ -119,13 +128,18 @@ const orderSchema = new Schema({
         type: Number,
         default: null
     },
+    currency: {
+        type: String,
+        default: null
+    },
     orderedOn: {
         type: Date,
         default: new Date()
     },
     paymentId: {
         type: ObjectId,
-        // required: true
+        ref: Payments
+            // required: true
     },
     paymentStatus: {
         type: Boolean,

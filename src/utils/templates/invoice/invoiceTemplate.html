@@ -10,12 +10,12 @@
             margin: 0px;
             line-height: 26px;
         }
-
+        
         h1,
         h2 {
             margin: 0px;
         }
-
+        
         .invoice-box {
             /* max-width: 800px; */
             margin: auto;
@@ -24,100 +24,97 @@
             font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
             color: #555;
         }
-
+        
         .invoice-box table {
             width: 100%;
             line-height: inherit;
             text-align: left;
         }
-
+        
         .invoice-box table td {
             padding: 5px;
             vertical-align: top;
         }
-
+        
         .invoice-box table tr td:nth-child(2) {
             text-align: right;
         }
-
+        
         .invoice-box table tr.top table td {
             padding-bottom: 20px;
         }
-
         /* .invoice-box table tr.top table td.title {
             font-size: 45px;
             line-height: 45px;
             color: #333;
         } */
-
+        
         .invoice-box table tr.information table td {
             padding-bottom: 40px;
         }
-
+        
         .invoice-box table tr.heading td {
             background: #eee;
             border-bottom: 1px solid #ddd;
             font-weight: bold;
         }
-
+        
         .invoice-box table tr.details td {
             padding-bottom: 20px;
         }
-
+        
         .invoice-box table tr.item td {
             border-bottom: 1px solid #eee;
         }
-
+        
         .invoice-box table tr.item.last td {
             border-bottom: none;
         }
-
+        
         .invoice-box table tr.total td:nth-child(2) {
             border-top: 2px solid #eee;
             font-weight: bold;
         }
-
+        
         @media only screen and (max-width: 600px) {
             .invoice-box table tr.top table td {
                 width: 100%;
                 display: block;
                 text-align: center;
             }
-
             .invoice-box table tr.information table td {
                 width: 100%;
                 display: block;
                 text-align: center;
             }
         }
-
         /** RTL **/
+        
         .rtl {
             direction: rtl;
-            font-family: Tahoma, "Helvetica Neue", "Helvetica", Helvetica, Arial,
-                sans-serif;
+            font-family: Tahoma, "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
         }
-
+        
         .rtl table {
             text-align: right;
         }
-
+        
         .rtl table tr td:nth-child(2) {
             text-align: left;
         }
-
+        
         .price_table td,
         th {
             border: 1px solid #ddd;
             text-align: left;
             padding: 10px;
         }
-
+        
         .price_table {
             border-collapse: collapse;
             width: 100%;
         }
-
+        
         .ribbon {
             background: #31c78a;
             padding: 7px;
@@ -159,9 +156,8 @@
                                 <td>
                                     <h4>Bill To</h4>
                                     <p>
-                                        {{details.sellerDetails.name}}<br />
-                                        {{details.sellerDetails.city}},{{details.sellerDetails.state}}<br />
-                                        GST No: {{details.sellerDetails.gstNo}}<br />
+                                        {{details.sellerDetails.name}}<br /> {{details.sellerDetails.city}},{{details.sellerDetails.state}}
+                                        <br /> {{details.sellerDetails.pincode}}-{{details.sellerDetails.pincode}}<br /> GST No: {{details.sellerDetails.gstNo}}<br />
                                     </p>
                                 </td>
 
@@ -180,7 +176,7 @@
                         <th>Sl.No</th>
                         <th>Plan Type</th>
                         <th>Price</th>
-                        <th>GST(18%) Amount</th>
+                        <th>GST(18%)</th>
                         <!-- <th>Amount</th> -->
                         <th>Total</th>
                     </tr>
@@ -195,7 +191,7 @@
                         <!-- <td>{{details.orderData.pricePerMonth}}</td> -->
                         <td>{{details.orderData.currency}} {{details.orderData.amount}}</td>
                         <td>{{details.orderData.currency}} {{details.orderData.gstAmount}}</td>
-                        <td>{{details.orderData.currency}} {{details.orderData.total}}</td>
+                        <td>{{details.orderData.currency}} {{details.orderData.orderTotal}}</td>
                     </tr>
 
                 </table>
@@ -206,7 +202,7 @@
                             <p><span>Total:</span> </p>
                         </td>
                         <td>
-                            <p><strong>{{details.orderData.currency}} {{details.orderData.total}}</strong></p>
+                            <p><strong>{{details.orderData.currency}} {{details.orderData.orderTotal}}</strong></p>
                         </td>
                     </tr>
                 </table>
