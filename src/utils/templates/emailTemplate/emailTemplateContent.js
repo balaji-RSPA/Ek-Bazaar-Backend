@@ -142,7 +142,7 @@ module.exports.listingRemovalReq = () => {
   let message = {
     title: 'Listing Removal Request',
     image: 'https://www.tenders.ekbazaar.com/assets/images/announcement.png',
-    body: `<p>Thank you. We will contact you within 7 working days and remove your listing.</p>`,
+    body: `<p>Thank you.</p><p>We will contact you within 7 working days and remove your listing.</p>`,
   }
   return message;
 }
