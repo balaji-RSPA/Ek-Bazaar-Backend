@@ -452,7 +452,7 @@ module.exports.updateUser = async (req, res) => {
         seller.isEmailSent = true;
         buyer.isEmailSent = true;
         // otp
-        let emailMessage = emailSuccessfulRegistration({name : user.name,url:url})
+        let emailMessage = emailSuccessfulRegistration({name : user.name,url:url,userType})
         const message = {
           from: MailgunKeys.senderMail,
           to: user.email,

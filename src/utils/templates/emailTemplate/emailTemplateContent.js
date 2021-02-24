@@ -1,10 +1,11 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
-module.exports.emailSuccessfulRegistration = (params) => {
+module.exports.emailSuccessfulRegistration = (params) => { //userType
+  console.log(params.userType,"===========")
   let message = {
     title : 'Welcome',
     image: 'https://ekbazaar.tech-active.com/assets/images/registrationthanks.png',
-    body: 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.',
+    body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'Thank you for registering.',
     greeting:`Hello ${params.name},`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
     buttonLink: `${params.url}/signin`,
@@ -141,7 +142,7 @@ module.exports.planChangedEmail = (params) => {
 module.exports.listingRemovalReq = () => {
   let message = {
     title: 'Listing Removal Request',
-    image: 'https://www.tenders.ekbazaar.com/assets/images/announcement.png',
+    image: 'https://ekbazaar.tech-active.com/assets/images/announcement.png',
     body: `<p>Thank you.</p><p>We will contact you within 7 working days and remove your listing.</p>`,
   }
   return message;

@@ -60,15 +60,21 @@ module.exports.serachSeller = async (req, res) => {
       // console.log("module.exports.serachSeller -> query", query)
       const _cities = await getAllCitiesElastic(query)
       // console.log("module.exports.serachSeller -> _cities", _cities)
-      if (_cities[0].length && _cities[0][0]._source)
+      if (_cities[0].length && _cities[0][0]._source) {
         cities = _cities[0][0]._source
+        cities.id = _cities[0][0]._id
+        cities._id = _cities[0][0]._id
+      }
       // console.log("module.exports.serachSeller -> cities", cities)
       const statesQuery = await sellerSearch({ stateFromKeyWord: keyword })
       query = statesQuery.query
       const _states = await getAllStatesElastic(query)
       // console.log("module.exports.serachSeller -> _states", _states[0][0])
-      if (_states[0].length && _states[0][0]._source)
+      if (_states[0].length && _states[0][0]._source) {
         states = _states[0][0]._source
+        states.id = _states[0][0]._id
+        states._id = _states[0][0]._id
+      }
       // console.log("module.exports.serachSeller -> states", states)
 
       if (cities && cities.alias) {
@@ -166,7 +172,7 @@ module.exports.searchSuggestion = async (req, res) => {
     const { skip, limit, search, product, group, sellerId, productId } = reqQuery
     console.log("🚀 ~ file: elasticSearchController.js ~ line 167 ~ module.exports.searchSuggestion= ~ sellerId", productId)
 
-    if(productId && productId !== '' && productId !== 'undefined') {
+    if (productId && productId !== '' && productId !== 'undefined') {
       const query = {
         "bool": {
           "must": {
@@ -251,8 +257,8 @@ module.exports.searchSuggestion = async (req, res) => {
       const others = []; // group - 1
       const farmer = ["3"]; // group - 2
       const service = ["35", "37", "40", "41", "42", "43", "44", "48", "56"]; // group - 3
-        query.bool.must.unshift({"bool": {"should": []}})
-      if (group === '2'){
+      query.bool.must.unshift({ "bool": { "should": [] } })
+      if (group === '2') {
         for (let i = 0; i < farmer.length; i++) {
           const _farmer = farmer[i]
           const categoryMatch = {
@@ -263,7 +269,7 @@ module.exports.searchSuggestion = async (req, res) => {
           query.bool.must[0]["bool"]["should"].push(categoryMatch)
         }
 
-      } else if (group === '3'){
+      } else if (group === '3') {
 
         for (let i = 0; i < service.length; i++) {
           const _service = service[i]
@@ -272,9 +278,9 @@ module.exports.searchSuggestion = async (req, res) => {
               "l1": _service,
             }
           };
-            query.bool.must[0]["bool"]["should"].push(categoryMatch)
+          query.bool.must[0]["bool"]["should"].push(categoryMatch)
         }
-      }else{
+      } else {
 
       }
 
@@ -312,7 +318,7 @@ module.exports.searchSuggestion = async (req, res) => {
           // "query": {
           // "bool": {
           //   "must": {
-              "match_all": {}
+          "match_all": {}
           //   }
           // }
           // }
