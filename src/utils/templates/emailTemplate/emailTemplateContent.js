@@ -1,10 +1,11 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
 module.exports.emailSuccessfulRegistration = (params) => { //userType
+  console.log(params.userType,"===========")
   let message = {
     title : 'Welcome',
     image: 'https://ekbazaar.tech-active.com/assets/images/registrationthanks.png',
-    body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'You have successfully registered',
+    body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'Thank you for registering.',
     greeting:`Hello ${params.name},`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
     buttonLink: `${params.url}/signin`,
