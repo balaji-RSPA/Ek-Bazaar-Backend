@@ -151,6 +151,7 @@ module.exports.addParentCategories = async (req, res) => {
         const reqData = req.body
         const result = await addParentCategories(reqData)
         const suggestion = {
+            _id: result[0]._id,
             id: result[0]._id,
             name: result[0].name,
             search: "level1",
@@ -229,6 +230,7 @@ module.exports.addPrimaryCategories = async (req, res) => {
                 }
                 const result = await addPrimaryCategory(primaryData)
                 const suggestion = {
+                    _id: result._id,
                     id: result._id,
                     name: result.name,
                     search: "level2",
@@ -318,6 +320,7 @@ module.exports.addSecondaryCategories = async (req, res) => {
                 const result = await addSecondaryCategory(secData)
 
                 const suggestion = {
+                    _id: result._id,
                     id: result._id,
                     name: result.name,
                     search: "level3",
@@ -411,6 +414,7 @@ module.exports.addBulkProducts = async (req, res) => {
                     }
                     const result = await addProductCategory(productData)
                     const suggestion = {
+                        _id: result._id,
                         id: result._id,
                         name: result.name,
                         search: "level4",
@@ -462,6 +466,7 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
                     }
                     const result = await addProductSubCategory(productData)
                     const suggestion = {
+                        _id: result._id,
                         id: result._id,
                         name: result.name,
                         search: "level5",
