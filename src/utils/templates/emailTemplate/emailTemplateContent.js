@@ -4,7 +4,7 @@ module.exports.emailSuccessfulRegistration = (params) => { //userType
   let message = {
     title : 'Welcome',
     image: 'https://ekbazaar.tech-active.com/assets/images/registrationthanks.png',
-    body: userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'You have successfully registered',
+    body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'You have successfully registered',
     greeting:`Hello ${params.name},`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
     buttonLink: `${params.url}/signin`,
