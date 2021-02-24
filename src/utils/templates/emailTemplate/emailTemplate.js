@@ -252,7 +252,7 @@ exports.commonTemplate = (params) => {
                         <td style="padding: 20px 10px;width: 100%;font-size: 12px; font-family: sans-serif; line-height:18px; text-align: center; color: #888888;"
                             class="x-gmail-data-detectors">
                              You received this email because you signed up for this<br><br>
-                            <unsubscribe style="color:#888888; text-decoration:underline;font-size: 14px;color: #3225A7;">unsubscribe</unsubscribe>
+                            <a href = 'https://ekbazaar.tech-active.com/'> <unsubscribe style = "color:#888888; text-decoration:underline;font-size: 14px;color: #3225A7;"> unsubscribe </unsubscribe></a>
                         </td>
                     </tr>
                 </table>

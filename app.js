@@ -16,7 +16,7 @@ const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersCont
 const { captureRazorPayPayment, createPdf } = require('./src/controllers/web/paymentController')
 const { deleteRecords } = require('./src/controllers/web/userController')
 const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
-
+const { updateLevel2l1Data, updateLevel3l1Data } = require('./src/controllers/web/testController')
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
     // require('./config/db').elasticSearchConnect();
@@ -30,7 +30,7 @@ const models = require('./src/models')
     // const Countries = models.Countries
 
 const { suggestions, level1, level2, level3, level4, level5, city, state, country, serviceType, tradeMaster } = require("./elasticsearch-mapping");
-const { checkIndices, putMapping } = suggestions
+const { checkIndices, putMapping, suggestionsMapping } = suggestions
 const l1CheckIndices = level1.checkIndices,
     l1PutMapping = level1.putMapping,
     l2CheckIndices = level2.checkIndices,
@@ -66,6 +66,32 @@ app.get('/', function(req, res) {
     res.send('Its trade live')
 })
 
+// app.get('/updateLevel2l1Data', async function (req, res) {
+//   try {
+//       const result = await updateLevel2l1Data()
+//   } catch (error) {
+
+//   }
+//   res.send('Its delete records  live')
+// })
+// app.get('/updateLevel3l1Data', async function (req, res) {
+//   try {
+//       const result = await updateLevel3l1Data()
+//   } catch (error) {
+
+//   }
+//   res.send('Its delete records  live')
+// })
+
+app.get('/suggestionsMapping', async function (req, res) {
+  try {
+      const result = await suggestionsMapping()
+  } catch (error) {
+
+      res.send(error)
+  }
+})
+
 // app.get('/getExpirePlansCron', async function (req, res) {
 //   try {
 //     const result = await getExpirePlansCron()
@@ -90,6 +116,25 @@ app.get('/', function(req, res) {
 //   }
 //   // res.send('Its delete records  live')
 // })
+  
+// const planExpire = cron.schedule('* * * * *', async () => {
+//     planExpire.stop()
+//     console.log('-------------------- planExpire file cron start --------------------', new Date());
+//     // await getExpirePlansCron()
+//     await getAboutToExpirePlan()
+//     console.log('-------------------- planExpire file cron completed --------------------', new Date())
+//     planExpire.start()
+//   })
+//   planExpire.start()
+
+// const queEmail = cron.schedule('* * * * *', async () => {
+//   queEmail.stop()
+//   console.log('-------------------- queEmail file cron start --------------------', new Date());
+//   await sendQueEmails()
+//   console.log('-------------------- queEmail file cron completed --------------------', new Date())
+//   queEmail.start()
+// })
+// queEmail.start()
 
 app.post('/capture/:paymentId', async function(req, res) {
     try {
@@ -240,13 +285,13 @@ if (env.NODE_ENV === "production") {
 
 if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
 
-    const planExpire = cron.schedule('* * * * *', async() => {
-        planExpire.stop()
-        console.log('-------------------- planExpire file cron start --------------------', new Date());
-        await getExpirePlansCron()
-        await getAboutToExpirePlan()
-        console.log('-------------------- planExpire file cron completed --------------------', new Date())
-        planExpire.start()
+  const planExpire = cron.schedule('0 10 * * *', async () => { //every day 10 am cron will start
+      planExpire.stop()
+      console.log('-------------------- planExpire file cron start --------------------', new Date());
+      await getExpirePlansCron()
+      await getAboutToExpirePlan()
+      console.log('-------------------- planExpire file cron completed --------------------', new Date())
+      planExpire.start()
     })
     planExpire.start()
 

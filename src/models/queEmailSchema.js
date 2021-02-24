@@ -29,7 +29,7 @@ const queEmailSchema = new Schema({
         default: null
     },
     body: {
-        type: String,
+        type: Object,
         trim: true
     },
     fromEmail: {

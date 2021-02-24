@@ -9,7 +9,7 @@ const {
   SellerTypes,
   Sellers,
   SellerProducts,
-
+  Suggestions
 } = require("../models");
 const {
   searchProducts
@@ -299,6 +299,8 @@ exports.getAllPrimaryCategory = (searchQuery, skip, limit) =>
     PrimaryCategory.find(searchQry)
       .skip(skip)
       .limit(limit)
+      .populate('parentCatId')
+      // .lean()
       .then((doc) => resolve(doc))
       .catch((error) => reject(error));
   });
@@ -673,6 +675,7 @@ exports.getProductByName = (query) => new Promise((resolve, reject) => {
 
 exports.getSecondaryCategoryByName = (query) => new Promise((resolve, reject) => {
   SecondaryCategory.find(query)
+    .populate('primaryCatId')
     // .limit(1)
     .then((doc) => resolve(doc))
     .catch((error) => reject(error));
@@ -929,3 +932,29 @@ module.exports.getAllLevel5Categories = (searchQuery, skip, limit) =>
       })
       .catch(reject);
   });
+
+  /* 
+    Suggestion collection starts
+  */
+  module.exports.createSuggestions = (data, id) =>
+    new Promise((resolve, reject) => {
+      Suggestions.create(data)
+        .then((doc) => {
+          resolve(doc && id ? doc._id : doc);
+        })
+        .catch(reject);
+    });
+
+module.exports.bulkInsertSuggestions = (data) =>
+  new Promise((resolve, reject) => {
+    Suggestions.insertMany(data, {
+      ordered: false,
+    })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });
+  /* 
+    Suggestions collection end
+  */
