@@ -7,6 +7,10 @@ const {
 } = require("../../utils/respHadler");
 const { sendSMS } = require('../../utils/utils');
 const { removeListingMsg } = require('../../utils/templates/smsTemplate/smsTemplate');
+const { listingRemovalReq } = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
+const { MailgunKeys } = require('../../utils/globalConstants');
+const { sendSingleMail } = require('../../utils/mailgunService');
 const {
 create,
 listAll
@@ -21,13 +25,16 @@ module.exports.createRemoveListing = async (req, res) => {
       console.log("=============Invalid mobile================");
     }
     if (removeListing && removeListing.email) {
+      let removeMessage = listingRemovalReq();
       const message = {
-        from: removeListing.email,
-        to: MailgunKeys.senderMail,
+        from: MailgunKeys.senderMail,
+        to:removeListing.email,
         subject: 'Remove my listing',
-        html: `<p>${removeListing.reason}</p>`
+        html: commonTemplate(removeMessage)
       }
       await sendSingleMail(message)
+    }else{
+      console.log("==============Email Not send==============");
     }
     respSuccess(res,"We will contact you within 7 working days and remove your listing");
   } catch (error) {

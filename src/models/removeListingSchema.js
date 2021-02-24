@@ -21,6 +21,11 @@ const removeListingSchema = new Schema({
    trim: true,
    required: true,
   },
+  email:{
+    type: String,
+    trim: true,
+    required: true,
+  },
   mobile: {
     mobile:{
       type: String,
