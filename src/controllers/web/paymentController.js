@@ -17,7 +17,7 @@ const {
 const { uploadToDOSpace, sendSMS } = require('../../utils/utils')
 const { addOrdersPlans } = require('../../modules/ordersModule');
 const { planSubscription, planChanged } = require('../../utils/templates/smsTemplate/smsTemplate')
-const { invoiceContent } = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const { invoiceContent,planChangedEmail } = require('../../utils/templates/emailTemplate/emailTemplateContent');
 const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate')
 
 const {
@@ -160,6 +160,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
 
     try {
         const { sellerId, subscriptionId, orderDetails, userId, paymentResponse } = req.body
+        const url = req.get('origin');
         const dateNow = new Date();
         const gstValue = 18
         const currency = 'INR'
@@ -176,6 +177,9 @@ module.exports.captureRazorPayPayment = async(req, res) => {
             let sellerPlanDetails = seller && seller.planId ? await getSellerPlan({ _id: seller.planId }) : null;
             const planTo = sellerPlanDetails && sellerPlanDetails.exprireDate;
             const planFrom = sellerPlanDetails && sellerPlanDetails.createdAt;
+            const checkPaidSeller = sellerPlanDetails && sellerPlanDetails.isTrial === false;
+            const oldPlanType = sellerPlanDetails && sellerPlanDetails.planType;
+            let newPlanType = '';
 
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
             const pricePerMonth = planDetails && planDetails.price
@@ -295,7 +299,6 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         deleteProduct = true
                     }
                     const patmentUpdate = await updatePayment({ _id: payment._id }, { orderId: OrdersData._id })
-
                     if (sellerPlanDetails) {
                         sellerPlanDetails = await updateSellerPlan({ _id: sellerPlanDetails._id }, planData);
                     } else {
@@ -329,7 +332,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                     }
 
                     // const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
-                    if (checkMobile && isProd && planTo && planFrom) {
+                    if (checkMobile && isProd && planTo && planFrom && checkPaidSeller) {
                         const msgData = {
                             plan: _p_details.planType,
                             currency: currency,
@@ -354,15 +357,31 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                     } else {
                         console.log("================sms not send===========")
                     }
-
-                    if (seller && seller.email) {
+                    if (seller && seller.email && planTo && planFrom && checkPaidSeller) {
+                        let planChangedEmailMsg = planChangedEmail({
+                            oldPlanType,
+                            newPlanType: _p_details.planType,
+                            expiryDate: sellerPlanDetails && sellerPlanDetails.exprireDate,
+                            url
+                         })
+                        const message = {
+                          from: MailgunKeys.senderMail,
+                          to: seller.email,
+                          subject: 'Plan changed',
+                          html: commonTemplate(planChangedEmailMsg),
+                        }
+                         await sendSingleMail(message)
+                     }else{
+                        console.log("==============Plan Changed Email Not Send====================")
+                     }
+                     if(seller && seller.email){
                         let invoiceEmailMsg = invoiceContent({
                             plan: _p_details.planType,
                             till: _p_details.exprireDate,
                             price: totalAmount,
-                            invoiceLink: invoice.Location
+                            invoiceLink: invoice.Location,
+                            cardNo: paymentJson.paymentDetails.card.last4
                         });
-                        // `<p>Your Subscription plan activated successfully!</p><p>Service type: ${currentGroup === 1 ? "Manufacturers/Traders" : currentGroup === 2 ? "Farmer" : " Service"}</p><p>Plan Type: ${planDetails.type}</p><p>Price/Month : ${pricePerMonth}</p><p>Price : ${price}</p><p>GST(18%) : ${gstAmount}</p><p>Total : ${totalAmount}</p>`
                         const message = {
                             from: MailgunKeys.senderMail,
                             to: seller.email,
@@ -373,9 +392,9 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                                 path: invoice.Location
                             }]
                         }
-                        console.log(seller.email, ' emai-----------------')
                         await sendSingleMail(message)
-                        // fs.unlinkSync(invoicePath)
+                    }else{
+                        console.log("==============Invoice Not Send====================")
                     }
                     await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
                     console.log('------------------ Payment done ---------')
