@@ -6,7 +6,7 @@ const auth = require("../../controllers/web/authController");
 const { authenticate } = require("../../middleware/auth");
 
 router.get("/buyer/rfp/:SellerId/:skip/:limit", authenticate, buyer.getRFPS);
-router.post('/buyer/rfp', buyer.createRFP)
+router.post('/buyer/rfp', buyer.createRFP);
 // router.post("/buyer", buyer.addBuyer);
 router.get("/buyer", authenticate, buyer.getBuyer);
 router.put("/buyer", authenticate, buyer.updateBuyer);

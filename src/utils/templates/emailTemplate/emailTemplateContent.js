@@ -1,7 +1,6 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
 module.exports.emailSuccessfulRegistration = (params) => { //userType
-  console.log(params.userType,"===========")
   let message = {
     title : 'Welcome',
     image: 'https://ekbazaar.tech-active.com/assets/images/registrationthanks.png',
