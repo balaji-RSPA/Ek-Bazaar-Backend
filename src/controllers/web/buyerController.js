@@ -483,15 +483,9 @@ module.exports.getRFPS = async (req, res) => {
       skip: parseInt(params.skip),
       limit: parseInt(params.limit)
     }
-    // const {
-    //   sellerId
-    // } = req.params;
-    const RFP = await getRFPData({
-      sellerId: params.SellerId
-    }, obj);
-    let totalCount = await getRFP({
-      sellerId: params.SellerId
-    });
+    let condition = {$and: [{sellerId: params.SellerId},{requestType: 1}]}
+    const RFP = await getRFPData(condition, obj);
+    let totalCount = await getRFP(condition);
     totalCount = totalCount.length;
     respSuccess(res, {
       RFP,
