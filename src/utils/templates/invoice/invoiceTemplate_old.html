@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Invoice</title>
+
+    <style>
+        p {
+            margin: 0px;
+            line-height: 26px;
+        }
+        
+        h1,
+        h2 {
+            margin: 0px;
+        }
+        
+        .invoice-box {
+            /* max-width: 800px; */
+            margin: auto;
+            font-size: 12px;
+            line-height: 20px;
+            font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+            color: #555;
+        }
+        
+        .invoice-box table {
+            width: 100%;
+            line-height: inherit;
+            text-align: left;
+        }
+        
+        .invoice-box table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        
+        .invoice-box table tr td:nth-child(2) {
+            text-align: right;
+        }
+        
+        .invoice-box table tr.top table td {
+            padding-bottom: 20px;
+        }
+        /* .invoice-box table tr.top table td.title {
+            font-size: 45px;
+            line-height: 45px;
+            color: #333;
+        } */
+        
+        .invoice-box table tr.information table td {
+            padding-bottom: 40px;
+        }
+        
+        .invoice-box table tr.heading td {
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+        
+        .invoice-box table tr.details td {
+            padding-bottom: 20px;
+        }
+        
+        .invoice-box table tr.item td {
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invoice-box table tr.item.last td {
+            border-bottom: none;
+        }
+        
+        .invoice-box table tr.total td:nth-child(2) {
+            border-top: 2px solid #eee;
+            font-weight: bold;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .invoice-box table tr.top table td {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+            .invoice-box table tr.information table td {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+        }
+        /** RTL **/
+        
+        .rtl {
+            direction: rtl;
+            font-family: Tahoma, "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+        }
+        
+        .rtl table {
+            text-align: right;
+        }
+        
+        .rtl table tr td:nth-child(2) {
+            text-align: left;
+        }
+        
+        .price_table td,
+        th {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 10px;
+        }
+        
+        .price_table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        .ribbon {
+            background: #31c78a;
+            padding: 7px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-box">
+        <div class="mail_div">
+            <table cellpadding="0" cellspacing="0">
+                <tr class="top">
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td>
+                                    <!-- <img src="CabStart-Symbol-FAV.png" alt="logo"> -->
+                                    <!-- <img src="" alt="logo" width="100" height="70"> -->
+                                    <p>
+                                        <!-- <img src="../../../../public/images/L3FB3.jpg" alt="logo"> -->
+                                    </p>
+                                </td>
+
+                                <td>
+                                    <h2>INVOICE-{{details.orderData.invoiceNumber}}</h2>
+                                    <!-- <p style="margin: 0px;"># INV-<?php echo $data['invoice_no']; ?></p> -->
+                                    <!-- <p>Balance Due</p>
+                                    <p><strong>100000</strong></p> -->
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="information">
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td>
+                                    <h4>Bill To</h4>
+                                    <p>
+                                        {{details.sellerDetails.name}}<br /> {{details.sellerDetails.city}},{{details.sellerDetails.state}}
+                                        <br /> {{details.sellerDetails.address}}-{{details.sellerDetails.pincode}}<br /> GST No: {{details.sellerDetails.gstNo}}<br />
+                                    </p>
+                                </td>
+
+                                <td>
+                                    <h5></h5>
+                                    <p><span>Invoice Date :</span> {{details.orderData.invoiceDate}}</p>
+                                    <p><span>Expire Date :</span> {{details.orderData.expireDate}}</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <table class="price_table">
+                    <tr>
+                        <th>Sl.No</th>
+                        <th>Plan Type</th>
+                        <th>Price</th>
+                        <th>GST(18%)</th>
+                        <!-- <th>Amount</th> -->
+                        <th>Total</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            <p style="text-align: left;">{{details.orderData.planType}}</p>
+                            <p style="text-align: left;">
+                                Access to all features
+                            </p>
+                        </td>
+                        <!-- <td>{{details.orderData.pricePerMonth}}</td> -->
+                        <td>{{details.orderData.currency}} {{details.orderData.amount}}</td>
+                        <td>{{details.orderData.currency}} {{details.orderData.gstAmount}}</td>
+                        <td>{{details.orderData.currency}} {{details.orderData.orderTotal}}</td>
+                    </tr>
+
+                </table>
+                <table>
+                    <tr>
+                        <td style="width: 60%;"></td>
+                        <td style="width: 15%;">
+                            <p><span>Total:</span> </p>
+                        </td>
+                        <td>
+                            <p><strong>{{details.orderData.currency}} {{details.orderData.orderTotal}}</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
