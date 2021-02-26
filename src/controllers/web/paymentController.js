@@ -141,10 +141,10 @@ module.exports.createRazorPayOrder = async(req, res) => {
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
             const pricePerMonth = planDetails && planDetails.price
             const price = pricePerMonth * parseInt(months)
-            const gstAmount = (parseInt(price) * gstValue) / 100
-            const totalAmount = parseInt(price) + gstAmount
+            const gstAmount = (parseFloat(price) * gstValue) / 100
+            const totalAmount = parseFloat(price) + gstAmount
 
-            const result = await instance.orders.create({ amount: (totalAmount * 100).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
+            const result = await instance.orders.create({ amount: parseInt((totalAmount * 100).toFixed(2)).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
                 // console.log(result, 'create Order')
 
             respSuccess(res, {...result, key_id: razorPayCredentials.key_id })
@@ -187,8 +187,8 @@ module.exports.captureRazorPayPayment = async(req, res) => {
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
             const pricePerMonth = planDetails && planDetails.price
             const price = pricePerMonth * parseInt(months)
-            const gstAmount = (parseInt(price) * gstValue) / 100
-            const totalAmount = parseInt(price) + gstAmount
+            const gstAmount = (parseFloat(price) * gstValue) / 100
+            const totalAmount = parseFloat(price) + gstAmount
 
             console.log(months, "-------", pricePerMonth, "-------", price, "-------", gstAmount, "-------", totalAmount)
 
@@ -196,7 +196,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                 method: 'POST',
                 url: `https://${razorPayCredentials.key_id}:${razorPayCredentials.key_secret}@api.razorpay.com/v1/payments/${req.params.paymentId}/capture`,
                 form: {
-                    amount: (totalAmount * 100),
+                    amount: parseInt((totalAmount * 100).toFixed(2)).toString(),
                     currency: 'INR'
                 }
             }, async function(error, response, body) {
