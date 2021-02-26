@@ -6,6 +6,7 @@ const Razorpay = require('razorpay')
 const axios = require("axios")
 const request = require('request');
 const moment = require('moment')
+const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
@@ -34,6 +35,7 @@ const { updateSellerProducts } = sellerProducts
 const { updateMasterBulkProducts } = mastercollections
 const { getInvoiceNumber, updateInvoiceNumber, addInvoiceNumber } = InvoiceNumber
 const isProd = process.env.NODE_ENV === 'production';
+const toWords = new ToWords();
 
 const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, reject) => {
 
@@ -62,27 +64,28 @@ const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, rej
             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
             expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
-            currency: orderDetails && orderDetails.currency || ''
+            currency: orderDetails && orderDetails.currency || '',
+            currencyInWords: toWords.convert(orderDetails && orderDetails.total, { currency: true })
 
         }
         const html = fs.readFileSync(path.resolve(__dirname, '../../..', 'src/utils/templates/invoice', 'invoiceTemplate.html'), 'utf8');
         const options = {
             format: "A4",
-            orientation: "portrait",
+            // orientation: "portrait",
             border: "10mm",
-            header: {
-                // height: "45mm",
-                contents: '<div style="text-align: center;">Ekbazaar</div>'
-            },
-            "footer": {
-                // "height": "28mm",
-                "contents": {
-                    // first: 'Cover page',
-                    2: 'Second page', // Any page number is working. 1-based index
-                    default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
-                    // last: 'Last Page'
-                }
-            }
+            // header: {
+            //     // height: "45mm",
+            //     contents: '<div style="text-align: center;">Ekbazaar</div>'
+            // },
+            // "footer": {
+            //     // "height": "28mm",
+            //     "contents": {
+            //         // first: 'Cover page',
+            //         2: 'Second page', // Any page number is working. 1-based index
+            //         default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+            //         // last: 'Last Page'
+            //     }
+            // }
         }
 
         const details = {
@@ -205,7 +208,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                     userId: seller.userId,
                     sellerId: seller._id,
                 }
-                if (response.statusCode === 200) {
+                if ( response.statusCode === 200) {
                     const invoiceNumner = await getInvoiceNumber({ id: 1 })
                     const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
                     const planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
@@ -380,7 +383,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                             till: _p_details.exprireDate,
                             price: totalAmount,
                             invoiceLink: invoice.Location,
-                            cardNo: paymentJson.paymentDetails.card.last4
+                            cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4
                         });
                         const message = {
                             from: MailgunKeys.senderMail,
