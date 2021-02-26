@@ -140,7 +140,7 @@ module.exports.createRazorPayOrder = async(req, res) => {
             const gstValue = 18
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
             const pricePerMonth = planDetails && planDetails.price
-            const price = pricePerMonth * parseInt(months)
+            const price = pricePerMonth /* * parseInt(months) */
             const gstAmount = (parseFloat(price) * gstValue) / 100
             const totalAmount = parseFloat(price) + gstAmount
 
@@ -186,7 +186,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
 
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
             const pricePerMonth = planDetails && planDetails.price
-            const price = pricePerMonth * parseInt(months)
+            const price = pricePerMonth/*  * parseInt(months) */
             const gstAmount = (parseFloat(price) * gstValue) / 100
             const totalAmount = parseFloat(price) + gstAmount
 
@@ -346,7 +346,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                             to: planTo,
                             from: planFrom
                         }
-                        await sendSMS(checkMobile, planChanged(msgData))
+                        /* await */ sendSMS(checkMobile, planChanged(msgData))
                     } else if (checkMobile && isProd) {
                         const msgData = {
                             plan: _p_details.planType,
@@ -356,7 +356,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                             name: order_details.invoiceNo.toString() + '-invoice.pdf',
                             till: _p_details.exprireDate
                         }
-                        await sendSMS(checkMobile, planSubscription(msgData))
+                        /* await */ sendSMS(checkMobile, planSubscription(msgData))
                     } else {
                         console.log("================sms not send===========")
                     }
@@ -373,7 +373,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                           subject: 'Plan changed',
                           html: commonTemplate(planChangedEmailMsg),
                         }
-                         await sendSingleMail(message)
+                         /* await */ sendSingleMail(message)
                      }else{
                         console.log("==============Plan Changed Email Not Send====================")
                      }
@@ -395,7 +395,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                                 path: invoice.Location
                             }]
                         }
-                        await sendSingleMail(message)
+                        /* await */ sendSingleMail(message)
                     }else{
                         console.log("==============Invoice Not Send====================")
                     }
