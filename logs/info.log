@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-10T11:16:13.412Z"}
 {"error":{"code":"MODULE_NOT_FOUND","requireStack":["/media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/sellersController.js","/media/mapper/ekbazaar-all/tradebazaar-backend/app.js"]},"level":"error","message":"uncaughtException: Cannot find module 'razorpay'\nRequire stack:\n- /media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/sellersController.js\n- /media/mapper/ekbazaar-all/tradebazaar-backend/app.js\nError: Cannot find module 'razorpay'\nRequire stack:\n- /media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/sellersController.js\n- /media/mapper/ekbazaar-all/tradebazaar-backend/app.js\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:797:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:690:27)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/sellersController.js:13:18)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/ekbazaar-all/tradebazaar-backend/app.js:15:39)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)","stack":"Error: Cannot find module 'razorpay'\nRequire stack:\n- /media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/sellersController.js\n- /media/mapper/ekbazaar-all/tradebazaar-backend/app.js\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:797:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:690:27)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/sellersController.js:13:18)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/ekbazaar-all/tradebazaar-backend/app.js:15:39)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)","exception":true,"date":"Wed Feb 10 2021 16:46:25 GMT+0530 (India Standard Time)","process":{"pid":9614,"uid":1000,"gid":1000,"cwd":"/media/mapper/ekbazaar-all/tradebazaar-backend","execPath":"/usr/bin/node","version":"v12.14.0","argv":["/usr/bin/node","/media/mapper/ekbazaar-all/tradebazaar-backend/app.js"],"memoryUsage":{"rss":78204928,"heapTotal":55525376,"heapUsed":31249416,"external":22496966}},"os":{"loadavg":[1.14453125,1.2421875,1.48583984375],"uptime":108847},"trace":[{"column":15,"file":"internal/modules/cjs/loader.js","function":"Module._resolveFilename","line":797,"method":"_resolveFilename","native":false},{"column":27,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":690,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":18,"file":"/media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/sellersController.js","function":null,"line":13,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":39,"file":"/media/mapper/ekbazaar-all/tradebazaar-backend/app.js","function":null,"line":15,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false}],"timestamp":"2021-02-10T11:16:25.978Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-10T11:18:30.204Z"}
@@ -31,6 +32,14 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 799b48e3ff6105f4ec3f19ed52c89e18ce14ef90
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-23T12:42:29.888Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-23T12:46:24.791Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-24T08:38:05.387Z"}
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 {"error":{"code":"MODULE_NOT_FOUND","requireStack":["/media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/paymentController.js","/media/mapper/ekbazaar-all/tradebazaar-backend/app.js"]},"level":"error","message":"uncaughtException: Cannot find module 'pdf-creator-node'\nRequire stack:\n- /media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/paymentController.js\n- /media/mapper/ekbazaar-all/tradebazaar-backend/app.js\nError: Cannot find module 'pdf-creator-node'\nRequire stack:\n- /media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/paymentController.js\n- /media/mapper/ekbazaar-all/tradebazaar-backend/app.js\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:797:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:690:27)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/paymentController.js:6:13)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/ekbazaar-all/tradebazaar-backend/app.js:16:47)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)\n    at internal/main/run_main_module.js:17:11","stack":"Error: Cannot find module 'pdf-creator-node'\nRequire stack:\n- /media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/paymentController.js\n- /media/mapper/ekbazaar-all/tradebazaar-backend/app.js\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:797:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:690:27)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/paymentController.js:6:13)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/ekbazaar-all/tradebazaar-backend/app.js:16:47)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)\n    at internal/main/run_main_module.js:17:11","exception":true,"date":"Fri Feb 12 2021 18:56:44 GMT+0530 (India Standard Time)","process":{"pid":1428,"uid":1000,"gid":1000,"cwd":"/media/mapper/ekbazaar-all/tradebazaar-backend","execPath":"/usr/bin/node","version":"v12.14.0","argv":["/usr/bin/node","/media/mapper/ekbazaar-all/tradebazaar-backend/app.js"],"memoryUsage":{"rss":97779712,"heapTotal":61526016,"heapUsed":39857320,"external":20957319}},"os":{"loadavg":[0.27197265625,0.8369140625,0.88916015625],"uptime":289466},"trace":[{"column":15,"file":"internal/modules/cjs/loader.js","function":"Module._resolveFilename","line":797,"method":"_resolveFilename","native":false},{"column":27,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":690,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":13,"file":"/media/mapper/ekbazaar-all/tradebazaar-backend/src/controllers/web/paymentController.js","function":null,"line":6,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":47,"file":"/media/mapper/ekbazaar-all/tradebazaar-backend/app.js","function":null,"line":16,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module.runMain","line":1047,"method":"runMain","native":false},{"column":11,"file":"internal/main/run_main_module.js","function":null,"line":17,"method":null,"native":false}],"timestamp":"2021-02-12T13:26:44.599Z"}
 =======
 <<<<<<< HEAD
@@ -1607,6 +1616,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> e3e18b4b8dd413469573c312cfb0eb9b7a3fd255
 {"error":{"code":"MODULE_NOT_FOUND","requireStack":["/home/api/public_html/src/controllers/web/paymentController.js","/home/api/public_html/app.js"]},"level":"error","message":"uncaughtException: Cannot find module 'pdf-creator-node'\nRequire stack:\n- /home/api/public_html/src/controllers/web/paymentController.js\n- /home/api/public_html/app.js\nError: Cannot find module 'pdf-creator-node'\nRequire stack:\n- /home/api/public_html/src/controllers/web/paymentController.js\n- /home/api/public_html/app.js\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:797:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:690:27)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/api/public_html/src/controllers/web/paymentController.js:6:13)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/api/public_html/app.js:16:47)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)\n    at internal/main/run_main_module.js:17:11","stack":"Error: Cannot find module 'pdf-creator-node'\nRequire stack:\n- /home/api/public_html/src/controllers/web/paymentController.js\n- /home/api/public_html/app.js\n    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:797:15)\n    at Function.Module._load (internal/modules/cjs/loader.js:690:27)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/api/public_html/src/controllers/web/paymentController.js:6:13)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/api/public_html/app.js:16:47)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)\n    at internal/main/run_main_module.js:17:11","exception":true,"date":"Mon Feb 15 2021 06:29:21 GMT+0000 (Coordinated Universal Time)","process":{"pid":31412,"uid":1000,"gid":1000,"cwd":"/home/api/public_html","execPath":"/usr/bin/node","version":"v12.14.0","argv":["/usr/bin/node","/home/api/public_html/app.js"],"memoryUsage":{"rss":101769216,"heapTotal":62836736,"heapUsed":38626208,"external":20948169}},"os":{"loadavg":[0.06689453125,0.13623046875,0.12255859375],"uptime":7507285},"trace":[{"column":15,"file":"internal/modules/cjs/loader.js","function":"Module._resolveFilename","line":797,"method":"_resolveFilename","native":false},{"column":27,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":690,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":13,"file":"/home/api/public_html/src/controllers/web/paymentController.js","function":null,"line":6,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":47,"file":"/home/api/public_html/app.js","function":null,"line":16,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module.runMain","line":1047,"method":"runMain","native":false},{"column":11,"file":"internal/main/run_main_module.js","function":null,"line":17,"method":null,"native":false}],"timestamp":"2021-02-15T06:29:21.274Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-15T06:30:01.297Z"}
@@ -1620,6 +1630,11 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-15T06:24:24.086Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-17T06:14:26.983Z"}
 >>>>>>> 799b48e3ff6105f4ec3f19ed52c89e18ce14ef90
+=======
+>>>>>>> staging
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-15T06:24:24.086Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-17T06:14:26.983Z"}
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 =======
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-15T11:08:27.266Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-15T11:09:26.204Z"}
@@ -1636,12 +1651,15 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-15T12:44:16.746Z"}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 76e33e51b4ea5299669a88717c81ddd8a43d0212
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-15T12:44:54.663Z"}
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> 799b48e3ff6105f4ec3f19ed52c89e18ce14ef90
+=======
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 >>>>>>> staging
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-16T04:42:04.914Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-16T04:46:53.171Z"}
@@ -2124,6 +2142,7 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-17T06:14:44.260Z"}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-19T13:16:14.791Z"}
 =======
 >>>>>>> sprint-01
@@ -2148,6 +2167,8 @@
 =======
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 >>>>>>> sprint-01
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-17T06:16:01.566Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-17T06:28:20.893Z"}
@@ -2160,7 +2181,10 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-17T06:28:20.893Z"}
 <<<<<<< HEAD
 >>>>>>> sprint-01
+<<<<<<< HEAD
 >>>>>>> 799b48e3ff6105f4ec3f19ed52c89e18ce14ef90
+=======
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 >>>>>>> staging
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-18T04:22:07.299Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-18T05:30:05.112Z"}
@@ -2210,8 +2234,11 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-18T07:13:07.144Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-18T07:13:16.363Z"}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-18T07:28:22.190Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-18T08:57:19.210Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-18T08:57:25.437Z"}
@@ -2541,7 +2568,10 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-23T06:23:36.189Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-23T06:25:26.451Z"}
 =======
+<<<<<<< HEAD
 >>>>>>> 799b48e3ff6105f4ec3f19ed52c89e18ce14ef90
+=======
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-19T13:17:54.763Z"}
 =======
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-17T13:25:05.125Z"}
@@ -2578,6 +2608,7 @@
 >>>>>>> staging
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-19T13:16:30.535Z"}
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> sprint-01
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-19T13:18:14.892Z"}
 >>>>>>> 5870476f47f376a0df0a57d9aacc8e46f823e069
@@ -2591,6 +2622,8 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-22T05:47:52.628Z"}
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-23T09:03:31.069Z"}
 =======
 >>>>>>> sprint-01
@@ -2785,10 +2818,34 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-24T11:51:50.292Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-24T11:52:02.124Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-24T11:52:11.054Z"}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-24T12:13:29.111Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-24T12:49:10.530Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:21:46.505Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:30:37.287Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:31:06.147Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:38:37.245Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:39:51.558Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:39:57.685Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:46:49.141Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:48:38.051Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:50:32.663Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:51:00.336Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T04:57:43.915Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T05:01:33.756Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T05:02:18.249Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T05:02:20.455Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T05:03:31.555Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-25T05:03:58.070Z"}
+=======
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
 >>>>>>> chandra-backend
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-24T12:55:48.684Z"}
 =======
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-24T12:54:59.414Z"}
+<<<<<<< HEAD
 <<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-25T07:40:05.921Z"}
 =======
@@ -2816,3 +2873,14 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-02-25T07:51:49.751Z"}
 =======
 >>>>>>> 307158d19594eb7ed13fbb6adce292bf3cd3f8d3
+=======
+>>>>>>> sprint-01
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-24T12:57:22.572Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-24T12:57:50.392Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-24T12:58:19.910Z"}
+>>>>>>> staging
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-26T04:14:17.112Z"}
+=======
+>>>>>>> staging
+>>>>>>> 2605f0fde8f4bb8b1d6669eb63c600044795a296
+{"message":"Listening:8070","level":"info","timestamp":"2021-02-26T04:27:37.982Z"}
