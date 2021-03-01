@@ -77,7 +77,7 @@ module.exports.emailBody = (params) =>
                                           width="100%">
                                         <tbody>
                                         <tr>
-                                            <td style="padding-left:40px; padding-right:40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:13.5px; font-weight:300; letter-spacing:0.07em; line-height:2em;">
+                                            < td style = "padding-left:40px; padding-right:40px; padding-bottom: 40px;text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:13.5px; font-weight:300; letter-spacing:0.07em; line-height:2em;" >
                                                 ${params.body}
                                                 <br><br>
                                                 ${button(params.buttonName,params.buttonLink)}
