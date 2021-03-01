@@ -29,7 +29,7 @@ module.exports.passwordUpdate = (params) => {
     body: `<p><strong>Hello ${params.name},<strong></p><p>Your password has been changed recently. Please use the updated password to login to your account.</p>`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
     buttonLink: `${params.url}/signin`,
-    extracontent1: `If you did not make the change. <a href='${params.url}/contact'>Please contact support.</a>`
+    extracontent1: `<p style="text-align:center;margin-top: -13px;">If you did not make the change. <a href='${params.url}/contact'>Please contact support.</a></p>`
   }
   return message;
 }
@@ -51,7 +51,7 @@ module.exports.invoiceContent = (params) => {
     <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
     buttonName: 'VIEW FULL INVOICE',
     buttonLink: params.invoiceLink,
-    extracontent1: `<p style="text-align: center">Thank you for choosing EkBazaar</p>`
+    extracontent1: `<p style="text-align: center; margin-top:-13px;">Thank you for choosing EkBazaar</p>`
   }
   return message;
 }
@@ -112,7 +112,7 @@ module.exports.RfpEnquiryReceived = (params) => {
     body: `<p>You have an enquiry for (${capitalizeFirstLetter(params.productDetails.name.name)}, ${params.productDetails.quantity}${capitalizeFirstLetter(params.productDetails.weight)}) from (${params._loc}) by (${capitalizeFirstLetter(params.name)}) on ${moment().format('Do MMM YYYY')}.</p>`,
     buttonName: 'VIEW BUYER DETAILS',
     buttonLink: `${params.url}/seller/seller-central/enquiry?sellerId=${params.sellerId}&skip=0&limit=10`,
-    extracontent1: `<p style="text-align: center">Thank you for choosing EkBazaar</p>`
+    extracontent1: `<p style="text-align: center;margin-top:-13px;">Thank you for choosing EkBazaar</p>`
   }
   return message;
 }
@@ -134,7 +134,7 @@ module.exports.planChangedEmail = (params) => {
     `,
     buttonName: 'VIEW YOUR PLAN',
     buttonLink: `${params.url}/seller/seller-central/seller-account?skip=0&limit=10`,
-    extracontent1: `<p style="text-align: center">Thank you for choosing EK Bazaar. Have a good day.</p>`
+    extracontent1: `<p style="text-align: center;margin-top:-13px;">Thank you for choosing EK Bazaar. Have a good day.</p>`
   }
   return message;
 }

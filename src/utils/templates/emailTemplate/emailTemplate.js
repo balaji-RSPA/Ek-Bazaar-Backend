@@ -196,11 +196,11 @@ exports.commonTemplate = (params) => {
                 <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center"
                        width="100%" style="max-width: 680px;">
                     <tr>
-                        <td style="padding: 42px 0; text-align: center">
+                        <td style="padding: 25px 0; text-align: center">
                             <img src=${logo} aria-hidden="true" width="108"
                                  height="63" alt="logo"
                                  border="0"
-                                 style="height: auto; transform:scale(2); font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                                 style="height: 45px; width: 199px; transform:scale(2); font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
                         </td>
                     </tr>
                 </table>
@@ -213,46 +213,6 @@ exports.commonTemplate = (params) => {
                         <td style="padding:40px 10px 20px 10px; width: 100%;font-size: 12px; font-family: sans-serif; line-height:18px; text-align: center; color: #888888;"
                             class="x-gmail-data-detectors">
                              Copyright 2021© EkBazaar.com, All rights reserved.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" valign="top" class="m_7296168928262505884footerContent"
-                            style="color:#999;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:170%;padding:8px 0">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%"
-                                   style="border-collapse:collapse;max-width:200px;margin:5px 0 15px 0">
-                                <tbody>
-                                <tr>
-                                    <td align="center" style="padding:0 10px 0 10px"><a
-                                            href="https://www.htmlemailtemplates.net/startup-emails-vol2"
-                                            style="color:#499df3;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:100%;text-decoration:none"
-                                            target="_blank">
-                                        <img src=${facebook}
-                                             width="32" class=""
-                                             style="max-width:100%;height:auto;border:none"></a></td>
-                                    <td align="center" style="padding:0 10px 0 10px"><a
-                                                href="https://www.htmlemailtemplates.net/startup-emails-vol2"
-                                                style="color:#499df3;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:100%;text-decoration:none"
-                                                target="_blank">
-                                            <img src=${twitter}
-                                                 width="30" class=""
-                                                 style="max-width:100%;height:auto;border:none"></a></td>
-                                    <td align="center" style="padding:0 10px 0 10px"><a
-                                                href="https://www.htmlemailtemplates.net/startup-emails-vol2"
-                                                style="color:#499df3;font-family:'Open Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:100%;text-decoration:none"
-                                                target="_blank">
-                                            <img src=${linkedIn}
-                                                 width="30" class=""
-                                                 style="max-width:100%;height:auto;border:none"></a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 20px 10px;width: 100%;font-size: 12px; font-family: sans-serif; line-height:18px; text-align: center; color: #888888;"
-                            class="x-gmail-data-detectors">
-                             You received this email because you signed up for this<br><br>
-                            <a href = 'https://ekbazaar.tech-active.com/'> <unsubscribe style = "color:#888888; text-decoration:underline;font-size: 14px;color: #3225A7;"> unsubscribe </unsubscribe></a>
                         </td>
                     </tr>
                 </table>
