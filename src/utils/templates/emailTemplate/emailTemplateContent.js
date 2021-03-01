@@ -69,7 +69,7 @@ module.exports.planExpired = (params)=>{
     message = {
       title: 'Plan Expired',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpired.png',
-      body: `Your plan has expired. Please renew your plan`,
+      body: `<p>Your plan has expired. Please renew your plan</p>`,
       buttonName: 'SUBSCRIBE',
       buttonLink: `${params.url}`
     }
@@ -82,7 +82,7 @@ module.exports.planExpiring = (params)=>{
     message = {
       title: 'Plan Expiring',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-      body: `<p>Thank you for joining Ekbazaar. We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is coming to a close and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
+      body: `<p>We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is coming to a close and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
     }
@@ -90,7 +90,7 @@ module.exports.planExpiring = (params)=>{
     message = {
       title: 'Plan Expiring',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-      body: `<p>Thank you for joining Ekbazaar. Your plan is about to expire in ${params.days}days.Please renew your plan</p>`,
+      body: `<p>Your plan is about to expire in ${params.days}days.Please renew your plan</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
     }
@@ -98,7 +98,7 @@ module.exports.planExpiring = (params)=>{
     message = {
       title: 'Plan Expiring',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-      body: `<p>Thank you for joining Ekbazaar. Your Plan is Expiring Today! Please Renew to access the benefits of a Subscriber</p>`,
+      body: `<p>Your Plan is Expiring Today! Please Renew to access the benefits of a Subscriber</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
     }
