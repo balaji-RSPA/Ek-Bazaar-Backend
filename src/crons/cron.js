@@ -350,9 +350,9 @@ exports.getAboutToExpirePlan = async (req,res) =>{
                 smsData.push(data2);
             }
             if (element && element.sellerId && element.sellerId.email) {
-                 const date1 = moment();
-                 const date2 = moment(element.exprireDate);
-                 const dayDiff = date2.diff(date1, 'days');
+                 const date1 = new Date();
+                 const date2 = element.exprireDate;
+                 const dayDiff = date2.getDay() - date1.getDay();
                 const data = {
                     messageType: "plan_abt_expire",
                     sellerId: element._id,

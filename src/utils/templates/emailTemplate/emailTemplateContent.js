@@ -78,19 +78,19 @@ module.exports.planExpired = (params)=>{
 }
 module.exports.planExpiring = (params)=>{
   let message = ''
-  if (params.isTrial) {
+  if (params.isTrial && params.dayDiff) {
     message = {
       title: 'Plan Expiring',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-      body: `<p>We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is coming to a close and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
+      body: `<p>We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is about to expire in ${params.dayDiff} days and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
     }
-  }else if(params.days){
+  } else if (params.dayDiff && params.isTrial===false) {
     message = {
       title: 'Plan Expiring',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-      body: `<p>Your plan is about to expire in ${params.days}days.Please renew your plan</p>`,
+      body: `<p>Your plan is about to expire in ${params.dayDiff} days.Please renew your plan</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
     }
