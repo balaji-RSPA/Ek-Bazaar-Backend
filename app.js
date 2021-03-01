@@ -285,14 +285,17 @@ if (env.NODE_ENV === "production") {
 
 if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
 
-  const planExpire = cron.schedule('0 10 * * *', async () => { //every day 10 am cron will start
+  const planExpire = cron.schedule('50 23 * * *', async () => { //every day 10 am cron will start
       planExpire.stop()
       console.log('-------------------- planExpire file cron start --------------------', new Date());
       await getExpirePlansCron()
       await getAboutToExpirePlan()
       console.log('-------------------- planExpire file cron completed --------------------', new Date())
       planExpire.start()
-    })
+    }, {
+        scheduled: true,
+        timezone: "Asia/Kolkata"
+      })
     planExpire.start()
 
     const queEmail = cron.schedule('* * * * *', async() => {
