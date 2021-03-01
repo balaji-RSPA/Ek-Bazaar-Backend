@@ -20,14 +20,14 @@ module.exports.sendSingleMail = (message) => new Promise((resolve, reject) => {
     nodemailerMailgun.sendMail(message, (err, info) => {
       if (err) {
         console.log(`Error: ${err}`);
-        reject(err)
+        resolve("error")
       } else {
         console.log(`Response: ${info}`);
         resolve(info)
       }
     });
   } catch (error) {
-    reject(error)
+    resolve("error")
   }
 });
 

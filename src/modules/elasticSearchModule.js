@@ -165,6 +165,38 @@ exports.sellerSearch = async (reqQuery) => {
 
   }
 
+  const sellerActiveAccount = {
+    "bool": {
+      "should": [
+        {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "sellerId.deactivateAccount"
+                }
+              },
+              {
+                "term": {
+                  "sellerId.deactivateAccount": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "bool": {
+            "must_not": {
+              "exists": {
+                "field": "sellerId.deactivateAccount"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+
   if (userId) {
     query.bool.must.push({
       "exists": {
@@ -271,6 +303,7 @@ exports.sellerSearch = async (reqQuery) => {
           }
         }
       }
+      query.bool.filter.push(sellerActiveAccount)
     }
   }
 
@@ -281,6 +314,15 @@ exports.sellerSearch = async (reqQuery) => {
       }
     }
     query.bool.must.push(seller)
+    // aggs = {
+    //   "aggs": {
+    //     "products": {
+    //       "cardinality": {
+    //         "field": "name.keyword"
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   if (search) {
@@ -302,14 +344,23 @@ exports.sellerSearch = async (reqQuery) => {
       },
     }
     query.bool.must.push(level5Search);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
+
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -327,14 +378,22 @@ exports.sellerSearch = async (reqQuery) => {
     };
 
     query.bool.must.push(categoryMatch);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -385,6 +444,7 @@ exports.sellerSearch = async (reqQuery) => {
         }
       }
     }
+    query.bool.filter.push(sellerActiveAccount)
   }
 
   if (secondaryId) {
@@ -395,14 +455,22 @@ exports.sellerSearch = async (reqQuery) => {
       },
     };
     query.bool.must.push(categoryMatch);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -418,14 +486,22 @@ exports.sellerSearch = async (reqQuery) => {
       },
     };
     query.bool.must.push(categoryMatch);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
     aggs = {
       "collapse": {
-        "field": "sellerId.name.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId.name.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -433,7 +509,7 @@ exports.sellerSearch = async (reqQuery) => {
   }
 
   if (parentId) {
-  console.log("exports.sellerSearch -> parentId", parentId)
+    console.log("exports.sellerSearch -> parentId", parentId)
 
     // const categoryId = await getSecCatId({_id: secondaryId }, '_id')
     const categoryMatch = {
@@ -442,14 +518,22 @@ exports.sellerSearch = async (reqQuery) => {
       },
     };
     query.bool.must.push(categoryMatch);
+    query.bool.filter.push(sellerActiveAccount)
+    if(reqQuery.findByEmail) {
+      query.bool.must.push({
+        "exists": {
+          "field": "sellerId.email"
+        }
+      })
+    }
     aggs = {
       "collapse": {
-        "field": "sellerId._id.keyword"
+        "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
       },
       "aggs": {
         "products": {
           "cardinality": {
-            "field": "sellerId._id.keyword"
+            "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
         }
       }
@@ -501,7 +585,9 @@ exports.sellerSearch = async (reqQuery) => {
         }
       }
     }
+    query.bool.filter.push(sellerActiveAccount)
   }
+  console.log(JSON.stringify(query), ' llllllllllllllllllll')
   return {
     query,
     aggs,
@@ -614,7 +700,7 @@ exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, 
       query,
       ...aggs
     };
-  // console.log("exports.getSuggestions -> body", body)
+  // console.log("exports.getSuggestions -> body", JSON.stringify(body))
   const searchQuery = {
     index: process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions",
     body,

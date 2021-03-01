@@ -6,3 +6,5 @@ yarn-lock.json
 ref
 logs
 .env
+
+/public/orders

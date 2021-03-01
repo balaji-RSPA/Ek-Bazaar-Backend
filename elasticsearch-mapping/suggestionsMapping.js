@@ -2,7 +2,7 @@ var client = require('../config/db').esClient;
 const index =  process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "suggestions" //"trade-live.suggestions"
 const type = "_doc"
 
-const { ParentCategory, PrimaryCategory, SecondaryCategory, Products, ProductsSubCategories } = require("../src/models")
+const { ParentCategory, PrimaryCategory, SecondaryCategory, Products, ProductsSubCategories, Suggestions } = require("../src/models")
 
 client.cluster.health({}, function (err, resp, status) {
     console.log("-- Client Health --", resp);
@@ -286,10 +286,182 @@ function structureLevel5Categories() {
     })
 }
 
+module.exports.suggestionsMapping = () => new Promise( async (resolve, reject) => {
+
+    try {
+        console.log('suggestions maaping')
+
+        console.log(' Level 1 Start ----')
+        const level1 = await this.mapLevel1Suggestions()
+        console.log(' Level 1 Completed ----')
+        
+        console.log(' Level 2 Start ----')
+        const level2 = await this.mapLevel2Suggestions()
+        console.log(' Level 2 Completed ----')
+
+        console.log(' Level 3 Start ----')
+        const level3 = await this.mapLevel3Suggestions()
+        console.log(' Level 3 Completed ----')
+
+        console.log(' Level 4 Start ----')
+        const level4 = await this.mapLevel4Suggestions()
+        console.log(' Level 4 Completed ----')
+
+        console.log(' Level 5 Start ----')
+        const level5 = await this.mapLevel5Suggestions()
+        console.log(' Level 5 Completed ----')
+
+        console.log('------- COmpleted all level category suggestions ----')
+        resolve();
+        
+    } catch (error) {
+        console.log(error)
+        reject(error)
+    }
+
+})
+
+module.exports.mapLevel1Suggestions = function () {
+    return new Promise(async (resolve, reject) => {
+
+        const bulkBody = [];
+        const documentCount = await ParentCategory.countDocuments()
+        console.log("functionstructureLevel1Categories -> documentCount", documentCount)
+        const level1 = await _getLevel1Categories();
+        level1.forEach(element => {
+            bulkBody.push({
+                name: element.name.toLowerCase(),
+                _id: element._id,
+                id: element._id,
+                l1:element.vendorId,
+                vendorId: element.vendorId,
+                search: "level1"
+            });
+
+        });
+        await bulkInsertSuggestions(bulkBody)
+        console.log('Level 1 indexing limit')
+        // console.log(bulkBody)
+        resolve();
+    })
+}
+
+module.exports.mapLevel2Suggestions = function () {
+    return new Promise(async (resolve, reject) => {
+
+        const documentCount = await PrimaryCategory.countDocuments()
+        console.log("functionstructureLevel2Categories -> documentCount", documentCount)
+        let skip = 0, limit = 1000
+        for (skip; skip <= documentCount; skip += limit) {
+            const level2 = await _getLevel2Categories({ skip, limit });
+            console.log("module.exports.mapLevel2Suggestions -> level2", level2.length)
+            const bulkBody = [];
+            
+            level2.forEach(element => {
+                bulkBody.push({
+                    name: element.name.toLowerCase(),
+                    _id: element._id,
+                    id: element._id,
+                    l1: element.l1,
+                    vendorId: element.vendorId,
+                    search: "level2"
+                });
+
+            });
+            await bulkInsertSuggestions(bulkBody)
+            console.log('Level 2 indexing limit --', limit)
+        }
+
+        resolve();
+    })
+}
+
+module.exports.mapLevel3Suggestions = function () {
+    return new Promise(async (resolve, reject) => {
+
+        const documentCount = await SecondaryCategory.countDocuments()
+        console.log("functionstructureLevel3Categories -> documentCount", documentCount)
+        let skip = 0, limit = 1000
+        for (skip; skip <= documentCount; skip += limit) {
+            const level3 = await _getLevel3Categories({ skip, limit });
+            const bulkBody = [];
+            level3.forEach(element => {
+                bulkBody.push({
+                    name: element.name.toLowerCase(),
+                    _id: element._id,
+                    id: element._id,
+                    vendorId: element.vendorId,
+                    l1: element.l1,
+                    search: "level3"
+                });
+
+            });
+            await bulkInsertSuggestions(bulkBody)
+            console.log('Level 3 indexing limit --', limit)
+        }
+        resolve();
+    })
+}
+
+module.exports.mapLevel4Suggestions = function () {
+    return new Promise(async (resolve, reject) => {
+
+        const documentCount = await Products.countDocuments()
+        console.log("functionstructureLevel4Categories -> documentCount", documentCount)
+        let skip = 0, limit = 1000
+        for (skip; skip <= documentCount; skip += limit) {
+            const level4 = await _getLevel4Categories({ skip, limit });
+            const bulkBody = [];
+            level4.forEach(element => {
+                bulkBody.push({
+                    name: element.name.toLowerCase(),
+                    _id: element._id,
+                    id: element._id,
+                    vendorId: element.vendorId,
+                    l1: element.l1,
+                    search: "level4"
+                });
+
+            });
+            await bulkInsertSuggestions(bulkBody)
+            console.log('Level 4 indexing limit --', limit)
+        }
+
+        resolve();
+    })
+}
+
+module.exports.mapLevel5Suggestions = function () {
+    return new Promise(async (resolve, reject) => {
+
+        const documentCount = await ProductsSubCategories.countDocuments()
+        console.log("functionstructureLevel5Categories -> documentCount", documentCount)
+        let skip = 0, limit = 1000
+        for (skip; skip <= documentCount; skip += limit) {
+            const level5 = await _getLevel5Categories({ skip, limit });
+            const bulkBody = [];
+            level5.forEach(element => {
+                bulkBody.push({
+                    name: element.name.toLowerCase(),
+                    _id: element._id,
+                    id: element._id,
+                    vendorId: element.vendorId,
+                    l1: element.l1,
+                    search: "level5"
+                });
+
+            });
+            await bulkInsertSuggestions(bulkBody)
+            console.log('Level 4 indexing limit --', limit)
+        }
+        resolve();
+    })
+}
+
 function getLevel1Categories() {
     return new Promise((resolve, reject) => {
         ParentCategory.find({})
-            .select("name vendorId")
+            .select("name vendorId l1")
             .then(doc => resolve(doc))
             .catch(error => reject(error))
     })
@@ -298,7 +470,7 @@ function getLevel1Categories() {
 function getLevel2Categories() {
     return new Promise((resolve, reject) => {
         PrimaryCategory.find({})
-            .select("name vendorId")
+            .select("name vendorId l1")
             .then(doc => resolve(doc))
             .catch(error => reject(error))
     })
@@ -307,7 +479,7 @@ function getLevel2Categories() {
 function getLevel3Categories() {
     return new Promise((resolve, reject) => {
         SecondaryCategory.find({})
-            .select("name vendorId")
+            .select("name vendorId l1")
             .then(doc => resolve(doc))
             .catch(error => reject(error))
     })
@@ -318,7 +490,7 @@ function getLevel4Categories(range) {
         Products.find({})
             .skip(range.skip)
             .limit(range.limit)
-            .select("name vendorId")
+            .select("name vendorId l1")
             .then(doc => resolve(doc))
             .catch(error => reject(error))
     })
@@ -327,8 +499,75 @@ function getLevel4Categories(range) {
 function getLevel5Categories() {
     return new Promise((resolve, reject) => {
         ProductsSubCategories.find({})
-            .select("name vendorId")
+            .select("name vendorId l1")
             .then(doc => resolve(doc))
             .catch(error => reject(error))
     })
 }
+
+
+function _getLevel1Categories() {
+    return new Promise((resolve, reject) => {
+        ParentCategory.find({})
+            .select("name vendorId l1")
+            .then(doc => resolve(doc))
+            .catch(error => reject(error))
+    })
+}
+
+function _getLevel2Categories(range) {
+    return new Promise((resolve, reject) => {
+        PrimaryCategory.find({})
+            .select("name vendorId l1")
+            .skip(range.skip)
+            .limit(range.limit)
+            .then(doc => resolve(doc))
+            .catch(error => reject(error))
+    })
+}
+
+function _getLevel3Categories(range) {
+    return new Promise((resolve, reject) => {
+        SecondaryCategory.find({})
+            .select("name vendorId l1")
+            .skip(range.skip)
+            .limit(range.limit)
+            .then(doc => resolve(doc))
+            .catch(error => reject(error))
+    })
+}
+
+function _getLevel4Categories(range) {
+    return new Promise((resolve, reject) => {
+        Products.find({})
+            .skip(range.skip)
+            .limit(range.limit)
+            .select("name vendorId l1")
+            .then(doc => resolve(doc))
+            .catch(error => reject(error))
+    })
+}
+
+function _getLevel5Categories(range) {
+    return new Promise((resolve, reject) => {
+        ProductsSubCategories.find({})
+            .select("name vendorId l1")
+            .skip(range.skip)
+            .limit(range.limit)
+            .then(doc => resolve(doc))
+            .catch(error => reject(error))
+    })
+}
+
+function bulkInsertSuggestions(data) {
+    return new Promise((resolve, reject) => {
+        Suggestions.insertMany(data, {
+            ordered: false,
+        })
+            .then((doc) => {
+                resolve(doc);
+            })
+            .catch(reject);
+    })
+}
+

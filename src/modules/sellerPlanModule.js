@@ -53,16 +53,78 @@ module.exports.updateSellerPlans = (query, data) =>
 
 exports.getExpirePlans = () => new Promise((resolve, reject) => {
 
-    const today = moment().format('YYYY-MM-DD')// .format('YYYY-MM-DD hh:mm:ss').replace(" ", 'T').concat('Z')
-    console.log(new Date(moment().startOf('day').format('YYYY-MM-DD')), 'sssssssss')
-    console.log(new Date(moment().add(1, 'day').endOf('day').format('YYYY-MM-DD')), 'eeeeeeeeeeee')
+    // const today = moment().format('YYYY-MM-DD')// .format('YYYY-MM-DD hh:mm:ss').replace(" ", 'T').concat('Z')
+    // console.log(new Date(moment().subtract({ days: 15, months: 3 }).startOf('day').format('YYYY-MM-DD')), "=========")
+    // console.log(new Date(moment().subtract(1, 'day').endOf('day').format('YYYY-MM-DD')), 'eeeeeeeeeeee')
     SellerPlans.find({
-        $and: [
+        // $and: [
+        //     {
+        //         expireStatus: false,
+        //         exprireDate: {
+        //             $gte: new Date(moment().startOf('day').format('YYYY-MM-DD')), // today.toDate(),
+        //             $lt: new Date(moment().add(1, 'day').endOf('day').format('YYYY-MM-DD')) // moment(today).endOf('day').toDate()
+        //         }
+        //     }
+        // ]
+        $or:[
             {
-                expireStatus: false,
+                exprireDate : {
+                    $gte: new Date(moment().subtract(1,'day').startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract(1, 'day').endOf('day').format('YYYY-MM-DD'))
+                }
+            },{
                 exprireDate: {
-                    $gte: new Date(moment().startOf('day').format('YYYY-MM-DD')), // today.toDate(),
-                    $lt: new Date(moment().add(1, 'day').endOf('day').format('YYYY-MM-DD')) // moment(today).endOf('day').toDate()
+                    $gte: new Date(moment().subtract(3, 'day').startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract(3, 'day').endOf('day').format('YYYY-MM-DD'))
+                }
+            },{
+                exprireDate: {
+                    $gte: new Date(moment().subtract(5, 'day').startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract(5, 'day').endOf('day').format('YYYY-MM-DD'))
+                }
+            },
+
+            {
+                exprireDate: {
+                    $gte: new Date(moment().subtract(7, 'day').startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract(7, 'day').endOf('day').format('YYYY-MM-DD'))
+                }
+            },
+            {
+                exprireDate: {
+                    $gte: new Date(moment().subtract(10, 'day').startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract(10, 'day').endOf('day').format('YYYY-MM-DD'))
+                }
+            },
+            {
+                exprireDate: {
+                    $gte: new Date(moment().subtract(15, 'day').startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract(15, 'day').endOf('day').format('YYYY-MM-DD'))
+                }
+            },
+            {
+                exprireDate: {
+                    $gte: new Date(moment().subtract(30, 'day').startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract(30, 'day').endOf('day').format('YYYY-MM-DD'))
+                }
+            },
+                //months
+            {
+                exprireDate: {
+                    $gte: new Date(moment().subtract({ days: 15, months: 1 }).startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract({ days: 15, months: 1 }).endOf('day').format('YYYY-MM-DD'))
+                }
+            },
+            {
+                exprireDate: {
+                    $gte: new Date(moment().subtract({ days: 15, months: 2 }).startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract({ days: 15, months: 2 }).endOf('day').format('YYYY-MM-DD'))
+                }
+            },
+            {
+                exprireDate: {
+                    $gte: new Date(moment().subtract({ days: 15, months: 3 }).startOf('day').format('YYYY-MM-DD')),
+                    $lte: new Date(moment().subtract({ days: 15, months: 3 }).endOf('day').format('YYYY-MM-DD'))
                 }
             }
         ]
@@ -77,4 +139,59 @@ exports.getExpirePlans = () => new Promise((resolve, reject) => {
         }).catch(reject)
 
 })
+
+
+
+module.exports.getAboutToexpirePlan = () =>
+    new Promise((resolve, reject) => {
+        SellerPlans.find({
+            $and: [{
+                expireStatus: false,
+                $or:[
+                    {
+                    exprireDate: {
+                        $gte: new Date(moment().add(7, 'day').startOf('day').format('YYYY-MM-DD')),
+                        $lte: new Date(moment().add(7, 'day').endOf('day').format('YYYY-MM-DD'))
+                     }
+                    },
+                    {
+                        exprireDate: {
+                            $gte: new Date(moment().add(5, 'day').startOf('day').format('YYYY-MM-DD')),
+                            $lte: new Date(moment().add(5, 'day').endOf('day').format('YYYY-MM-DD'))
+                        }
+                    },
+                    {
+                        exprireDate: {
+                            $gte: new Date(moment().add(3, 'day').startOf('day').format('YYYY-MM-DD')),
+                            $lte: new Date(moment().add(3, 'day').endOf('day').format('YYYY-MM-DD'))
+                        }
+                    },
+                    {
+                        exprireDate: {
+                            $gte: new Date(moment().add(2, 'day').startOf('day').format('YYYY-MM-DD')),
+                            $lte: new Date(moment().add(2, 'day').endOf('day').format('YYYY-MM-DD'))
+                        }
+                    },
+                    {
+                        exprireDate: {
+                            $gte: new Date(moment().add(1, 'day').startOf('day').format('YYYY-MM-DD')),
+                            $lte: new Date(moment().add(1, 'day').endOf('day').format('YYYY-MM-DD'))
+                        }
+                    },
+                    {
+                        exprireDate: {
+                            $gte: new Date(moment().startOf('day').format('YYYY-MM-DD')),
+                            $lte: new Date(moment().endOf('day').format('YYYY-MM-DD'))
+                        }
+                    },
+                ]
+            }]
+        })
+        .populate('sellerId')
+        .then((doc) => {
+            console.log(doc.length)
+            resolve(doc)
+        })
+    .catch((error) => reject(error))
+    })
 

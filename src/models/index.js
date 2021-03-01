@@ -26,6 +26,8 @@ const SellerPlanLog = require('./sellerPlansLogSchema')
 const Payments = require('./paymentSchema')
 const Orders = require('./ordersSchema')
 const OrdersPlans = require('./orderPlanSchema')
+const InvoiceNumber = require('./invoiceNumberSchema')
+const Suggestions = require('./suggestionsSchema')
 // const Users = require('./user')
 
 module.exports = {
@@ -56,5 +58,7 @@ module.exports = {
     SellerPlanLog,
     Payments,
     Orders,
-    OrdersPlans
+    OrdersPlans,
+    InvoiceNumber,
+    Suggestions
 }

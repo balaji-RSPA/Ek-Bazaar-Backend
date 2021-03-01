@@ -6,12 +6,12 @@ content-type: application/json
 # content-type: application/json
 
 [
-{
-"vendorId": "L5F2137",
-"productId": "L4F127",
-"secondaryId": "L3F19",
-"level2id": "F3",
-"l1": 3,
-"name": "Betel Nut / Areca Nut"
-}
+    {
+        "vendorId": "L5F2137",
+        "productId": "L4F127",
+        "secondaryId": "L3F19",
+        "level2id": "F3",
+        "l1": 3,
+        "name": "Betel Nut / Areca Nut"
+    }
 ]
