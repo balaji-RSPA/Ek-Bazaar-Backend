@@ -74,3 +74,23 @@ module.exports.updateMasterBulkProducts = (query, data) => new Promise((resolve,
         })
         .catch((error) => reject(error))
 })
+
+module.exports.getMasterRecords = (reqQuery, range) => new Promise((resolve, reject) => {
+
+    const skip = parseInt(range.skip) || 0;
+    const limit = parseInt(range.limit) || 100;
+
+    MasterCollection.find(reqQuery)
+        .skip(skip)
+        .limit(limit)
+        .sort({ _id: -1 })
+        .populate('sellerId._id')
+        .lean()
+        .then((doc) => {
+            resolve(doc)
+        }).catch((error) => {
+            console.log(error)
+            reject(error)
+        })
+
+})

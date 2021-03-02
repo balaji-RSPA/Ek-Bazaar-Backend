@@ -226,7 +226,8 @@ const masterCollectionSchema = new Schema(
     {
         sellerId: {
             _id: {
-                type: ObjectId
+                type: ObjectId,
+                ref: 'sellers'
             },
             name: {
                 type: String,
@@ -323,6 +324,9 @@ const masterCollectionSchema = new Schema(
             planExpireDate: {
                 type: Date
             }
+        },
+        priority: {
+            type: Number
         },
         userId: {
             type: nameSchema,
