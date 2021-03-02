@@ -390,10 +390,11 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                             to: seller.email,
                             subject: 'Ekbazaar Subscription activated successfully',
                             html: commonTemplate(invoiceEmailMsg),
-                            attachments: [{ // stream as an attachment
-                                filename: 'invoice.pdf',
-                                path: invoice.Location
-                            }]
+                            attachment: invoice.attachement
+                            // attachments: [{ // stream as an attachment
+                            //     filename: 'invoice.pdf',
+                            //     path: invoice.Location
+                            // }]
                         }
                         /* await */ sendSingleMail(message)
                     }else{
