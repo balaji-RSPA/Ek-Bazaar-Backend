@@ -29,7 +29,7 @@ module.exports.passwordUpdate = (params) => {
     body: `<p><strong>Hello ${params.name},<strong></p><p>Your password has been changed recently. Please use the updated password to login to your account.</p>`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
     buttonLink: `${params.url}/signin`,
-    extracontent1: `If you did not make the change. <a href='${params.url}/contact'>Please contact support.</a>`
+    extracontent1: `<p style="text-align:center;margin-top: -13px;">If you did not make the change. <a href='${params.url}/contact'>Please contact support.</a></p>`
   }
   return message;
 }
@@ -51,7 +51,7 @@ module.exports.invoiceContent = (params) => {
     <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
     buttonName: 'VIEW FULL INVOICE',
     buttonLink: params.invoiceLink,
-    extracontent1: `<p style="text-align: center">Thank you for choosing EkBazaar</p>`
+    extracontent1: `<p style="text-align: center; margin-top:-13px;">Thank you for choosing EkBazaar</p>`
   }
   return message;
 }
@@ -69,7 +69,7 @@ module.exports.planExpired = (params)=>{
     message = {
       title: 'Plan Expired',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpired.png',
-      body: `Your plan has expired. Please renew your plan`,
+      body: `<p>Your plan has expired. Please renew your plan</p>`,
       buttonName: 'SUBSCRIBE',
       buttonLink: `${params.url}`
     }
@@ -78,19 +78,19 @@ module.exports.planExpired = (params)=>{
 }
 module.exports.planExpiring = (params)=>{
   let message = ''
-  if (params.isTrial) {
+  if (params.isTrial && params.dayDiff) {
     message = {
       title: 'Plan Expiring',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-      body: `<p>Thank you for joining Ekbazaar. We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is coming to a close and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
+      body: `<p>We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is about to expire in ${params.dayDiff} days and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
     }
-  }else if(params.days){
+  } else if (params.dayDiff && params.isTrial===false) {
     message = {
       title: 'Plan Expiring',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-      body: `<p>Thank you for joining Ekbazaar. Your plan is about to expire in ${params.days}days.Please renew your plan</p>`,
+      body: `<p>Your plan is about to expire in ${params.dayDiff} days.Please renew your plan</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
     }
@@ -98,7 +98,7 @@ module.exports.planExpiring = (params)=>{
     message = {
       title: 'Plan Expiring',
       image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
-      body: `<p>Thank you for joining Ekbazaar. Your Plan is Expiring Today! Please Renew to access the benefits of a Subscriber</p>`,
+      body: `<p>Your Plan is Expiring Today! Please Renew to access the benefits of a Subscriber</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
     }
@@ -112,7 +112,7 @@ module.exports.RfpEnquiryReceived = (params) => {
     body: `<p>You have an enquiry for (${capitalizeFirstLetter(params.productDetails.name.name)}, ${params.productDetails.quantity}${capitalizeFirstLetter(params.productDetails.weight)}) from (${params._loc}) by (${capitalizeFirstLetter(params.name)}) on ${moment().format('Do MMM YYYY')}.</p>`,
     buttonName: 'VIEW BUYER DETAILS',
     buttonLink: `${params.url}/seller/seller-central/enquiry?sellerId=${params.sellerId}&skip=0&limit=10`,
-    extracontent1: `<p style="text-align: center">Thank you for choosing EkBazaar</p>`
+    extracontent1: `<p style="text-align: center;margin-top:-13px;">Thank you for choosing EkBazaar</p>`
   }
   return message;
 }
@@ -134,7 +134,7 @@ module.exports.planChangedEmail = (params) => {
     `,
     buttonName: 'VIEW YOUR PLAN',
     buttonLink: `${params.url}/seller/seller-central/seller-account?skip=0&limit=10`,
-    extracontent1: `<p style="text-align: center">Thank you for choosing EK Bazaar. Have a good day.</p>`
+    extracontent1: `<p style="text-align: center;margin-top:-13px;">Thank you for choosing EK Bazaar. Have a good day.</p>`
   }
   return message;
 }

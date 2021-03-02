@@ -136,7 +136,7 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile, reset } = req.body;
-    const otp = 1234;
+    let otp = 1234
     const seller = await checkUserExistOrNot({ mobile });
     const { otpMessage } = sendOtp({reset,otp});
 
@@ -170,6 +170,7 @@ module.exports.sendOtp = async (req, res) => {
         otp: resp.data.data.otp
       }, checkUser ? 'Your OTP has been send successfully, check your email or sms' : "");
     } else {
+      // otp = 1234
       if (checkUser) {
           const otpMessage = otpVerification({otp:otp});
           //send email
