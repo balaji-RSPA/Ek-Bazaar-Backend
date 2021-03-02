@@ -16,18 +16,18 @@ const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersCont
 const { captureRazorPayPayment, createPdf } = require('./src/controllers/web/paymentController')
 const { deleteRecords } = require('./src/controllers/web/userController')
 const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
-const { updateLevel2l1Data, updateLevel3l1Data } = require('./src/controllers/web/testController')
+const { updateLevel2l1Data, updateLevel3l1Data, updatePriority } = require('./src/controllers/web/testController')
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
-    // require('./config/db').elasticSearchConnect();
+// require('./config/db').elasticSearchConnect();
 
 const app = express();
 const server = require('http').Server(app);
 
 const router = require('./src/routes');
 const models = require('./src/models')
-    // const States = models.States
-    // const Countries = models.Countries
+// const States = models.States
+// const Countries = models.Countries
 
 const { suggestions, level1, level2, level3, level4, level5, city, state, country, serviceType, tradeMaster } = require("./elasticsearch-mapping");
 const { checkIndices, putMapping, suggestionsMapping } = suggestions
@@ -61,7 +61,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     console.log('Home page')
     res.send('Its trade live')
 })
@@ -84,12 +84,21 @@ app.get('/', function(req, res) {
 // })
 
 app.get('/suggestionsMapping', async function (req, res) {
-  try {
-      const result = await suggestionsMapping()
-  } catch (error) {
+    try {
+        const result = await suggestionsMapping()
+    } catch (error) {
 
-      res.send(error)
-  }
+        res.send(error)
+    }
+})
+
+app.get('/updatePriority', async function (req, res) {
+    try {
+        const result = await updatePriority()
+    } catch (error) {
+
+        res.send(error)
+    }
 })
 
 // app.get('/getExpirePlansCron', async function (req, res) {
@@ -116,7 +125,7 @@ app.get('/suggestionsMapping', async function (req, res) {
 //   }
 //   // res.send('Its delete records  live')
 // })
-  
+
 // const planExpire = cron.schedule('* * * * *', async () => {
 //     planExpire.stop()
 //     console.log('-------------------- planExpire file cron start --------------------', new Date());
@@ -136,7 +145,7 @@ app.get('/suggestionsMapping', async function (req, res) {
 // })
 // queEmail.start()
 
-app.post('/capture/:paymentId', async function(req, res) {
+app.post('/capture/:paymentId', async function (req, res) {
     try {
         const result = await captureRazorPayPayment(req, res)
     } catch (error) {
@@ -148,26 +157,26 @@ app.post('/capture/:paymentId', async function(req, res) {
 async function indexing() {
     await checkIndices()
     await putMapping()
-        // await l1CheckIndices()
-        // await l1PutMapping()
-        // await l2CheckIndices()
-        // await l2PutMapping()
-        // await l3CheckIndices()
-        // await l3PutMapping()
-        // await l4CheckIndices()
-        // await l4PutMapping()
-        // await l5CheckIndices()
-        // await l5PutMapping()
-        // await cityCheckIndices()
-        // await cityPutMapping()
-        // await stateCheckIndices()
-        // await statePutMapping()
-        // await countryCheckIndices()
-        // await countryPutMapping()
-        // await serviceTypeCheckIndices()
-        // await serviceTypePutMapping() 
-        // await tradeMasterCheckIndices()
-        // await tradeMasterPutMapping()
+    // await l1CheckIndices()
+    // await l1PutMapping()
+    // await l2CheckIndices()
+    // await l2PutMapping()
+    // await l3CheckIndices()
+    // await l3PutMapping()
+    // await l4CheckIndices()
+    // await l4PutMapping()
+    // await l5CheckIndices()
+    // await l5PutMapping()
+    // await cityCheckIndices()
+    // await cityPutMapping()
+    // await stateCheckIndices()
+    // await statePutMapping()
+    // await countryCheckIndices()
+    // await countryPutMapping()
+    // await serviceTypeCheckIndices()
+    // await serviceTypePutMapping() 
+    // await tradeMasterCheckIndices()
+    // await tradeMasterPutMapping()
 }
 // indexing()
 
@@ -242,7 +251,7 @@ async function indexing() {
 //   // res.send('Its delete records  live')
 // })
 
-app.get('/createPdf', async function(req, res) {
+app.get('/createPdf', async function (req, res) {
     // console.log('Home page')
     try {
         const result = await createPdf()
@@ -273,7 +282,7 @@ server.on('listening', () => {
 if (env.NODE_ENV === "production") {
 
 
-    const queSms = cron.schedule('* * * * *', async() => {
+    const queSms = cron.schedule('* * * * *', async () => {
         queSms.stop()
         console.log('-------------------- queSms file cron start --------------------', new Date());
         await sendQueSms()
@@ -285,20 +294,20 @@ if (env.NODE_ENV === "production") {
 
 if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
 
-  const planExpire = cron.schedule('50 23 * * *', async () => { //every day 10 am cron will start
-      planExpire.stop()
-      console.log('-------------------- planExpire file cron start --------------------', new Date());
-      await getExpirePlansCron()
-      await getAboutToExpirePlan()
-      console.log('-------------------- planExpire file cron completed --------------------', new Date())
-      planExpire.start()
+    const planExpire = cron.schedule('50 23 * * *', async () => { //every day 10 am cron will start
+        planExpire.stop()
+        console.log('-------------------- planExpire file cron start --------------------', new Date());
+        await getExpirePlansCron()
+        await getAboutToExpirePlan()
+        console.log('-------------------- planExpire file cron completed --------------------', new Date())
+        planExpire.start()
     }, {
         scheduled: true,
         timezone: "Asia/Kolkata"
-      })
+    })
     planExpire.start()
 
-    const queEmail = cron.schedule('* * * * *', async() => {
+    const queEmail = cron.schedule('* * * * *', async () => {
         queEmail.stop()
         console.log('-------------------- queEmail file cron start --------------------', new Date());
         await sendQueEmails()
@@ -306,4 +315,14 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
         queEmail.start()
     })
     queEmail.start()
+
+    const priority = cron.schedule('* * * * *', async () => {
+        priority.stop()
+        console.log('-------------------- priority file cron start --------------------', new Date());
+        await updatePriority()
+        console.log('-------------------- priority file cron completed --------------------', new Date())
+        priority.start()
+    })
+    priority.start()
+
 }
