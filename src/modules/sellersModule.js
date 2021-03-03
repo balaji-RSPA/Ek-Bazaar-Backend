@@ -555,6 +555,7 @@ exports.getSellerProfile = (id) =>
       .populate('sellerType'/* , 'name' */)
       .populate('busenessId')
       .populate('statutoryId')
+      .populate('planId')
       .populate({
         path: 'sellerContactId',
         model: SellersContact,
