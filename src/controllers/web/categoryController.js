@@ -59,9 +59,9 @@ module.exports.getAllSellerTypes = async (req, res) => {
     try {
         const reqQuery = camelcaseKeys(req.query)
         const { search } = reqQuery
-        console.log("module.exports.getAllSellerTypes -> reqQuery", reqQuery)
+        // console.log("module.exports.getAllSellerTypes -> reqQuery", reqQuery)
         let result = await getAllSellerTypes(0, 16, { status: true })
-        console.log("module.exports.getAllSellerTypes -> result", result)
+        // console.log("module.exports.getAllSellerTypes -> result", result)
         if (search) {
             let types = []
             let combine = result && result.length && result.filter((type) => {

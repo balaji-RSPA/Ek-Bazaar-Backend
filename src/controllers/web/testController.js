@@ -66,7 +66,7 @@ module.exports.updateLevel3l1Data = async (req, res) => {
 
 }
 
-module.exports.updatePriority = async (req, res) => {
+module.exports.updatePriority = async (req, res) => new Promise(async (resolve, reject) => {
 
     try {
 
@@ -100,6 +100,8 @@ module.exports.updatePriority = async (req, res) => {
                         priority = 4
                     }
 
+                } else {
+                    priority = 4
                 }
                 const updateData = {
                     priority
@@ -113,9 +115,11 @@ module.exports.updatePriority = async (req, res) => {
         } else {
             console.log('----------------- NO master records -------------')
         }
-
+        resolve()
     } catch (error) {
+        console.log(error)
 
+        reject(error)
     }
 
-}
+})
