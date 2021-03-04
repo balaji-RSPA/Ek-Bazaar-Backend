@@ -447,6 +447,25 @@ module.exports.updateUser = async (req, res) => {
     if (user && buyer && seller) {
       // console.log(user, "-----11", buyer, "----------22", seller) userType
       const url = req.get('origin');
+      if (user.email && buyer.isEmailSent === false) {
+        let {
+          token
+        } = req.headers.authorization.split('|')[1]
+        token = token || req.token
+        // req.body.userHash = encrypt(user.email)
+        const alteredToken = token.split('.').join('!')
+        // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
+        const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
+        const template = await activateAccount(link)
+
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: user.email,
+          subject: 'Ekbazaar email verification',
+          html: template
+        }
+        await sendSingleMail(message)
+      }
       if (buyer.isEmailSent === false && buyer.email) {
         const { successfulMessage } = successfulRegistration({userType});
         seller.isEmailSent = true;
@@ -465,25 +484,6 @@ module.exports.updateUser = async (req, res) => {
         }
         await updateBuyer({ _id: buyer._id }, buyer);
         await updateSeller({ _id: seller._id }, seller);
-      }
-      if (user.email && user.isEmailVerified === 1) {
-        let {
-          token
-        } = req.headers.authorization.split('|')[1]
-        token = token || req.token
-        // req.body.userHash = encrypt(user.email)
-        const alteredToken = token.split('.').join('!')
-        // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
-        const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
-        const template = await activateAccount(link)
-
-        const message = {
-          from: MailgunKeys.senderMail,
-          to: user.email,
-          subject: 'Ekbazaar email verification',
-          html: template
-        }
-        await sendSingleMail(message)
       }
       respSuccess(res, {
         seller,
