@@ -1,4 +1,5 @@
 const camelcaseKeys = require('camelcase-keys')
+const moment = require('moment')
 const {
   machineIdSync
 } = require('node-machine-id')
@@ -354,7 +355,7 @@ module.exports.deleteSellerProduct = async (req, res) => {
 
 // function masterMapData(val, keywords) {
 const masterMapData = (val, type) => new Promise((resolve, reject) => {
-  // console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", val)
+  console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", val)
   const _Scity = [];
   let serviceProductData;
   if (val.serviceCity && val.serviceCity.length) {
@@ -450,6 +451,26 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
 
 })
 
+const mapPriority = (plan) => new Promise((resolve, reject) => {
+  let priority = 4
+  if (plan && plan.sellerId) {
+    const currentDate = moment().format('YYYY-MM-DD')
+    const expireDate = moment(plan.exprireDate).format('YYYY-MM-DD')
+    // console.log(moment(currentDate).isSameOrAfter(expireDate), ' ggggggggggggggg')
+
+    if (plan.isTrial) {
+      priority = 2
+    } else if (moment(currentDate).isSameOrAfter(expireDate)) {
+      priority = 3
+    } else if (!moment(currentDate).isSameOrAfter(expireDate)) {
+      priority = 1
+    }
+
+  }
+  resolve(priority)
+
+})
+
 module.exports.addSellerProduct = async (req, res) => {
   try {
     let result
@@ -504,10 +525,10 @@ module.exports.addSellerProduct = async (req, res) => {
         for (let index = 0; index < proDetails.length; index++) {
           const val = proDetails[index];
 
-
+          const priority = await mapPriority(findSeller && findSeller.length && findSeller[0].planId || "")
           const formateData = await masterMapData(val, 'insert')
           const updatePro = await updateSellerProducts({ _id: val._id }, { keywords: formateData.keywords })
-          masterData.push(formateData)
+          masterData.push({ ...formateData, priority })
           // return ({
           //   sellerId: val.sellerId && {
           //     location: val.sellerId && val.sellerId.location || null,
@@ -601,7 +622,7 @@ module.exports.updateSellerProduct = async (req, res) => {
           body: files.document.data
         }
         const _document = await uploadToDOSpace(data)
-        let size = (files.document.size/1000).toFixed(1)
+        let size = (files.document.size / 1000).toFixed(1)
         size = `${size} ${size < 1024 ? 'KB' : 'MB'}`;
         productDetails.productDetails.document = {
           name: files.document.name,
@@ -684,19 +705,20 @@ module.exports.updateSellerProduct = async (req, res) => {
         "status": body.status
       })
     }
+    let seller = await getSellerProfile(updateDetail.sellerId)
     if (updateDetail) {
       const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
       // console.log("🚀 ~ file: sellersController.js ~ line 662 ~ module.exports.updateSellerProduct= ~ updatedProduct", updatedProduct[0]["productDetails"])
       updatedProduct[0]["panIndia"] = body.panIndia
+      const priority = await mapPriority(seller && seller.length && seller[0].planId || "")
       const masterData = await masterMapData(updatedProduct[0], 'update')
-      console.log("🚀 ~ file: sellersController.js ~ line 665 ~ module.exports.updateSellerProduct= ~ masterData", masterData)
+      // console.log("🚀 ~ file: sellersController.js ~ line 665 ~ module.exports.updateSellerProduct= ~ masterData", { ...masterData, priority })
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
-      const masResult = await updateMaster({ _id: updateDetail._id }, masterData)
+      const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: 8 })
     }
     // if(body.id && body.inStock){
     //   
     // }else
-    let seller = await getSellerProfile(updateDetail.sellerId)
     respSuccess(res, seller, "Successfully updated")
   } catch (error) {
     console.log(error, ' ipdate data----------------')
