@@ -1,13 +1,13 @@
 require('dotenv').config();
 const { env } = process
 global.environment = env.NODE_ENV || 'production'
-const https = require("https")
 const express = require('express')
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 const cors = require('cors');
 const cron = require("node-cron");
+var io = require('socket.io')(http);
 const Logger = require('./src/utils/logger');
 const useragent = require('express-useragent');
 const config = require('./config/config')
@@ -62,37 +62,89 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-/*************************** SOCKET INTEGRATION ********************************/
-
-const io = require('socket.io')(server)
-
-var tradeSellerChat = io.of('/chat-sendMesasge')
-    .on('connection', function (socket) {
-        item = items[Math.floor(Math.random() * items.length)];
-        log(colors.verbose("New client connected" + item(socket.id)));
-        socket.emit('connected', { status: 'Connected' });
-        socket.on("new-message", data => {
-            let _data = JSON.parse(data)
-            tradeSellerChat.emit('send-message', { name: "nothing" });
-        });
-
-        socket.on('disconnect', (socket) => {
-            // delete user socket id from list of connected users
-            for (let uid in global.userSocketIds) {
-                if (global.userSocketIds.hasOwnProperty(uid) && global.userSocketIds[uid] === socket.id) {
-                    delete global.userSocketIds[uid];
-                }
-            }
-        })
-    })
-
-
-/*************************** END ********************************/
-
 app.get('/', function (req, res) {
     console.log('Home page')
     res.send('Its trade live')
 })
+
+// app.get('/updateLevel2l1Data', async function (req, res) {
+//   try {
+//       const result = await updateLevel2l1Data()
+//   } catch (error) {
+
+//   }
+//   res.send('Its delete records  live')
+// })
+// app.get('/updateLevel3l1Data', async function (req, res) {
+//   try {
+//       const result = await updateLevel3l1Data()
+//   } catch (error) {
+
+//   }
+//   res.send('Its delete records  live')
+// })
+
+app.get('/suggestionsMapping', async function (req, res) {
+    try {
+        const result = await suggestionsMapping()
+    } catch (error) {
+
+        res.send(error)
+    }
+})
+
+app.get('/updatePriority', async function (req, res) {
+    try {
+        const result = await updatePriority()
+    } catch (error) {
+
+        res.send(error)
+    }
+})
+
+// app.get('/getExpirePlansCron', async function (req, res) {
+//   try {
+//     const result = await getExpirePlansCron()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+// app.get('/sendQueEmails', async function (req, res) {
+//   try {
+//     const result = await sendQueEmails()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+// app.get('/abouttoexpireplan', async function (req, res) {
+//   try {
+//     const result = await getAboutToExpirePlan()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// const planExpire = cron.schedule('* * * * *', async () => {
+//     planExpire.stop()
+//     console.log('-------------------- planExpire file cron start --------------------', new Date());
+//     // await getExpirePlansCron()
+//     await getAboutToExpirePlan()
+//     console.log('-------------------- planExpire file cron completed --------------------', new Date())
+//     planExpire.start()
+//   })
+//   planExpire.start()
+
+// const queEmail = cron.schedule('* * * * *', async () => {
+//   queEmail.stop()
+//   console.log('-------------------- queEmail file cron start --------------------', new Date());
+//   await sendQueEmails()
+//   console.log('-------------------- queEmail file cron completed --------------------', new Date())
+//   queEmail.start()
+// })
+// queEmail.start()
 
 app.post('/capture/:paymentId', async function (req, res) {
     try {
@@ -128,6 +180,87 @@ async function indexing() {
     // await tradeMasterPutMapping()
 }
 // indexing()
+
+// app.get('/deleteRecords1', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 0, limit : 1000})
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords2', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 1000, limit : 2000})
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords3', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 2000, limit : 3000})
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/deleteRecords4', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await deleteRecords({skip : 3000, limit : 4000})
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/updateSelleProfileChangesToProducts', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await updateSelleProfileChangesToProducts()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+// app.get('/updateKeywords', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await updateKeywords()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+
+// app.get('/sendQueSms', async function (req, res) {
+//   // console.log('Home page')
+//   try {
+//     const result = await sendQueSms()
+//   } catch (error) {
+
+//   }
+//   // res.send('Its delete records  live')
+// })
+
+app.get('/createPdf', async function (req, res) {
+    // console.log('Home page')
+    try {
+        const result = await createPdf()
+    } catch (error) {
+
+    }
+    // res.send('Its delete records  live')
+})
 
 app.use(router)
 

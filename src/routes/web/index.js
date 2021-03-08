@@ -9,6 +9,7 @@ const subscriptionPlan = require('./subscriptionPlanRoutes')
 const contact = require('./contactRoutes')
 const removeListing = require('./removeListingRoutes')
 const payment = require('./paymentRoutes')
+const chat = require('./rocketChatRoutes')
 
 router.use(location)
 router.use(buyer)
@@ -20,5 +21,6 @@ router.use(subscriptionPlan)
 router.use(contact)
 router.use(removeListing)
 router.use(payment)
+router.use(chat)
 
 module.exports = router

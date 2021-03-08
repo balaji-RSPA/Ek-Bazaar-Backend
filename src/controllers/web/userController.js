@@ -8,8 +8,8 @@ const {
   encodePassword,
   sendSMS
 } = require("../../utils/utils");
-const { sendOtp , successfulRegistration,businessProfileIncomplete } = require("../../utils/templates/smsTemplate/smsTemplate");
-const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans, SellerPlanLogs } = require("../../modules");
+const { sendOtp, successfulRegistration, businessProfileIncomplete } = require("../../utils/templates/smsTemplate/smsTemplate");
+const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans, SellerPlanLogs, Chat } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
 const { deleteSellerProducts } = require('../../modules/sellerProductModule')
@@ -29,7 +29,7 @@ const {
 const {
   sendSingleMail
 } = require('../../utils/mailgunService')
-const {commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
+const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
 const {
   emailSuccessfulRegistration,
   otpVerification,
@@ -37,6 +37,10 @@ const {
 } = require('../../utils/templates/emailTemplate/emailTemplateContent');
 const { getSubscriptionPlanDetail } = subscriptionPlan
 const { createTrialPlan } = SellerPlans
+const { createChat } = Chat
+
+const { createChatUser } = require('./rocketChatController')
+
 const algorithm = 'aes-256-cbc'
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
@@ -123,7 +127,7 @@ module.exports.checkUserExistOrNot = async (req, res) => {
     const seller = await checkUserExistOrNot({ mobile });
     console.log("🚀 ~ file: userController.js ~ line 113 ~ module.exports.checkUserExistOrNot= ~ seller", seller)
     if (seller && seller.length) {
-      if(seller[0]["password"]) seller[0]["password"] = true
+      if (seller[0]["password"]) seller[0]["password"] = true
       else seller[0]["password"] = false
       return respSuccess(res, seller[0], "User with number already exist");
     }
@@ -138,13 +142,13 @@ module.exports.sendOtp = async (req, res) => {
     const { mobile, reset } = req.body;
     let otp = 1234
     const seller = await checkUserExistOrNot({ mobile });
-    const { otpMessage } = sendOtp({reset,otp});
+    const { otpMessage } = sendOtp({ reset, otp });
 
     if (seller && seller.length && !reset) {
       return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-    
+
     const checkUser = seller && seller.length && seller[0].email && seller[0].isEmailVerified === 2;
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
@@ -154,17 +158,17 @@ module.exports.sendOtp = async (req, res) => {
       // })
       let response = await sendSMS(mobile, otpMessage);
       if (response && response.data && response.data.otp && checkUser) {
-         const otpMessage = otpVerification({otp:response.data.otp});
-          //send email
-          const message = {
-            from: MailgunKeys.senderMail,
-            to: seller[0].email,
-            subject: 'OTP Verification',
-            html: commonTemplate(otpMessage)
-          }
-          await sendSingleMail(message)
-        }else{
-         console.log("=======Email is not verified yet================")
+        const otpMessage = otpVerification({ otp: response.data.otp });
+        //send email
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: seller[0].email,
+          subject: 'OTP Verification',
+          html: commonTemplate(otpMessage)
+        }
+        await sendSingleMail(message)
+      } else {
+        console.log("=======Email is not verified yet================")
       }
       return respSuccess(res, {
         otp: resp.data.data.otp
@@ -172,16 +176,16 @@ module.exports.sendOtp = async (req, res) => {
     } else {
       // otp = 1234
       if (checkUser) {
-          const otpMessage = otpVerification({otp:otp});
-          //send email
-          const message = {
-            from: MailgunKeys.senderMail,
-            to: seller[0].email,
-            subject: 'OTP Verification',
-            html: commonTemplate(otpMessage)
-          }
-          await sendSingleMail(message)
-      }else{
+        const otpMessage = otpVerification({ otp: otp });
+        //send email
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: seller[0].email,
+          subject: 'OTP Verification',
+          html: commonTemplate(otpMessage)
+        }
+        await sendSingleMail(message)
+      } else {
         console.log("=======Email is not verified yet================")
       }
       return respSuccess(res, {
@@ -364,7 +368,7 @@ module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
     const _buyer = req.body.buyer || {}
-    let { name, email, business, location, mobile, type, sellerType,userType } = req.body;
+    let { name, email, business, location, mobile, type, sellerType, userType } = req.body;
 
     let userData = {
       name: _buyer && _buyer.name || name,
@@ -389,7 +393,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
-    if((_buyer.mobile && _buyer.mobile.length) ||(mobile && mobile.length)) {
+    if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
       buyerData.mobile = _buyer.mobile[0]["mobile"] || mobile[0]["mobile"]
       buyerData.mobile = _buyer.mobile[0]["countryCode"] || mobile[0]["countryCode"]
       sellerData.mobile = _buyer.mobile || mobile
@@ -448,11 +452,11 @@ module.exports.updateUser = async (req, res) => {
       // console.log(user, "-----11", buyer, "----------22", seller) userType
       const url = req.get('origin');
       if (buyer.isEmailSent === false && buyer.email) {
-        const { successfulMessage } = successfulRegistration({userType});
+        const { successfulMessage } = successfulRegistration({ userType });
         seller.isEmailSent = true;
         buyer.isEmailSent = true;
         // otp
-        let emailMessage = emailSuccessfulRegistration({name : user.name,url:url,userType})
+        let emailMessage = emailSuccessfulRegistration({ name: user.name, url: url, userType })
         const message = {
           from: MailgunKeys.senderMail,
           to: user.email,
@@ -460,11 +464,21 @@ module.exports.updateUser = async (req, res) => {
           html: commonTemplate(emailMessage)
         }
         await sendSingleMail(message)
-        if (isProd){
+        if (isProd) {
           await sendSMS(mobile, successfulMessage);
         }
         await updateBuyer({ _id: buyer._id }, buyer);
         await updateSeller({ _id: seller._id }, seller);
+
+
+
+        const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
+        if (chatUser) {
+          const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: seller.userId })
+          console.log(chatDetails, " ccccccccccccccccccccccc")
+        }
+        console.log(chatUser, " uuuuuuuuuuuuuuuuuuuuuuuuuuuu")
+
       }
       if (user.email && user.isEmailVerified === 1) {
         let {
@@ -529,7 +543,7 @@ exports.verifiedEmail = async (req, res) => {
     }
     const url = req.get('origin');
     // const template = await emailVerified("https://tradebazaar.tech-active.com")
-    const template = await emailVerified({link : url,name:user[0].name})
+    const template = await emailVerified({ link: url, name: user[0].name })
     const message = {
       from: MailgunKeys.senderMail,
       to: userEmail,
@@ -570,7 +584,7 @@ module.exports.updateNewPassword = async (req, res) => {
     const curntPwd = findUser && findUser.length && findUser[0].password
     const comparePass = await bcrypt.compare(currentPassword, curntPwd);
     const compareCurrentOldPass = await bcrypt.compare(checkPassword, curntPwd);
-    if (compareCurrentOldPass){
+    if (compareCurrentOldPass) {
       return respError(res, "Entered password is same as old password, try to enter different password")
     }
     if (!comparePass) {
@@ -578,7 +592,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({name:user.name,url:url})
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url })
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,

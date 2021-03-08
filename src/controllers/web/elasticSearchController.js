@@ -167,10 +167,10 @@ module.exports.serachSeller = async (req, res) => {
 module.exports.searchSuggestion = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
-    console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
+    // console.log("module.exports.searchSuggestion -> reqQuery", reqQuery)
 
     const { skip, limit, search, product, group, sellerId, productId } = reqQuery
-    console.log("🚀 ~ file: elasticSearchController.js ~ line 167 ~ module.exports.searchSuggestion= ~ sellerId", productId)
+    // console.log("🚀 ~ file: elasticSearchController.js ~ line 167 ~ module.exports.searchSuggestion= ~ sellerId", productId)
 
     if (productId && productId !== '' && productId !== 'undefined') {
       const query = {
@@ -242,7 +242,7 @@ module.exports.searchSuggestion = async (req, res) => {
           })))
         }
       })
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
+      // console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
       return respSuccess(res, suggestions, sellers[1]["products"])
     } else {
       console.log("Suggestion search-----")

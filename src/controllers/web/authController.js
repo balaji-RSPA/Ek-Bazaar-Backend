@@ -8,13 +8,15 @@ const {
   respAuthFailed,
 } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
+const { userChatLogin, userChatLogout } = require('./rocketChatController')
 // const {
 //   handleUserSession, getSessionCount, handleUserLogoutSession
 // } = require('../../modules/sessionModules')
 
-const { sellers, buyers } = require("../../modules");
+const { sellers, buyers, Chat } = require("../../modules");
 
 const { JWTTOKEN } = require("../../utils/globalConstants");
+const { getChat, createChatSession } = Chat
 
 const getUserAgent = (userAgent) => {
   const { browser, version, os, platform, source } = userAgent;
@@ -44,6 +46,7 @@ exports.login = async (req, res) => {
     } else if (user && !user.password && userType === 'seller') {
       return respAuthFailed(res, undefined, "User not found");
     }
+
     if (userType === 'seller') {
 
       const seller = await sellers.getSeller(user._id);
@@ -78,6 +81,13 @@ exports.login = async (req, res) => {
         ipAddress
       }
       const result1 = await sellers.handleUserSession(user._id, finalData);
+      const chatLogin = await getChat({ userId: user._id })
+      if (chatLogin) {
+        const activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123" })
+        await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
+        console.log(activeChat, '------ Chat activated-----------')
+      }
+
       return respSuccess(res, { token, location }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");
@@ -100,6 +110,7 @@ exports.logout = async (req, res) => {
         deviceId,
         token
       }
+      const chatLogout = await userChatLogout()
       const result = sellers.handleUserLogoutSession(data);
 
     }
