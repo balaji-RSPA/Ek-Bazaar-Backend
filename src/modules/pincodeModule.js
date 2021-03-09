@@ -8,3 +8,12 @@ exports.create = (data) =>
       })
       .catch(reject)
   })
+
+exports.findPincode = (query) =>
+  new Promise((resolve, reject) => {
+    Pincodes.findOne(query)
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
