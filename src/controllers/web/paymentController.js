@@ -20,6 +20,7 @@ const { addOrdersPlans } = require('../../modules/ordersModule');
 const { planSubscription, planChanged } = require('../../utils/templates/smsTemplate/smsTemplate')
 const { invoiceContent,planChangedEmail } = require('../../utils/templates/emailTemplate/emailTemplateContent');
 const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate')
+const { findPincode } = require('../../modules/pincodeModule')
 
 const {
     getSubscriptionPlanDetail,
@@ -52,13 +53,15 @@ const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, rej
             address: orderDetails && orderDetails.address || '',
             pincode: orderDetails && orderDetails.pincode || '',
         }
-
         const orderData = {
             planType: plan && plan.type || '',
             pricePerMonth: plan && plan.price || '',
             // months: '3',
             features: plan && plan.features,
-            gstAmount: orderDetails && orderDetails.gstAmount,
+            igstAmount: orderDetails && orderDetails.gstAmount,
+            cgstAmount: orderDetails && orderDetails.cgstAmount,
+            sgstAmount: orderDetails && orderDetails.sgstAmount,
+
             amount: plan && plan.totalPlanPrice,
             orderTotal: orderDetails && orderDetails.total.toFixed(2),
             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
@@ -125,6 +128,24 @@ const createPdf = async(seller, plan, orderDetails) => new Promise((resolve, rej
 
 })
 
+async function CalculateGst(price, findpincode) {
+   const gstValue = 18 //igst
+   const cgst = 9 //cgst and sgst
+   let gstAmount = ''
+   let cgstAmount = ''
+   let sgstAmount = ''
+   let totalAmount = ''
+   if (findpincode.stateName === 'Karnataka'){
+        cgstAmount = (parseFloat(price) * cgst) / 100
+        sgstAmount = (parseFloat(price) * cgst) / 100
+        totalAmount = parseFloat(price) + cgstAmount + sgstAmount
+    }else{
+      gstAmount = (parseFloat(price) * gstValue) / 100
+      totalAmount = parseFloat(price) + gstAmount
+   }
+
+   return  { gstAmount, cgstAmount, sgstAmount,totalAmount }
+ }
 
 module.exports.createRazorPayOrder = async(req, res) => {
 
@@ -133,25 +154,29 @@ module.exports.createRazorPayOrder = async(req, res) => {
             key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
             key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
         });
-        const { planId } = req.body
-        const planDetails = await getSubscriptionPlanDetail({ _id: planId })
-            // console.log(planDetails, 'test')
-        if (planDetails) {
-            const gstValue = 18
-            const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
-            const pricePerMonth = planDetails && planDetails.price
-            const price = pricePerMonth /* * parseInt(months) */
-            const gstAmount = (parseFloat(price) * gstValue) / 100
-            const totalAmount = parseFloat(price) + gstAmount
+        const { planId,pincode } = req.body
+        let findpincode = await findPincode({pincode});
+        if(!findpincode){
+          respError(res, "Invalid pincode");
+        }else{
+            const planDetails = await getSubscriptionPlanDetail({ _id: planId })
+                // console.log(planDetails, 'test')
+            if (planDetails) {
+                const gstValue = 18
+                const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
+                const pricePerMonth = planDetails && planDetails.price
+                const price = pricePerMonth /* * parseInt(months) */
+                 const includedGstAmount = await CalculateGst(price, findpincode);
+                // const gstAmount = (parseFloat(price) * gstValue) / 100
+                // const totalAmount = parseFloat(price) + gstAmount
 
-            const result = await instance.orders.create({ amount: parseInt((totalAmount * 100).toFixed(2)).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
-                // console.log(result, 'create Order')
+                const result = await instance.orders.create({ amount: parseInt((includedGstAmount.totalAmount * 100).toFixed(2)).toString(), currency: "INR", receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
+                    // console.log(result, 'create Order')
 
-            respSuccess(res, {...result, key_id: razorPayCredentials.key_id })
+                respSuccess(res, {...result, key_id: razorPayCredentials.key_id })
+            }
         }
-
-
-    } catch (error) {
+     } catch (error) {
         console.log(error)
         respError(error)
 
@@ -168,7 +193,11 @@ module.exports.captureRazorPayPayment = async(req, res) => {
         const gstValue = 18
         const currency = 'INR'
         let deleteProduct = false
-        console.log(req.body, ' order details--------')
+        const pincode = orderDetails && orderDetails.pincode;
+        let findpincode = await findPincode({pincode});
+        if(!findpincode){
+           respError(res, 'Invalid pincode')
+        }else{
         let seller = await getSellerProfile(sellerId)
         const planDetails = await getSubscriptionPlanDetail({ _id: subscriptionId })
         if (planDetails && seller && seller.length) {
@@ -187,16 +216,18 @@ module.exports.captureRazorPayPayment = async(req, res) => {
             const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
             const pricePerMonth = planDetails && planDetails.price
             const price = pricePerMonth/*  * parseInt(months) */
-            const gstAmount = (parseFloat(price) * gstValue) / 100
-            const totalAmount = parseFloat(price) + gstAmount
+            const includedGstAmount = await CalculateGst(price, findpincode);
 
-            console.log(months, "-------", pricePerMonth, "-------", price, "-------", gstAmount, "-------", totalAmount)
+            // const gstAmount = (parseFloat(price) * gstValue) / 100
+            // const totalAmount = parseFloat(price) + gstAmount
+
+            // console.log(months, "-------", pricePerMonth, "-------", price, "-------", gstAmount, "-------", totalAmount)
 
             request({
                 method: 'POST',
                 url: `https://${razorPayCredentials.key_id}:${razorPayCredentials.key_secret}@api.razorpay.com/v1/payments/${req.params.paymentId}/capture`,
                 form: {
-                    amount: parseInt((totalAmount * 100).toFixed(2)).toString(),
+                    amount: parseInt((includedGstAmount.totalAmount * 100).toFixed(2)).toString(),
                     currency: 'INR'
                 }
             }, async function(error, response, body) {
@@ -269,8 +300,10 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         // orderPlanId: '', // order items/plans id
                         gst: gstValue,
                         price: price,
-                        gstAmount: gstAmount,
-                        total: totalAmount,
+                        gstAmount: includedGstAmount.gstAmount,
+                        cgstAmount: includedGstAmount.cgstAmount,
+                        sgstAmount: includedGstAmount.sgstAmount,
+                        total: includedGstAmount.totalAmount,
                         orderedOn: new Date(),
                         // paymentId: '', // payment collection id
                         // paymentStatus: '',
@@ -339,7 +372,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         const msgData = {
                             plan: _p_details.planType,
                             currency: currency,
-                            amount: totalAmount,
+                            amount: includedGstAmount.totalAmount,
                             url: invoice.Location,
                             name: order_details.invoiceNo.toString() + '-invoice.pdf',
                             till: _p_details.exprireDate,
@@ -351,7 +384,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         const msgData = {
                             plan: _p_details.planType,
                             currency: currency,
-                            amount: totalAmount,
+                            amount: includedGstAmount.totalAmount,
                             url: invoice && invoice.Location || null,
                             name: order_details.invoiceNo.toString() + '-invoice.pdf',
                             till: _p_details.exprireDate
@@ -381,7 +414,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
                         let invoiceEmailMsg = invoiceContent({
                             plan: _p_details.planType,
                             till: _p_details.exprireDate,
-                            price: totalAmount,
+                            price: includedGstAmount.totalAmount,
                             invoiceLink: invoice.Location,
                             cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4
                         });
@@ -418,6 +451,7 @@ module.exports.captureRazorPayPayment = async(req, res) => {
         } else
             return respSuccess(res, { payment: false }, 'Payment failed')
 
+        }
     } catch (error) {
         console.log(error)
         respError(error)

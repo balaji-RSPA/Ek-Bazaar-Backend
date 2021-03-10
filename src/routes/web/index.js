@@ -9,6 +9,7 @@ const subscriptionPlan = require('./subscriptionPlanRoutes')
 const contact = require('./contactRoutes')
 const removeListing = require('./removeListingRoutes')
 const payment = require('./paymentRoutes')
+const Pincode = require('./pincodeRoutes')
 
 router.use(location)
 router.use(buyer)
@@ -20,5 +21,6 @@ router.use(subscriptionPlan)
 router.use(contact)
 router.use(removeListing)
 router.use(payment)
+router.use(Pincode)
 
 module.exports = router

@@ -254,7 +254,7 @@
                             <td>
                                 <div class="card">
                                     <h5>Service Period :</h5>
-                                    <p>{{details.orderData.expireDate}}</p>
+                                    <p>{{details.orderData.invoiceDate}} to {{details.orderData.expireDate}}</p>
                                 </div>
                             </td>
                         </tr>
@@ -272,7 +272,12 @@
                     <td class="text-center">Unit Price</td>
                     <td class="text-center">Qty </td>
                     <td class="text-center">Net Amount</td>
-                    <td class="text-center">GST (18%)</td>
+                    {{#if details.orderData.igstAmount}}
+                     <td class="text-center">IGST (18%)</td>
+                    {{else}}
+                    <td class="text-center">CGST (9%)</td>
+                    <td class="text-center">SGST (9%)</td>
+                    {{/if}}
                     <td class="text-center" style="width:80px !important;">Total</td>
                 </tr>
             </thead>
@@ -283,9 +288,14 @@
                     <td class="text-right">₹ {{details.orderData.amount}}</td>
                     <td class="text-right">1</td>
                     <td class="text-right">₹ {{details.orderData.amount}}</td>
-                    <td class="text-right">₹ {{details.orderData.gstAmount}}</td>
+                    {{#if details.orderData.igstAmount}}
+                     <td class="text-right">₹ {{details.orderData.igstAmount}}</td>
+                    {{else}}
+                     <td class="text-right">₹ {{details.orderData.cgstAmount}}</td>
+                     <td class="text-right">₹ {{details.orderData.sgstAmount}}</td>
+                    {{/if}}
                     <td class="text-right">₹ {{details.orderData.orderTotal}}</td>
-                </tr>
+                 </tr>
 
                 <tr style="border:1px solid #ddd;background-color: #F9F9F9;">
                     <td style="font-weight:600;font-size: 12px;color: #000;" class="highrow">Total</td>
@@ -294,7 +304,13 @@
                     <td class="highrow"></td>
                     <td class="highrow"></td>
                     <td class="highrow"></td>
+                    {{#if details.orderData.cgstAmount }}
+                     {{#if details.orderData.sgstAmount }}
+                      <td class="highrow"></td>
+                     {{/if}}
+                    {{/if}}
                     <td style="font-weight:600;font-size: 12px;color: #000; width: 80px ;" class="highrow text-right">₹ {{details.orderData.orderTotal}}</td>
+                   
                 </tr>
 
 
