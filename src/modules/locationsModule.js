@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types
 const { States, Countries, Cities } = require("../models");
 
-module.exports.getAllStates = (skip, limit) =>
+module.exports.getAllStates = (reqQuery) =>
   new Promise((resolve, reject) => {
-    States.find({})
+    const skip = parseInt(reqQuery.skip) || 0;
+    const limit = parseInt(reqQuery.limit) || 300;
+    States.find(reqQuery)
       .skip(skip)
       .limit(limit)
       .then((doc) => {
