@@ -19,8 +19,15 @@ const chatSchema = new Schema(
             type: ObjectId
         },
         session: {
-            userId: String,
-            token: String
+            userId: {
+                type: String
+            },
+            authToken: {
+                type: String
+            },
+            username: {
+                type: String
+            }
         }
     },
     {

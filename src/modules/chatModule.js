@@ -26,3 +26,14 @@ module.exports.createChatSession = (query, data) =>
             })
             .catch((error) => reject(error.message));
     });
+
+module.exports.updateChatSession = (query, data) =>
+    new Promise((resolve, reject) => {
+        console.log(data, ' hhhhhhhhhhhhhhhhh')
+        Chat.findOneAndUpdate(query, data, { new: true, upsert: true })
+            .then((doc) => {
+                console.log("🚀 ~ file: chatModule.js ~ line 35 ~ .then ~ doc", doc)
+                resolve(doc);
+            })
+            .catch((error) => reject(error.message));
+    });

@@ -3,25 +3,47 @@ const {
     respSuccess,
     respError
 } = require('../../utils/respHadler')
-const rocketChatClient = new RocketChatApi("https", "chatbot.active.agency", 443)
-const session = {
-    userId: "2aDCcJzHwaXfPvobs",
-    authToken: "NMRk-oqZz0x4Lf0houOkMsR8VmXUu3uTJBgpXGwObbc"
+const axios = require("axios")
+const moment = require('moment')
+const chatDomain = "https://chatbot.active.agency"
 
-}
+const rocketChatClient = new RocketChatApi("https", "chatbot.active.agency", 443)
+// const rocketChatClient = new RocketChatApi("http", "192.168.1.30", 3000)
+const { Chat } = require('../../modules')
+const { updateChatSession } = Chat
+// let session = {
+//     userId: "2aDCcJzHwaXfPvobs",
+//     authToken: "NMRk-oqZz0x4Lf0houOkMsR8VmXUu3uTJBgpXGwObbc",
+//     username: ""
+
+// }
 const admin = {
     username: "ramesh",
     password: "ramesh123"
 }
 
+exports.setChatSession = (data) => {
+    rocketChatClient.setAuthToken(data.authToken)
+    rocketChatClient.setUserId(data.userId)
+    console.log(' chat session set')
+    return true
+}
+
 exports.userLogin = async (req, res) => {
-    const { username, password } = req.body
+    const { username, password, customerUserId } = req.body
     try {
         // console.log("🚀 ~ file: rocketChatController.js ~ line 7 ~ exports.userLogin= ~ req.body", req.body)
         const login = await rocketChatClient.login(username, password)
         console.log("🚀 ~ file: rocketChatController.js ~ line 9 ~ exports.userLogin= ~ login", login)
-        rocketChatClient.setAuthToken(login.authToken)
-        rocketChatClient.setUserId(login.userId)
+        await this.setChatSession({ authToken: login.authToken, userId: login.userId })
+        // rocketChatClient.setAuthToken(login.authToken)
+        // rocketChatClient.setUserId(login.userId)
+        const session = {
+            authToken: login.authToken,
+            userId: login.userId,
+            username: login.me.username
+        }
+        await updateChatSession({ userId: customerUserId }, { session: { ...session } })
         return respSuccess(res, login, "Logged In!")
         // return (login, "Logged In!")
     } catch (error) {
@@ -38,6 +60,7 @@ const inlinUserLogin = (req) => new Promise(async (resolve, reject) => {
         const login = await rocketChatClient.login(username, password)
         rocketChatClient.setAuthToken(login.authToken)
         rocketChatClient.setUserId(login.userId)
+        console.log(login, ' admin internal login')
         resolve()
     } catch (error) {
         reject()
@@ -59,21 +82,39 @@ exports.userLogout = async (req, res) => {
     }
 }
 
-exports.userDetails = async (req, res) => {
+
+exports.setLanguage = async (req, res) => {
 
     try {
-        console.log('get user details -----------')
-        rocketChatClient.authentication.me((err, body) => {
-            if (err)
-                return respError(res, err)
-            return respSuccess(res, body)
-        })
-
+        const {
+            chatAthToken, chatUserId, chatUsername
+        } = req
+        const { lang } = req.body
+        console.log(lang, ' set language  room-------------')
+        const url = `${chatDomain}/api/v1/users.setPreferences`
+        const data = {
+            language: "kn"
+        }
+        const result = await axios.post(url, {
+            userId: chatUserId,
+            data: { language: lang }
+        },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        console.log(JSON.stringify(result.data), ' lllllllllllllllllll')
+        return respSuccess(res, result.data)
     } catch (error) {
-        // console.log(err)
-        return respError(res, error)
+        console.log(error)
+        return respError(res, error.message)
     }
+
 }
+
 
 exports.createUser = async (req, res) => {
 
@@ -95,7 +136,6 @@ exports.createUser = async (req, res) => {
         const logout = await rocketChatClient.logout()
         rocketChatClient.setAuthToken(user.authToken)
         rocketChatClient.setUserId(user.userId)
-        console.log("🚀 ~ file: rocketChatController.js ~ line 52 ~ exports.createUser= ~ user", user)
         return respSuccess(res, user)
 
     } catch (error) {
@@ -105,57 +145,36 @@ exports.createUser = async (req, res) => {
 }
 
 
-exports.deleteUser = async (req, res) => {
-
-    try {
-        console.log('Delete user -----------')
-        const user = await rocketChatClient.users.delete(req.body.userId);
-        return respSuccess(res, user, 'Deleted Succesfully!')
-
-    } catch (error) {
-        // console.log(err)
-        return respError(res, error)
-    }
-}
-
 exports.userList = async (req, res) => {
-
     try {
+        const {
+            chatAthToken, chatUserId, chatUsername
+        } = req
+
         let list = await rocketChatClient.im.list({
             "offset": 0,
             "count": 0,
             "sort": undefined,
             "fields": undefined, "query": undefined/* { 'unreads': false } */
         })
-
-        // console.log("🚀 ~ file: rocketChatController.js ~ line 130 ~ exports.userList= ~ list", list)
+        list.ims = [...list.ims].reverse()
         for (let index = 0; index < list.ims.length; index++) {
             const element = list.ims[index];
-            const info = await rocketChatClient.users.info({ username: element.usernames[1] })
+            const info = await rocketChatClient.users.info({ username: chatUsername !== element.usernames[1] ? element.usernames[1] : element.usernames[0] })
+
             list.ims[index] = { ...info, ...list.ims[index] }
+
+            const url = `${chatDomain}/api/v1/subscriptions.getOne?roomId=${element.lastMessage.rid}`
+            const resp = await axios.get(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+            list.ims[index] = { ...resp.data, ...list.ims[index] }
         }
-        console.log("🚀 ~ file: rocketChatController.js ~ line 135 ~ exports.userList= ~ info", list)
-        // rocketChatClient.im.list({
-        //     "offset": 0,
-        //     "count": 0,
-        //     "sort": undefined,
-        //     "fields": undefined, "query": undefined/* { 'unreads': false } */
-        // }, (err, body) => {
-        //     if (err) throw err;
-        //     let result = body
-        //     for (let index = 0; index < body.ims.length; index++) {
-        //         const element = body.ims[index];
-        //         rocketChatClient.users.info({ username: element.usernames[1] }, (err, body1) => {
-        //             console.log(err, ' eeeeeeeeeeeee')
-        //             console.log(body, ' kkkkkkkkkkkk')
-        //             result.ims[index] = { ...body1, ...result.ims[index] }
-        //             console.log(result, ' ------------------------------')
-        //         });
-        //     }
-        //     console.log('1111111111111111111')
-        //     // body.ims.map((val) => {
-        //     //     console.log(val.usernames);
-        //     // })
+        console.log(list, ' liast-------')
         return respSuccess(res, list)
         // })
 
@@ -165,18 +184,72 @@ exports.userList = async (req, res) => {
     }
 }
 
-exports.openRoom = async (req, res) => {
+
+exports.getHistory = async (req, res) => {
 
     try {
-        console.log(' chat room-------------')
+        console.log(' history message-----')
+        const { roomId, limit, offset } = req.query
+        console.log("🚀 ~ file: rocketChatController.js ~ line 189 ~ exports.getHistory= ~ roomId", req.query)
+        let _temp = {};
+
+
+        rocketChatClient.im.history({ roomId, offset, count: limit }, async (err, body) => {
+            if (err)
+                return respError(res, err)
+            const arr = body.messages.reverse()
+            for await (data of arr) {
+                let _key = moment(data.ts).format('YYYY-MM-DD');
+                if (_temp[_key] || _temp[_key] !== undefined) {
+                    _temp[_key].push(data);
+                }
+                else {
+                    _temp[_key] = [];
+                    _temp[_key].push(data);
+                }
+
+
+            }
+            console.log(_temp, ' kkkkkk')
+            return respSuccess(res, { messages: _temp })
+        });
+
+
+    } catch (err) {
+
+        return respError(res, err.message)
+    }
+
+}
+
+exports.markAsRead = async (req, res) => {
+
+    try {
+        console.log(' markAsread  room-------------')
+        const {
+            chatAthToken, chatUserId, chatUsername
+        } = req
         const { roomId } = req.body
-        const room = await rocketChatClient.im.open(roomId)
-        return respSuccess(res, room)
+        console.log("🚀 ~ file: rocketChatController.js ~ line 184 ~ exports.markAsRead= ~ roomId", roomId)
+        const url = `${chatDomain}/api/v1/subscriptions.read`
+        const result = await axios.post(url, {
+            rid: roomId
+        },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        return respSuccess(res, result.data)
     } catch (error) {
+        console.log(error)
         return respError(res, error.message)
     }
 
 }
+
 
 exports.sendMessage = async (req, res) => {
 
@@ -186,6 +259,7 @@ exports.sendMessage = async (req, res) => {
         rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
             if (err)
                 return respError(res, err.message)
+            console.log(body, '--------------------------')
             return respSuccess(res, body)
         });
 
@@ -194,6 +268,51 @@ exports.sendMessage = async (req, res) => {
     }
 
 }
+
+exports.openRoom = async (req, res) => {
+
+    // try {
+    //     console.log(' chat room-------------')
+    //     const { roomId } = req.body
+    //     const room = await rocketChatClient.im.open(roomId)
+    //     return respSuccess(res, room)
+    // } catch (error) {
+    //     return respError(res, error.message)
+    // }
+
+}
+
+
+exports.deleteUser = async (req, res) => {
+
+    // try {
+    //     console.log('Delete user -----------')
+    //     const user = await rocketChatClient.users.delete(req.body.userId);
+    //     return respSuccess(res, user, 'Deleted Succesfully!')
+
+    // } catch (error) {
+    //     // console.log(err)
+    //     return respError(res, error)
+    // }
+}
+
+exports.userDetails = async (req, res) => {
+
+    // try {
+    //     console.log('get user details -----------')
+    //     rocketChatClient.authentication.me((err, body) => {
+    //         if (err)
+    //             return respError(res, err)
+    //         return respSuccess(res, body)
+    //     })
+
+    // } catch (error) {
+    //     // console.log(err)
+    //     return respError(res, error)
+    // }
+}
+
+
 
 exports.searchMessage = async (req, res) => {
 
@@ -212,34 +331,16 @@ exports.searchMessage = async (req, res) => {
 
 }
 
-exports.getHistory = async (req, res) => {
 
-    try {
-        console.log(req.query, ' history message-----')
-        const { roomId } = req.query
-        console.log("🚀 ~ file: rocketChatController.js ~ line 189 ~ exports.getHistory= ~ roomId", roomId)
-
-        rocketChatClient.im.history({ roomId }, (err, body) => {
-            console.log(err, ' pppppppppppppppp')
-            if (err)
-                return respError(res, err)
-
-            return respSuccess(res, body)
-        });
-
-
-    } catch (err) {
-
-        return respError(res, err.message)
-    }
-
-}
-
-exports.getUnreadMessages = async (req, res) => {
+exports.getNotification = async (req, res) => {
 
     try {
         console.log(req.query, ' Unread message-----')
-
+        rocketChatClient.notify.room.onChanged({ roomId: "2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP" }, (err, body) => {
+            if (err)
+                return respError(res, err.message)
+            return respSuccess(res, body)
+        });
     } catch (err) {
 
         return respError(res, err.message)
@@ -254,11 +355,24 @@ exports.getUnreadMessages = async (req, res) => {
 
 */
 exports.userChatLogin = async (data) => {
-    const { username, password } = data
+    const { username, password, customerUserId } = data
     try {
         const login = await rocketChatClient.login(username, password)
-        rocketChatClient.setAuthToken(login.authToken)
-        rocketChatClient.setUserId(login.userId)
+        console.log("🚀 ~ file: rocketChatController.js ~ line 345 ~ exports.userChatLogin= ~ login", login)
+        // rocketChatClient.setAuthToken(login.authToken)
+        // rocketChatClient.setUserId(login.userId)
+        await this.setChatSession({ authToken: login.authToken, userId: login.userId })
+        const session = {
+            authToken: login.authToken,
+            userId: login.userId,
+            username: login.me.username
+        }
+        await updateChatSession({ userId: customerUserId }, {
+            session: {
+                ...session
+            }
+        })
+        console.log(customerUserId, session, ' ssssssssssssss')
         return login
     } catch (error) {
         // console.log(error)
@@ -285,14 +399,16 @@ exports.createChatUser = async (data) => {
         };
         const chat = await inlinUserLogin({ username: admin.username, password: admin.password })
         const user = await rocketChatClient.users.create(userToAdd);
+        console.log(user, ' creat user ------------------------------------------')
         const logout = await rocketChatClient.logout()
-        rocketChatClient.setAuthToken(user.authToken)
-        rocketChatClient.setUserId(user.userId)
+        await this.setChatSession({ authToken: user.authToken, userId: user.userId })
+        // rocketChatClient.setAuthToken(user.authToken)
+        // rocketChatClient.setUserId(user.userId)
         // console.log("🚀 ~ file: rocketChatController.js ~ line 52 ~ exports.createUser= ~ user", user)
         return user
 
     } catch (error) {
-        // console.log(error)
+        console.log(error)
         return 0
     }
 }

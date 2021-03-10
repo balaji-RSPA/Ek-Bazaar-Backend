@@ -3,9 +3,43 @@ POST  http://localhost:8070/api/chat/login HTTP/1.1
 content-type: application/json
 
 {
-    "username": "12345678901",
-    "password": "active123"
+    "username": "3453657585",
+    "password": "active123",
+    "customerUserId": "6040b56f216d8f1731c2d8a7"
 }
+
+
+    # "username": "3453657585",
+    # "password": "active123"
+
+
+###
+GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobstACzKwnsLK68noQvB&offset=25&limit=25 HTTP/1.1
+content-type: application/json
+
+
+###
+GET  http://localhost:8070/api/chat/getList HTTP/1.1
+content-type: application/json
+
+
+###
+POST  http://localhost:8070/api/chat/markAsRead HTTP/1.1
+content-type: application/json
+
+{
+    "roomId":"2aDCcJzHwaXfPvobstACzKwnsLK68noQvB"
+}
+
+###
+POST  http://localhost:8070/api/chat/setLanguage HTTP/1.1
+content-type: application/json
+
+{
+    "lang":"en"
+}
+
+
 ###
 POST  http://localhost:8070/api/chat/logout HTTP/1.1
 content-type: application/json
@@ -23,10 +57,6 @@ content-type: application/json
     "email": "ram@active.agency",
     "username": "9876543210"
 }
-
-###
-GET  http://localhost:8070/api/chat/getList HTTP/1.1
-content-type: application/json
 
 ###
 POST  http://localhost:8070/api/chat/delete HTTP/1.1
@@ -49,8 +79,8 @@ POST  http://localhost:8070/api/chat/sendMessage HTTP/1.1
 content-type: application/json
 
 {
-    "roomId" : "2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP", 
-    "message" : " Hi hello how are you?" 
+    "roomId" : "2aDCcJzHwaXfPvobstACzKwnsLK68noQvB", 
+    "message" : " Hi hello how are you?v ------fhfgdhf----------------" 
 }
 
 ###
@@ -62,7 +92,15 @@ content-type: application/json
     "searchText": "hi"
 }
 ###
-GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP HTTP/1.1
+GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobstACzKwnsLK68noQvB&offset=25&limit=25 HTTP/1.1
+content-type: application/json
+
+# {
+#     "roomId" : "2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP"
+# }
+
+###
+GET  http://localhost:8070/api/chat/getNotofication?roomId=2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP HTTP/1.1
 content-type: application/json
 
 # {

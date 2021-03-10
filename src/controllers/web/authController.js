@@ -8,7 +8,7 @@ const {
   respAuthFailed,
 } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
-const { userChatLogin, userChatLogout } = require('./rocketChatController')
+const { userChatLogin, userChatLogout, createChatUser } = require('./rocketChatController')
 // const {
 //   handleUserSession, getSessionCount, handleUserLogoutSession
 // } = require('../../modules/sessionModules')
@@ -39,10 +39,10 @@ exports.login = async (req, res) => {
     }
     else if (user && !user.password && userType === 'buyer') {
       const _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
-      console.log("🚀 ~ file: authController.js ~ line 40 ~ exports.login= ~ _user", _user)
+      // console.log("🚀 ~ file: authController.js ~ line 40 ~ exports.login= ~ _user", _user)
       user = await sellers.checkUserExistOrNot({ mobile });
       user = user[0]
-      console.log("🚀 ~ file: authController.js ~ line 42 ~ exports.login= ~ user", user)
+      // console.log("🚀 ~ file: authController.js ~ line 42 ~ exports.login= ~ user", user)
     } else if (user && !user.password && userType === 'seller') {
       return respAuthFailed(res, undefined, "User not found");
     }
@@ -83,9 +83,13 @@ exports.login = async (req, res) => {
       const result1 = await sellers.handleUserSession(user._id, finalData);
       const chatLogin = await getChat({ userId: user._id })
       if (chatLogin) {
-        const activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123" })
-        await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
-        console.log(activeChat, '------ Chat activated-----------')
+        const activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+        // await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
+        console.log(activeChat, '------ Old Chat activated-----------')
+      } else {
+        const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
+        const activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+        console.log(activeChat, '------ New Chat activated-----------')
       }
 
       return respSuccess(res, { token, location }, "successfully logged in!");
