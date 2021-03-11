@@ -6,11 +6,12 @@ const {
 const axios = require("axios")
 const moment = require('moment')
 const chatDomain = "https://chatbot.active.agency"
+const { getSellerProfile } = require('../../modules/sellersModule')
 
 const rocketChatClient = new RocketChatApi("https", "chatbot.active.agency", 443)
 // const rocketChatClient = new RocketChatApi("http", "192.168.1.30", 3000)
 const { Chat } = require('../../modules')
-const { updateChatSession } = Chat
+const { updateChatSession, getChat, createChat } = Chat
 // let session = {
 //     userId: "2aDCcJzHwaXfPvobs",
 //     authToken: "NMRk-oqZz0x4Lf0houOkMsR8VmXUu3uTJBgpXGwObbc",
@@ -191,17 +192,20 @@ exports.userList = async (req, res) => {
             })
 
             list.data.ims[index] = { ...userInfo.data, ...list.data.ims[index] }
-
-            const url = `${chatDomain}/api/v1/subscriptions.getOne?roomId=${element.lastMessage.rid}`
-            const resp = await axios.get(url, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Auth-Token': chatAthToken,
-                    'X-User-Id': chatUserId
-                }
-            })
-            list.data.ims[index] = { ...resp.data, ...list.data.ims[index] }
+            // console.log(element, ' iiiiiiiiiiiiiiiiiiiii')
+            if (element.lastMessage && element.lastMessage.rid) {
+                const url = `${chatDomain}/api/v1/subscriptions.getOne?roomId=${element.lastMessage.rid}`
+                const resp = await axios.get(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Auth-Token': chatAthToken,
+                        'X-User-Id': chatUserId
+                    }
+                })
+                list.data.ims[index] = { ...resp.data, ...list.data.ims[index] }
+            }
         }
+        console.log(list.data, ' list ................')
         return respSuccess(res, list.data)
         // })
 
@@ -318,6 +322,30 @@ exports.sendMessage = async (req, res) => {
 
     } catch (err) {
         return respError(res, err.message)
+    }
+
+}
+
+exports.checkSellerChat = async (req, res) => {
+
+    try {
+        const { sellerId } = req.query
+        console.log("🚀 ~ file: rocketChatController.js ~ line 329 ~ exports.checkSellerChat= ~ sellerId", sellerId)
+        let checkChat = await getChat({ sellerId })
+        console.log("🚀 ~ file: rocketChatController.js ~ line 332 ~ exports.checkSellerChat= ~ checkChat", checkChat)
+        if (!checkChat) {
+            const seller = await getSellerProfile(sellerId)
+            const user = seller[0]
+            const chatUser = await this.createChatUser({ name: user.name, email: user.email, username: user.mobile[0].mobile.toString() })
+            checkChat = await createChat({ details: chatUser, sellerId: user._id, buyerId: user.buyer || null, userId: user.userId || null })
+            // checkChat = await this.userChatLogin({ username: creatChat.details.user.username, password: "active123", customerUserId: user._id })
+        }
+        console.log("🚀 ~ file: rocketChatController.js ~ line 330 ~ exports.checkSellerChat= ~ checkChat", checkChat)
+        respSuccess(res, checkChat)
+    } catch (error) {
+
+        respError(res, error.message)
+
     }
 
 }
