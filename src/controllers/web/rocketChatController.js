@@ -70,16 +70,28 @@ const inlinUserLogin = (req) => new Promise(async (resolve, reject) => {
 
 })
 
-exports.userLogout = async (req, res) => {
+exports.userChatSessionLogout = async (req) => {
 
     try {
-        console.log('chat logout-----------')
-        const chat = await rocketChatClient.logout()
-        return respSuccess(res, chat, chat.message)
+        console.log(req, 'chat logout-----------')
+        const {
+            chatAthToken, chatUserId, chatUsername
+        } = req
+        const url = `${chatDomain}/api/v1/logout`
+        const result = await axios.post(url, {},
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        console.log(result.data, ' cccccccccccccccccccc log outttttttttt')
+        return result
 
     } catch (error) {
         console.log(error)
-        return respError(res, error.message)
+        return false
     }
 }
 
@@ -521,6 +533,31 @@ exports.userChatLogout = async () => {
         console.log(error)
         return false
         // return respError(res, error.message)
+    }
+}
+
+exports.userLogout = async (req, res) => {
+
+    try {
+        console.log('chat logout-----------')
+        const {
+            chatAthToken, chatUserId, chatUsername
+        } = req
+        // const chat = await rocketChatClient.logout()
+        const url = `${chatDomain}/api/v1/logout`
+        const result = await axios.post(url, {},
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        return true
+
+    } catch (error) {
+        console.log(error)
+        return false
     }
 }
 

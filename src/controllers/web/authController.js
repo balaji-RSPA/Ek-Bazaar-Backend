@@ -8,7 +8,7 @@ const {
   respAuthFailed,
 } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
-const { userChatLogin, userChatLogout, createChatUser } = require('./rocketChatController')
+const { userChatLogin, userChatLogout, createChatUser, userChatSessionLogout } = require('./rocketChatController')
 // const {
 //   handleUserSession, getSessionCount, handleUserLogoutSession
 // } = require('../../modules/sessionModules')
@@ -115,7 +115,8 @@ exports.logout = async (req, res) => {
         deviceId,
         token
       }
-      const chatLogout = await userChatLogout()
+      // const chatLogout = await userChatLogout()
+      const chatLogout = await userChatSessionLogout(req)
       const result = sellers.handleUserLogoutSession(data);
 
     }

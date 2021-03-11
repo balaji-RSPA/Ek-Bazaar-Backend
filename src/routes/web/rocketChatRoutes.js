@@ -6,7 +6,7 @@ const { authenticate } = require('../../middleware/auth')
 const chat = require('../../controllers/web/rocketChatController')
 
 router.post('/chat/login', chat.userLogin);
-router.post('/chat/logout', chat.userLogout);
+router.post('/chat/logout', authenticate, chat.userLogout);
 router.post('/chat/register', chat.createUser);
 router.get('/chat/getList', authenticate, chat.userList);
 router.get('/chat/getHistory', authenticate, chat.getHistory);
