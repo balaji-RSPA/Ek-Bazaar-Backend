@@ -82,17 +82,18 @@ exports.login = async (req, res) => {
       }
       const result1 = await sellers.handleUserSession(user._id, finalData);
       const chatLogin = await getChat({ userId: user._id })
+      let activeChat = {}
       if (chatLogin) {
-        const activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+        activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
         // await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
         console.log(activeChat, '------ Old Chat activated-----------')
       } else {
         const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
-        const activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+        activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
         console.log(activeChat, '------ New Chat activated-----------')
       }
 
-      return respSuccess(res, { token, location }, "successfully logged in!");
+      return respSuccess(res, { token, location, activeChat }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");
   } catch (error) {

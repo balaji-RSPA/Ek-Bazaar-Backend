@@ -132,7 +132,7 @@ exports.createUser = async (req, res) => {
             "roles": ["user"]
         };
         const adminLogin = await inlinUserLogin({ username: admin.username, password: admin.password })
-        // console.log("🚀 ~ file: rocketChatController.js ~ line 135 ~ exports.createUser= ~ adminLogin", adminLogin)
+        console.log("🚀 ~ file: rocketChatController.js ~ line 135 ~ exports.createUser= ~ adminLogin", adminLogin)
 
         const url = `${chatDomain}/api/v1/users.create`
 
@@ -144,7 +144,7 @@ exports.createUser = async (req, res) => {
                     'X-User-Id': adminLogin.userId
                 }
             })
-        // console.log(result.data, ' new usereerererer------------')
+        console.log(result.data, ' new usereerererer------------')
 
         // const user = await rocketChatClient.users.create(userToAdd);
         // const logout = await rocketChatClient.logout()
@@ -165,32 +165,18 @@ exports.userList = async (req, res) => {
             chatAthToken, chatUserId, chatUsername
         } = req
 
-        const url = `${chatDomain}/api/v1/im.list`
-        const list = await axios.get(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Auth-Token': chatAthToken,
-                'X-User-Id': chatUserId
-            }
+        let list = await rocketChatClient.im.list({
+            "offset": 0,
+            "count": 0,
+            "sort": undefined,
+            "fields": undefined, "query": undefined/* { 'unreads': false } */
         })
+        list.ims = [...list.ims].reverse()
+        for (let index = 0; index < list.ims.length; index++) {
+            const element = list.ims[index];
+            const info = await rocketChatClient.users.info({ username: chatUsername !== element.usernames[1] ? element.usernames[1] : element.usernames[0] })
 
-        list.data.ims = [...list.data.ims].reverse()
-
-        for (let index = 0; index < list.data.ims.length; index++) {
-            const element = list.data.ims[index];
-            const uid = chatUsername !== element.usernames[1] ? element.usernames[1] : element.usernames[0]
-
-            const userInfoUrl = `${chatDomain}/api/v1/users.info?username=${uid}`
-
-            const userInfo = await axios.get(userInfoUrl, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Auth-Token': chatAthToken,
-                    'X-User-Id': chatUserId
-                }
-            })
-
-            list.data.ims[index] = { ...userInfo.data, ...list.data.ims[index] }
+            list.ims[index] = { ...info, ...list.ims[index] }
 
             const url = `${chatDomain}/api/v1/subscriptions.getOne?roomId=${element.lastMessage.rid}`
             const resp = await axios.get(url, {
@@ -200,9 +186,10 @@ exports.userList = async (req, res) => {
                     'X-User-Id': chatUserId
                 }
             })
-            list.data.ims[index] = { ...resp.data, ...list.data.ims[index] }
+            list.ims[index] = { ...resp.data, ...list.ims[index] }
         }
-        return respSuccess(res, list.data)
+        console.log(list, ' liast-------')
+        return respSuccess(res, list)
         // })
 
     } catch (error) {
@@ -216,41 +203,30 @@ exports.getHistory = async (req, res) => {
 
     try {
         console.log(' history message-----')
-        const {
-            chatAthToken, chatUserId, chatUsername
-        } = req
         const { roomId, limit, offset } = req.query
+        console.log("🚀 ~ file: rocketChatController.js ~ line 189 ~ exports.getHistory= ~ roomId", req.query)
         let _temp = {};
 
-        const url = `${chatDomain}/api/v1/im.history?roomId=${roomId}`
-        const history = await axios.get(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Auth-Token': chatAthToken,
-                'X-User-Id': chatUserId
+
+        rocketChatClient.im.history({ roomId, offset, count: limit }, async (err, body) => {
+            if (err)
+                return respError(res, err)
+            const arr = body.messages.reverse()
+            for await (data of arr) {
+                let _key = moment(data.ts).format('YYYY-MM-DD');
+                if (_temp[_key] || _temp[_key] !== undefined) {
+                    _temp[_key].push(data);
+                }
+                else {
+                    _temp[_key] = [];
+                    _temp[_key].push(data);
+                }
+
+
             }
-        })
-        const arr = history.data.messages.reverse()
-
-
-        // rocketChatClient.im.history({ roomId, offset, count: limit }, async (err, body) => {
-        //     if (err)
-        //         return respError(res, err)
-        for await (data of arr) {
-            let _key = moment(data.ts).format('YYYY-MM-DD');
-            if (_temp[_key] || _temp[_key] !== undefined) {
-                _temp[_key].push(data);
-            }
-            else {
-                _temp[_key] = [];
-                _temp[_key].push(data);
-            }
-
-
-        }
-        // console.log(_temp, ' kkkkkk')
-        return respSuccess(res, { messages: _temp })
-        // });
+            console.log(_temp, ' kkkkkk')
+            return respSuccess(res, { messages: _temp })
+        });
 
 
     } catch (err) {
@@ -293,28 +269,13 @@ exports.sendMessage = async (req, res) => {
 
     try {
         console.log(req.body, ' send message-----')
-        const {
-            chatAthToken, chatUserId, chatUsername
-        } = req
         const { roomId, message } = req.body
-
-        const url = `${chatDomain}/api/v1/chat.postMessage`
-
-        const result = await axios.post(url, { roomId: roomId, text: message },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Auth-Token': chatAthToken,
-                    'X-User-Id': chatUserId
-                }
-            })
-        // console.log(result.data, ' send meeeee ----------------')
-        // rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
-        //     if (err)
-        //         return respError(res, err.message)
-        //     console.log(body, '--------------------------')
-        return respSuccess(res, result.data)
-        // });
+        rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
+            if (err)
+                return respError(res, err.message)
+            console.log(body, '--------------------------')
+            return respSuccess(res, body)
+        });
 
     } catch (err) {
         return respError(res, err.message)

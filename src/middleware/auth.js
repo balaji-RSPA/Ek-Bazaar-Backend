@@ -25,9 +25,9 @@ const getChatRequest = (userId) => new Promise(async (resolve, reject) => {
 
   try {
     const chatData = await getChat({ userId })
-    if (chatData) {
-      await setChatSession(chatData.session)
-    }
+    // if (chatData) {
+    //   await setChatSession(chatData.session)
+    // }
     resolve(chatData)
 
   } catch (error) {
