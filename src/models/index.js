@@ -28,6 +28,7 @@ const Orders = require('./ordersSchema')
 const OrdersPlans = require('./orderPlanSchema')
 const InvoiceNumber = require('./invoiceNumberSchema')
 const Suggestions = require('./suggestionsSchema')
+const Chat = require('./chatSchema')
 const Pincodes = require('./pincode')
 // const Users = require('./user')
 
@@ -62,5 +63,6 @@ module.exports = {
     OrdersPlans,
     InvoiceNumber,
     Suggestions,
+    Chat,
     Pincodes
 }

@@ -1,0 +1,139 @@
+###
+POST  http://localhost:8070/api/chat/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "3453657585",
+    "password": "active123",
+    "customerUserId": "6040b56f216d8f1731c2d8a7"
+}
+
+
+    # "username": "3453657585",
+    # "password": "active123"
+
+
+###
+GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobstACzKwnsLK68noQvB&offset=25&limit=25 HTTP/1.1
+content-type: application/json
+
+
+###
+GET  http://localhost:8070/api/chat/getList HTTP/1.1
+content-type: application/json
+
+
+###
+POST  http://localhost:8070/api/chat/markAsRead HTTP/1.1
+content-type: application/json
+
+{
+    "roomId":"2aDCcJzHwaXfPvobstACzKwnsLK68noQvB"
+}
+
+###
+POST  http://localhost:8070/api/chat/setLanguage HTTP/1.1
+content-type: application/json
+
+{
+    "lang":"en"
+}
+
+
+###
+POST  http://localhost:8070/api/chat/logout HTTP/1.1
+content-type: application/json
+
+###
+GET  http://localhost:8070/api/chat/getUserDetails HTTP/1.1
+content-type: application/json
+
+###
+POST  http://localhost:8070/api/chat/register HTTP/1.1
+content-type: application/json
+
+{
+    "name": "ram",
+    "email": "ram@active.agency",
+    "username": "9876543210"
+}
+
+###
+POST  http://localhost:8070/api/chat/delete HTTP/1.1
+content-type: application/json
+
+{
+    "userId": "HT8e8ftpESBm4e7YP"
+}
+
+###
+GET  http://localhost:8070/api/chat/openChatRoom HTTP/1.1
+content-type: application/json
+
+{
+    "roomId":"2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP"
+}
+
+###
+POST  http://localhost:8070/api/chat/sendMessage HTTP/1.1
+content-type: application/json
+
+{
+    "roomId" : "2aDCcJzHwaXfPvobstACzKwnsLK68noQvB", 
+    "message" : " Hi hello how are you?v ------fhfgdhf----------------" 
+}
+
+###
+GET  http://localhost:8070/api/chat/searchMessage HTTP/1.1
+content-type: application/json
+
+{
+    "roomId" : "2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP",
+    "searchText": "hi"
+}
+###
+GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobstACzKwnsLK68noQvB&offset=25&limit=25 HTTP/1.1
+content-type: application/json
+
+# {
+#     "roomId" : "2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP"
+# }
+
+###
+GET  http://localhost:8070/api/chat/getNotofication?roomId=2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP HTTP/1.1
+content-type: application/json
+
+# {
+#     "roomId" : "2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP"
+# }
+
+
+# 2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP
+
+# {
+#   "success": true,
+#   "data": {
+#     "user": {
+#       "_id": "4af85q7qMLsSXM8sa",
+#       "createdAt": "2021-03-04T08:05:53.654Z",
+#       "username": "9876543210",
+#       "emails": [
+#         {
+#           "address": "ram@active.agency",
+#           "verified": true
+#         }
+#       ],
+#       "type": "user",
+#       "status": "offline",
+#       "active": true,
+#       "_updatedAt": "2021-03-04T08:05:54.028Z",
+#       "roles": [
+#         "user"
+#       ],
+#       "name": "ram",
+#       "requirePasswordChange": false,
+#       "settings": {}
+#     },
+#     "success": true
+#   }
+# }
