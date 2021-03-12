@@ -16,7 +16,7 @@ const { userChatLogin, userChatLogout, createChatUser, userChatSessionLogout } =
 const { sellers, buyers, Chat } = require("../../modules");
 
 const { JWTTOKEN } = require("../../utils/globalConstants");
-const { getChat, createChatSession } = Chat
+const { getChat, createChatSession, createChat } = Chat
 
 const getUserAgent = (userAgent) => {
   const { browser, version, os, platform, source } = userAgent;
@@ -47,6 +47,7 @@ exports.login = async (req, res) => {
       return respAuthFailed(res, undefined, "User not found");
     }
 
+    const buyer = await buyers.getBuyer(user._id);
     if (userType === 'seller') {
 
       const seller = await sellers.getSeller(user._id);
@@ -60,7 +61,6 @@ exports.login = async (req, res) => {
       }
     } else if (userType === 'buyer') {
 
-      const buyer = await buyers.getBuyer(user._id);
       if (buyer && buyer.deactivateAccount.status === true)
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
     }
@@ -82,6 +82,7 @@ exports.login = async (req, res) => {
       }
       const result1 = await sellers.handleUserSession(user._id, finalData);
       const chatLogin = await getChat({ userId: user._id })
+      const sellerDetails = await sellers.getSeller(user._id);
       let activeChat = {}
       if (chatLogin) {
         activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
@@ -89,6 +90,7 @@ exports.login = async (req, res) => {
         console.log(activeChat, '------ Old Chat activated-----------')
       } else {
         const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
+        const chatDetails = await createChat({ details: chatUser, sellerId: sellerDetails._id, buyerId: buyer._id, userId: user._id })
         activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: user._id })
         console.log(activeChat, '------ New Chat activated-----------')
       }
