@@ -15,6 +15,7 @@ const SellerPlanLogs = require('./sellerPlanLogModule')
 const Orders = require('./ordersModule')
 const Payments = require('./paymentModule')
 const InvoiceNumber = require('./invoiceNumberModule')
+const Chat = require('./chatModule')
 const Pincode = require('./pincodeModule')
 
 module.exports = {
@@ -35,5 +36,6 @@ module.exports = {
     Orders,
     Payments,
     InvoiceNumber,
+    Chat,
     Pincode
 }

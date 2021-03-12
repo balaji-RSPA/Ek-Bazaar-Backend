@@ -55,7 +55,6 @@ app.use(fileUpload());
 app.use(express.static(path.join(__dirname, 'public')));
 const server = require('http').Server(app);
 
-// app.use(_ssoRedirect());
 app.use(router)
 app.get('/', function (req, res) {
     console.log('Home page')
@@ -78,6 +77,42 @@ app.get("/api/logged", async (req, res, next) => {
     }
 })
 
+app.post('/capture/:paymentId', async function (req, res) {
+    try {
+        const result = await captureRazorPayPayment(req, res)
+    } catch (error) {
+
+    }
+    // res.send('Its delete records  live')
+})
+
+async function indexing() {
+    await checkIndices()
+    await putMapping()
+    // await l1CheckIndices()
+    // await l1PutMapping()
+    // await l2CheckIndices()
+    // await l2PutMapping()
+    // await l3CheckIndices()
+    // await l3PutMapping()
+    // await l4CheckIndices()
+    // await l4PutMapping()
+    // await l5CheckIndices()
+    // await l5PutMapping()
+    // await cityCheckIndices()
+    // await cityPutMapping()
+    // await stateCheckIndices()
+    // await statePutMapping()
+    // await countryCheckIndices()
+    // await countryPutMapping()
+    // await serviceTypeCheckIndices()
+    // await serviceTypePutMapping() 
+    // await tradeMasterCheckIndices()
+    // await tradeMasterPutMapping()
+}
+// indexing()
+
+app.use(router)
 
 server.listen(tradeDb.server_port);
 

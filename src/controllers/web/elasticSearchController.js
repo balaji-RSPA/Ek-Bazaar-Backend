@@ -240,7 +240,7 @@ module.exports.searchSuggestion = async (req, res) => {
           })))
         }
       })
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
+      // console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
       return respSuccess(res, suggestions, sellers[1]["products"])
     } else {
       let query = {
