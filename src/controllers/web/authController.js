@@ -16,13 +16,15 @@ const ssoLoginUrl = global.environment === "production" ? "" : global.environmen
 const ssoLogoutUrl = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:3010/simplesso/logout"
 const serviceURL = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:8070"
 
+const { userChatLogin, userChatLogout, createChatUser, userChatSessionLogout } = require('./rocketChatController')
 // const {
 //   handleUserSession, getSessionCount, handleUserLogoutSession
 // } = require('../../modules/sessionModules')
 
-const { sellers, buyers } = require("../../modules");
+const { sellers, buyers, Chat } = require("../../modules");
 
 const { JWTTOKEN } = require("../../utils/globalConstants");
+const { getChat, createChatSession, createChat } = Chat
 
 const getUserAgent = (userAgent) => {
   const { browser, version, os, platform, source } = userAgent;
@@ -39,10 +41,10 @@ exports.login = async (req, res, next) => {
   try {
 
     const { password, ipAddress, mobile, userType } = req.body;
-    // const serviceURL = "http://localhost:8070" // req.headers.origin
     const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
     const { data } = response
     let _user = data.user
+    console.log("🚀 ~ file: authController.js ~ line 47 ~ exports.login= ~ _user", _user)
 
     if (data.url) {
       const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
@@ -71,23 +73,22 @@ exports.login = async (req, res, next) => {
       
     }
 
+    const buyer = await buyers.getBuyer(_user._id);
+    const seller = await sellers.getSeller(_user._id);
     if (userType === 'seller') {
-
-      const seller = await sellers.getSeller(user._id);
 
       if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
 
       else if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
         const data = {
-          mobile: [{ mobile: user.mobile, countryCode: user.countryCode }]
+          mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
         }
-        await sellers.updateSeller({ userId: user._id }, data)
+        await sellers.updateSeller({ userId: _user._id }, data)
       }
 
     } else if (userType === 'buyer') {
 
-      const buyer = await buyers.getBuyer(user._id);
       if (buyer && buyer.deactivateAccount.status === true)
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
 
@@ -106,8 +107,24 @@ exports.login = async (req, res, next) => {
         deviceId: user.deviceId,
         ipAddress
       }
+      
       const result1 = await sellers.handleUserSession(_user._id, finalData);
-      return respSuccess(res, { user, token }, "successfully logged in!")
+      const chatLogin = await getChat({ userId: _user._id })
+      console.log("🚀 ~ file: authController.js ~ line 113 ~ exports.login= ~ chatLogin", chatLogin)
+      let activeChat = {}
+      if (chatLogin) {
+        activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+        // await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
+        console.log(activeChat, '------ Old Chat activated-----------')
+      } else {
+        const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile.toString() })
+        console.log("🚀 ~ file: authController.js ~ line 121 ~ exports.login= ~ chatUser", chatUser)
+        const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
+        activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: _user._id })
+        console.log(activeChat, '------ New Chat activated-----------')
+      }
+
+      return respSuccess(res, { user, token, activeChat }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");
 
@@ -133,7 +150,8 @@ exports.logout = async (req, res) => {
         deviceId/*,
         token*/
       }
-
+      // const chatLogout = await userChatLogout()
+      // const chatLogout = await userChatSessionLogout(req)
       const result = sellers.handleUserLogoutSession(data);
       const response = await axios.post(ssoLogoutUrl, { params: { serviceURL } })
       console.log("🚀 ~ file: authController.js ~ line 139 ~ exports.logout= ~ response", response)

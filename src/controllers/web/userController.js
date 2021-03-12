@@ -9,7 +9,7 @@ const {
   sendSMS
 } = require("../../utils/utils");
 const { sendOtp, successfulRegistration, businessProfileIncomplete } = require("../../utils/templates/smsTemplate/smsTemplate");
-const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans, SellerPlanLogs } = require("../../modules");
+const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans, SellerPlanLogs, Chat } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
 const { deleteSellerProducts } = require('../../modules/sellerProductModule')
@@ -38,6 +38,10 @@ const {
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan
 const { createTrialPlan } = SellerPlans
+const { createChat } = Chat
+
+const { createChatUser } = require('./rocketChatController')
+
 const algorithm = 'aes-256-cbc'
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
@@ -504,6 +508,16 @@ module.exports.updateUser = async (req, res) => {
         }
         await updateBuyer({ _id: buyer._id }, buyer);
         await updateSeller({ _id: seller._id }, seller);
+
+
+
+        const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
+        if (chatUser) {
+          const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: seller.userId })
+          console.log(chatDetails, " ccccccccccccccccccccccc")
+        }
+        console.log(chatUser, " uuuuuuuuuuuuuuuuuuuuuuuuuuuu")
+
       }
       respSuccess(res, {
         seller,

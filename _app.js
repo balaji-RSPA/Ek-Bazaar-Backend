@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 const path = require('path');
 const cors = require('cors');
 const cron = require("node-cron");
+var io = require('socket.io')(http);
 const Logger = require('./src/utils/logger');
 const useragent = require('express-useragent');
 const config = require('./config/config')
