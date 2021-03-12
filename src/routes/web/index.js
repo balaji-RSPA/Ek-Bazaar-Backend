@@ -10,6 +10,7 @@ const contact = require('./contactRoutes')
 const removeListing = require('./removeListingRoutes')
 const payment = require('./paymentRoutes')
 const chat = require('./rocketChatRoutes')
+const Pincode = require('./pincodeRoutes')
 
 router.use(location)
 router.use(buyer)
@@ -22,5 +23,6 @@ router.use(contact)
 router.use(removeListing)
 router.use(payment)
 router.use(chat)
+router.use(Pincode)
 
 module.exports = router
