@@ -235,6 +235,7 @@ exports.getHistory = async (req, res) => {
         const {
             chatAthToken, chatUserId, chatUsername
         } = req
+        console.log(chatAthToken, chatUserId, chatUsername, ' hhhhhhhh')
         const { roomId, limit, offset } = req.query
         let _temp = {};
 

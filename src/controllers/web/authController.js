@@ -89,7 +89,7 @@ exports.login = async (req, res) => {
         console.log(activeChat, '------ Old Chat activated-----------')
       } else {
         const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
-        activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+        activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: user._id })
         console.log(activeChat, '------ New Chat activated-----------')
       }
 
