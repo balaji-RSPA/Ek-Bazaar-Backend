@@ -163,7 +163,6 @@ exports.handleUserLogoutSession = (query) =>
       const data = {
         userId: result.userId,
         userAgent: result.userAgent,
-        // token: result.token,
         deviceId: result.deviceId,
         signIn: result.createdAt,
         ipAddress: result.ipAddress,

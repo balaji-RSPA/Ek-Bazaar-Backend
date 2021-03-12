@@ -5,6 +5,7 @@ const { JWTTOKEN } = require('../utils/globalConstants');
 const { respUnAuthorized } = require('../utils/respHadler');
 const Session = require("../../config/tenderdb").sessionModel;
 const SessionLog = require("../../config/tenderdb").sessionLogModel;
+const { verifyJwtToken } = require("../../sso-tools/jwt_verify");
 
 const { Types } = mongoose;
 const { ObjectId } = Types;
@@ -69,10 +70,10 @@ const checkRequestTime = (userId, deviceId, token) => new Promise((resolve, reje
       }, {
         deviceId
 
-      }, {
+      }/*, {
         token
 
-      }]
+      }*/]
     }
   }, {
     $addFields: {
@@ -105,10 +106,12 @@ const checkRequestTime = (userId, deviceId, token) => new Promise((resolve, reje
 })
 
 exports.authenticate = async (req, res, next) => {
+  console.log("🚀 ~ file: auth.js ~ line 108 ~ exports.authenticate= ~ req", req.headers.authorization)
   const token = req.headers.authorization.split('|')[1];
   try {
-
-    const decoded = jwt.verify(token, JWTTOKEN);
+    console.log(req.session.ssoToken)
+    const decoded = await verifyJwtToken(token) //jwt.verify(token, JWTTOKEN);
+    console.log("🚀 ~ file: auth.js ~ line 114 ~ exports.authenticate= ~ decoded", decoded)
     const { deviceId, userId } = decoded;
     req.deviceId = deviceId
     req.userID = userId;

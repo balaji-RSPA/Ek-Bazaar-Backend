@@ -8,7 +8,7 @@ const {
   encodePassword,
   sendSMS
 } = require("../../utils/utils");
-const { sendOtp , successfulRegistration,businessProfileIncomplete } = require("../../utils/templates/smsTemplate/smsTemplate");
+const { sendOtp, successfulRegistration, businessProfileIncomplete } = require("../../utils/templates/smsTemplate/smsTemplate");
 const { sellers, buyers, mastercollections, subscriptionPlan, SellerPlans, SellerPlanLogs } = require("../../modules");
 const { getSellerTypeAll } = require('../../modules/locationsModule')
 const { checkSellerExist, deleteSellerRecord } = require('../../modules/sellersModule')
@@ -29,12 +29,13 @@ const {
 const {
   sendSingleMail
 } = require('../../utils/mailgunService')
-const {commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
+const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
 const {
   emailSuccessfulRegistration,
   otpVerification,
   passwordUpdate
 } = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan
 const { createTrialPlan } = SellerPlans
 const algorithm = 'aes-256-cbc'
@@ -69,6 +70,8 @@ const { sms } = require("../../utils/globalConstants")
 // const {username, password, senderID, smsURL} = sms
 
 const isProd = process.env.NODE_ENV === "production"
+const ssoRegisterUrl = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:3010/simplesso/register"
+const serviceURL = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:8070"
 
 
 function encrypt(text) {
@@ -123,7 +126,7 @@ module.exports.checkUserExistOrNot = async (req, res) => {
     const seller = await checkUserExistOrNot({ mobile });
     console.log("🚀 ~ file: userController.js ~ line 113 ~ module.exports.checkUserExistOrNot= ~ seller", seller)
     if (seller && seller.length) {
-      if(seller[0]["password"]) seller[0]["password"] = true
+      if (seller[0]["password"]) seller[0]["password"] = true
       else seller[0]["password"] = false
       return respSuccess(res, seller[0], "User with number already exist");
     }
@@ -138,13 +141,13 @@ module.exports.sendOtp = async (req, res) => {
     const { mobile, reset } = req.body;
     let otp = 1234
     const seller = await checkUserExistOrNot({ mobile });
-    const { otpMessage } = sendOtp({reset,otp});
+    const { otpMessage } = sendOtp({ reset, otp });
 
     if (seller && seller.length && !reset) {
       return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length)) return respError(res, "No User found with this number");
-    
+
     const checkUser = seller && seller.length && seller[0].email && seller[0].isEmailVerified === 2;
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
@@ -154,17 +157,17 @@ module.exports.sendOtp = async (req, res) => {
       // })
       let response = await sendSMS(mobile, otpMessage);
       if (response && response.data && response.data.otp && checkUser) {
-         const otpMessage = otpVerification({otp:response.data.otp});
-          //send email
-          const message = {
-            from: MailgunKeys.senderMail,
-            to: seller[0].email,
-            subject: 'OTP Verification',
-            html: commonTemplate(otpMessage)
-          }
-          await sendSingleMail(message)
-        }else{
-         console.log("=======Email is not verified yet================")
+        const otpMessage = otpVerification({ otp: response.data.otp });
+        //send email
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: seller[0].email,
+          subject: 'OTP Verification',
+          html: commonTemplate(otpMessage)
+        }
+        await sendSingleMail(message)
+      } else {
+        console.log("=======Email is not verified yet================")
       }
       return respSuccess(res, {
         otp: resp.data.data.otp
@@ -172,16 +175,16 @@ module.exports.sendOtp = async (req, res) => {
     } else {
       // otp = 1234
       if (checkUser) {
-          const otpMessage = otpVerification({otp:otp});
-          //send email
-          const message = {
-            from: MailgunKeys.senderMail,
-            to: seller[0].email,
-            subject: 'OTP Verification',
-            html: commonTemplate(otpMessage)
-          }
-          await sendSingleMail(message)
-      }else{
+        const otpMessage = otpVerification({ otp: otp });
+        //send email
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: seller[0].email,
+          subject: 'OTP Verification',
+          html: commonTemplate(otpMessage)
+        }
+        await sendSingleMail(message)
+      } else {
         console.log("=======Email is not verified yet================")
       }
       return respSuccess(res, {
@@ -219,7 +222,7 @@ const getUserAgent = (userAgent) => {
 
 }
 
-module.exports.addUser = async (req, res) => {
+module.exports.addUser = async (req, res, next) => {
   try {
     const { password, mobile, ipAddress, preferredLanguage } = req.body;
     const dateNow = new Date();
@@ -317,14 +320,31 @@ module.exports.addUser = async (req, res) => {
         const log = await addSellerPlanLog(planLog)
 
       }
-      const deviceId = machineIdSync();
+
+      const response = await axios.post(ssoRegisterUrl, { mobile: mobile.mobile, password }, { params: { serviceURL } })
+      const { data } = response
+      let _user = data.user
+
+      if (data.url) {
+        const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
+        req.session.ssoToken = ssoToken
+        req.query = {
+          ssoToken: ssoToken
+        }
+      }
+
+      const _response = await ssoRedirect(req, res, next)
+      const { user, token } = _response
+
+      if (token) req.session.token = token
+
       const userAgent = getUserAgent(req.useragent)
-      const token = createToken(deviceId, { userId: seller.userId });
+      
       const finalData = {
         userAgent,
         userId: seller.userId,
         token,
-        deviceId,
+        deviceId: user.deviceId,
         ipAddress
       }
       console.log('account created-------------------')
@@ -332,7 +352,7 @@ module.exports.addUser = async (req, res) => {
       const result1 = await handleUserSession(seller.userId, finalData)
       return respSuccess(
         res,
-        { token, buyer, seller },
+        { token, buyer, seller, user },
         "Account Created Successfully"
       );
     }
@@ -364,7 +384,7 @@ module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
     const _buyer = req.body.buyer || {}
-    let { name, email, business, location, mobile, type, sellerType,userType } = req.body;
+    let { name, email, business, location, mobile, type, sellerType, userType } = req.body;
 
     let userData = {
       name: _buyer && _buyer.name || name,
@@ -389,7 +409,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer
     };
-    if((_buyer.mobile && _buyer.mobile.length) ||(mobile && mobile.length)) {
+    if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
       buyerData.mobile = _buyer.mobile[0]["mobile"] || mobile[0]["mobile"]
       buyerData.mobile = _buyer.mobile[0]["countryCode"] || mobile[0]["countryCode"]
       sellerData.mobile = _buyer.mobile || mobile
@@ -467,11 +487,11 @@ module.exports.updateUser = async (req, res) => {
         await sendSingleMail(message)
       }
       if (buyer.isEmailSent === false && buyer.email) {
-        const { successfulMessage } = successfulRegistration({userType});
+        const { successfulMessage } = successfulRegistration({ userType });
         seller.isEmailSent = true;
         buyer.isEmailSent = true;
         // otp
-        let emailMessage = emailSuccessfulRegistration({name : user.name,url:url,userType})
+        let emailMessage = emailSuccessfulRegistration({ name: user.name, url: url, userType })
         const message = {
           from: MailgunKeys.senderMail,
           to: user.email,
@@ -479,7 +499,7 @@ module.exports.updateUser = async (req, res) => {
           html: commonTemplate(emailMessage)
         }
         await sendSingleMail(message)
-        if (isProd){
+        if (isProd) {
           await sendSMS(mobile, successfulMessage);
         }
         await updateBuyer({ _id: buyer._id }, buyer);
@@ -529,7 +549,7 @@ exports.verifiedEmail = async (req, res) => {
     }
     const url = req.get('origin');
     // const template = await emailVerified("https://tradebazaar.tech-active.com")
-    const template = await emailVerified({link : url,name:user[0].name})
+    const template = await emailVerified({ link: url, name: user[0].name })
     const message = {
       from: MailgunKeys.senderMail,
       to: userEmail,
@@ -570,7 +590,7 @@ module.exports.updateNewPassword = async (req, res) => {
     const curntPwd = findUser && findUser.length && findUser[0].password
     const comparePass = await bcrypt.compare(currentPassword, curntPwd);
     const compareCurrentOldPass = await bcrypt.compare(checkPassword, curntPwd);
-    if (compareCurrentOldPass){
+    if (compareCurrentOldPass) {
       return respError(res, "Entered password is same as old password, try to enter different password")
     }
     if (!comparePass) {
@@ -578,7 +598,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({name:user.name,url:url})
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url })
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
@@ -593,35 +613,10 @@ module.exports.updateNewPassword = async (req, res) => {
   }
 };
 
-// let dt = new Date()
-//     let date = `${dt.getUTCDate()}`
-//     let month = `${dt.getUTCMonth()+1}`
-//     let year = `${dt.getUTCFullYear()}`
-//     let hours = `${dt.getUTCHours()}`
-//     let minutes = `${dt.getUTCMinutes()}`
-//     let seconds = `${dt.getUTCSeconds()}`
-//     let milisecs = `${dt.getUTCMilliseconds()}`
-
-//     const currentTime = `${year}-${month.length === 1 ? `0${month}` : month}-${date.length === 1 ? `0${date}` : date} ${hours.length === 1 ? `0${hours}` : hours}:${minutes.length === 1 ? `0${minutes}` : minutes}:${seconds.length === 1 ? `0${seconds}` : seconds}.${milisecs}Z`
-
-//     const timestamp = dt.getTime()
-//     const newTimestamp = timestamp - 12000000
-//     dt = new Date(newTimestamp)
-//     date = `${dt.getUTCDate()}`
-//     month = `${dt.getUTCMonth()+1}`
-//     year = `${dt.getUTCFullYear()}`
-//     hours = `${dt.getUTCHours()}`
-//     minutes = `${dt.getUTCMinutes()}`
-//     seconds = `${dt.getUTCSeconds()}`
-//     milisecs = `${dt.getUTCMilliseconds()}`
-
-//     const startTime = `${year}-${month.length === 1 ? `0${month}` : month}-${date.length === 1 ? `0${date}` : date} ${hours.length === 1 ? `0${hours}` : hours}:${minutes.length === 1 ? `0${minutes}` : minutes}:${seconds.length === 1 ? `0${seconds}` : seconds}.${milisecs}Z`
-
 module.exports.deleteRecords = async (req, res) => new Promise(async (resolve, reject) => {
 
   try {
 
-    // console.log('delete ------')
     const arr = ['5f97acc7b9a4b5524568716a', '5f97ace6b9a4b5524568716b', '5f97acf2b9a4b5524568716c', '5fa4fac96eb907267c7d15ce', '5fa5506e0524f35f355955f2',
       '5fa61d53520fd81fba4a1d6d', '5fb397c072e59028f0d17e32', '5fb39ad034d3932a93e0f079', '5fb46f021135863cd3c66664', '5fb5f268805ec7db145b4e58', '5fddfd218994761734d8011b',
       '5fe08558ad5cb94f153017d6', '5fe226ddcc99a97286d53e35', '5fe2271e30e98d73b97671ea']
