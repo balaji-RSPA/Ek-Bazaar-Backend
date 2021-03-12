@@ -303,6 +303,11 @@ exports.sellerSearch = async (reqQuery) => {
           }
         }
       }
+      query.bool.must.push({
+        "match": {
+          "status": true
+        }
+      })
       query.bool.filter.push(sellerActiveAccount)
     }
   }

@@ -390,7 +390,7 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
   if (type === "update") {
     data = {
       productDetails: val.productDetails && val.productDetails || null,
-      status: val.status || true,
+      status: val.status !== null && val.status !== undefined ? val.status : true,
       batch: 1,
       keywords,
       serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null
