@@ -4,15 +4,11 @@ const isAuthenticated = (req, res/*, next*/) => {
   // pass the redirect URL as current URL
   // serviceURL is where the sso should redirect in case of valid user
   const redirectURL = `${req.protocol}://${req.headers.host}${req.path}`;
-  console.log("🚀 ~ file: isAuthenticated.js ~ line 8 ~ isAuthenticated ~ req.session.user", req.session.user)
+  console.log("🚀 ~ file: isAuthenticated.js ~ line 8 ~ isAuthenticated ~ req.session.user", req.session)
   if (req.session.user == null) {
-    // return res.redirect(
-    //   `http://sso.ankuranand.com:3010/simplesso/login?serviceURL=${redirectURL}`
-    // );
-    return req.session.user
+    return null
   }
-  // next();
-  return null
+  return req.session.user
 };
 
 module.exports = isAuthenticated;

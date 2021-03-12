@@ -7,6 +7,7 @@ const express = require('express')
 const session = require("express-session");
 const useragent = require('express-useragent');
 const fileUpload = require('express-fileupload');
+const cookieParser = require('cookie-parser')
 const morgan = require("morgan");
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -17,82 +18,66 @@ require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
 const isAuthenticated = require("./sso-tools/isAuthenticated");
-const checkSSORedirect = require("./sso-tools/checkSSORedirect");
+const { ssoRedirect } = require("./sso-tools/checkSSORedirect");
 const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
 const { updatePriority } = require('./src/controllers/web/testController')
+const { respSuccess } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 
 const { tradeDb } = config
 
 const app = express();
-app.use(
-    session({
-        secret: "keyboard cat",
-        resave: false,
-        saveUninitialized: true
-    })
-);
-app.use(cors())
-app.use(useragent.express());
-app.use(fileUpload());
+// app.use(bodyParser.json({ limit: '200mb' }));
+app.use(bodyParser.json());
+app.use(cors({
+    origin: ["http://localhost:8085", "https://tradebazaar.tech-active.com", "https://www.trade.ekbazaar.com"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+}))
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(
+    session({
+        key: "userId",
+        secret: "keyboard cat",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            expires: 1000 * 60 * 60 * 24 * 15,
+        },
+    })
+);
+app.use(useragent.express());
+app.use(fileUpload());
 
-app.use(bodyParser.json({ limit: '200mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 const server = require('http').Server(app);
 
+// app.use(_ssoRedirect());
+app.use(router)
 app.get('/', function (req, res) {
     console.log('Home page')
-    res.send('Its trade live')
+    res.send("It's Ekbazaar Trade beta api server")
 })
 
 app.get("/api/logged", async (req, res, next) => {
-    let user = await checkSSORedirect(req, res, next)
-    console.log("🚀 ~ file: app.js ~ line 53 ~ app.get ~ user", user)
-    if(user && user.error) {
-        res.status(200).json({success: false, message: error})
-    } else if(!user) {
-        user = await isAuthenticated(req, res, next)    
-        if(!user) res.status(200).json({success: false, message: "user is not logged in any app"})
-        else res.status(200).json({success: true, user})
+    let user = await ssoRedirect(req, res, next)
+    if (user && user.error) {
+        respSuccess(res, error)
+    } else if (!user) {
+        user = await isAuthenticated(req, res, next)
+        if (!user) respSuccess(res, "user is not logged in any app")
+        else {
+            // req.session.cookie._expires = 60 * 60 * 24
+            respSuccess(res, { user, token: req.session.token })
+        }
     } else {
-        res.status(200).json({success: true, user})
+        respSuccess(res, { user, token: req.session.token })
     }
 })
 
-// app.use(checkSSORedirect());
-
-// app.get("/", isAuthenticated, (req, res, next) => {
-//   res.render("index", {
-//     what: `SSO-Consumer One ${JSON.stringify(req.session.user)}`,
-//     title: "SSO-Consumer | Home"
-//   });
-// });
-
-// app.use((req, res, next) => {
-//   // catch 404 and forward to error handler
-//   const err = new Error("Resource Not Found");
-//   err.status = 404;
-//   next(err);
-// });
-
-// app.use((err, req, res, next) => {
-//   console.error({
-//     message: err.message,
-//     error: err
-//   });
-//   const statusCode = err.status || 500;
-//   let message = err.message || "Internal Server Error";
-
-//   if (statusCode === 500) {
-//     message = "Internal Server Error";
-//   }
-//   res.status(statusCode).json({ message });
-// });
-
-app.use(router)
 
 server.listen(tradeDb.server_port);
 
