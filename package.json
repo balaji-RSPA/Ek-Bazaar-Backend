@@ -1,0 +1,34 @@
+{
+  "name": "sso-server",
+  "version": "1.0.0",
+  "description": "\"A Single Sign On Server\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "sso",
+    "node.js",
+    "sso-nodejs"
+  ],
+  "author": "Ankur Anand",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.18.3",
+    "ejs": "^2.7.4",
+    "ejs-mate": "^2.3.0",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "hashids": "^1.2.2",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.11.19",
+    "morgan": "^1.9.0",
+    "node-machine-id": "^1.1.12",
+    "uuid": "^3.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
