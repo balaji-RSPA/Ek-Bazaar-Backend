@@ -237,9 +237,10 @@ exports.getHistory = async (req, res) => {
         } = req
         console.log(chatAthToken, chatUserId, chatUsername, ' hhhhhhhh')
         const { roomId, limit, offset } = req.query
+        console.log(roomId, limit, offset, ' qqqqqqqqqqqqqqqqqqqq')
         let _temp = {};
 
-        const url = `${chatDomain}/api/v1/im.history?roomId=${roomId}`
+        const url = `${chatDomain}/api/v1/im.history?roomId=${roomId}&offset=${offset}&count=${limit}`
         const history = await axios.get(url, {
             headers: {
                 'Content-Type': 'application/json',
@@ -265,7 +266,7 @@ exports.getHistory = async (req, res) => {
 
 
         }
-        // console.log(_temp, ' kkkkkk')
+        console.log(_temp, ' kkkkkk')
         return respSuccess(res, { messages: _temp })
         // });
 
