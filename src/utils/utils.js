@@ -32,6 +32,30 @@ const s3 = new AWS.S3({
   secretAccessKey
 });
 
+exports.globalVaraibles = {
+  _IS_PROD_: process.env.NODE_ENV === "production",
+  _IS_DEV_: process.env.NODE_ENV === "staging",
+  ssoLoginUrl: "login",
+  ssoLogoutUrl: "logout",
+  ssoRegisterUrl: "register",
+  ssoServerJWTURL: "verifytoken",
+  authServiceURL: function () {
+    if (this._IS_PROD_) {
+      return {
+        serviceURL: "https://tradeapi.ekbazaar.com",
+      }
+    } else if (this._IS_DEV_) {
+      return {
+        serviceURL: "https://tradebazaarapi.tech-active.com"
+      }
+    } else {
+      return {
+        serviceURL: "http://localhost:8070"
+      }
+    }
+  }
+}
+
 
 exports.sendBulkSMS = async (mobile, message) => new Promise((resolve, reject) => {
   console.log('bulk sms', mobile, message)
