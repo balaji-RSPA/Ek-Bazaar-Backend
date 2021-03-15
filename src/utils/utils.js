@@ -25,6 +25,12 @@ const {
 
 const { sms, siteUrl } = require('./globalConstants')
 const { username, password, senderID, smsURL } = sms
+const spacesEndpoint = new AWS.Endpoint(endpoint);
+const s3 = new AWS.S3({
+  endpoint: spacesEndpoint,
+  accessKeyId,
+  secretAccessKey
+});
 
 
 exports.sendBulkSMS = async (mobile, message) => new Promise((resolve, reject) => {
@@ -97,12 +103,6 @@ exports.encodePassword = (password) => {
  */
 module.exports.uploadToDOSpace = (req) => {
   // try {
-  const spacesEndpoint = new AWS.Endpoint(endpoint);
-  const s3 = new AWS.S3({
-    endpoint: spacesEndpoint,
-    accessKeyId,
-    secretAccessKey
-  });
   var params = {
     Body: req.body,
     Bucket,
@@ -131,3 +131,39 @@ module.exports.uploadToDOSpace = (req) => {
 
 
 }
+
+/**
+ * List all images from Digital Ocean Space
+ */
+module.exports.listAllDigitalOceanDocs = async() => {
+  const params = {
+    Bucket
+  }
+  return new Promise((resolve, reject) => {
+    s3.listObjectsV2(params, function (err, data) {
+      if (err) reject(err)
+      else {
+        resolve(data.Contents)
+      }
+    })
+  })
+}
+
+/**
+ * Delete images from Digital Ocean Space
+ */
+module.exports.deleteDigitalOceanDocs = async (query) => {
+  const params = {
+    Bucket,
+    Key: query.key
+  }
+  return new Promise((resolve, reject) => {
+    s3.deleteObject(params, function (err, data) {
+      if (err) reject(err)
+      else {
+        resolve(data)
+      }
+    })
+  })
+}
+
