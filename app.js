@@ -38,14 +38,38 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.set("trust proxy", 1);
+const cookieOptions = {
+    path: "/",
+    expires: 1000 * 60 * 60 * 24 * 15,
+    // domain: ".tech-active.com",
+    sameSite: "none",
+    httpOnly: true,
+    // secure: true,
+};
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS, HEAD");
+    res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization");
+    // res.cookie("token","ghjkk5247986-512222222222.dfghjkk", {
+    //   secure: true,
+    //   httpOnly: true,
+    //   domain: "tradebazaarapi.tech-acive.com"
+    // });
+    next();
+});
+
 app.use(
     session({
         key: "userId",
         secret: "keyboard cat",
         resave: false,
         saveUninitialized: false,
+        // domain: ".tech-active.com",
         cookie: {
-            expires: 1000 * 60 * 60 * 24 * 15,
+            ...cookieOptions
         },
     })
 );
