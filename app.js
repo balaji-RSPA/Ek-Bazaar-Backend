@@ -1,16 +1,57 @@
 const express = require("express");
-const morgan = require("morgan");
-const app = express();
-const engine = require("ejs-mate");
 const session = require("express-session");
+const cookieParser = require('cookie-parser')
+const morgan = require("morgan");
+const bodyParser = require('body-parser');
+const engine = require("ejs-mate");
+const cors = require('cors');
 require('./config/db').conn
 const router = require("./router");
+
+const app = express();
+app.use(bodyParser.json());
+app.use(cors({
+  origin: ["https://tradeapi.ekbazaar.com", "https://tradebazaarapi.tech-active.com", "http://localhost:8077"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}))
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.set("trust proxy", 1);
+const cookieOptions = {
+  path: "/",
+  expires: 1000 * 60 * 60 * 24 * 15,
+  // domain: "tech-active.com",
+  sameSite: "none",
+  httpOnly: true,
+  // secure: true,
+};
+
+app.use((req, res, next) => {
+  console.log(req.session, req.headers);
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS, HEAD");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization");
+  res.header("Access-Control-Expose-Headers", "Set-Cookie");
+  // res.cookie("token", "ghjkk5247986-512222222222.dfghjkk", {
+  //   secure: true,
+  //   httpOnly: true,
+  //   domain: ".tech-acive.com"
+  // });
+  next();
+});
 
 app.use(
   session({
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: true,
+    cookie: {
+      ...cookieOptions
+    },
   })
 );
 app.use((req, res, next) => {

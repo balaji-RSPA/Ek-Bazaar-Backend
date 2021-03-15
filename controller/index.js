@@ -167,6 +167,7 @@ const register = async (req, res, next) => {
       password: 1,
       isPhoneVerified: 1,
       isMobileVerified: 1,
+      countryCode: 1
       // _id: -1,
     })
     .exec()
@@ -205,6 +206,7 @@ const doLogin = async (req, res, next) => {
   // like checking with Datebase and all, we are skiping these section
   // const { email, password } = req.body;
   const { mobile, password } = req.body;
+  console.log("🚀 ~ file: index.js ~ line 209 ~ doLogin ~ req.body", req.body)
   const user = await UserModel.findOne({ mobile })
     .select({
       name: 1,
@@ -214,6 +216,7 @@ const doLogin = async (req, res, next) => {
       password: 1,
       isPhoneVerified: 1,
       isMobileVerified: 1,
+      countryCode: 1
       // _id: -1,
     })
     .exec()
@@ -267,6 +270,7 @@ const login = async (req, res, next) => {
       password: 1,
       isPhoneVerified: 1,
       isMobileVerified: 1,
+      countryCode: 1
       // _id: -1,
     })
     .exec()
