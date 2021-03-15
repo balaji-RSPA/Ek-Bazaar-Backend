@@ -921,7 +921,6 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
   })
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
-    console.log(id, data,"==================")
     if (id) {
       SelleresProductList.findOneAndUpdate({
         _id: id
