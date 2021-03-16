@@ -39,7 +39,7 @@ const { getSubscriptionPlanDetail } = subscriptionPlan
 const { createTrialPlan } = SellerPlans
 const { createChat } = Chat
 
-const { createChatUser } = require('./rocketChatController')
+const { createChatUser, userChatLogin } = require('./rocketChatController')
 
 const algorithm = 'aes-256-cbc'
 const key = crypto.randomBytes(32);
@@ -470,6 +470,7 @@ module.exports.updateUser = async (req, res) => {
         }
         await sendSingleMail(message)
       }
+      let activeChat = {}
       if (buyer.isEmailSent === false && buyer.email) {
         const { successfulMessage } = successfulRegistration({ userType });
         seller.isEmailSent = true;
@@ -490,18 +491,21 @@ module.exports.updateUser = async (req, res) => {
         await updateSeller({ _id: seller._id }, seller);
 
 
-
         const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
+        console.log("🚀 ~ file: userController.js ~ line 495 ~ module.exports.updateUser= ~ chatUser", chatUser)
+
         if (chatUser) {
           const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: seller.userId })
-          console.log(chatDetails, " ccccccccccccccccccccccc")
+          // console.log(chatDetails, " ccccccccccccccccccccccc")
+          activeChat = await userChatLogin({ username: chatDetails.details.user.username, password: "active123", customerUserId: seller.userId })
         }
-        console.log(chatUser, " uuuuuuuuuuuuuuuuuuuuuuuuuuuu")
+        // console.log(chatUser, " uuuuuuuuuuuuuuuuuuuuuuuuuuuu")
 
       }
       respSuccess(res, {
         seller,
-        buyer
+        buyer,
+        activeChat
       }, user.email && user.isEmailVerified === 1 ? "Updated Successfully and check your email to activate your email" : "Updated Successfully");
     } else {
       respError(res, "Failed to update");

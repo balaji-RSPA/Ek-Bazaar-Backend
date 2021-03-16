@@ -28,6 +28,14 @@ const chatSchema = new Schema(
             username: {
                 type: String
             }
+        },
+        isLanguageSet: {
+            type: Boolean,
+            default: false
+        },
+        language: {
+            type: String,
+            default: null
         }
     },
     {

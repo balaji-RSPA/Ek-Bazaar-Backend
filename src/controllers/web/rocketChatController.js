@@ -6,12 +6,13 @@ const {
 const axios = require("axios")
 const moment = require('moment')
 const chatDomain = "https://chatbot.active.agency"
+// const chatDomain = "http://192.168.1.52:3000"
 const { getSellerProfile } = require('../../modules/sellersModule')
 
 const rocketChatClient = new RocketChatApi("https", "chatbot.active.agency", 443)
-// const rocketChatClient = new RocketChatApi("http", "192.168.1.30", 3000)
+// const rocketChatClient = new RocketChatApi("http", "192.168.1.52", 3000)
 const { Chat } = require('../../modules')
-const { updateChatSession, getChat, createChat } = Chat
+const { updateChatSession, getChat, createChat, createChatSession } = Chat
 // let session = {
 //     userId: "2aDCcJzHwaXfPvobs",
 //     authToken: "NMRk-oqZz0x4Lf0houOkMsR8VmXUu3uTJBgpXGwObbc",
@@ -26,16 +27,13 @@ const admin = {
 exports.setChatSession = (data) => {
     rocketChatClient.setAuthToken(data.authToken)
     rocketChatClient.setUserId(data.userId)
-    console.log(' chat session set')
     return true
 }
 
 exports.userLogin = async (req, res) => {
     const { username, password, customerUserId } = req.body
     try {
-        // console.log("🚀 ~ file: rocketChatController.js ~ line 7 ~ exports.userLogin= ~ req.body", req.body)
         const login = await rocketChatClient.login(username, password)
-        console.log("🚀 ~ file: rocketChatController.js ~ line 9 ~ exports.userLogin= ~ login", login)
         // await this.setChatSession({ authToken: login.authToken, userId: login.userId })
         // rocketChatClient.setAuthToken(login.authToken)
         // rocketChatClient.setUserId(login.userId)
@@ -61,7 +59,6 @@ const inlinUserLogin = (req) => new Promise(async (resolve, reject) => {
         const login = await rocketChatClient.login(username, password)
         // rocketChatClient.setAuthToken(login.authToken)
         // rocketChatClient.setUserId(login.userId)
-        console.log(login, ' admin internal login')
         resolve(login)
     } catch (error) {
         reject()
@@ -72,27 +69,27 @@ const inlinUserLogin = (req) => new Promise(async (resolve, reject) => {
 
 exports.userChatSessionLogout = async (req) => {
 
-    try {
-        console.log(req, 'chat logout-----------')
-        const {
-            chatAthToken, chatUserId, chatUsername
-        } = req
-        const url = `${chatDomain}/api/v1/logout`
-        const result = await axios.post(url, {},
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Auth-Token': chatAthToken,
-                    'X-User-Id': chatUserId
-                }
-            })
-        console.log(result.data, ' cccccccccccccccccccc log outttttttttt')
-        return result
+    // try {
+    //     console.log(req, 'chat logout-----------')
+    //     const {
+    //         chatAthToken, chatUserId, chatUsername
+    //     } = req
+    //     const url = `${chatDomain}/api/v1/logout`
+    //     const result = await axios.post(url, {},
+    //         {
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'X-Auth-Token': chatAthToken,
+    //                 'X-User-Id': chatUserId
+    //             }
+    //         })
+    //     console.log(result.data, ' cccccccccccccccccccc log outttttttttt')
+    //     return result
 
-    } catch (error) {
-        console.log(error)
-        return false
-    }
+    // } catch (error) {
+    //     console.log(error)
+    //     return false
+    // }
 }
 
 
@@ -100,27 +97,28 @@ exports.setLanguage = async (req, res) => {
 
     try {
         const {
-            chatAthToken, chatUserId, chatUsername
+            chatAthToken, chatUserId, chatUsername, userID
         } = req
         const { lang } = req.body
-        console.log(lang, ' set language  room-------------')
-        const url = `${chatDomain}/api/v1/users.setPreferences`
-        const data = {
-            language: "kn"
-        }
-        const result = await axios.post(url, {
-            userId: chatUserId,
-            data: { language: lang }
-        },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Auth-Token': chatAthToken,
-                    'X-User-Id': chatUserId
-                }
-            })
-        console.log(JSON.stringify(result.data), ' lllllllllllllllllll')
-        return respSuccess(res, result.data)
+        const chatUpdate = await createChatSession({ userId: userID }, { language: lang, isLanguageSet: false })
+        // console.log(lang, ' set language  room-------------')
+        // const url = `${chatDomain}/api/v1/autotranslate.saveSettings`
+        // // const data = {
+        // //     language: "kn"
+        // // }
+        // const result = await axios.post(url, {
+        //     userId: chatUserId,
+        //     data: { language: lang }
+        // },
+        //     {
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'X-Auth-Token': chatAthToken,
+        //             'X-User-Id': chatUserId
+        //         }
+        //     })
+        // console.log(JSON.stringify(result.data), ' lllllllllllllllllll')
+        return respSuccess(res, chatUpdate)
     } catch (error) {
         console.log(error)
         return respError(res, error.message)
@@ -177,6 +175,7 @@ exports.userList = async (req, res) => {
         const {
             chatAthToken, chatUserId, chatUsername
         } = req
+        const { chatUserType } = req.query
 
         const url = `${chatDomain}/api/v1/im.list`
         const list = await axios.get(url, {
@@ -191,6 +190,9 @@ exports.userList = async (req, res) => {
 
         for (let index = 0; index < list.data.ims.length; index++) {
             const element = list.data.ims[index];
+            // if (element.usernames[chatUserType] == chatUsername) { ////buyer
+            //     break;
+            // }
             const uid = chatUsername !== element.usernames[1] ? element.usernames[1] : element.usernames[0]
 
             const userInfoUrl = `${chatDomain}/api/v1/users.info?username=${uid}`
@@ -204,7 +206,6 @@ exports.userList = async (req, res) => {
             })
 
             list.data.ims[index] = { ...userInfo.data, ...list.data.ims[index] }
-            // console.log(element, ' iiiiiiiiiiiiiiiiiiiii')
             if (element.lastMessage && element.lastMessage.rid) {
                 const url = `${chatDomain}/api/v1/subscriptions.getOne?roomId=${element.lastMessage.rid}`
                 const resp = await axios.get(url, {
@@ -217,7 +218,6 @@ exports.userList = async (req, res) => {
                 list.data.ims[index] = { ...resp.data, ...list.data.ims[index] }
             }
         }
-        console.log(list.data, ' list ................')
         return respSuccess(res, list.data)
         // })
 
@@ -235,9 +235,9 @@ exports.getHistory = async (req, res) => {
         const {
             chatAthToken, chatUserId, chatUsername
         } = req
-        console.log(chatAthToken, chatUserId, chatUsername, ' hhhhhhhh')
+
         const { roomId, limit, offset } = req.query
-        console.log(roomId, limit, offset, ' qqqqqqqqqqqqqqqqqqqq')
+        await this.updateLanguage(req, roomId)
         let _temp = {};
 
         const url = `${chatDomain}/api/v1/im.history?roomId=${roomId}&offset=${offset}&count=${limit}`
@@ -266,7 +266,6 @@ exports.getHistory = async (req, res) => {
 
 
         }
-        console.log(_temp, ' kkkkkk')
         return respSuccess(res, { messages: _temp })
         // });
 
@@ -286,7 +285,6 @@ exports.markAsRead = async (req, res) => {
             chatAthToken, chatUserId, chatUsername
         } = req
         const { roomId } = req.body
-        console.log("🚀 ~ file: rocketChatController.js ~ line 184 ~ exports.markAsRead= ~ roomId", roomId)
         const url = `${chatDomain}/api/v1/subscriptions.read`
         const result = await axios.post(url, {
             rid: roomId
@@ -340,13 +338,83 @@ exports.sendMessage = async (req, res) => {
 
 }
 
+exports.updateChatStatus = async (req) => { // Logout API
+    try {
+        console.log(' logout chat status updated-----')
+        const {
+            chatAthToken, chatUserId, chatUsername
+        } = req
+        const url = `${chatDomain}/api/v1/users.setStatus`
+        // const url = `${chatDomain}/api/v1/users.setActiveStatus `
+        // const data={
+        //     activeStatus: false,
+        //     userId: chatUserId
+        // }
+        const data = {
+            message: "My status update",
+            status: "offline"
+        }
+
+        const result = await axios.post(url, data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        return result
+
+    } catch (error) {
+
+    }
+}
+
+
+exports.updateLanguage = async (req, roomId) => {
+    const {
+        chatAthToken, chatUserId, chatUsername, userID
+    } = req
+    const Details = await getChat({ userId: userID, isLanguageSet: false })
+    if (Details) {
+
+        const url = `${chatDomain}/api/v1/autotranslate.saveSettings`
+
+        const result = await axios.post(url, {
+            roomId: roomId,
+            field: "autoTranslateLanguage",
+            value: Details.language
+        },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        const result_1 = await axios.post(url, {
+            roomId: roomId,
+            field: "autoTranslate",
+            value: true
+        },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        await createChatSession({ userId: userID }, { isLanguageSet: true }) // updateing to mongo
+    }
+
+}
+
+
 exports.checkSellerChat = async (req, res) => {
 
     try {
         const { sellerId } = req.query
-        console.log("🚀 ~ file: rocketChatController.js ~ line 329 ~ exports.checkSellerChat= ~ sellerId", sellerId)
         let checkChat = await getChat({ sellerId })
-        console.log("🚀 ~ file: rocketChatController.js ~ line 332 ~ exports.checkSellerChat= ~ checkChat", checkChat)
         if (!checkChat) {
             const seller = await getSellerProfile(sellerId)
             const user = seller[0]
@@ -354,7 +422,6 @@ exports.checkSellerChat = async (req, res) => {
             checkChat = await createChat({ details: chatUser, sellerId: user._id, buyerId: user.buyer || null, userId: user.userId || null })
             // checkChat = await this.userChatLogin({ username: creatChat.details.user.username, password: "active123", customerUserId: user._id })
         }
-        console.log("🚀 ~ file: rocketChatController.js ~ line 330 ~ exports.checkSellerChat= ~ checkChat", checkChat)
         respSuccess(res, checkChat)
     } catch (error) {
 
@@ -411,35 +478,35 @@ exports.userDetails = async (req, res) => {
 
 exports.searchMessage = async (req, res) => {
 
-    try {
-        console.log(' send message-----')
-        const { roomId, message } = req.body
-        rocketChatClient.chat.search({ roomId: roomId, text: message }, (err, body) => {
-            if (err)
-                return respError(res, err.message)
-            return respSuccess(res, body)
-        });
+    // try {
+    //     console.log(' send message-----')
+    //     const { roomId, message } = req.body
+    //     rocketChatClient.chat.search({ roomId: roomId, text: message }, (err, body) => {
+    //         if (err)
+    //             return respError(res, err.message)
+    //         return respSuccess(res, body)
+    //     });
 
-    } catch (err) {
-        return respError(res, err.message)
-    }
+    // } catch (err) {
+    //     return respError(res, err.message)
+    // }
 
 }
 
 
 exports.getNotification = async (req, res) => {
 
-    try {
-        console.log(req.query, ' Unread message-----')
-        rocketChatClient.notify.room.onChanged({ roomId: "2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP" }, (err, body) => {
-            if (err)
-                return respError(res, err.message)
-            return respSuccess(res, body)
-        });
-    } catch (err) {
+    // try {
+    //     console.log(req.query, ' Unread message-----')
+    //     rocketChatClient.notify.room.onChanged({ roomId: "2aDCcJzHwaXfPvobsHT8e8ftpESBm4e7YP" }, (err, body) => {
+    //         if (err)
+    //             return respError(res, err.message)
+    //         return respSuccess(res, body)
+    //     });
+    // } catch (err) {
 
-        return respError(res, err.message)
-    }
+    //     return respError(res, err.message)
+    // }
 
 }
 
@@ -453,7 +520,7 @@ exports.userChatLogin = async (data) => {
     const { username, password, customerUserId } = data
     try {
         const login = await rocketChatClient.login(username, password)
-        console.log("🚀 ~ file: rocketChatController.js ~ line 345 ~ exports.userChatLogin= ~ login", login)
+        // console.log("🚀 ~ file: rocketChatController.js ~ line 345 ~ exports.userChatLogin= ~ login", login)
         // rocketChatClient.setAuthToken(login.authToken)
         // rocketChatClient.setUserId(login.userId)
         // await this.setChatSession({ authToken: login.authToken, userId: login.userId })
@@ -467,7 +534,12 @@ exports.userChatLogin = async (data) => {
                 ...session
             }
         })
-        console.log(customerUserId, session, ' ssssssssssssss')
+        await this.chatUpdateChatStatus({
+            chatAthToken: login.authToken,
+            chatUserId: login.userId,
+            chatUsername: login.me.username
+        })
+        // console.log(customerUserId, session, ' ssssssssssssss')
         return login
     } catch (error) {
         // console.log(error)
@@ -475,6 +547,34 @@ exports.userChatLogin = async (data) => {
         // respError(res, error.message, "Invalid credentials")
     }
 
+}
+
+
+exports.chatUpdateChatStatus = async (data) => {
+    const {
+        chatAthToken, chatUserId, chatUsername
+    } = data
+    try {
+        // console.log("🚀 ~ file: rocketChatController.js ~ line 578 ~ exports.chatUpdateChatStatus= ~ data", data)
+        const url = `${chatDomain}/api/v1/users.setStatus`
+        const data = {
+            message: "My status update",
+            status: "online"
+        }
+
+        const result = await axios.post(url, data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        return result
+
+    } catch (error) {
+
+    }
 }
 
 exports.createChatUser = async (data) => {
@@ -525,41 +625,41 @@ exports.createChatUser = async (data) => {
 
 exports.userChatLogout = async () => {
 
-    try {
-        console.log('------- chat logout-----------')
-        const chat = await rocketChatClient.logout()
-        return true
-        // return respSuccess(res, chat, chat.message)
+    // try {
+    //     console.log('------- chat logout-----------')
+    //     const chat = await rocketChatClient.logout()
+    //     return true
+    //     // return respSuccess(res, chat, chat.message)
 
-    } catch (error) {
-        console.log(error)
-        return false
-        // return respError(res, error.message)
-    }
+    // } catch (error) {
+    //     console.log(error)
+    //     return false
+    //     // return respError(res, error.message)
+    // }
 }
 
 exports.userLogout = async (req, res) => {
 
-    try {
-        console.log('chat logout-----------')
-        const {
-            chatAthToken, chatUserId, chatUsername
-        } = req
-        // const chat = await rocketChatClient.logout()
-        const url = `${chatDomain}/api/v1/logout`
-        const result = await axios.post(url, {},
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Auth-Token': chatAthToken,
-                    'X-User-Id': chatUserId
-                }
-            })
-        return true
+    // try {
+    //     console.log('chat logout-----------')
+    //     const {
+    //         chatAthToken, chatUserId, chatUsername
+    //     } = req
+    //     // const chat = await rocketChatClient.logout()
+    //     const url = `${chatDomain}/api/v1/logout`
+    //     const result = await axios.post(url, {},
+    //         {
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'X-Auth-Token': chatAthToken,
+    //                 'X-User-Id': chatUserId
+    //             }
+    //         })
+    //     return true
 
-    } catch (error) {
-        console.log(error)
-        return false
-    }
+    // } catch (error) {
+    //     console.log(error)
+    //     return false
+    // }
 }
 

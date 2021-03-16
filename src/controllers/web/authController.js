@@ -8,7 +8,7 @@ const {
   respAuthFailed,
 } = require("../../utils/respHadler");
 const { createToken, encodePassword } = require("../../utils/utils");
-const { userChatLogin, userChatLogout, createChatUser, userChatSessionLogout } = require('./rocketChatController')
+const { userChatLogin, userChatLogout, createChatUser, userChatSessionLogout, updateChatStatus } = require('./rocketChatController')
 // const {
 //   handleUserSession, getSessionCount, handleUserLogoutSession
 // } = require('../../modules/sessionModules')
@@ -82,13 +82,22 @@ exports.login = async (req, res) => {
       }
       const result1 = await sellers.handleUserSession(user._id, finalData);
       const chatLogin = await getChat({ userId: user._id })
+      console.log("🚀 ~ file: authController.js ~ line 85 ~ exports.login= ~ chatLogin", chatLogin)
       const sellerDetails = await sellers.getSeller(user._id);
       let activeChat = {}
       if (chatLogin) {
-        activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+        // console.log("🚀 ~ file: authController.js ~ line 88 ~ exports.login= ~ chatLogin", chatLogin)
+        try {
+          activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+          // activeChat = await userChatLogin({ username: "sreeraj@active.agency", password: "IamSree@2302", customerUserId: user._id })
+        } catch (e) {
+
+        }
         // await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
         console.log(activeChat, '------ Old Chat activated-----------')
       } else {
+
+        console.log(' chat crfeate initiated-------------')
         const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
         const chatDetails = await createChat({ details: chatUser, sellerId: sellerDetails._id, buyerId: buyer._id, userId: user._id })
         activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: user._id })
@@ -118,7 +127,7 @@ exports.logout = async (req, res) => {
         token
       }
       // const chatLogout = await userChatLogout()
-      const chatLogout = await userChatSessionLogout(req)
+      const chatLogout = await updateChatStatus(req)
       const result = sellers.handleUserLogoutSession(data);
 
     }
