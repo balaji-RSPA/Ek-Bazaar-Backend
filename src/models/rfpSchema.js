@@ -4,6 +4,10 @@ const { ObjectId } = Types;
 
 const Product = require("./productsSchema");
 const Seller = require("./sellersSchema");
+const State = require("./statesSchema");
+const City = require("./citiesSchema");
+const Country = require("./countriesSchema");
+
 
 const productDetails = new Schema({
   name: {
@@ -24,19 +28,16 @@ const productDetails = new Schema({
 
 const location = new Schema({
   city: {
-    type: String,
-    trim: true,
-    // required: true,
+    type: ObjectId,
+    ref: City,
   },
   state: {
-    type: String,
-    trim: true,
-    // required: true,
+    type: ObjectId,
+    ref: State,
   },
   country: {
-    type: String,
-    trim: true,
-    // required: true,
+    type: ObjectId,
+    ref: Country,
   },
 });
 
@@ -56,10 +57,11 @@ const buyerDetails = new Schema({
     trim: true,
     // required: true,
   },
-  location: {
-    type: { location },
-    trim: true,
-  }
+  location: location,
+  sellerId: {
+    type: ObjectId,
+    ref: Seller
+  },
 });
 
 const rfpSchema = new Schema(
@@ -74,10 +76,11 @@ const rfpSchema = new Schema(
       ref: 'buyers',
       // required: true,
     },
-    buyerDetails: {
-      type: { buyerDetails },
-      trim: true,
-    },
+    buyerDetails: buyerDetails,
+    //  {
+    //   type: { buyerDetails },
+    //   trim: true,
+    // },
     productId: {
       type: ObjectId,
       ref: Product,
@@ -87,6 +90,22 @@ const rfpSchema = new Schema(
       type: { productDetails },
       trim: true,
     },
+    requestType: {
+      type: Number,
+      default: null
+    },
+    totalCount: {
+      type: Number,
+      default: 0
+    },
+    message: {
+      type: String,
+      default: null
+    },
+    status: {
+      type: Boolean,
+      default: true
+    }
   },
   {
     versionKey: false,

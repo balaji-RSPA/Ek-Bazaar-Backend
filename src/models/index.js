@@ -16,6 +16,20 @@ const SellerCompany = require('./sellerCompanySchema')
 const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema')
 const ProductsSubCategories = require("./productsSubCategoriesSchema")
+const SubscriptionPlan = require('./subscriptionPlanSchema')
+const MasterCollection = require('./MasterCollectionSchema')
+const RemoveListing = require('./removeListingSchema')
+const SMSQue = require('./SMSQueSchema')
+const SellerPlans = require('./sellerPlanSchema')
+const QueEmails = require('./queEmailSchema')
+const SellerPlanLog = require('./sellerPlansLogSchema')
+const Payments = require('./paymentSchema')
+const Orders = require('./ordersSchema')
+const OrdersPlans = require('./orderPlanSchema')
+const InvoiceNumber = require('./invoiceNumberSchema')
+const Suggestions = require('./suggestionsSchema')
+const Chat = require('./chatSchema')
+const Pincodes = require('./pincode')
 // const Users = require('./user')
 
 module.exports = {
@@ -36,6 +50,19 @@ module.exports = {
     SellerCompany,
     SellerProducts,
     SellerTypes,
-    ProductsSubCategories
-    // Users
+    ProductsSubCategories,
+    SubscriptionPlan,
+    MasterCollection,
+    RemoveListing,
+    SMSQue,
+    SellerPlans,
+    QueEmails,
+    SellerPlanLog,
+    Payments,
+    Orders,
+    OrdersPlans,
+    InvoiceNumber,
+    Suggestions,
+    Chat,
+    Pincodes
 }

@@ -1,7 +1,12 @@
 const camelcaseKeys = require("camelcase-keys");
+const axios = require("axios")
+const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { buyers, sellers, category, elastic } = require("../../modules");
+const { buyers, sellers, category, elastic, location, SMSQue, QueEmails } = require("../../modules");
+const {RfpEnquirySend,RfpEnquiryReceived} = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate');
+const moment = require('moment');
 const {
   postRFP,
   checkBuyerExistOrNot,
@@ -9,66 +14,251 @@ const {
   getBuyer,
   updateBuyer,
   getAllBuyers,
+  getRFPData,
+  getRFP,
   updateBuyerPassword,
+  updateRFP
 } = buyers;
+const {
+  sendSingleMail
+} = require('../../utils/mailgunService')
 const { getProductByName } = category
-const { sellerSearch, searchFromElastic } = elastic
-const { checkUserExistOrNot, updateUser, addUser } = sellers
-const { createToken } = require("../../utils/utils");
+const { sellerSearch, searchFromElastic, getSuggestions } = elastic
+const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile, checkSellerExist, updateSeller } = sellers
+const { getCity } = location
+const { createToken, messageContent, sendSMS } = require("../../utils/utils");
+const { queSMSBulkInsert, getQueSMS } = SMSQue
+const { bulkInserQemails } = QueEmails;
+
+const { sms,MailgunKeys } = require("../../utils/globalConstants")
+const { RFQOneToOne,RFQOneToOneBuyer }  = require("../../utils/templates/smsTemplate/smsTemplate")
+const { username, password, senderID, smsURL } = sms
+
+const getUserAgent = (userAgent) => {
+
+  const {
+    browser, version, os, platform, source
+  } = userAgent
+  return {
+    browser,
+    version,
+    os,
+    platform,
+    source
+  }
+
+}
+
+module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp, url) => {
+
+  try {
+    //productDetails.name !== 'undefined' 
+    if (productDetails && productDetails.name && productDetails.name.name) {
+      // const query = {
+      //   "term": {
+      //     "name.keyword": productDetails.name
+      //   }
+      // }
+      // let suggestions = await getSuggestions(query, {}, '', '')
+      // const pro = suggestions && suggestions.length && suggestions[0] && suggestions[0].length && suggestions[0][0]._source || '';
+      // console.log("🚀 ~ file: buyerController.js ~ line 50 ~ module.exports.queSmsData= ~ pro", pro)
+      const pro = {
+        id: productDetails.name && productDetails.name.id,
+        search: productDetails.name && productDetails.name.search || ''
+      }
+      if (pro) {
+        let parentId, productId, secondaryId, primaryId, level5Id = ''
+        if (pro.search === 'level1')
+          parentId = pro.id
+        else if (pro.search === 'level2')
+          primaryId = pro.id
+        else if (pro.search === 'level3')
+          secondaryId = pro.id
+        else if (pro.search === 'level4')
+          productId = pro.id
+        else if (pro.search === 'level5')
+          level5Id = pro.id
+        const reqQuery = {
+          parentId, productId, secondaryId, primaryId, level5Id, userId: true, findByEmail: true
+        }
+        const result = await sellerSearch(reqQuery);
+        const Searchquery = result.query, limit = 1000
+        let skip = 0, status = true, totalInsertion = 0
+        const sellerIds = []
+        let msg = ''
+        let bdy = ''
+        while (status) {
+          const seller = await searchFromElastic(Searchquery, { skip, limit }, result.aggs, { "sellerId.paidSeller": "desc" });
+          console.log("🚀 ~ file: buyerController.js ~ line 92 ~ module.exports.queSmsData= ~ seller", seller && seller[0].length)
+          
+          if (seller[0] && seller[0].length) {
+            const sellers = seller[0]
+            const QueData = sellers.filter(v => v._source.sellerId.mobile && v._source.sellerId.mobile.length).map(v => {
+              const sellerId = v._source.sellerId
+              msg = RFQOneToOne({productDetails, _loc, name})
+              bdy = RfpEnquiryReceived({productDetails, _loc, name,url,sellerId : sellerId._id});
+
+              totalInsertion++
+              sellerIds.push(sellerId._id)
+
+              return ({
+                sellerId: sellerId._id || null,
+                buyerId: user && user._id || null,
+                userId: user && user._id || null,
+                name: name,
+                subject: "Product Enquiry",
+                body: bdy,
+                fromEmail: rfp && rfp.buyerDetails && rfp.buyerDetails.email,
+                toEmail: sellerId.email,
+                mobile: {
+                  countryCode: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].countryCode,
+                  mobile: sellerId.mobile && sellerId.mobile.length && sellerId.mobile[0].mobile,
+                },
+                message: msg,
+                messageType: 'rfp',
+                requestId: rfp._id
+              })
+            })
+            await bulkInserQemails(QueData)
+            // await queSMSBulkInsert(QueData)
+            skip += limit
+
+          } else status = false
+
+        } if (!status) {
+          console.log('No matching seller products--------------------------')
+        }
+
+        if (sellerIds && sellerIds.length) {
+          await updateRFP({ _id: rfp._id }, { sellerId: sellerIds, totalCount: totalInsertion, message: msg })
+        }
+        console.log(" SMS count", totalInsertion)
+      } else {
+        console.log(' product not matching---------------')
+      }
+    }
+
+    return true
+
+  } catch (error) {
+    console.log(error)
+
+  }
+
+}
+
 
 module.exports.createRFP = async (req, res) => {
   try {
-    const {mobile, name, email, location, productDetails} = req.body
-    const user = await checkUserExistOrNot({mobile: mobile.mobile})
+    const { mobile, name, email, location, productDetails, ipAddress, requestType, sellerId } = req.body
+    console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
+    const user = await checkUserExistOrNot({ mobile: mobile.mobile })
+    const url = req.get('origin');
     console.log("~ user", user, productDetails)
-    if(user && user.length) {
-      // const range = {
-      //   skip: 0,
-      //   limit: 5,
-      // };
-      // const productResult = await getProductByName({name: productDetails.name})
-      // const searchQuery = await sellerSearch({productId: productResult._id})
-      // const { query } = searchQuery;
-      // const seller = await searchFromElastic(query, range);
-      // const resp = {
-      //   total: seller[1],
-      //   data: seller[0],
-      // };
-      // seller[0].map((sell) => {
-      //   console.log(sell._source.email, '---------')
-      // })
-      // console.log("productResult", resp)
+    if (user && user.length) {
+
       const userData = {
         name,
         email,
       }
-      const user = await updateUser({ mobile: mobile.mobile }, userData)
+      // const user = await updateUser({ mobile: mobile.mobile }, userData)
       const buyerData = {
-        name,
-        email,
-        mobile: mobile.mobile,
-        countryCode: mobile.countryCode,
+        name: user[0]["name"],
+        email: user[0]["email"],
+        mobile: user[0]["mobile"],
+        countryCode: user[0]["countryCode"],
         location,
         userId: user._id
       }
       const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
       let buyer
-      if (exist && exist.length)
-        buyer = await updateBuyer({ userId: user._id }, buyerData)
+      if (exist && exist.length) {
+        buyer = exist[0]
+        console.log()
+      }
       else
         buyer = await addBuyer(buyerData)
+
+      const sellerData = {
+        // name,
+        email: email || null,
+        // mobile,
+        location,
+        // sellerType: serviceType,
+        // userId: user._id,
+      };
+
+      // const sellerExist = await checkSellerExist({ userId: user._id })
+      // if (sellerExist && sellerExist !== '')
+      //   await updateSeller({ userId: user._id }, sellerData)
+
       const rfpData = {
         buyerId: buyer._id,
         buyerDetails: {
           name,
           email,
           mobile: mobile.mobile,
-          location
+          location,
+          sellerId: sellerId || null
         },
-        productDetails
+        productDetails,
+        requestType,
+        sellerId: sellerId || null
       }
       const rfp = await postRFP(rfpData)
+      const locationDetails = await getCity({ _id: location.city })
+      const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
+      const sellerDtl = await getSellerProfile(sellerId);
+      if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
+        // const message = {
+        //   from: email,
+        //   to: sellerDtl[0].email,
+        //   subject: 'Product Enquiry',
+        //   html: `<p>Somebody has enquired about the product</p>`
+        // }
+        // await sendSingleMail(message)
+        await sendEmailSeller({
+          buyerEmail: email,
+          sellerEmail: sellerDtl[0].email,
+           sellerId: sellerDtl[0]._id,
+           url : url,
+          _loc,
+          productDetails,
+          name
+        })
+        await sendEmailBuyer(email)
+      }
+      if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
+        // const sellerData = await getSellerProfile(sellerId)
+        // const constsellerContactNo = sellerDtl && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+        const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+        if (constsellerContactNo && constsellerContactNo.mobile) {
+          console.log('message sending...........')
+          await sendSMS(constsellerContactNo.mobile, RFQOneToOne({ productDetails, _loc, name }))
+          await sendSMS(mobile.mobile, RFQOneToOneBuyer())
+        } else {
+          console.log(' no seller contact number')
+        }
+      } else if (!sellerId && requestType === 2) {
+        this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
+        await sendEmailBuyer(email)
+        // const message = {
+        //   from: MailgunKeys.senderMail,
+        //   to: email,
+        //   subject: 'Product Enquiry',
+        //   html: `<p>This is confirmation that your enquiry has been successfully send to the seller.</p>`
+        // }
+        // await sendSingleMail(message)
+        // await sendSMS(mobile, RFQOneToOneBuyer())
+
+        if (global.environment === "production")
+          await sendSMS(mobile.mobile, RFQOneToOneBuyer())
+      } else {
+        console.log(' Single contact beta user exist------------')
+      }
+      respSuccess(res, "Your requirement has successfully submitted")
     } else {
+      console.log(' not register buyer-----------------')
       const userData = {
         name,
         email,
@@ -86,6 +276,17 @@ module.exports.createRFP = async (req, res) => {
         userId: user._id
       }
       const buyer = await addBuyer(buyerData)
+
+      const sellerData = {
+        name,
+        email: email || null,
+        mobile,
+        location,
+        // sellerType: serviceType,
+        userId: user._id,
+      };
+      const seller = await addSeller(sellerData);
+
       const rfpData = {
         buyerId: buyer._id,
         buyerDetails: {
@@ -94,13 +295,84 @@ module.exports.createRFP = async (req, res) => {
           mobile: mobile.mobile,
           location
         },
-        productDetails
+        productDetails,
+        requestType,
+        sellerId: sellerId || null
       }
-      const rfp = await postRFP(rfpData)
+
+      if (buyer && seller) {
+        const deviceId = machineIdSync();
+        const userAgent = getUserAgent(req.useragent)
+        const token = createToken(deviceId, { userId: buyer.userId });
+        const finalData = {
+          userAgent,
+          userId: buyer.userId,
+          token,
+          deviceId,
+          ipAddress: ipAddress || null
+        }
+
+        const result1 = await handleUserSession(user._id, finalData)
+        const rfp = await postRFP(rfpData)
+
+        const locationDetails = await getCity({ _id: location.city })
+        const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
+        const sellerDtl = await getSellerProfile(sellerId)
+        if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
+          // const message = {
+          //   from: email,
+          //   to: sellerDtl[0].email,
+          //   subject: 'Product Enquiry',
+          //   html: `<p>Somebody has enquired about the product</p>`
+          // }
+          // await sendSingleMail(message)
+          await sendEmailSeller({
+            buyerEmail: email,
+            sellerEmail: sellerDtl[0].email,
+            sellerId: sellerDtl[0]._id,
+            url: url,
+            _loc,
+            productDetails,
+            name
+          })
+          await sendEmailBuyer(email)
+        }
+        if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
+          // const sellerData = await getSellerProfile(sellerId)
+          const constsellerContactNo = sellerDtl && sellerDtl.length && sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
+          if (constsellerContactNo && constsellerContactNo.mobile) {
+            console.log('message sending...........')
+            await sendSMS(constsellerContactNo.mobile, RFQOneToOne({ productDetails, _loc, name }))
+            await sendSMS(mobile.mobile, RFQOneToOneBuyer())
+
+          }
+        } else if (!sellerId && requestType === 2) {
+
+         this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url )
+         await sendEmailBuyer(email)
+        // const message = {
+        //   from: MailgunKeys.senderMail,
+        //   to: email,
+        //   subject: 'Product Enquiry',
+        //   html: `<p>This is confirmation that your enquiry has been successfully send to the seller.</p>`
+        // }
+        // await sendSingleMail(message)
+        //  await sendSMS(mobile, RFQOneToOneBuyer())
+          // this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
+          if (global.environment === "production") {
+            const resp = await sendSMS(mobile.mobile, RFQOneToOneBuyer())
+            console.log("sent meassage response", resp)
+          }
+        } else {
+          console.log(' Single contact beta------------')
+        }
+
+        respSuccess(res, { token, buyer, seller }, "Your requirement has successfully submitted.")
+      }
     }
-    respSuccess(res, "Your requirement has successfully submitted")
 
   } catch (error) {
+    console.log(error)
     respError(res, error.message)
   }
 }
@@ -167,6 +439,7 @@ module.exports.getBuyer = async (req, res) => {
 };
 
 module.exports.updateBuyer = async (req, res) => {
+  console.log("update buyer---------------------")
   try {
     // const { buyerID } = req;
     const { userID } = req
@@ -197,3 +470,65 @@ module.exports.updateBuyerPassword = async (req, res) => {
     respError(res, error.message);
   }
 };
+/**
+ * get RFPs
+ */
+module.exports.getRFPS = async (req, res) => {
+  try {
+    const {
+      userID,
+      params
+    } = req;
+    let obj = {
+      skip: parseInt(params.skip),
+      limit: parseInt(params.limit)
+    }
+    let condition = {$and: [{sellerId: params.SellerId},{requestType: 1}]}
+    const RFP = await getRFPData(condition, obj);
+    let totalCount = await getRFP(condition);
+    totalCount = totalCount.length;
+    respSuccess(res, {
+      RFP,
+      totalCount
+    });
+  } catch (error) {
+    respError(res, error.message);
+  }
+};
+
+async function sendEmailBuyer(email){
+  let messagecontent = RfpEnquirySend();
+  const message = {
+    from: MailgunKeys.senderMail,
+    to: email,
+    subject: 'Product Enquiry',
+    html: commonTemplate(messagecontent)
+  }
+  await sendSingleMail(message)
+}
+async function sendEmailSeller(params){
+ let messagecontent = RfpEnquiryReceived(params);
+ const message = {
+   from: params.buyerEmail,
+   to: params.sellerEmail,
+   subject: 'Product Enquiry',
+   html: commonTemplate(messagecontent)
+ }
+  await sendSingleMail(message)
+}
+// module.exports.queEmailData = async(productDetails,loc,user, name, mobile, rfp) => {
+//   let emailParams = {};
+//   try {
+//     emailParams.userId = user && user._id;
+//     emailParams.sellerId = rfp && rfp.sellerId;
+//     emailParams.name = name;
+//     emailParams.subject = "Product Enquiry";
+//     emailParams.body = "Need more details about product";
+//     emailParams.fromEmail = rfp && rfp.buyerDetails && rfp.buyerDetails.email;
+//     emailParams.toEmail ="";
+//     emailParams.type ="rfp";
+
+//   }catch(err){
+//      console.log(error)
+//   }     
+// }

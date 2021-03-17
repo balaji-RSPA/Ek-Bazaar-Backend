@@ -1,3 +1,4 @@
+const { values } = require("lodash");
 const mongoose = require("mongoose");
 const {
   PrimaryCategory,
@@ -7,7 +8,8 @@ const {
   ProductsSubCategories,
   SellerTypes,
   Sellers,
-  SellerProducts
+  SellerProducts,
+  Suggestions
 } = require("../models");
 const {
   searchProducts
@@ -36,12 +38,10 @@ module.exports.checkAndAddSellerType = (query) =>
     this.getSellerType(query, "_id")
       .then((doc) => {
         if (doc) {
-          console.log("existing seller type +++++");
           resolve(doc);
         } else {
           this.addSellerType(query, "_id")
             .then((newDoc) => {
-              console.log("New seller type ++++");
               resolve(newDoc);
             })
             .catch(reject);
@@ -50,48 +50,42 @@ module.exports.checkAndAddSellerType = (query) =>
       .catch(reject);
   });
 
-module.exports.getAllSellerTypes = () =>
+module.exports.getAllSellerTypes = (skip, limit, query) =>
   new Promise((resolve, reject) => {
-    // const query = {
-    //   _id: {
-    //     $in: [
-    //       "5f97ace6b9a4b5524568716b",
-    //       "5fa4fac96eb907267c7d15ce",
-    //       "5fa5506e0524f35f355955f2",
-    //       "5fa61d53520fd81fba4a1d6d",
-    //       "5fb39af634d3932a93e10025",
-    //       "5fb397c072e59028f0d17e32",
-    //       "5fb46f021135863cd3c66664",
-    //       "5fb5f268805ec7db145b4e58"
-    //     ],
-    //   },
-    // };
-    SellerTypes.find({})
+    SellerTypes.find(query || {})
+      .sort({sequence: 1})
+      .select("name group status sequence")
+      .skip(skip)
+      .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
       .catch(reject);
   });
-module.exports.getAllCategories = (query) =>
+
+module.exports.getSpecificCategories = (query) =>
   new Promise((resolve, reject) => {
-    ParentCategory.find({
-      _id: {
-        $in: [
-          "5f9a60b98420b75666d810d6",
-          "5f9a60b98420b75666d810d8",
-          "5f9a60b98420b75666d810e2",
-          "5f9a60b98420b75666d810e8",
-        ],
-      },
-    })
+    ParentCategory.find(query)
+      .then(doc => resolve(doc))
+      .catch(error => reject(error))
+  })
+
+module.exports.getAllCategories = (query, searchQuery, skip, limit) =>
+  new Promise((resolve, reject) => {
+    let searchQry = searchQuery ?
+      { name: { $regex: searchQuery, $options: 'i' } } : {};
+    ParentCategory.find(searchQry)
+      .sort({ name: 1 })
       .populate({
         path: "primaryCategotyId",
         model: PrimaryCategory,
-        select: "name vendorId",
+        select: "name vendorId secondaryCategotyId",
+        options: { sort: { 'name': 1 } },
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
-          select: "name vendorId",
+          select: "name vendorId productId",
+          options: { sort: { 'name': 1 } }
           // populate: {
           //   path: "productId",
           //   model: Products,
@@ -99,12 +93,13 @@ module.exports.getAllCategories = (query) =>
           // },
         },
       })
+      // .skip(skip)
+      // .limit(limit)
       .then((doc) => {
         resolve(doc);
       })
       .catch(reject);
   });
-
 // Parent Category
 module.exports.addParentCategories = (data) =>
   new Promise((resolve, reject) => {
@@ -129,6 +124,7 @@ module.exports.addParentCategory = (data) =>
 module.exports.getParentCat = (query) =>
   new Promise((resolve, reject) => {
     ParentCategory.findOne(query)
+      .populate("primaryCategotyId")
       .then((doc) => {
         resolve(doc);
       })
@@ -170,7 +166,8 @@ module.exports.getParentCategory = (reqQuery) =>
       .populate({
         path: "primaryCategotyId",
         model: PrimaryCategory,
-        select: "name vendorId",
+        select: "name vendorId secondaryCategotyId",
+        options: { sort: { 'name': 1 } },
         match: {
           $and: [{
             name: {
@@ -182,12 +179,15 @@ module.exports.getParentCategory = (reqQuery) =>
         populate: {
           path: "secondaryCategotyId",
           model: SecondaryCategory,
-          select: "name vendorId",
+          select: "name vendorId productId",
+          options: { sort: { 'name': 1 } },
         },
       })
       // .slice(PrimaryCategory, -1)
       // .select(PrimaryCategory)
+      .sort({ name: 1 })
       .lean()
+      .sort({ name: 1 })
       .then((doc) => {
         resolve(doc);
       })
@@ -257,7 +257,7 @@ module.exports.getRelatedPrimaryCategory = (id) =>
     PrimaryCategory.findById(id)
       .skip(0)
       .limit(2)
-      .populate("secondaryCategotyId", "name vendorId")
+      .populate("secondaryCategotyId")//, "name vendorId")
       .then((doc) => {
         resolve(doc);
       })
@@ -267,6 +267,7 @@ module.exports.getRelatedPrimaryCategory = (id) =>
 module.exports.getPrimaryCat = (query) =>
   new Promise((resolve, reject) => {
     PrimaryCategory.findOne(query)
+      .populate("secondaryCategotyId")
       .then((doc) => {
         resolve(doc);
       })
@@ -288,26 +289,37 @@ exports.updatePrimaryCategory = (id, newData) =>
       .catch(reject);
   });
 
-exports.getAllPrimaryCategory = () =>
+exports.getAllPrimaryCategory = (searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    PrimaryCategory.find({})
+    let searchQry = searchQuery ? {
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+      ]
+    } : {};
+    PrimaryCategory.find(searchQry)
+      .skip(skip)
+      .limit(limit)
+      .populate('parentCatId')
+      // .lean()
       .then((doc) => resolve(doc))
       .catch((error) => reject(error));
   });
 
 module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) => {
-  console.log(query, "vande matram ..................................")
   PrimaryCategory.findOne({
     _id: query._id
   })
     .limit(query.limit)
     .skip(query.skip)
+    .sort({ name: 1 })
     .populate("secondaryCategotyId")
     .populate({
       path: "secondaryCategotyId",
+      options: { sort: { 'name': 1 } },
       populate: {
         path: "productId",
-        model: "products"
+        model: "level4",
+        options: { sort: { 'name': 1 } }
       }
     })
     .then(doc => resolve(doc))
@@ -348,6 +360,7 @@ module.exports.getSecondaryCategory = (id) =>
 module.exports.getSecondaryCat = (query) =>
   new Promise((resolve, reject) => {
     SecondaryCategory.findOne(query)
+      .populate("productId")
       .then((doc) => {
         resolve(doc);
       })
@@ -357,11 +370,19 @@ module.exports.getSecondaryCat = (query) =>
 module.exports.getProductCat = (query) =>
   new Promise((resolve, reject) => {
     Products.findOne(query)
+      .populate("subCategoryId")
       .then((doc) => {
         resolve(doc);
       })
       .catch(reject);
   });
+
+module.exports.getProductSubcategory = (query) =>
+  new Promise((resolve, reject) => {
+    ProductsSubCategories.findOne(query)
+      .then(doc => resolve(doc))
+      .catch(error => reject(error))
+  })
 
 exports.updateSecondaryCategory = (id, newData) =>
   new Promise((resolve, reject) => {
@@ -378,19 +399,26 @@ exports.updateSecondaryCategory = (id, newData) =>
       .catch(reject);
   });
 
-exports.getAllSecondaryCategory = () =>
+exports.getAllSecondaryCategory = (searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    SecondaryCategory.find({})
+    let searchQry = searchQuery ? {
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+      ]
+    } : {};
+    SecondaryCategory.find(searchQry)
+      .skip(skip)
+      .limit(limit)
       .then((doc) => resolve(doc))
       .catch((error) => reject(error));
   });
 
-exports.getAllSecondaryCategories = () => new Promise((resolve, reject) => {
-  SecondaryCategory.find({})
-    .limit(4)
-    .sort({
-      _id: -1
-    })
+exports.getAllSecondaryCategories = (query) => new Promise((resolve, reject) => {
+  SecondaryCategory.find(query)
+    // .limit(4)
+    // .sort({
+    //   _id: -1
+    // })
     .populate("productId")
     .then((doc) => {
       resolve(doc)
@@ -512,6 +540,8 @@ module.exports.addProductSubCategory = (data) =>
 module.exports.getProductCategory = (id) =>
   new Promise((resolve, reject) => {
     Products.findById(id)
+      .populate({ path: 'subCategoryId', options: { sort: { name: 1 } } })
+      .sort({ name: 1 })
       .then((doc) => {
         resolve(doc);
       })
@@ -637,7 +667,6 @@ exports.getAllProductsToSearch = () =>
   });
 
 exports.getProductByName = (query) => new Promise((resolve, reject) => {
-  console.log("🚀 ~ file: categoryModule.js ~ line 623 ~ exports.getProductByName= ~ query", query)
   Products.find(query)
     // .limit(1)
     .then((doc) => resolve(doc))
@@ -646,6 +675,7 @@ exports.getProductByName = (query) => new Promise((resolve, reject) => {
 
 exports.getSecondaryCategoryByName = (query) => new Promise((resolve, reject) => {
   SecondaryCategory.find(query)
+    .populate('primaryCatId')
     // .limit(1)
     .then((doc) => resolve(doc))
     .catch((error) => reject(error));
@@ -882,3 +912,49 @@ exports.getLevelFiveCategoryList = (list) => new Promise((resolve, reject) => {
     })
     .catch(reject);
 })
+
+/**
+ * Get all label 5 category list module
+*/
+module.exports.getAllLevel5Categories = (searchQuery, skip, limit) =>
+  new Promise((resolve, reject) => {
+    let searchQry = searchQuery ? {
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+        { mobile: { $regex: searchQuery, $options: 'i' } },
+      ]
+    } : {};
+    ProductsSubCategories.find(searchQry)
+      .skip(skip)
+      .limit(limit)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });
+
+  /* 
+    Suggestion collection starts
+  */
+  module.exports.createSuggestions = (data, id) =>
+    new Promise((resolve, reject) => {
+      Suggestions.create(data)
+        .then((doc) => {
+          resolve(doc && id ? doc._id : doc);
+        })
+        .catch(reject);
+    });
+
+module.exports.bulkInsertSuggestions = (data) =>
+  new Promise((resolve, reject) => {
+    Suggestions.insertMany(data, {
+      ordered: false,
+    })
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });
+  /* 
+    Suggestions collection end
+  */

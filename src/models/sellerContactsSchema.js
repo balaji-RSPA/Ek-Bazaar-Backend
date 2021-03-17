@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 // const Seller = require('./sellersSchema')
-const State = require("./statesSchema");
+const States = require("./statesSchema");
 const Country = require("./countriesSchema");
 const Cities = require("./citiesSchema");
 const { Schema, model, Types } = mongoose;
@@ -71,16 +71,16 @@ const sellerContactSchema = new Schema(
       },
       state: {
         type: ObjectId,
-        ref: State,
+        ref: States,
         trim: true,
         // required: true,
       },
-      // country: {
-      //   type: ObjectId,
-      //   ref: Country,
-      //   trim: true,
-      //   // required: true,
-      // }
+      country: {
+        type: ObjectId,
+        ref: Country,
+        trim: true,
+        // required: true,
+      }
      },
   },
   {

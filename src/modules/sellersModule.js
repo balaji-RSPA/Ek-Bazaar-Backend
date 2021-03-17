@@ -10,9 +10,9 @@ const SellersStatutory = require('../models/sellerStatutorySchema')
 const Users = require('../../config/tenderdb').userModel
 const Sessions = require('../../config/tenderdb').sessionModel
 const SessionsLogs = require('../../config/tenderdb').sessionLogModel
-const SellerProducts = require('../models/sellerProductListSchema')
 const Cities = require('../models/citiesSchema')
 const States = require('../models/statesSchema')
+const Countries = require('../models/countriesSchema')
 const {
   checkAndAddCity,
   getState,
@@ -28,10 +28,25 @@ const {
   getLevelFourCategoryList,
   getLevelFiveCategoryList
 } = require('../modules/categoryModule')
-const { sellerProductsBulkInsert } = require('./sellerProductModule')
-const { capitalizeFirstLetter } = require('../utils/helpers')
-const { PrimaryCategory, SecondaryCategory, ParentCategory, SellerContact } = require('../models')
-const { updateESDoc } = require('./elasticSearchModule')
+const {
+  sellerProductsBulkInsert,
+} = require('./sellerProductModule')
+const {
+  capitalizeFirstLetter
+} = require('../utils/helpers')
+const {
+  PrimaryCategory,
+  SecondaryCategory,
+  ParentCategory,
+  Products,
+  ProductsSubCategories,
+  SellerContact
+} = require('../models')
+const {
+  updateESDoc
+} = require('./elasticSearchModule')
+// const { reject } = require('lodash')
+// const Seller = require('../models/sellersSchema')
 
 // module.exports.checkSellerExistOrNot = (mobile) =>
 //   new Promise((resolve, reject) => {
@@ -57,11 +72,14 @@ module.exports.checkSellerExist = (query) =>
  */
 module.exports.getAccessToken = (ipAddress) =>
   new Promise((resolve, reject) => {
-    Sessions.find({ ipAddress })
-      .sort({ _id: -1 })
+    Sessions.find({
+      ipAddress
+    })
+      .sort({
+        _id: -1
+      })
       .limit(1)
       .then((doc) => {
-        // console.log(doc, 'doc.........')
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -69,11 +87,14 @@ module.exports.getAccessToken = (ipAddress) =>
 
 module.exports.getSessionLog = (ipAddress) =>
   new Promise((resolve, reject) => {
-    SessionsLogs.find({ ipAddress })
-      .sort({ _id: -1 })
+    SessionsLogs.find({
+      ipAddress
+    })
+      .sort({
+        _id: -1
+      })
       .limit(1)
       .then((doc) => {
-        // console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -90,13 +111,19 @@ exports.handleUserSession = (userId, data) =>
 
 exports.getSessionCount = (userId) =>
   new Promise((resolve, reject) => {
-    Sessions.countDocuments({ userId })
+    Sessions.countDocuments({
+      userId
+    })
       .then((doc) => {
         if (doc >= 3) {
-          Sessions.findOne(
-            { userId },
-            ['-_id -token '],
-            { sort: { createdAt: 1 } },
+          Sessions.findOne({
+            userId
+          },
+            ['-_id -token '], {
+            sort: {
+              createdAt: 1
+            }
+          },
             async (err, result) => {
               if (err) {
                 reject()
@@ -136,7 +163,6 @@ exports.handleUserLogoutSession = (query) =>
       const data = {
         userId: result.userId,
         userAgent: result.userAgent,
-        // token: result.token,
         deviceId: result.deviceId,
         signIn: result.createdAt,
         ipAddress: result.ipAddress,
@@ -154,14 +180,18 @@ exports.handleUserLogoutSession = (query) =>
 
 exports.getUserAllSessionDataUpdate = (userId) =>
   new Promise((resolve, reject) => {
-    Sessions.find({ userId }, async (err, doc) => {
+    Sessions.find({
+      userId
+    }, async (err, doc) => {
       if (err) {
         reject(err)
       }
 
       SessionsLogs.insertMany(doc)
         .then((d) => {
-          Sessions.deleteMany({ userId }, (error) => {
+          Sessions.deleteMany({
+            userId
+          }, (error) => {
             if (!error) {
               console.log(error)
             } else {
@@ -176,7 +206,9 @@ exports.getUserAllSessionDataUpdate = (userId) =>
 
 exports.deleteAllSession = (userId) =>
   new Promise((resolve, reject) => {
-    Sessions.deleteMany({ userId })
+    Sessions.deleteMany({
+      userId
+    })
       .then((doc) => {
         resolve(doc)
       })
@@ -185,7 +217,9 @@ exports.deleteAllSession = (userId) =>
 
 exports.deleteAllSessionLog = (userId) =>
   new Promise((resolve, reject) => {
-    SessionsLogs.deleteMany({ userId })
+    SessionsLogs.deleteMany({
+      userId
+    })
       .then((doc) => {
         resolve(doc)
       })
@@ -199,9 +233,11 @@ module.exports.checkUserExistOrNot = (query) =>
         name: 1,
         email: 1,
         mobile: 1,
+        countryCode: 1,
         isPhoneVerified: 1,
         isMobileVerified: 1,
         password: 1,
+        isEmailVerified: 1,
         // _id: -1,
       })
       .then((doc) => {
@@ -221,17 +257,20 @@ module.exports.addUser = (data) =>
 
 module.exports.getUserProfile = (id) =>
   new Promise((resolve, reject) => {
-    Users.findOne({ _id: id })
+    Users.findOne({
+      _id: id
+    })
       .select({
         name: 1,
         email: 1,
         mobile: 1,
+        preferredLanguage: 1,
+        password: 1,
         isPhoneVerified: 1,
         isMobileVerified: 1,
         // _id: -1,
       })
       .then((doc) => {
-        // console.log(doc);
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -239,9 +278,10 @@ module.exports.getUserProfile = (id) =>
 
 module.exports.updateUser = (query, data) =>
   new Promise((resolve, reject) => {
-    Users.findOneAndUpdate(query, data, { new: true })
+    Users.findOneAndUpdate(query, data, {
+      new: true
+    })
       .then((doc) => {
-        // console.log(doc);
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -249,9 +289,12 @@ module.exports.updateUser = (query, data) =>
 
 module.exports.forgetPassword = (mobile, data) =>
   new Promise((resolve, reject) => {
-    Users.findOneAndUpdate({ mobile }, data, { new: true })
+    Users.findOneAndUpdate({
+      mobile
+    }, data, {
+      new: true
+    })
       .then((doc) => {
-        // console.log(doc);
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -274,13 +317,101 @@ module.exports.sellerBulkInser = (data) =>
   new Promise((resolve, reject) => {
     Sellers.insertMany(data)
       .then((doc) => {
-        // console.log("doc", doc);
         resolve(doc)
       })
       .catch(reject)
   })
 // populate : {path: ("primaryCategoryId")},
 // populate : {path: ("secondaryCategoryId")},
+// module.exports.getSeller = (id, chkStock) =>
+//   new Promise((resolve, reject) => {
+//     let matchVal = null
+//     if (chkStock === true || chkStock === false) {
+//       matchVal = {
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: 'productDetails.regionOfOrigin',
+//         },
+//         match: {
+//           'productDetails.inStock': {
+//             $eq: chkStock
+//           }
+//         }
+//       }
+//     } else {
+//       matchVal = {
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: 'productDetails.regionOfOrigin',
+//         }
+//       }
+//     }
+//     Sellers.findOne({ userId: id })
+//       .populate('sellerProductId.')
+//       .populate('sellerType.name', 'name')
+//       .populate('sellerType.cities.city', 'name')
+//       .populate('sellerType.cities.state', 'name region')
+//       .populate('busenessId')
+//       .populate('statutoryId')
+//       .populate({
+//         path: 'sellerContactId',
+//         model: SellersContact,
+//         populate: {
+//           path: "city",
+//           model: Cities
+//         },
+//         populate: {
+//           path: "state",
+//           model: States
+//         },
+//       })
+//       .populate('sellerCompanyId')
+//       .populate('establishmentId')
+
+//       .populate({
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: "parentCategoryId",
+//           model: ParentCategory.collection.name
+//         },
+//       })
+//       .populate({
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: "primaryCategoryId",
+//           model: PrimaryCategory.collection.name
+//         },
+//       })
+//       .populate({
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: "secondaryCategoryId",
+//           model: SecondaryCategory.collection.name
+//         },
+//       })
+//       .populate(matchVal)
+//       .populate({
+//         path: 'sellerProductId',
+//         model: 'sellerproducts',
+//         populate: {
+//           path: 'productDetails.regionOfOrigin',
+//         },
+//       })
+//       .populate('location.city', 'name')
+//       .populate('location.state', 'name region')
+//       .populate('location.country', 'name')
+//       .lean()
+//       .then((doc) => {
+//         resolve(doc)
+//       })
+//       .catch((error) => reject(error))
+//   })
+
 module.exports.getSeller = (id, chkStock) =>
   new Promise((resolve, reject) => {
     let matchVal = null
@@ -290,9 +421,15 @@ module.exports.getSeller = (id, chkStock) =>
         model: 'sellerproducts',
         populate: {
           path: 'productDetails.regionOfOrigin',
+          match: {
+            'productDetails.inStock': true
+          },
         },
         match: {
-          'productDetails.inStock': {
+          // 'productDetails.inStock': {
+          //   $eq: chkStock
+          // }
+          status: {
             $eq: chkStock
           }
         }
@@ -306,23 +443,35 @@ module.exports.getSeller = (id, chkStock) =>
         }
       }
     }
-    Sellers.findOne({ userId: id })
-      .populate('sellerProductId.')
-      .populate('sellerType.name', 'name')
-      .populate('sellerType.cities.city', 'name')
-      .populate('sellerType.cities.state', 'name region')
+    Sellers.findOne({
+      userId: id
+    })
+      .populate('sellerProductId')
+      .populate('sellerType')
       .populate('busenessId')
       .populate('statutoryId')
       .populate({
         path: 'sellerContactId',
         model: SellersContact,
         populate: {
+          path: "location.city location.state location.country",
+          // model: Cities
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
           path: "location.state",
           model: States,
-        },
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
         populate: {
-          path: "location.city",
-          model: Cities
+          path: "location.country",
+          model: Countries,
         }
       })
       .populate('sellerCompanyId')
@@ -352,7 +501,22 @@ module.exports.getSeller = (id, chkStock) =>
           model: SecondaryCategory.collection.name
         },
       })
-      .populate(matchVal)
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
       .populate({
         path: 'sellerProductId',
         model: 'sellerproducts',
@@ -360,9 +524,18 @@ module.exports.getSeller = (id, chkStock) =>
           path: 'productDetails.regionOfOrigin',
         },
       })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
+      .populate(matchVal)
       .populate('location.city', 'name')
-      .populate('location.state', 'name region')
+      .populate('location.state', 'name')
       .populate('location.country', 'name')
+      .populate('planId')
       .lean()
       .then((doc) => {
         resolve(doc)
@@ -372,26 +545,42 @@ module.exports.getSeller = (id, chkStock) =>
 
 exports.getSellerProfile = (id) =>
   new Promise((resolve, reject) => {
-    Sellers.find({ _id: id })
-      .populate("primaryCatId")
-      .populate("sellerType")
-      .populate("busenessId")
-      .populate("statutoryId")
-      .populate("sellerContactId")
-      // .populate({
-      //   path: 'sellerContactId',
-      //   model: SellerContact,
-      //   populate: {
-      //     path: 'city',
-      //     model: Cities
-      //   },
-      //   populate: {
-      //     path: 'state',
-      //     model: States
-      //   },
-      // })
-      .populate("sellerCompanyId")
-      .populate("establishmentId")
+    console.log("id", id)
+    Sellers.find({
+      _id: id
+    })
+      // .populate("primaryCatId")
+      .populate('sellerProductId')
+      .populate('sellerType'/* , 'name' */)
+      .populate('busenessId')
+      .populate('statutoryId')
+      .populate('planId')
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.city location.state location.country",
+          // model: Cities
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.state",
+          model: States,
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.country",
+          model: Countries,
+        }
+      })
+      .populate('sellerCompanyId')
+      .populate('establishmentId')
 
       .populate({
         path: 'sellerProductId',
@@ -417,18 +606,105 @@ exports.getSellerProfile = (id) =>
           model: SecondaryCategory.collection.name
         },
       })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.cityOfOrigin',
+          // model: "cities"
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.sellingStates',
+          model: "states"
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.sellingCities',
+          model: "cities"
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.sellingCountries',
+          model: "countries"
+        },
+      })
       .populate("location.city", "name")
       .populate("location.state", "name")
       .populate("location.country", "name")
+      .lean()
       .then((doc) => {
         resolve(doc);
       })
       .catch((error) => reject(error))
   })
 
-module.exports.getAllSellers = () =>
+module.exports.getAllSellers = (sellerType, searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    Sellers.find({})
+    let searchQry = {};
+    if (searchQuery && sellerType) {
+      searchQry = {
+        $and: [
+          { sellerType: sellerType },
+          searchQuery ? {
+            $or: [
+              { name: { $regex: searchQuery, $options: 'i' } },
+              { "mobile.mobile": { $regex: searchQuery, $options: 'i' } },
+            ]
+          } : {}
+        ]
+      }
+    }
+    if (searchQuery && !sellerType) {
+      searchQry = {
+        $or: [
+          { name: { $regex: searchQuery, $options: 'i' } },
+          { "mobile.mobile": { $regex: searchQuery, $options: 'i' } },
+        ]
+      }
+    }
+    Sellers.find(searchQry)
+      .skip(skip)
+      .limit(limit)
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
       .populate('sellerType.cities.city', 'name')
@@ -470,11 +746,18 @@ module.exports.getAllSellers = () =>
           path: 'productDetails.regionOfOrigin',
         },
       })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
+      .lean()
       .then((doc) => {
-        console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -482,8 +765,10 @@ module.exports.getAllSellers = () =>
 
 module.exports.updateSeller = (query, data, elastic) =>
   new Promise((resolve, reject) => {
-    console.log(query, data, ' uodate seller-----')
-    Sellers.findOneAndUpdate(query, data, { new: true, upsert: true })
+    Sellers.findOneAndUpdate(query, data, {
+      new: true,
+      upsert: true
+    })
       .populate('sellerProductId.')
       .populate('sellerType.name', 'name')
       .populate('sellerType.cities.city', 'name')
@@ -494,43 +779,65 @@ module.exports.updateSeller = (query, data, elastic) =>
       .populate('sellerCompanyId')
       .populate('establishmentId')
 
-      // .populate({
-      //   path: 'sellerProductId',
-      //   model: 'sellerproducts',
-      //   populate: {
-      //     path: "parentCategoryId",
-      //     model: ParentCategory.collection.name
-      //   },
-      // })
-      // .populate({
-      //   path: 'sellerProductId',
-      //   model: 'sellerproducts',
-      //   populate: {
-      //     path: "primaryCategoryId",
-      //     model: PrimaryCategory.collection.name
-      //   },
-      // })
-      // .populate({
-      //   path: 'sellerProductId',
-      //   model: 'sellerproducts',
-      //   populate: {
-      //     path: "secondaryCategoryId",
-      //     model: SecondaryCategory.collection.name
-      //   },
-      // })
-      // .populate({
-      //   path: 'sellerProductId',
-      //   model: 'sellerproducts',
-      //   populate: {
-      //     path: 'productDetails.regionOfOrigin',
-      //   },
-      // })
-      // .populate('location.city', 'name')
-      // .populate('location.state', 'name region')
-      // .populate('location.country', 'name')
-      // .lean()
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "parentCategoryId",
+          model: ParentCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          model: PrimaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
+      .populate('location.city', 'name')
+      .populate('location.state', 'name region')
+      .populate('location.country', 'name')
+      .lean()
       .then(async (doc) => {
-
         // if (doc && elastic) {
         //   // const tenderDoc = JSON.parse(JSON.stringify(doc));
         //   const esData = JSON.parse(JSON.stringify(doc));
@@ -547,11 +854,14 @@ module.exports.updateSeller = (query, data, elastic) =>
 
 module.exports.addbusinessDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
-    SellersBusiness.findOneAndUpdate(
-      { sellerId },
-      { $set: data },
-      { new: true, upsert: true },
-    )
+    SellersBusiness.findOneAndUpdate({
+      sellerId
+    }, {
+      $set: data
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
         // console.log(doc);
         resolve(doc)
@@ -561,13 +871,16 @@ module.exports.addbusinessDetails = (sellerId, data) =>
 
 module.exports.addCompanyDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
-    SellersCompany.findOneAndUpdate(
-      { sellerId },
-      { $set: data },
-      { new: true, upsert: true },
-    )
+    SellersCompany.findOneAndUpdate({
+      sellerId
+    }, {
+      $set: data
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
-        console.log(doc)
+        // console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
@@ -575,37 +888,47 @@ module.exports.addCompanyDetails = (sellerId, data) =>
 
 module.exports.addContactDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
-    console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
-    SellersContact.findOneAndUpdate(
-      { sellerId },
-      { $set: data },
-      { new: true, upsert: true },
-    )
+    // console.log("🚀 ~ file: sellersModule.js ~ line 494 ~ sellerId, data", sellerId, data)
+    SellersContact.findOneAndUpdate({
+      sellerId
+    }, {
+      $set: data
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
-        console.log(doc)
+        // console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
   })
 
-module.exports.addEstablishmentPhotos = (sellerId, data) =>
+module.exports.addEstablishmentPhotos = (sellerId, photos) =>
   new Promise((resolve, reject) => {
-    SellersEstablishment.findOneAndUpdate(
-      { sellerId },
-      { $set: data },
-      { new: true, upsert: true },
-    )
+    SellersEstablishment.findOneAndUpdate({
+      sellerId
+    }, {
+      photos
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
-        console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
   })
-// module.exports.addProductDetails = (id, data) =>
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
     if (id) {
-      SelleresProductList.findOneAndUpdate({ _id: id }, { $set: data }, { new: true })
+      SelleresProductList.findOneAndUpdate({
+        _id: id
+      }, {
+        $set: data
+      }, {
+        new: true
+      })
         .then((doc) => {
           resolve(doc)
         })
@@ -621,28 +944,41 @@ module.exports.addProductDetails = (id, data) =>
   })
 module.exports.addStatutoryDetails = (sellerId, data) =>
   new Promise((resolve, reject) => {
-    SellersStatutory.findOneAndUpdate(
-      { sellerId },
-      { $set: data },
-      { new: true, upsert: true },
-    )
+    SellersStatutory.findOneAndUpdate({
+      sellerId
+    }, {
+      $set: data
+    }, {
+      new: true,
+      upsert: true
+    })
       .then((doc) => {
-        console.log(doc)
+        // console.log(doc)
         resolve(doc)
       })
       .catch((error) => reject(error))
   })
 
 exports.inserSeller = async (seller) => {
-  const { name, address, numbers, City, Category } = seller
+  const {
+    name,
+    address,
+    numbers,
+    City,
+    Category
+  } = seller
 
-  let cityData = City ? await checkAndAddCity({ name: City }) : null
+  let cityData = City ? await checkAndAddCity({
+    name: City
+  }) : null
   let stateData =
     cityData && cityData.state ? await getState(cityData.state) : null
   let countryData =
     stateData && stateData.country ? await getCountry(stateData.country) : null
   let categoryData =
-    countryData && Category ? await getPrimaryCat({ name: Category }) : null
+    countryData && Category ? await getPrimaryCat({
+      name: Category
+    }) : null
 
   let mobile = numbers.replace(/[\[\]' ]+/g, '').split(',')
   mobile = mobile.map((m) => ({
@@ -699,13 +1035,14 @@ exports.structureSellerData = async (seller) => {
   name = name.trim()
   let serviceCity = Service_City.trim().split(',')
   serviceCity = await getServiceCity(_.uniq(serviceCity))
-  let levelFour = [], levelFive = []
+  let levelFour = [],
+    levelFive = []
   if (Level_5) {
     if (typeof Level_5 === 'number') Level_5 = `${Level_5}`
     Level_5 = Level_5.split(',')
     // console.log("🚀 ~ file: sellersModule.js ~ line 663 ~ exports.structureSellerData= ~ Level_5", Level_5)
     levelFive = await getLevelFiveCategoryList(Level_5)
-    console.log("🚀 ~ file: sellersModule.js ~ line 677 ~ exports.structureSellerData= ~ levelFive", levelFive)
+    // console.log("🚀 ~ file: sellersModule.js ~ line 677 ~ exports.structureSellerData= ~ levelFive", levelFive)
   }
   // else {
   if (typeof Level_4 === 'number') Level_4 = `${Level_4}`
@@ -715,19 +1052,24 @@ exports.structureSellerData = async (seller) => {
   // console.log("🚀 ~ file: sellersModule.js ~ line 678 ~ exports.structureSellerData= ~ levelFour", levelFour)
   // }
 
-  console.log(' working ------------------')
+  // console.log(' working ------------------')
 
   let sellerType = await checkAndAddSellerType({
     name: capitalizeFirstLetter(Service_Type),
   })
 
-  const sellerExist = await this.checkSellerExist({ name })
+  const sellerExist = await this.checkSellerExist({
+    name
+  })
   if (sellerExist) {
     console.log(' Existing Seller --------------')
     let productData = []
     let proData = []
     if (levelFive.length) /*{*/
-      levelFive = levelFive.map(cat => ({ categoryId: cat._id, productDetails: {} }))
+      levelFive = levelFive.map(cat => ({
+        categoryId: cat._id,
+        productDetails: {}
+      }))
     console.log("🚀 ~ file: sellersModule.js ~ line 686 ~ exports.structureSellerData= ~ levelFive.length", levelFive)
     // productData = levelFive.map(pro => ({
     //   sellerId: sellerExist._id,
@@ -775,8 +1117,9 @@ exports.structureSellerData = async (seller) => {
     }
     // console.log("finalData", _sellerType[1].cities)
 
-    const updateSeller = await this.updateSeller(
-      { _id: sellerExist._id },
+    const updateSeller = await this.updateSeller({
+      _id: sellerExist._id
+    },
       finalData,
     )
     // console.log("updateSeller +++++++++++++++++", updateSeller)
@@ -789,9 +1132,9 @@ exports.structureSellerData = async (seller) => {
     console.log(pincodeSplit, '========')
     const pinData = pincodeSplit[pincodeSplit.length - 1]
     console.log(pinData, '+++++++')
-    const pincode = pinData
-      ? pinData.substring(pinData.indexOf('-') + 1).trim()
-      : 0
+    const pincode = pinData ?
+      pinData.substring(pinData.indexOf('-') + 1).trim() :
+      0
     addr.splice(addr.indexOf(pinData), 1)
     const completeAddress = addr.join(',')
 
@@ -802,13 +1145,15 @@ exports.structureSellerData = async (seller) => {
 
     // Level_4 = Level_4.split(","); -----------
 
-    let cityData = City ? await checkAndAddCity({ name: City.trim() }) : null
+    let cityData = City ? await checkAndAddCity({
+      name: City.trim()
+    }) : null
     let stateData =
       cityData && cityData.state ? await getState(cityData.state) : null
     let countryData =
-      stateData && stateData.country
-        ? await getCountry(stateData.country)
-        : null
+      stateData && stateData.country ?
+        await getCountry(stateData.country) :
+        null
     // let categoryData =
     //   countryData && Category ? await getPrimaryCat({ name: Category }) : null;
     let mobile = []
@@ -877,15 +1222,13 @@ exports.structureSellerData = async (seller) => {
         state: (stateData && stateData._id) || null,
         country: (countryData && countryData._id) || null,
       },
-      sellerType: [
-        {
-          name: sellerType,
-          cities: serviceCity.map((cat) => ({
-            city: cat._id,
-            state: cat.state._id || null,
-          })),
-        },
-      ],
+      sellerType: [{
+        name: sellerType,
+        cities: serviceCity.map((cat) => ({
+          city: cat._id,
+          state: cat.state._id || null,
+        })),
+      },],
       source: 'vendor',
     }
     const result = await this.addSeller(finalData)
@@ -894,7 +1237,10 @@ exports.structureSellerData = async (seller) => {
 
     if (result) {
       if (levelFive.length) /*{*/
-        levelFive = levelFive.map(cat => ({ categoryId: cat._id, productDetails: {} }))
+        levelFive = levelFive.map(cat => ({
+          categoryId: cat._id,
+          productDetails: {}
+        }))
       console.log("🚀 ~ file: sellersModule.js ~ line 854 ~ exports.structureSellerData= ~ levelFive.length", levelFive.length)
       // productData = levelFive.map(pro => ({
       //   sellerId: result._id,
@@ -922,7 +1268,9 @@ exports.structureSellerData = async (seller) => {
       const upData = {
         sellerProductId: proData,
       }
-      const updateSeller = await this.updateSeller({ _id: result._id }, upData)
+      const updateSeller = await this.updateSeller({
+        _id: result._id
+      }, upData)
     }
   }
 
@@ -930,9 +1278,9 @@ exports.structureSellerData = async (seller) => {
   // console.log("location", finalData)
 }
 
-module.exports.getSellerVal = (id) =>
+module.exports.getSellerVal = (query) =>
   new Promise((resolve, reject) => {
-    Sellers.findOne({ _id: id })
+    Sellers.findOne(query)
       .lean()
       .then((doc) => {
         resolve(doc)
@@ -942,7 +1290,9 @@ module.exports.getSellerVal = (id) =>
 
 module.exports.deleteSellerProduct = (data) =>
   new Promise((resolve, reject) => {
-    SellerProducts.findByIdAndDelete({ _id: data })
+    SelleresProductList.findByIdAndDelete({
+      _id: data
+    })
       .then((doc) => {
         resolve(doc)
       })
@@ -959,7 +1309,216 @@ module.exports.addSellerProduct = (data) =>
       else {
         const idArray = doc && doc.length && doc.map(d => d._id)
         resolve(idArray)
+        // resolve(doc)
+
       }
     })
   })
 
+/**
+* 
+* Find Established photos
+* */
+module.exports.findEstablishment = (id) =>
+  new Promise((resolve, reject) => {
+    SellersEstablishment.findOne({
+      _id: id
+    })
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+/**
+* 
+* Get seller product detail
+* */
+module.exports.getSellerProductDtl = (query) =>
+  new Promise((resolve, reject) => {
+    SelleresProductList.findOne(query)
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+/**
+* 
+* Get all seller products
+* */
+module.exports.listAllSellerProduct = (serviceType, searchQuery, skip, limit) =>
+  new Promise((resolve, reject) => {
+    let searchQry = {};
+    if (searchQuery && serviceType) {
+      searchQry = {
+        $and: [
+          { serviceType: serviceType },
+          searchQuery ?
+            { "productDetails.name": { $regex: searchQuery, $options: 'i' } } : {}
+        ]
+      }
+    }
+    if (searchQuery && !serviceType) {
+      searchQry = { "productDetails.name": { $regex: searchQuery, $options: 'i' } }
+    }
+
+    // {"$match":{"title":{"$regex":/example/}}},
+    // {"$lookup":{
+    //   "from":"article_category",
+    //   "localField":"article_id",
+    //   "foreignField":"article_id",
+    //   "as":"article_category"
+    // }},
+    // {"$unwind":"$article_category"},
+
+    //   SelleresProductList.aggregate([{
+    //       $lookup:{
+    //           from: ParentCategory.collection.name,      
+    //           localField: "parentCategoryId",   
+    //           foreignField: "_id",
+    //           as: "level_1"        
+    //       }
+    //     // $lookup:{
+    //     //     from:"level1",
+    //     //     localField:"parentCategoryId",
+    //     //     foreignField:"_id",
+    //     //     as:"parentCategoryId"
+    //     // }
+    //   },
+    //   {
+    //     $match:{'name' : "Medicine,Pharma & Drugs"}
+    //   }
+    // ]) 
+    //   .then((doc) => {
+    //     console.log(doc,"===============adsghfsfhshf")
+    //     resolve(doc)
+    //   })
+    //   .catch(reject)
+    // let searchQry = searchQuery ? 
+    //   { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }: {};
+
+    SelleresProductList.find(searchQry)
+      .skip(skip)
+      .limit(limit)
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+/**
+* 
+* Get seller product detail
+* */
+module.exports.getSellerProduct = (query) =>
+  new Promise((resolve, reject) => {
+    console.log("query", query)
+    SelleresProductList.findOne(query)
+      .populate({
+        path: 'serviceCity.city'
+      })
+      .populate({
+        path: 'productDetails.countryOfOrigin'
+      })
+      .populate({
+        path: 'productDetails.regionOfOrigin'
+      })
+      .populate({
+        path: 'productDetails.cityOfOrigin'
+      })
+      .populate({
+        path: 'productDetails.sellingStates',
+      })
+      .populate({
+        path: 'productDetails.sellingCities',
+      })
+      .populate({
+        path: 'productDetails.sellingCountries',
+      })
+      .populate("sellerId")
+      .populate({
+        path: "sellerId",
+        populate: "location.city location.state busenessId statutoryId sellerCompanyId sellerContactId sellerType"
+      })
+      .populate("serviceType")
+      .populate("parentCategoryId")
+      .populate("primaryCategoryId")
+      .populate("secondaryCategoryId")
+      // .populate({
+      //   path: "sellerId",
+      //   // model: "sellers",
+      //   populate: {
+      //     path: "sellerContactId",
+      //     // model: SellersContact,
+      //     populate: "location.city location.state",
+      //     // populate: {
+      //     //   path: "location.city location.state"
+      //     // }
+      //   }
+      // })
+      .populate("poductId")
+      .populate("productSubcategoryId")
+      // .populate({
+      //   path: 'serviceCity.country'
+      // })
+      // .populate({
+      //   path: 'serviceCity.state'
+      // })
+      .then((doc) => {
+        console.log("doc", doc)
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+exports.deleteSellerRecord = (id) =>
+  new Promise((resolve, reject) => {
+    Sellers.findByIdAndDelete(id)
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+
+module.exports.getSellerProductDetails = (query) =>
+  new Promise((resolve, reject) => {
+    SelleresProductList.find(query)
+      .populate({
+        path: 'sellerId',
+        populate: {
+          path: 'sellerType busenessId location.city location.state location.country',
+          select: 'name',
+        }
+      })
+      .populate({
+        path: 'serviceType parentCategoryId primaryCategoryId secondaryCategoryId poductId productSubcategoryId serviceCity.city serviceCity.country serviceCity.state productDetails.regionOfOrigin productDetails.countryOfOrigin productDetails.cityOfOrigin productDetails.sellingCountries productDetails.sellingStates productDetails.sellingCities',
+        select: 'name vendorId'
+      })
+      .populate({
+        path: 'productDetails.regionOfOrigin productDetails.countryOfOrigin productDetails.cityOfOrigin productDetails.sellingCountries productDetails.sellingStates productDetails.sellingCities',
+        select: 'name'
+      })
+      .then((doc) => {
+        // console.log("🚀 ~ file: sellersModule.js ~ line 1498 ~ .then ~ doc", doc)
+        resolve(doc)
+      })
+      .catch(reject)
+  })
+
+module.exports.getUpdatedSellerDetails = (query, skip, limit) => new Promise((resolve, reject) => {
+  Sellers.find(query)
+    .skip(skip)
+    .limit(limit)
+    .populate({
+      path: 'sellerType busenessId location.city location.state location.country'
+    })
+    .then((doc) => {
+      resolve(doc)
+    })
+    .catch((error) => reject(error))
+})
+
+// module.exports.updateMany = (query1,query2) => new Promise((resolve, reject) => {
+//   Sellers.updateMany(query1,query2)
+//     .then((doc) => {
+//       resolve(doc)
+//     })
+//     .catch((error) => reject(error))
+// })

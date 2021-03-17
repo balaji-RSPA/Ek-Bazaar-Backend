@@ -41,7 +41,7 @@ module.exports.addState = (newData) =>
   new Promise((resolve, reject) => {
     States.create(newData)
       .then((doc) => {
-        console.log(doc);
+        // console.log(doc);
         resolve(doc);
       })
       .catch((error) => reject(error.message));
@@ -57,3 +57,4 @@ module.exports.addCountry = (newData) =>
         reject(error);
       });
   });
+

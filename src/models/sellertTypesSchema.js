@@ -12,6 +12,10 @@ const sellerTypeSchema = new Schema(
         type: Boolean,
         default: true
     },
+    group: {
+      type: Number,
+      default: 1
+    }
     
   },
   {

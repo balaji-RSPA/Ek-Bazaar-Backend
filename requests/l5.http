@@ -1,0 +1,17 @@
+###
+POST http://localhost:8070/api/addBulkProductSubcategories HTTP/1.1
+content-type: application/json
+
+# POST http://localhost:8070/api/l4_delete HTTP/1.1
+# content-type: application/json
+
+[
+    {
+        "vendorId": "L5F2137",
+        "productId": "L4F127",
+        "secondaryId": "L3F19",
+        "level2id": "F3",
+        "l1": 3,
+        "name": "Betel Nut / Areca Nut"
+    }
+]

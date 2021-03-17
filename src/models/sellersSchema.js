@@ -12,6 +12,7 @@ const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema');
+const SellerPlans = require('./sellerPlanSchema')
 const { identity } = require("lodash");
 
 // const notificationSchema = new Schema({
@@ -93,6 +94,18 @@ const serviceSchema = new Schema({
   }]
 })
 
+const telephoneSchema = new Schema({
+  telephone: {
+    type: String,
+    trim: true
+  },
+  countryCode: {
+    type: String,
+    trim: true,
+    default: null
+  }
+})
+
 const sellersSchema = new Schema(
   {
     userId: {
@@ -111,16 +124,24 @@ const sellersSchema = new Schema(
       trim: true,
       default: null
     },
-    mobile: [mobile],
+    // mobile: [mobile],
+    mobile: {
+      type: [mobile],
+      default: []
+    },
     alternateNumber: {
       type: String,
       trim: true,
     },
     email: {
       type: String,
+      trim: true,
       default: null,
       // required: true,
-      trim: true,
+    },
+    isEmailSent: {
+      type: Boolean,
+      default: false,
     },
     isEmailVerified: {
       type: Boolean,
@@ -131,6 +152,14 @@ const sellersSchema = new Schema(
       type: Boolean,
       default: false,
       // required: true
+    },
+    sellerVerified: {
+      type: Boolean,
+      default: false
+    },
+    paidSeller: {
+      type: Boolean,
+      default: false
     },
     location: {
       type: location,
@@ -147,7 +176,12 @@ const sellersSchema = new Schema(
       },
     },
     // Array Object
-    sellerType: [serviceSchema],
+    // sellerType: [serviceSchema],
+    sellerType: [{
+      type: ObjectId,
+      ref: SellerTypes,
+      // default: []
+    }],
     // Array Object
     // serviceCity:[
     //   {
@@ -189,7 +223,7 @@ const sellersSchema = new Schema(
     },
     // primaryCatId:{
     //   type: ObjectId,
-    //   ref: 'primaryCategory',
+    //   ref: 'level2',
     //   default: null
     // },
     // sellerNotifications:{notificationSchema},
@@ -224,6 +258,41 @@ const sellersSchema = new Schema(
       type: String,
       default: null,
       trim: true
+    },
+    profileUpdate: {
+      type: Boolean,
+      default: false
+    },
+    flag: {
+      type: Number,
+      default: 1,
+    },
+    international: {
+      type: Boolean,
+      default: false
+    },
+    telephone: {
+      type: [telephoneSchema],
+      default: null
+    },
+    website: {
+      type: String,
+      default: null
+    },
+    country: {
+      type: Object,
+      default: null
+    },
+    status: {
+      type: Boolean,
+      default: true
+    },
+    planId: {
+      type: ObjectId,
+      ref: SellerPlans
+    },
+    trialExtends: {
+      type: Number
     }
   },
   {
@@ -231,6 +300,11 @@ const sellersSchema = new Schema(
     versionKey: false,
   }
 );
+sellersSchema.index({
+  email: 1
+}, {
+  sparse: true,
+})
 
 const Seller = model("sellers", sellersSchema);
 module.exports = Seller;

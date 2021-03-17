@@ -32,7 +32,7 @@ const secondaryCatSchema = new Schema(
     },
     productId: [{
       type: ObjectId,
-      ref: "products",
+      ref: "level4",
       default: []
     }],
     image: {
@@ -45,7 +45,6 @@ const secondaryCatSchema = new Schema(
     },
     l1: {
       type: String,
-      default: true
     }
 
   },
@@ -71,5 +70,5 @@ secondaryCatSchema.index({
   }
 })
 
-const SecondaryCategory = model("secondarycategories", secondaryCatSchema);
+const SecondaryCategory = model("level3", secondaryCatSchema);
 module.exports = SecondaryCategory;

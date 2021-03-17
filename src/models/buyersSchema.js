@@ -53,9 +53,13 @@ const buyerSchema = new Schema(
     },
     email: {
       type: String,
+      trim: true,
       default: null,
       // required: true,
-      trim: true,
+    },
+    isEmailSent:{
+      type : Boolean,
+      default: false,
     },
     countryCode: {
       type: String,
@@ -65,6 +69,10 @@ const buyerSchema = new Schema(
     mobile: {
       type: String,
       required: true,
+      trim: true,
+    },
+    alternateNumber: {
+      type: String,
       trim: true,
     },
     // password: {

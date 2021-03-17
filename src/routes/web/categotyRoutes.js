@@ -5,6 +5,7 @@ const router = Router();
 const category = require('../../controllers/web/categoryController');
 
 // Get All Categories
+router.get("/getCategories", category.getSpecificCategories)
 router.get("/getAllCategories", category.getAllCategories);
 router.get("/getAllProducts", category.getAllProducts)
 router.get("/getRelatedCategories/:id", category.getRelatedCategories)
@@ -32,6 +33,7 @@ router.post("/addBulkProducts", category.addBulkProducts);
 router.post("/addProductCategory", category.addProduct);
 router.get("/getProductCategory/:id", category.getProduct);
 router.get("/products", category.getProducts)
+router.get("/getLevelFive/:id", category.getLevelFive)
 
 //product sub categories
 router.post("/addBulkProductSubcategories", category.addBulkProductSubCategories);
