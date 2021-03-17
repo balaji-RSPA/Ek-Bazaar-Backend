@@ -21,9 +21,12 @@ const isAuthenticated = require("./sso-tools/isAuthenticated");
 const { ssoRedirect } = require("./sso-tools/checkSSORedirect");
 const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
 const { updatePriority } = require('./src/controllers/web/testController')
-const { respSuccess } = require("./src/utils/respHadler")
+const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
+const { request } = require("./src/utils/request")
+const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 
+const { serviceURL } = authServiceURL()
 const { tradeDb } = config
 
 const app = express();
@@ -31,7 +34,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors({
     origin: ["http://localhost:8085", "https://tradebazaar.tech-active.com", "https://www.trade.ekbazaar.com"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
 }))
 app.use(cookieParser());
@@ -43,23 +46,11 @@ const cookieOptions = {
     path: "/",
     expires: 1000 * 60 * 60 * 24 * 15,
     // domain: ".tech-active.com",
-    sameSite: "none",
+    // sameSite: "none",
     httpOnly: true,
     // secure: true,
 };
 
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Credentials", true);
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS, HEAD");
-    res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization");
-    // res.cookie("token","ghjkk5247986-512222222222.dfghjkk", {
-    //   secure: true,
-    //   httpOnly: true,
-    //   domain: "tradebazaarapi.tech-acive.com"
-    // });
-    next();
-});
 
 app.use(
     session({
@@ -67,12 +58,18 @@ app.use(
         secret: "keyboard cat",
         resave: false,
         saveUninitialized: false,
-        // domain: ".tech-active.com",
         cookie: {
             ...cookieOptions
         },
     })
 );
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS, HEAD");
+    res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization");
+    next();
+});
 app.use(useragent.express());
 app.use(fileUpload());
 
@@ -86,19 +83,27 @@ app.get('/', function (req, res) {
 })
 
 app.get("/api/logged", async (req, res, next) => {
-    let user = await ssoRedirect(req, res, next)
-    if (user && user.error) {
-        respSuccess(res, error)
-    } else if (!user) {
-        user = await isAuthenticated(req, res, next)
-        if (!user) respSuccess(res, "user is not logged in any app")
-        else {
-            // req.session.cookie._expires = 60 * 60 * 24
-            respSuccess(res, { user, token: req.session.token })
-        }
-    } else {
-        respSuccess(res, { user, token: req.session.token })
-    }
+    const response = await request({ url: ssoLoginUrl, method: 'GET', params: { serviceURL } })
+    console.log("🚀 ~ file: app.js ~ line 87 ~ app.get ~ response", response.data)
+    const { data } = response
+    if (data.success)
+        return respSuccess(res, { user: data.data.user, token: data.data.token })
+    else return respError(res, data.message)
+    // next()
+
+    // let user = await ssoRedirect(req, res, next)
+    // if (user && user.error) {
+    //     respSuccess(res, error)
+    // } else if (!user) {
+    //     user = await isAuthenticated(req, res, next)
+    //     if (!user) respSuccess(res, "user is not logged in any app")
+    //     else {
+    //         // req.session.cookie._expires = 60 * 60 * 24
+    //         respSuccess(res, { user, token: req.session.token })
+    //     }
+    // } else {
+    //     respSuccess(res, { user, token: req.session.token })
+    // }
 })
 
 app.post('/capture/:paymentId', async function (req, res) {
