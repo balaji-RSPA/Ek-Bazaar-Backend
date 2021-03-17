@@ -7,9 +7,18 @@ router
   .route("/login")
   .get(controller.login)
   .post(controller.doLogin);
-
 router.get("/verifytoken", controller.verifySsoToken);
 router.post("/logout", controller.logout);
 router.post("/register", controller.register)
+
+router
+  .route("/user/login")
+  .post(controller.doLogin);
+router
+  .route("/user/logout")
+  .post(controller.logout);
+router
+  .route("/user")
+  .post(controller.register);
 
 module.exports = router;

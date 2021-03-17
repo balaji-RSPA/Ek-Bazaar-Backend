@@ -1,13 +1,20 @@
 const uuidv4 = require("uuid/v4");
 const Hashids = require("hashids");
+const axios = require("axios");
 const URL = require("url").URL;
 const hashids = new Hashids();
 const bcrypt = require("bcrypt");
 const { genJwtToken } = require("./jwt_helper");
 const { machineIdSync } = require("node-machine-id");
 const { UserModel } = require("../config/db")
+const { globalVaraibles, respError, respSuccess } = require("../utils/helper");
+const { trade, tender, investment } = globalVaraibles.baseURL()
+const { _trade, _tender, _investment } = globalVaraibles.authServiceURL()
 
 const re = /(\S+)\s+(\S+)/;
+
+// url to make request
+let baseURL = ""
 
 // Note: express http converts all headers
 // to lower case.
@@ -52,6 +59,8 @@ const appTokenDB = {
 const alloweOrigin = {
   "http://localhost:8070": true,
   "http://localhost:8060": true,
+  "http://localhost:8085": true,
+  "http://localhost:8080": true,
 };
 
 const deHyphenatedUUID = () => uuidv4().replace(/-/gi, "");
@@ -65,6 +74,8 @@ const sessionApp = {};
 const originAppName = {
   "http://localhost:8070": "trade_sso_consumer",
   "http://localhost:8060": "tenders_sso_consumer",
+  "http://localhost:8085": "trade_sso_consumer",
+  "http://localhost:8080": "tenders_sso_consumer",
 };
 
 let userDB = {
@@ -123,6 +134,7 @@ const generatePayload = ssoToken => {
 };
 
 const verifySsoToken = async (req, res, next) => {
+  console.log("🚀 ~ file: index.js ~ line 163 ~ verifySsoToken ~ req", req.headers)
   const appToken = appTokenFromRequest(req);
   const { ssoToken } = req.query;
   // if the application token is not present or ssoToken request is invalid
@@ -152,6 +164,7 @@ const verifySsoToken = async (req, res, next) => {
   const token = await genJwtToken(payload);
   // delete the itremCache key for no futher use,
   delete intrmTokenCache[ssoToken];
+  console.log("🚀 ~ file: index.js ~ line 163 ~ verifySsoToken ~ res", res.headers)
   return res.status(200).json({ token, deviceId: payload.deviceId });
 };
 
@@ -187,7 +200,7 @@ const register = async (req, res, next) => {
     }
   }
   const { serviceURL } = req.query;
-  const id = _id; // encodedId();
+  const id = encodedId();
   req.session.user = id;
   sessionUser[id] = mobile;
   if (serviceURL == null) {
@@ -195,18 +208,35 @@ const register = async (req, res, next) => {
   }
   const url = new URL(serviceURL);
 
-  const intrmid = _id; // encodedId();
+  const intrmid = encodedId();
   storeApplicationInCache(url.origin, id, intrmid);
   return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` });
 }
 
 const doLogin = async (req, res, next) => {
+  console.log("🚀 ~ file: index.js ~ line 204 ~ doLogin ~ req", req.headers)
   // do the validation with email and password
   // but the goal is not to do the same in this right now,
   // like checking with Datebase and all, we are skiping these section
   // const { email, password } = req.body;
-  const { mobile, password } = req.body;
-  console.log("🚀 ~ file: index.js ~ line 209 ~ doLogin ~ req.body", req.body)
+  const { password, ipAddress, mobile, userType, origin } = req.body;
+  let url = ""
+  if (origin === "trade") {
+    baseURL = trade;
+    url = baseURL + "user/login"
+    req.query.serviceURL = _trade
+  }
+  else if (origin === "tender") {
+    baseURL = tender;
+    url = "v1/user/login"
+    req.query.serviceURL = _tender
+  }
+  else {
+    baseURL = investment;
+    url = ""
+    req.query.serviceURL = _investment
+  }
+
   const user = await UserModel.findOne({ mobile })
     .select({
       name: 1,
@@ -240,17 +270,22 @@ const doLogin = async (req, res, next) => {
 
   // else redirect
   const { serviceURL } = req.query;
-  const id = _id; // encodedId();
+  const id = encodedId();
   req.session.user = id;
   sessionUser[id] = email;
   if (serviceURL == null) {
     return res.redirect("/");
   }
-  const url = new URL(serviceURL);
+  const _url = new URL(serviceURL);
 
-  const intrmid = _id; // encodedId();
-  storeApplicationInCache(url.origin, id, intrmid);
-  return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` });
+  const intrmid = encodedId();
+  storeApplicationInCache(_url.origin, id, intrmid);
+  const response = await axios({ url, method: "POST", data: { user, url: `${serviceURL}?ssoToken=${intrmid}`, origin, password, ipAddress, mobile, userType } })
+  const { data } = response
+  console.log("🚀 ~ file: index.js ~ line 281 ~ doLogin ~ response", response.data)
+  req.session.token = data.data.token
+  req.session.ssoToken = intrmid
+  return respSuccess(res, { user: data.data.user, token: data.data.token, activeChat: data.data.activeChat }, data.message)
 };
 
 const login = async (req, res, next) => {
@@ -259,24 +294,10 @@ const login = async (req, res, next) => {
   // This can also be used to verify the origin from where the request has came in
   // for the redirection
   const { serviceURL } = req.query;
-  const { mobile } = req.body;
+  console.log("🚀 ~ file: index.js ~ line 292 ~ login ~ req.session.user", req.session.user)
 
-  const user = await UserModel.findOne({ mobile })
-    .select({
-      name: 1,
-      email: 1,
-      mobile: 1,
-      preferredLanguage: 1,
-      password: 1,
-      isPhoneVerified: 1,
-      isMobileVerified: 1,
-      countryCode: 1
-      // _id: -1,
-    })
-    .exec()
-
-  const { _id } = user
   // direct access will give the error inside new URL.
+  const intrmid = encodedId();
   if (serviceURL != null) {
     const url = new URL(serviceURL);
     if (alloweOrigin[url.origin] !== true) {
@@ -292,9 +313,9 @@ const login = async (req, res, next) => {
   // if global session already has the user directly redirect with the token
   if (req.session.user != null && serviceURL != null) {
     const url = new URL(serviceURL);
-    const intrmid = _id // encodedId();
     storeApplicationInCache(url.origin, req.session.user, intrmid);
-    res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` })
+    return respSuccess(res, { user: req.session.user, token: req.session.token })
+    // return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` })
   }
 
   next()
@@ -311,7 +332,7 @@ const logout = async (req, res, next) => {
         .json({ message: "Your are not allowed to access the sso-server" });
     }
   }
-  console.log("🚀 ~ file: index.js ~ line 265 ~ logout ~ req.session.user", req.session.user)
+
   if (req.session.user !== null && serviceURL !== null) {
     req.session = null //.distroy(function (err) {
     // if (err) res.status(500).json({ success: false, message: err })
@@ -325,4 +346,4 @@ const logout = async (req, res, next) => {
   }
 }
 
-module.exports = Object.assign({}, { doLogin, login, verifySsoToken, logout, register });
+module.exports = Object.assign({}, { doLogin, login, verifySsoToken, logout, register, baseURL });
