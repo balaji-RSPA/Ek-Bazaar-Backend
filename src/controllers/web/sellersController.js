@@ -355,7 +355,6 @@ module.exports.deleteSellerProduct = async (req, res) => {
 
 // function masterMapData(val, keywords) {
 const masterMapData = (val, type) => new Promise((resolve, reject) => {
-  console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", val)
   const _Scity = [];
   let serviceProductData;
   if (val.serviceCity && val.serviceCity.length) {
@@ -395,7 +394,6 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
       keywords,
       serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null
     }
-
   } else {
     data = {
       sellerId: val.sellerId && {
@@ -708,11 +706,9 @@ module.exports.updateSellerProduct = async (req, res) => {
     let seller = await getSellerProfile(updateDetail.sellerId)
     if (updateDetail) {
       const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
-      // console.log("🚀 ~ file: sellersController.js ~ line 662 ~ module.exports.updateSellerProduct= ~ updatedProduct", updatedProduct[0]["productDetails"])
       updatedProduct[0]["panIndia"] = body.panIndia
       const priority = await mapPriority(seller && seller.length && seller[0].planId || "")
       const masterData = await masterMapData(updatedProduct[0], 'update')
-      // console.log("🚀 ~ file: sellersController.js ~ line 665 ~ module.exports.updateSellerProduct= ~ masterData", { ...masterData, priority })
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
       const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: 8 })
     }

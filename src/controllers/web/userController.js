@@ -74,8 +74,8 @@ const { sms } = require("../../utils/globalConstants")
 // const {username, password, senderID, smsURL} = sms
 
 const isProd = process.env.NODE_ENV === "production"
-const ssoRegisterUrl = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:3010/simplesso/register"
-const serviceURL = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:8070"
+const ssoRegisterUrl = global.environment === "production" ? "" : global.environment === "staging" ? "https://auth.tech-active.com/simplesso/register" : "http://localhost:3010/simplesso/register"
+const serviceURL = global.environment === "production" ? "" : global.environment === "staging" ? "https://tradebazaarapi.tech-active.com" : "http://localhost:8070"
 
 
 function encrypt(text) {

@@ -11,10 +11,9 @@ const {
 const { createToken, encodePassword } = require("../../utils/utils");
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { verifyJwtToken } = require("../../../sso-tools/jwt_verify");
-
-const ssoLoginUrl = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:3010/simplesso/login"
-const ssoLogoutUrl = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:3010/simplesso/logout"
-const serviceURL = global.environment === "production" ? "" : global.environment === "staging" ? "" : "http://localhost:8070"
+const { request } = require('../../utils/request')
+const { ssoLoginUrl, ssoLogoutUrl, authServiceURL } = require('../../utils/utils').globalVaraibles
+const { serviceURL } = authServiceURL()
 
 const { userChatLogin, userChatLogout, createChatUser, userChatSessionLogout } = require('./rocketChatController')
 // const {
@@ -41,10 +40,15 @@ exports.login = async (req, res, next) => {
   try {
 
     const { password, ipAddress, mobile, userType } = req.body;
-    const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
-    const { data } = response
-    let _user = data.user
-    console.log("🚀 ~ file: authController.js ~ line 47 ~ exports.login= ~ _user", _user)
+    console.log("🚀 ~ file: authController.js ~ line 43 ~ exports.login= ~ req.body", req.body)
+    // const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
+    // const { data } = response
+    // console.log("🚀 ~ file: authController.js ~ line 46 ~ exports.login= ~ response", response.headers)
+    // let _user = data.user
+    let _user = req.body.user
+    const data = {
+      url: req.body.url
+    }
 
     if (data.url) {
       const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
@@ -55,8 +59,9 @@ exports.login = async (req, res, next) => {
     }
 
     const _response = await ssoRedirect(req, res, next)
+    console.log("🚀 ~ file: authController.js ~ line 63 ~ exports.login= ~ _response", _response)
     const { user, token } = _response
-    if(token) req.session.token = token
+    if (token) req.session.token = token
     if (!_user) {
 
       return respAuthFailed(res, undefined, "User not found");
@@ -70,7 +75,7 @@ exports.login = async (req, res, next) => {
     } else if (_user && !_user.password && userType === 'seller') {
 
       return respAuthFailed(res, undefined, "User not found");
-      
+
     }
 
     const buyer = await buyers.getBuyer(_user._id);
@@ -99,7 +104,7 @@ exports.login = async (req, res, next) => {
       const sessionCount = await sellers.getSessionCount(_user._id);
 
       const userAgent = getUserAgent(req.useragent);
-      
+
       const finalData = {
         userAgent,
         userId: _user._id,
@@ -107,23 +112,23 @@ exports.login = async (req, res, next) => {
         deviceId: user.deviceId,
         ipAddress
       }
-      
+
       const result1 = await sellers.handleUserSession(_user._id, finalData);
       const chatLogin = await getChat({ userId: _user._id })
       console.log("🚀 ~ file: authController.js ~ line 113 ~ exports.login= ~ chatLogin", chatLogin)
       let activeChat = {}
-      if (chatLogin) {
-        activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
-        // await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
-        console.log(activeChat, '------ Old Chat activated-----------')
-      } else {
-        const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile.toString() })
-        console.log("🚀 ~ file: authController.js ~ line 121 ~ exports.login= ~ chatUser", chatUser)
-        const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
-        activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: _user._id })
-        console.log(activeChat, '------ New Chat activated-----------')
-      }
-
+      // if (chatLogin) {
+      //   activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: user._id })
+      //   // await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
+      //   console.log(activeChat, '------ Old Chat activated-----------')
+      // } else {
+      //   const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile.toString() })
+      //   console.log("🚀 ~ file: authController.js ~ line 121 ~ exports.login= ~ chatUser", chatUser)
+      //   const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
+      //   activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: _user._id })
+      //   console.log(activeChat, '------ New Chat activated-----------')
+      // }
+      console.log(res.headers, ".............................")
       return respSuccess(res, { user, token, activeChat }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");
@@ -155,14 +160,14 @@ exports.logout = async (req, res) => {
       const result = sellers.handleUserLogoutSession(data);
       const response = await axios.post(ssoLogoutUrl, { params: { serviceURL } })
       console.log("🚀 ~ file: authController.js ~ line 139 ~ exports.logout= ~ response", response)
-      if(response.data && response.data.success) {
+      if (response.data && response.data.success) {
 
         req.session = null //.distroy(function (err) {
-          // if (err) return respError(res, error.message)
-          // else return respSuccess(res, 'successfully logged out!');
+        // if (err) return respError(res, error.message)
+        // else return respSuccess(res, 'successfully logged out!');
         // })
         return respSuccess(res, 'successfully logged out!');
-        
+
       }
     }
 

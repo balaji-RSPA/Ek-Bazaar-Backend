@@ -357,7 +357,11 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
     }
-
+    query.bool.must.push({
+      "match": {
+        "status": true
+      }
+    })
     aggs = {
       "collapse": {
         "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
@@ -383,6 +387,11 @@ exports.sellerSearch = async (reqQuery) => {
     };
 
     query.bool.must.push(categoryMatch);
+    query.bool.must.push({
+      "match": {
+        "status": true
+      }
+    })
     query.bool.filter.push(sellerActiveAccount)
     if(reqQuery.findByEmail) {
       query.bool.must.push({
@@ -468,6 +477,11 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
     }
+     query.bool.must.push({
+       "match": {
+         "status": true
+       }
+     })
     aggs = {
       "collapse": {
         "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
@@ -499,6 +513,11 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
     }
+    query.bool.must.push({
+      "match": {
+        "status": true
+      }
+    })
     aggs = {
       "collapse": {
         "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
@@ -522,6 +541,11 @@ exports.sellerSearch = async (reqQuery) => {
         "parentCategoryId._id": parentId,
       },
     };
+    query.bool.must.push({
+      "match": {
+        "status": true
+      }
+    })
     query.bool.must.push(categoryMatch);
     query.bool.filter.push(sellerActiveAccount)
     if(reqQuery.findByEmail) {
@@ -592,7 +616,6 @@ exports.sellerSearch = async (reqQuery) => {
     }
     query.bool.filter.push(sellerActiveAccount)
   }
-  console.log(JSON.stringify(query), ' llllllllllllllllllll')
   return {
     query,
     aggs,
