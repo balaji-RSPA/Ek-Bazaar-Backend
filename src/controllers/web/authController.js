@@ -11,7 +11,7 @@ const {
 const { createToken, encodePassword } = require("../../utils/utils");
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { verifyJwtToken } = require("../../../sso-tools/jwt_verify");
-const {request} = require('../../utils/request')
+const { request } = require('../../utils/request')
 const { ssoLoginUrl, ssoLogoutUrl, authServiceURL } = require('../../utils/utils').globalVaraibles
 const { serviceURL } = authServiceURL()
 
@@ -40,14 +40,18 @@ exports.login = async (req, res, next) => {
   try {
 
     const { password, ipAddress, mobile, userType } = req.body;
-    const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
-    // const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
-    const { url } = response
-    let _user = response.user
-    console.log("🚀 ~ file: authController.js ~ line 47 ~ exports.login= ~ _user", _user)
+    console.log("🚀 ~ file: authController.js ~ line 43 ~ exports.login= ~ req.body", req.body)
+    // const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
+    // const { data } = response
+    // console.log("🚀 ~ file: authController.js ~ line 46 ~ exports.login= ~ response", response.headers)
+    // let _user = data.user
+    let _user = req.body.user
+    const data = {
+      url: req.body.url
+    }
 
-    if (url) {
-      const ssoToken = url.substring(url.indexOf("=") + 1)
+    if (data.url) {
+      const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
       req.session.ssoToken = ssoToken
       req.query = {
         ssoToken: ssoToken
@@ -55,6 +59,7 @@ exports.login = async (req, res, next) => {
     }
 
     const _response = await ssoRedirect(req, res, next)
+    console.log("🚀 ~ file: authController.js ~ line 63 ~ exports.login= ~ _response", _response)
     const { user, token } = _response
     if (token) req.session.token = token
     if (!_user) {
@@ -123,7 +128,7 @@ exports.login = async (req, res, next) => {
       //   activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: _user._id })
       //   console.log(activeChat, '------ New Chat activated-----------')
       // }
-
+      console.log(res.headers, ".............................")
       return respSuccess(res, { user, token, activeChat }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");

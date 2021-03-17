@@ -13,7 +13,7 @@ const request = axios.create({
 })
 
 request.interceptors.request.use(async (config) => {
-    console.log("🚀 ~ file: request.js ~ line 15 ~ request.interceptors.request.use ~ config", config)
+    // console.log("🚀 ~ file: request.js ~ line 15 ~ request.interceptors.request.use ~ config", config)
     config.headers.origin = serviceURL
     return config
   }, Promise.reject)
@@ -21,7 +21,7 @@ request.interceptors.request.use(async (config) => {
   request.interceptors.response.use(
     (response) => {
         console.log("🚀 ~ file: request.js ~ line 25 ~ response", response.headers)
-      return response.data
+      return response
     },
     (err) => {
     //   console.log("🚀 ~ file: request.js ~ line 33 ~ err", err)  
