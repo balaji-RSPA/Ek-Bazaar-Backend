@@ -35,6 +35,7 @@ const {
   otpVerification,
   passwordUpdate
 } = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan
 const { createTrialPlan } = SellerPlans
 const { createChat } = Chat
@@ -73,6 +74,8 @@ const { sms } = require("../../utils/globalConstants")
 // const {username, password, senderID, smsURL} = sms
 
 const isProd = process.env.NODE_ENV === "production"
+const ssoRegisterUrl = global.environment === "production" ? "" : global.environment === "staging" ? "https://auth.tech-active.com/simplesso/register" : "http://localhost:3010/simplesso/register"
+const serviceURL = global.environment === "production" ? "" : global.environment === "staging" ? "https://tradebazaarapi.tech-active.com" : "http://localhost:8070"
 
 
 function encrypt(text) {
@@ -223,7 +226,7 @@ const getUserAgent = (userAgent) => {
 
 }
 
-module.exports.addUser = async (req, res) => {
+module.exports.addUser = async (req, res, next) => {
   try {
     const { password, mobile, ipAddress, preferredLanguage } = req.body;
     const dateNow = new Date();
@@ -321,14 +324,31 @@ module.exports.addUser = async (req, res) => {
         const log = await addSellerPlanLog(planLog)
 
       }
-      const deviceId = machineIdSync();
+
+      const response = await axios.post(ssoRegisterUrl, { mobile: mobile.mobile, password }, { params: { serviceURL } })
+      const { data } = response
+      let _user = data.user
+
+      if (data.url) {
+        const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
+        req.session.ssoToken = ssoToken
+        req.query = {
+          ssoToken: ssoToken
+        }
+      }
+
+      const _response = await ssoRedirect(req, res, next)
+      const { user, token } = _response
+
+      if (token) req.session.token = token
+
       const userAgent = getUserAgent(req.useragent)
-      const token = createToken(deviceId, { userId: seller.userId });
+      
       const finalData = {
         userAgent,
         userId: seller.userId,
         token,
-        deviceId,
+        deviceId: user.deviceId,
         ipAddress
       }
       console.log('account created-------------------')
@@ -336,7 +356,7 @@ module.exports.addUser = async (req, res) => {
       const result1 = await handleUserSession(seller.userId, finalData)
       return respSuccess(
         res,
-        { token, buyer, seller },
+        { token, buyer, seller, user },
         "Account Created Successfully"
       );
     }
@@ -611,35 +631,10 @@ module.exports.updateNewPassword = async (req, res) => {
   }
 };
 
-// let dt = new Date()
-//     let date = `${dt.getUTCDate()}`
-//     let month = `${dt.getUTCMonth()+1}`
-//     let year = `${dt.getUTCFullYear()}`
-//     let hours = `${dt.getUTCHours()}`
-//     let minutes = `${dt.getUTCMinutes()}`
-//     let seconds = `${dt.getUTCSeconds()}`
-//     let milisecs = `${dt.getUTCMilliseconds()}`
-
-//     const currentTime = `${year}-${month.length === 1 ? `0${month}` : month}-${date.length === 1 ? `0${date}` : date} ${hours.length === 1 ? `0${hours}` : hours}:${minutes.length === 1 ? `0${minutes}` : minutes}:${seconds.length === 1 ? `0${seconds}` : seconds}.${milisecs}Z`
-
-//     const timestamp = dt.getTime()
-//     const newTimestamp = timestamp - 12000000
-//     dt = new Date(newTimestamp)
-//     date = `${dt.getUTCDate()}`
-//     month = `${dt.getUTCMonth()+1}`
-//     year = `${dt.getUTCFullYear()}`
-//     hours = `${dt.getUTCHours()}`
-//     minutes = `${dt.getUTCMinutes()}`
-//     seconds = `${dt.getUTCSeconds()}`
-//     milisecs = `${dt.getUTCMilliseconds()}`
-
-//     const startTime = `${year}-${month.length === 1 ? `0${month}` : month}-${date.length === 1 ? `0${date}` : date} ${hours.length === 1 ? `0${hours}` : hours}:${minutes.length === 1 ? `0${minutes}` : minutes}:${seconds.length === 1 ? `0${seconds}` : seconds}.${milisecs}Z`
-
 module.exports.deleteRecords = async (req, res) => new Promise(async (resolve, reject) => {
 
   try {
 
-    // console.log('delete ------')
     const arr = ['5f97acc7b9a4b5524568716a', '5f97ace6b9a4b5524568716b', '5f97acf2b9a4b5524568716c', '5fa4fac96eb907267c7d15ce', '5fa5506e0524f35f355955f2',
       '5fa61d53520fd81fba4a1d6d', '5fb397c072e59028f0d17e32', '5fb39ad034d3932a93e0f079', '5fb46f021135863cd3c66664', '5fb5f268805ec7db145b4e58', '5fddfd218994761734d8011b',
       '5fe08558ad5cb94f153017d6', '5fe226ddcc99a97286d53e35', '5fe2271e30e98d73b97671ea']

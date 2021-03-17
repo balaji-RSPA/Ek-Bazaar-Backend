@@ -355,7 +355,6 @@ module.exports.deleteSellerProduct = async (req, res) => {
 
 // function masterMapData(val, keywords) {
 const masterMapData = (val, type) => new Promise((resolve, reject) => {
-  console.log("🚀 ~ file: sellersController.js ~ line 395 ~ masterMapData ~ val", val)
   const _Scity = [];
   let serviceProductData;
   if (val.serviceCity && val.serviceCity.length) {
@@ -390,12 +389,11 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
   if (type === "update") {
     data = {
       productDetails: val.productDetails && val.productDetails || null,
-      status: val.status || true,
+      status: val.status !== null && val.status !== undefined ? val.status : true,
       batch: 1,
       keywords,
       serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null
     }
-
   } else {
     data = {
       sellerId: val.sellerId && {
@@ -594,17 +592,16 @@ module.exports.addSellerProduct = async (req, res) => {
 
 module.exports.updateSellerProduct = async (req, res) => {
   // const {id,inStock} = req.body
-
   try {
     const {
       body,
-      files
+      files,
+      prodDtl
     } = req
     // console.log('update poroduct---', JSON.parse(body.productDetails))
     let updateDetail
-    if (body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
+    if (body && body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
-      console.log("🚀 ~ file: sellersController.js ~ line 586 ~ module.exports.updateSellerProduct= ~ productDetails", files)
       let findCities = await getSellerSelectedCities(productDetails.serviceCity);
       if (findCities && findCities.length) {
         productDetails.serviceCity = findCities.map((val) => ({
@@ -618,7 +615,7 @@ module.exports.updateSellerProduct = async (req, res) => {
       // /* need to optimize the below code*/
       if (files && files.document) {
         let data = {
-          Key: `${productDetails.sellerId}/${files.document.name}`,
+          Key: `${productDetails.sellerId._id}/${files.document.name}`,
           body: files.document.data
         }
         const _document = await uploadToDOSpace(data)
@@ -634,7 +631,7 @@ module.exports.updateSellerProduct = async (req, res) => {
 
       if (files && files.image1) {
         let data = {
-          Key: `${productDetails.sellerId}/${files.image1.name}`,
+          Key: `${productDetails.sellerId._id}/${files.image1.name}`,
           body: files.image1.data
         }
         const _image1 = await uploadToDOSpace(data)
@@ -646,7 +643,7 @@ module.exports.updateSellerProduct = async (req, res) => {
 
       if (files && files.image2) {
         let data = {
-          Key: `${productDetails.sellerId}/${files.image2.name}`,
+          Key: `${productDetails.sellerId._id}/${files.image2.name}`,
           body: files.image2.data
         }
         const _image2 = await uploadToDOSpace(data)
@@ -658,7 +655,7 @@ module.exports.updateSellerProduct = async (req, res) => {
 
       if (files && files.image3) {
         let data = {
-          Key: `${productDetails.sellerId}/${files.image3.name}`,
+          Key: `${productDetails.sellerId._id}/${files.image3.name}`,
           body: files.image3.data
         }
         const _image3 = await uploadToDOSpace(data)
@@ -670,7 +667,7 @@ module.exports.updateSellerProduct = async (req, res) => {
 
       if (files && files.image4) {
         let data = {
-          Key: `${productDetails.sellerId}/${files.image4.name}`,
+          Key: `${productDetails.sellerId._id}/${files.image4.name}`,
           body: files.image4.data
         }
         const _image4 = await uploadToDOSpace(data)
@@ -682,8 +679,14 @@ module.exports.updateSellerProduct = async (req, res) => {
       /* till here*/
 
       updateDetail = await addProductDetails(productDetails._id, productDetails);
+    } else if (prodDtl) {
+      /*this is for updating the seller document field*/
+      updateDetail = await addProductDetails(prodDtl._id, {
+        "productDetails.document": null,
+        "productDetails.documentName":null
+      });
     }
-    if (body.id && body.imageType) {
+    if (body && body.id && body.imageType) {
       const data = {
         Key: `${body.sellerId}/${body.fileName}`,
         body: files.file.data
@@ -700,7 +703,7 @@ module.exports.updateSellerProduct = async (req, res) => {
       imageDtl[imageVal] = imageNameLoc;
       updateDetail = await addProductDetails(body.id, imageDtl)
     }
-    if (body.id && (body.status === false || body.status)) {
+    if (body && body.id && (body.status === false || body.status)) {
       updateDetail = await addProductDetails(body.id, {
         "status": body.status
       })
@@ -708,11 +711,9 @@ module.exports.updateSellerProduct = async (req, res) => {
     let seller = await getSellerProfile(updateDetail.sellerId)
     if (updateDetail) {
       const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
-      // console.log("🚀 ~ file: sellersController.js ~ line 662 ~ module.exports.updateSellerProduct= ~ updatedProduct", updatedProduct[0]["productDetails"])
-      updatedProduct[0]["panIndia"] = body.panIndia
+      updatedProduct[0]["panIndia"] = body && body.panIndia
       const priority = await mapPriority(seller && seller.length && seller[0].planId || "")
       const masterData = await masterMapData(updatedProduct[0], 'update')
-      // console.log("🚀 ~ file: sellersController.js ~ line 665 ~ module.exports.updateSellerProduct= ~ masterData", { ...masterData, priority })
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
       const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: 8 })
     }

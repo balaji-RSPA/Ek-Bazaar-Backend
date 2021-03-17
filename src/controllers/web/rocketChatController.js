@@ -99,8 +99,12 @@ exports.setLanguage = async (req, res) => {
         const {
             chatAthToken, chatUserId, chatUsername, userID
         } = req
-        const { lang } = req.body
+        const { lang, fromWhere, roomId } = req.body
+        console.log("🚀 ~ file: rocketChatController.js ~ line 103 ~ exports.setLanguage= ~ req.body", req.body)
         const chatUpdate = await createChatSession({ userId: userID }, { language: lang, isLanguageSet: false })
+        if (fromWhere) {
+            this.updateLanguage(req, roomId)
+        }
         // console.log(lang, ' set language  room-------------')
         // const url = `${chatDomain}/api/v1/autotranslate.saveSettings`
         // // const data = {
@@ -237,6 +241,7 @@ exports.getHistory = async (req, res) => {
         } = req
 
         const { roomId, limit, offset } = req.query
+        console.log("🚀 ~ file: rocketChatController.js ~ line 244 ~ exports.getHistory= ~ req.query", req.query)
         await this.updateLanguage(req, roomId)
         let _temp = {};
 

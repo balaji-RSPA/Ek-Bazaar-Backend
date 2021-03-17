@@ -1,97 +1,104 @@
 require('dotenv').config();
 const { env } = process
 global.environment = env.NODE_ENV || 'production'
-const https = require("https")
-const express = require('express')
-const bodyParser = require('body-parser');
-const fileUpload = require('express-fileupload');
+
 const path = require('path');
+const express = require('express')
+const session = require("express-session");
+const useragent = require('express-useragent');
+const fileUpload = require('express-fileupload');
+const cookieParser = require('cookie-parser')
+const morgan = require("morgan");
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const cron = require("node-cron");
-const Logger = require('./src/utils/logger');
-const useragent = require('express-useragent');
-const config = require('./config/config')
-const { tradeDb } = config
 
-const { sellerBulkInsertWithBatch } = require("./src/controllers/web/sellersController")
-const { captureRazorPayPayment, createPdf } = require('./src/controllers/web/paymentController')
-const { deleteRecords } = require('./src/controllers/web/userController')
-const { updateSelleProfileChangesToProducts, updateKeywords, sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
-const { updateLevel2l1Data, updateLevel3l1Data, updatePriority } = require('./src/controllers/web/testController')
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
-// require('./config/db').elasticSearchConnect();
+const Logger = require('./src/utils/logger');
+const config = require('./config/config')
+const isAuthenticated = require("./sso-tools/isAuthenticated");
+const { ssoRedirect } = require("./sso-tools/checkSSORedirect");
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
+const { updatePriority } = require('./src/controllers/web/testController')
+const { respSuccess } = require("./src/utils/respHadler")
+const router = require('./src/routes');
+
+const { tradeDb } = config
 
 const app = express();
-const server = require('http').Server(app);
-
-const router = require('./src/routes');
-const models = require('./src/models')
-// const States = models.States
-// const Countries = models.Countries
-
-const { suggestions, level1, level2, level3, level4, level5, city, state, country, serviceType, tradeMaster } = require("./elasticsearch-mapping");
-const { checkIndices, putMapping, suggestionsMapping } = suggestions
-const l1CheckIndices = level1.checkIndices,
-    l1PutMapping = level1.putMapping,
-    l2CheckIndices = level2.checkIndices,
-    l2PutMapping = level2.putMapping,
-    l3CheckIndices = level3.checkIndices,
-    l3PutMapping = level3.putMapping,
-    l4CheckIndices = level4.checkIndices,
-    l4PutMapping = level4.putMapping,
-    l5CheckIndices = level5.checkIndices,
-    l5PutMapping = level5.putMapping,
-    cityCheckIndices = city.checkIndices,
-    cityPutMapping = city.putMapping,
-    stateCheckIndices = state.checkIndices,
-    statePutMapping = state.putMapping,
-    countryCheckIndices = country.checkIndices,
-    countryPutMapping = country.putMapping,
-    serviceTypeCheckIndices = serviceType.checkIndices,
-    serviceTypePutMapping = serviceType.putMapping,
-    tradeMasterCheckIndices = tradeMaster.checkIndicesMaster,
-    tradeMasterPutMapping = tradeMaster.putMappingMaster
-
-app.use(useragent.express());
-app.use(fileUpload());
-app.use(cors());
+// app.use(bodyParser.json({ limit: '200mb' }));
+app.use(bodyParser.json());
+app.use(cors({
+    origin: ["http://localhost:8085", "https://tradebazaar.tech-active.com", "https://www.trade.ekbazaar.com"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+}))
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-app.use(bodyParser.json({ limit: '200mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.set("trust proxy", 1);
+const cookieOptions = {
+    path: "/",
+    expires: 1000 * 60 * 60 * 24 * 15,
+    // domain: ".tech-active.com",
+    sameSite: "none",
+    httpOnly: true,
+    // secure: true,
+};
 
-/*************************** SOCKET INTEGRATION ********************************/
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS, HEAD");
+    res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization");
+    // res.cookie("token","ghjkk5247986-512222222222.dfghjkk", {
+    //   secure: true,
+    //   httpOnly: true,
+    //   domain: "tradebazaarapi.tech-acive.com"
+    // });
+    next();
+});
 
-const io = require('socket.io')(server)
-
-var tradeSellerChat = io.of('/chat-sendMesasge')
-    .on('connection', function (socket) {
-        item = items[Math.floor(Math.random() * items.length)];
-        log(colors.verbose("New client connected" + item(socket.id)));
-        socket.emit('connected', { status: 'Connected' });
-        socket.on("new-message", data => {
-            let _data = JSON.parse(data)
-            tradeSellerChat.emit('send-message', { name: "nothing" });
-        });
-
-        socket.on('disconnect', (socket) => {
-            // delete user socket id from list of connected users
-            for (let uid in global.userSocketIds) {
-                if (global.userSocketIds.hasOwnProperty(uid) && global.userSocketIds[uid] === socket.id) {
-                    delete global.userSocketIds[uid];
-                }
-            }
-        })
+app.use(
+    session({
+        key: "userId",
+        secret: "keyboard cat",
+        resave: false,
+        saveUninitialized: false,
+        // domain: ".tech-active.com",
+        cookie: {
+            ...cookieOptions
+        },
     })
+);
+app.use(useragent.express());
+app.use(fileUpload());
 
+app.use(express.static(path.join(__dirname, 'public')));
+const server = require('http').Server(app);
 
-/*************************** END ********************************/
-
+app.use(router)
 app.get('/', function (req, res) {
     console.log('Home page')
-    res.send('Its trade live')
+    res.send("It's Ekbazaar Trade beta api server")
+})
+
+app.get("/api/logged", async (req, res, next) => {
+    let user = await ssoRedirect(req, res, next)
+    if (user && user.error) {
+        respSuccess(res, error)
+    } else if (!user) {
+        user = await isAuthenticated(req, res, next)
+        if (!user) respSuccess(res, "user is not logged in any app")
+        else {
+            // req.session.cookie._expires = 60 * 60 * 24
+            respSuccess(res, { user, token: req.session.token })
+        }
+    } else {
+        respSuccess(res, { user, token: req.session.token })
+    }
 })
 
 app.post('/capture/:paymentId', async function (req, res) {
@@ -134,22 +141,16 @@ app.use(router)
 server.listen(tradeDb.server_port);
 
 server.on('error', (e) => {
-
     console.log(e, "Can't start the server!");
     Logger.error(e)
-
 });
 
 server.on('listening', () => {
-
     console.log(`Listening:${server.address().port}`);
     Logger.info(`Listening:${server.address().port}`)
-
 });
 
 if (env.NODE_ENV === "production") {
-
-
     const queSms = cron.schedule('* * * * *', async () => {
         queSms.stop()
         console.log('-------------------- queSms file cron start --------------------', new Date());
