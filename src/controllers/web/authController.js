@@ -57,6 +57,7 @@ exports.login = async (req, res, next) => {
         ssoToken: ssoToken
       }
     }
+    console.log("🚀 ~ file: authController.js ~ line 57 ~ exports.login= ~ req.query", req.query)
 
     const _response = await ssoRedirect(req, res, next)
     console.log("🚀 ~ file: authController.js ~ line 63 ~ exports.login= ~ _response", _response)
