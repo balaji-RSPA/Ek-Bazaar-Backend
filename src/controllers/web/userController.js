@@ -512,14 +512,11 @@ module.exports.updateUser = async (req, res) => {
 
 
         const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
-        console.log("🚀 ~ file: userController.js ~ line 495 ~ module.exports.updateUser= ~ chatUser", chatUser)
 
         if (chatUser) {
           const chatDetails = await createChat({ userId: seller.userId }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: seller.userId })
-          // console.log(chatDetails, " ccccccccccccccccccccccc")
           activeChat = await userChatLogin({ username: chatDetails.details.user.username, password: "active123", customerUserId: seller.userId })
         }
-        // console.log(chatUser, " uuuuuuuuuuuuuuuuuuuuuuuuuuuu")
 
       }
       respSuccess(res, {
