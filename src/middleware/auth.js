@@ -125,18 +125,17 @@ const checkRequestTime = (userId, deviceId, token) => new Promise((resolve, reje
 })
 
 exports.authenticate = async (req, res, next) => {
-  console.log("🚀 ~ file: auth.js ~ line 108 ~ exports.authenticate= ~ req", req.headers.authorization)
+
   const token = req.headers.authorization.split('|')[1];
   try {
-    console.log(req.session.ssoToken)
+
     const decoded = await verifyJwtToken(token) //jwt.verify(token, JWTTOKEN);
-    console.log("🚀 ~ file: auth.js ~ line 114 ~ exports.authenticate= ~ decoded", decoded)
     const { deviceId, userId } = decoded;
     req.deviceId = deviceId
     req.userID = userId;
     req.token = token
     const check = await checkRequestTime(userId, deviceId, token);
-    console.log("🚀 ~ file: auth.js ~ line 139 ~ exports.authenticate= ~ check", check)
+
     if (check) {
 
       const chat = await getChatRequest(userId)

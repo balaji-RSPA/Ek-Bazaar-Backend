@@ -228,18 +228,18 @@ const getUserAgent = (userAgent) => {
 
 module.exports.addUser = async (req, res, next) => {
   try {
-    const { password, mobile, ipAddress, preferredLanguage } = req.body;
+    const { password, mobile, ipAddress, preferredLanguage, user, _user, url } = req.body;
     const dateNow = new Date();
-    req.body.password = encodePassword(password);
-    const tenderUser = {
-      countryCode: mobile.countryCode,
-      mobile: mobile.mobile,
-      isPhoneVerified: 2,
-      password: req.body.password,
-      preferredLanguage
-    };
+    // req.body.password = encodePassword(password);
+    // const tenderUser = {
+    //   countryCode: mobile.countryCode,
+    //   mobile: mobile.mobile,
+    //   isPhoneVerified: 2,
+    //   password: req.body.password,
+    //   preferredLanguage
+    // };
 
-    const user = await addUser(tenderUser);
+    // const user = await addUser(tenderUser);
 
     req.body.userId = user._id;
     const buyerData = {
@@ -325,12 +325,12 @@ module.exports.addUser = async (req, res, next) => {
 
       }
 
-      const response = await axios.post(ssoRegisterUrl, { mobile: mobile.mobile, password }, { params: { serviceURL } })
-      const { data } = response
-      let _user = data.user
+      // const response = await axios.post(ssoRegisterUrl, { mobile: mobile.mobile, password }, { params: { serviceURL } })
+      // const { data } = response
+      // let _user = data.user
 
-      if (data.url) {
-        const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
+      if (url) {
+        const ssoToken = url.substring(url.indexOf("=") + 1)
         req.session.ssoToken = ssoToken
         req.query = {
           ssoToken: ssoToken
@@ -343,7 +343,7 @@ module.exports.addUser = async (req, res, next) => {
       if (token) req.session.token = token
 
       const userAgent = getUserAgent(req.useragent)
-      
+
       const finalData = {
         userAgent,
         userId: seller.userId,
@@ -515,7 +515,7 @@ module.exports.updateUser = async (req, res) => {
         console.log("🚀 ~ file: userController.js ~ line 495 ~ module.exports.updateUser= ~ chatUser", chatUser)
 
         if (chatUser) {
-          const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: seller.userId })
+          const chatDetails = await createChat({ userId: seller.userId }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: seller.userId })
           // console.log(chatDetails, " ccccccccccccccccccccccc")
           activeChat = await userChatLogin({ username: chatDetails.details.user.username, password: "active123", customerUserId: seller.userId })
         }

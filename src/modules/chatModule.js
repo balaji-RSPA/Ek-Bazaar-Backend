@@ -1,8 +1,13 @@
 const { Chat } = require('../models')
 
-module.exports.createChat = (newData) =>
+module.exports.createChat = (query, newData) =>
     new Promise((resolve, reject) => {
-        Chat.create(newData)
+        // Chat.create(newData)
+        //     .then((doc) => {
+        //         resolve(doc);
+        //     })
+        //     .catch((error) => reject(error.message));
+        Chat.findOneAndUpdate(query, newData, { new: true, upsert: true })
             .then((doc) => {
                 resolve(doc);
             })

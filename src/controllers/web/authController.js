@@ -40,11 +40,15 @@ exports.login = async (req, res, next) => {
   try {
 
     const { password, ipAddress, mobile, userType } = req.body;
-    const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
-    // const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
-    const { data } = response
-    let _user = data.user
-    console.log("🚀 ~ file: authController.js ~ line 47 ~ exports.login= ~ _user", _user)
+
+    // const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
+    // // const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
+    // const { data } = response
+    // let _user = data.user
+    let _user = req.body.user
+    const data = {
+      url: req.body.url
+    }
 
     if (data.url) {
       const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
@@ -55,7 +59,7 @@ exports.login = async (req, res, next) => {
     }
 
     const _response = await ssoRedirect(req, res, next)
-    console.log("🚀 ~ file: authController.js ~ line 63 ~ exports.login= ~ _response", _response)
+
     const { user, token } = _response
     if (token) req.session.token = token
     if (!_user) {
@@ -111,18 +115,31 @@ exports.login = async (req, res, next) => {
       const result1 = await sellers.handleUserSession(_user._id, finalData);
       const chatLogin = await getChat({ userId: _user._id })
       console.log("🚀 ~ file: authController.js ~ line 85 ~ exports.login= ~ chatLogin", chatLogin)
-      // const sellerDetails = await sellers.getSeller(_user._id);
+      
       let activeChat = {}
       if (chatLogin) {
-        activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: _user._id })
-        // activeChat = await userChatLogin({ username: "sreeraj@active.agency", password: "IamSree@2302", customerUserId: _user._id })
-        // await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
+        if (chatLogin.details) {
+          activeChat = await userChatLogin({ username: chatLogin.details && chatLogin.details.user.username, password: "active123", customerUserId: _user._id })
+        }
+        else {
+          const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile && _user.mobile.toString() })
+          console.log("🚀 ~ file: authController.js ~ line 129 ~ exports.login= ~ chatUser", chatUser)
+          if (chatUser) {
+            const chatDetails = await createChat({ userId: _user._id }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
+            activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
+          }
+          else {
+            console.error("catch-block");
+            activeChat = await userChatLogin({ username: _user.mobile && _user.mobile.toString(), password: "active123", customerUserId: _user._id })
+          }
+        }
         console.log(activeChat, '------ Old Chat activated-----------')
       } else {
         console.log(' chat crfeate initiated-------------')
-        const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
-        const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
-        activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: _user._id })
+        const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile && _user.mobile.toString() })
+        console.log("🚀 ~ file: authController.js ~ line 129 ~ exports.login= ~ chatUser", chatUser)
+        const chatDetails = await createChat({ userId: _user._id }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
+        activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
         console.log(activeChat, '------ New Chat activated-----------')
       }
 

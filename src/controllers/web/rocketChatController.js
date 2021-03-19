@@ -151,24 +151,29 @@ exports.createUser = async (req, res) => {
 
         const url = `${chatDomain}/api/v1/users.create`
 
-        const result = await axios.post(url, userToAdd,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Auth-Token': adminLogin.authToken,
-                    'X-User-Id': adminLogin.userId
-                }
-            })
-        // console.log(result.data, ' new usereerererer------------')
-
+        try{
+            const result = await axios.post(url, userToAdd,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Auth-Token': adminLogin.authToken,
+                        'X-User-Id': adminLogin.userId
+                    }
+                })
+                return respSuccess(res, result.data)
+        }
+        catch(err){
+            console.log("Create-User ERROR", err);
+        }
+        
         // const user = await rocketChatClient.users.create(userToAdd);
         // const logout = await rocketChatClient.logout()
         // rocketChatClient.setAuthToken(user.authToken)
         // rocketChatClient.setUserId(user.userId)
-        return respSuccess(res, result.data)
+        
 
     } catch (error) {
-        console.log(error)
+        console.error("Error-block axios Create-user", error)
         return respError(res, error.message)
     }
 }

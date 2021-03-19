@@ -20,7 +20,6 @@ request.interceptors.request.use(async (config) => {
 
 request.interceptors.response.use(
   (response) => {
-    console.log("🚀 ~ file: request.js ~ line 25 ~ response", response.headers)
     return response
   },
   (err) => {
