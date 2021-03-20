@@ -61,6 +61,11 @@ const alloweOrigin = {
   "http://localhost:8060": true,
   "http://localhost:8085": true,
   "http://localhost:8080": true,
+  "https://tradebazaarapi.tech-active.com": true,
+  "https://tradebazaar.tech-active.com": true,
+  "https://www.trade.ekbazaar.com": true,
+  "https://ekbazaar.tech-active.com": true,
+  "https://www.tenders.ekbazaar.com": true
 };
 
 const deHyphenatedUUID = () => uuidv4().replace(/-/gi, "");
@@ -76,6 +81,11 @@ const originAppName = {
   "http://localhost:8060": "tenders_sso_consumer",
   "http://localhost:8085": "trade_sso_consumer",
   "http://localhost:8080": "tenders_sso_consumer",
+  "https://tradebazaarapi.tech-active.com": "trade_sso_consumer",
+  "https://tradebazaar.tech-active.com": "trade_sso_consumer",
+  "https://www.trade.ekbazaar.com": "trade_sso_consumer",
+  "https://ekbazaar.tech-active.com": "tenders_sso_consumer",
+  "https://www.tenders.ekbazaar.com": "tenders_sso_consumer"
 };
 
 let userDB = {
@@ -214,12 +224,12 @@ const register = async (req, res, next) => {
 }
 
 const doLogin = async (req, res, next) => {
-  console.log("🚀 ~ file: index.js ~ line 204 ~ doLogin ~ req", req.headers)
+  console.log("🚀 ~ file: index.js ~ line 204 ~ doLogin ~ req", req.body)
   // do the validation with email and password
   // but the goal is not to do the same in this right now,
   // like checking with Datebase and all, we are skiping these section
   // const { email, password } = req.body;
-  const { password, ipAddress, mobile, userType, origin } = req.body;
+  const { password, ipAddress, mobile, userType, origin, location } = req.body;
   let url = ""
   if (origin === "trade") {
     baseURL = trade;
@@ -228,12 +238,12 @@ const doLogin = async (req, res, next) => {
   }
   else if (origin === "tender") {
     baseURL = tender;
-    url = "v1/user/login"
+    url = baseURL + "v1/user/login"
     req.query.serviceURL = _tender
   }
   else {
     baseURL = investment;
-    url = ""
+    url = baseURL + ""
     req.query.serviceURL = _investment
   }
 
@@ -280,7 +290,8 @@ const doLogin = async (req, res, next) => {
 
   const intrmid = encodedId();
   storeApplicationInCache(_url.origin, id, intrmid);
-  const response = await axios({ url, method: "POST", data: { user, url: `${serviceURL}?ssoToken=${intrmid}`, origin, password, ipAddress, mobile, userType } })
+  console.log("🚀 ~ file: index.js ~ line 302 ~ doLogin ~ url", url)
+  const response = await axios({ url, method: "POST", data: { user, url: `${serviceURL}?ssoToken=${intrmid}`, origin, password, ipAddress, mobile, userType, location } })
   const { data } = response
   console.log("🚀 ~ file: index.js ~ line 281 ~ doLogin ~ response", response.data)
   req.session.token = data.data.token
@@ -317,8 +328,8 @@ const login = async (req, res, next) => {
     return respSuccess(res, { user: req.session.user, token: req.session.token })
     // return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` })
   }
-
-  next()
+  respError(res, "User is not logged in")
+  // next()
 };
 
 const logout = async (req, res, next) => {

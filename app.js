@@ -14,7 +14,10 @@ const router = require("./router");
 const app = express();
 app.use(bodyParser.json());
 app.use(cors({
-  origin: ["https://tradeapi.ekbazaar.com", "https://tradebazaarapi.tech-active.com", "http://localhost:8070", "http://localhost:8085", "https://tradebazaar.tech-active.com", "https://www.trade.ekbazaar.com"],
+  origin: [
+    "https://tradeapi.ekbazaar.com", "https://tradebazaarapi.tech-active.com", "http://localhost:8070", 
+    "http://localhost:8085", "https://tradebazaar.tech-active.com", "https://www.trade.ekbazaar.com",
+    "http://localhost:8080", "https://ekbazaar.tech-active.com", "https://www.tenders.ekbazaar.com"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
   credentials: true,
 }))
