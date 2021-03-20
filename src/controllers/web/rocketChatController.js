@@ -31,20 +31,40 @@ exports.setChatSession = (data) => {
 }
 
 exports.userLogin = async (req, res) => {
-    const { username, password, customerUserId } = req.body
+    const { username, password, userId, buyerId, sellerId, name, email } = req.body
     try {
-        const login = await rocketChatClient.login(username, password)
-        // await this.setChatSession({ authToken: login.authToken, userId: login.userId })
-        // rocketChatClient.setAuthToken(login.authToken)
-        // rocketChatClient.setUserId(login.userId)
-        const session = {
-            authToken: login.authToken,
-            userId: login.userId,
-            username: login.me.username
+        console.log("🚀 ~ file: rocketChatController.js ~ line 35 ~ exports.userLogin= ~ req.body", req.body)
+        const chatLogin = await getChat({ userId })
+        let activeChat = {}
+        if (chatLogin) {
+
+            console.log(' -------------- old chat Login ----------- ')
+            activeChat = await this.userChatLogin({ username, password: "active123", customerUserId: userId })
+
+        } else {
+            console.log('------------------- new Chat user creating--------------')
+            const chatUser = await this.createChatUser({ name, email, username: username.toString() })
+            if (chatUser) {
+                const chatDetails = await createChat({ userId }, { details: chatUser, sellerId, buyerId, userId })
+                activeChat = await this.userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: userId })
+            }
+
         }
-        await updateChatSession({ userId: customerUserId }, { session: { ...session } })
-        return respSuccess(res, login, "Logged In!")
-        // return (login, "Logged In!")
+
+
+
+        // const login = await rocketChatClient.login(username, password)
+        // // await this.setChatSession({ authToken: login.authToken, userId: login.userId })
+        // // rocketChatClient.setAuthToken(login.authToken)
+        // // rocketChatClient.setUserId(login.userId)
+        // const session = {
+        //     authToken: login.authToken,
+        //     userId: login.userId,
+        //     username: login.me.username
+        // }
+        // await updateChatSession({ userId: customerUserId }, { session: { ...session } })
+        console.log(activeChat, ' kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+        return respSuccess(res, activeChat, "Logged In!")
     } catch (error) {
         console.log(error)
         respError(res, error.message, "Invalid credentials")
@@ -151,7 +171,7 @@ exports.createUser = async (req, res) => {
 
         const url = `${chatDomain}/api/v1/users.create`
 
-        try{
+        try {
             const result = await axios.post(url, userToAdd,
                 {
                     headers: {
@@ -160,17 +180,17 @@ exports.createUser = async (req, res) => {
                         'X-User-Id': adminLogin.userId
                     }
                 })
-                return respSuccess(res, result.data)
+            return respSuccess(res, result.data)
         }
-        catch(err){
+        catch (err) {
             console.log("Create-User ERROR", err);
         }
-        
+
         // const user = await rocketChatClient.users.create(userToAdd);
         // const logout = await rocketChatClient.logout()
         // rocketChatClient.setAuthToken(user.authToken)
         // rocketChatClient.setUserId(user.userId)
-        
+
 
     } catch (error) {
         console.error("Error-block axios Create-user", error)
@@ -539,7 +559,7 @@ exports.userChatLogin = async (data) => {
             userId: login.userId,
             username: login.me.username
         }
-        await updateChatSession({ userId: customerUserId }, {
+        const chatDetails = await updateChatSession({ userId: customerUserId }, {
             session: {
                 ...session
             }
@@ -550,7 +570,7 @@ exports.userChatLogin = async (data) => {
             chatUsername: login.me.username
         })
         // console.log(customerUserId, session, ' ssssssssssssss')
-        return login
+        return { ...login, language: chatDetails.isLanguageSet ? chatDetails.language : '' }
     } catch (error) {
         // console.log(error)
         return error.message

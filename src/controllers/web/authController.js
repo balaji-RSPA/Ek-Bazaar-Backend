@@ -40,6 +40,7 @@ exports.login = async (req, res, next) => {
   try {
 
     const { password, ipAddress, mobile, userType } = req.body;
+    console.log("🚀 ~ file: authController.js ~ line 43 ~ exports.login= ~ req.body", req.body)
 
     // const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
     // // const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
@@ -57,7 +58,6 @@ exports.login = async (req, res, next) => {
         ssoToken: ssoToken
       }
     }
-
     const _response = await ssoRedirect(req, res, next)
 
     const { user, token } = _response
@@ -68,7 +68,7 @@ exports.login = async (req, res, next) => {
 
     } else if (_user && !_user.password && userType === 'buyer') {
 
-      const _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
+      _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
       _user = await sellers.checkUserExistOrNot({ mobile });
       _user = _user[0]
 
@@ -80,6 +80,7 @@ exports.login = async (req, res, next) => {
 
     const buyer = await buyers.getBuyer(_user._id);
     const seller = await sellers.getSeller(_user._id);
+    console.log("🚀 ~ file: authController.js ~ line 83 ~ exports.login= ~ seller", seller)
     if (userType === 'seller') {
 
       if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
@@ -99,6 +100,7 @@ exports.login = async (req, res, next) => {
 
     }
 
+    console.log("🚀 ~ file: authController.js ~ line 49 ~ exports.login= ~ _user", _user, seller, buyer)
     const result = await bcrypt.compare(password, _user.password);
     if (result) {
       const sessionCount = await sellers.getSessionCount(_user._id);
@@ -113,35 +115,41 @@ exports.login = async (req, res, next) => {
         ipAddress
       }
       const result1 = await sellers.handleUserSession(_user._id, finalData);
-      const chatLogin = await getChat({ userId: _user._id })
-      console.log("🚀 ~ file: authController.js ~ line 85 ~ exports.login= ~ chatLogin", chatLogin)
-      
-      let activeChat = {}
-      if (chatLogin) {
-        if (chatLogin.details) {
-          activeChat = await userChatLogin({ username: chatLogin.details && chatLogin.details.user.username, password: "active123", customerUserId: _user._id })
-        }
-        else {
-          const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile && _user.mobile.toString() })
-          console.log("🚀 ~ file: authController.js ~ line 129 ~ exports.login= ~ chatUser", chatUser)
-          if (chatUser) {
-            const chatDetails = await createChat({ userId: _user._id }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
-            activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
-          }
-          else {
-            console.error("catch-block");
-            activeChat = await userChatLogin({ username: _user.mobile && _user.mobile.toString(), password: "active123", customerUserId: _user._id })
-          }
-        }
-        console.log(activeChat, '------ Old Chat activated-----------')
-      } else {
-        console.log(' chat crfeate initiated-------------')
-        const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile && _user.mobile.toString() })
-        console.log("🚀 ~ file: authController.js ~ line 129 ~ exports.login= ~ chatUser", chatUser)
-        const chatDetails = await createChat({ userId: _user._id }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
-        activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
-        console.log(activeChat, '------ New Chat activated-----------')
+      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+      // const chatLogin = await getChat({ userId: _user._id })
+
+      let activeChat = {
+        username: mobile,
+        userId: _user._id,
+        sellerId: seller._id,
+        buyerId: buyer._id,
+        email: seller.email,
+        name: seller.name
       }
+      // if (chatLogin) {
+      //   if (chatLogin.details) {
+      //     activeChat = await userChatLogin({ username: chatLogin.details && chatLogin.details.user.username, password: "active123", customerUserId: _user._id })
+      //   }
+      //   else {
+      //     const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile && _user.mobile.toString() })
+      //     if (chatUser) {
+      //       const chatDetails = await createChat({ userId: _user._id }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
+      //       activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
+      //     }
+      //     else {
+      //       console.error("catch-block");
+      //       activeChat = await userChatLogin({ username: _user.mobile && _user.mobile.toString(), password: "active123", customerUserId: _user._id })
+      //     }
+      //   }
+      //   console.log(activeChat, '------ Old Chat activated-----------')
+      // } else {
+      //   console.log(' chat crfeate initiated-------------')
+      //   const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile && _user.mobile.toString() })
+      //   console.log("🚀 ~ file: authController.js ~ line 129 ~ exports.login= ~ chatUser", chatUser)
+      //   const chatDetails = await createChat({ userId: _user._id }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
+      //   activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
+      //   console.log(activeChat, '------ New Chat activated-----------')
+      // }
 
       return respSuccess(res, { user, token, activeChat }, "successfully logged in!");
     }

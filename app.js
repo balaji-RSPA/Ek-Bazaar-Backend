@@ -84,7 +84,7 @@ app.get('/', function (req, res) {
 
 app.get("/api/logged", async (req, res, next) => {
     const response = await request({ url: ssoLoginUrl, method: 'GET', params: { serviceURL } })
-    console.log("🚀 ~ file: app.js ~ line 87 ~ app.get ~ response", response.data)
+    console.log("🚀 ~ file: app.js ~ line 87 ~ app.get ~ response", response)
     const { data } = response
     if (data.success)
         return respSuccess(res, { user: data.data.user, token: data.data.token })

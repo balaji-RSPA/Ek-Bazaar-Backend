@@ -14,7 +14,7 @@ content-type: application/json
 
 
 ###
-GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobstACzKwnsLK68noQvB&offset=25&limit=25 HTTP/1.1
+GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobstACzKwnsLK68noQvB&offset=0&limit=25 HTTP/1.1
 content-type: application/json
 
 
@@ -53,9 +53,9 @@ POST  http://localhost:8070/api/chat/register HTTP/1.1
 content-type: application/json
 
 {
-    "name": "ram",
-    "email": "ram@active.agency",
-    "username": "9876543210"
+    "name": "ram1",
+    "email": "ram1@active.agency",
+    "username": "9876543211"
 }
 
 ###
