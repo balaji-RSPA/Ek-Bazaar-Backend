@@ -476,9 +476,7 @@ module.exports.updateUser = async (req, res) => {
           token
         } = req.headers.authorization.split('|')[1]
         token = token || req.token
-        // req.body.userHash = encrypt(user.email)
         const alteredToken = token.split('.').join('!')
-        // const link = "https://tradebazaar.tech-active.com/user/" + userData.userHash.encryptedData + "&" + alteredToken
         const link = `${url}/user/${userData.userHash.encryptedData}&${alteredToken}`
         const template = await activateAccount(link)
 
@@ -511,12 +509,12 @@ module.exports.updateUser = async (req, res) => {
         await updateSeller({ _id: seller._id }, seller);
 
 
-        // const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
+        const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
 
-        // if (chatUser) {
-        //   const chatDetails = await createChat({ userId: seller.userId }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: seller.userId })
-        //   activeChat = await userChatLogin({ username: chatDetails.details.user.username, password: "active123", customerUserId: seller.userId })
-        // }
+        if (chatUser) {
+          const chatDetails = await createChat({ userId: seller.userId }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: seller.userId })
+          activeChat = await userChatLogin({ username: chatDetails.details.user.username, password: "active123", customerUserId: seller.userId })
+        }
 
       }
       respSuccess(res, {
