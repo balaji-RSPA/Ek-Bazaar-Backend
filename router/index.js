@@ -20,5 +20,8 @@ router
 router
   .route("/user")
   .post(controller.register);
+router
+  .route("/logged")
+  .get(controller.login);
 
 module.exports = router;

@@ -11,6 +11,10 @@ const { globalVaraibles, respError, respSuccess } = require("../utils/helper");
 const { trade, tender, investment } = globalVaraibles.baseURL()
 const { _trade, _tender, _investment } = globalVaraibles.authServiceURL()
 
+const encodePassword = (password) => {
+  return bcrypt.hashSync(password, 10);
+}
+
 const re = /(\S+)\s+(\S+)/;
 
 // url to make request
@@ -57,15 +61,19 @@ const appTokenDB = {
 };
 
 const alloweOrigin = {
-  "http://localhost:8070": true,
   "http://localhost:8060": true,
-  "http://localhost:8085": true,
   "http://localhost:8080": true,
+  "https://elastic.tech-active.com:8443": true,
+  "https://api.ekbazaar.com": true,
+  "https://ekbazaar.tech-active.com": true,
+  "https://www.tenders.ekbazaar.com": true,
+
+  "http://localhost:8070": true,
+  "http://localhost:8085": true,
   "https://tradebazaarapi.tech-active.com": true,
+  "https://tradeapi.ekbazaar.com": true,
   "https://tradebazaar.tech-active.com": true,
   "https://www.trade.ekbazaar.com": true,
-  "https://ekbazaar.tech-active.com": true,
-  "https://www.tenders.ekbazaar.com": true
 };
 
 const deHyphenatedUUID = () => uuidv4().replace(/-/gi, "");
@@ -77,15 +85,19 @@ const sessionUser = {};
 const sessionApp = {};
 
 const originAppName = {
-  "http://localhost:8070": "trade_sso_consumer",
   "http://localhost:8060": "tenders_sso_consumer",
-  "http://localhost:8085": "trade_sso_consumer",
   "http://localhost:8080": "tenders_sso_consumer",
+  "https://elastic.tech-active.com:8443": "tenders_sso_consumer",
+  "https://api.ekbazaar.com": "tenders_sso_consumer",
+  "https://ekbazaar.tech-active.com": "tenders_sso_consumer",
+  "https://www.tenders.ekbazaar.com": "tenders_sso_consumer",
+
+  "http://localhost:8070": "trade_sso_consumer",
+  "http://localhost:8085": "trade_sso_consumer",
   "https://tradebazaarapi.tech-active.com": "trade_sso_consumer",
+  "https://tradeapi.ekbazaar.com": "trade_sso_consumer",
   "https://tradebazaar.tech-active.com": "trade_sso_consumer",
   "https://www.trade.ekbazaar.com": "trade_sso_consumer",
-  "https://ekbazaar.tech-active.com": "tenders_sso_consumer",
-  "https://www.tenders.ekbazaar.com": "tenders_sso_consumer"
 };
 
 let userDB = {
@@ -179,23 +191,19 @@ const verifySsoToken = async (req, res, next) => {
 };
 
 const register = async (req, res, next) => {
-  const { mobile, password } = req.body;
-  console.log("🚀 ~ file: index.js ~ line 160 ~ register ~ mobile", mobile)
-  const user = await UserModel.findOne({ mobile })
-    .select({
-      name: 1,
-      email: 1,
-      mobile: 1,
-      preferredLanguage: 1,
-      password: 1,
-      isPhoneVerified: 1,
-      isMobileVerified: 1,
-      countryCode: 1
-      // _id: -1,
-    })
-    .exec()
+  const { mobile, password, ipAddress, preferredLanguage, countryCode, origin } = req.body;
+  req.body.password = encodePassword(password);
+  const tenderUser = {
+    countryCode: mobile.countryCode || countryCode,
+    mobile: mobile.mobile || mobile,
+    isPhoneVerified: 2,
+    password: req.body.password,
+    // preferredLanguage
+  };
+  if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage
+  const user = await UserModel.create(tenderUser)//.exec()
   if (!user) {
-    return res.status(404).json({ message: "User not Found" });
+    return res.status(404).json({ message: "User not Created" });
   }
   const { _id } = user
   userDB = {
@@ -209,6 +217,23 @@ const register = async (req, res, next) => {
       }
     }
   }
+  let url = ""
+  if (origin === "trade") {
+    baseURL = trade;
+    url = baseURL + "user"
+    req.query.serviceURL = _trade
+  }
+  else if (origin === "tender") {
+    baseURL = tender;
+    url = baseURL + "v1/user/login"
+    req.query.serviceURL = _tender
+  }
+  else {
+    baseURL = investment;
+    url = baseURL + ""
+    req.query.serviceURL = _investment
+  }
+
   const { serviceURL } = req.query;
   const id = encodedId();
   req.session.user = id;
@@ -216,11 +241,16 @@ const register = async (req, res, next) => {
   if (serviceURL == null) {
     return res.redirect("/");
   }
-  const url = new URL(serviceURL);
+  const _url = new URL(serviceURL);
 
   const intrmid = encodedId();
-  storeApplicationInCache(url.origin, id, intrmid);
-  return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` });
+  storeApplicationInCache(_url.origin, id, intrmid);
+  const response = await axios({ url, method: "POST", data: { user, _user: req.session.user, url: `${serviceURL}?ssoToken=${intrmid}`, mobile, password, ipAddress, preferredLanguage, countryCode, origin } })
+  const { data } = response
+  req.session.token = data.data.token
+  req.session.ssoToken = intrmid
+  return respSuccess(res, { token: data.data.token, _user: req.session.user }, data.message)
+  // return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` });
 }
 
 const doLogin = async (req, res, next) => {
@@ -248,18 +278,19 @@ const doLogin = async (req, res, next) => {
   }
 
   const user = await UserModel.findOne({ mobile })
-    .select({
-      name: 1,
-      email: 1,
-      mobile: 1,
-      preferredLanguage: 1,
-      password: 1,
-      isPhoneVerified: 1,
-      isMobileVerified: 1,
-      countryCode: 1
-      // _id: -1,
-    })
-    .exec()
+  .select({
+    name: 1,
+    email: 1,
+    mobile: 1,
+    preferredLanguage: 1,
+    password: 1,
+    isPhoneVerified: 1,
+    isMobileVerified: 1,
+    countryCode: 1
+    // _id: -1,
+  })
+  .exec()
+  
   const { name, email, preferredLanguage, isPhoneVerified, isMobileVerified, _id } = user
   const registered = await bcrypt.compare(password, user.password);
 
@@ -275,8 +306,8 @@ const doLogin = async (req, res, next) => {
     }
   }
   if (!(userDB[email] && registered)) {
-    return res.status(404).json({ message: "Invalid email and password" });
-  }
+    return respError(res, "Invalid Credentials");
+  } else if (!registered) return respError(res, "Invalid Credentials");
 
   // else redirect
   const { serviceURL } = req.query;
@@ -290,13 +321,16 @@ const doLogin = async (req, res, next) => {
 
   const intrmid = encodedId();
   storeApplicationInCache(_url.origin, id, intrmid);
-  console.log("🚀 ~ file: index.js ~ line 302 ~ doLogin ~ url", url)
   const response = await axios({ url, method: "POST", data: { user, url: `${serviceURL}?ssoToken=${intrmid}`, origin, password, ipAddress, mobile, userType, location } })
   const { data } = response
   console.log("🚀 ~ file: index.js ~ line 281 ~ doLogin ~ response", response.data)
-  req.session.token = data.data.token
-  req.session.ssoToken = intrmid
-  return respSuccess(res, { user: data.data.user, token: data.data.token, activeChat: data.data.activeChat }, data.message)
+  if(response.data.success) {
+    req.session.token = data.data.token
+    req.session.ssoToken = intrmid
+    return respSuccess(res, { user: data.data.user, token: data.data.token, activeChat: data.data.activeChat }, data.message)
+  } else {
+    respError(res, response.data.message)
+  }
 };
 
 const login = async (req, res, next) => {
@@ -304,6 +338,17 @@ const login = async (req, res, next) => {
   // login and with sso token.
   // This can also be used to verify the origin from where the request has came in
   // for the redirection
+  const { origin } = req.query;
+  if (origin === "trade") {
+    req.query.serviceURL = _trade
+  }
+  else if (origin === "tender") {
+    req.query.serviceURL = _tender
+  }
+  else {
+    req.query.serviceURL = _investment
+  }
+
   const { serviceURL } = req.query;
   console.log("🚀 ~ file: index.js ~ line 292 ~ login ~ req.session.user", req.session.user)
 
@@ -318,7 +363,7 @@ const login = async (req, res, next) => {
     }
   }
   if (req.session.user != null && serviceURL == null) {
-    return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` })
+    return res.send({ user: req.session.user, url: `${serviceURL}?ssoToken=${intrmid}` })
     // return res.redirect("/");
   }
   // if global session already has the user directly redirect with the token
@@ -345,15 +390,19 @@ const logout = async (req, res, next) => {
   }
 
   if (req.session.user !== null && serviceURL !== null) {
-    req.session = null //.distroy(function (err) {
+    req.sessionStore.destroy(req.session.id, function (err) {
+      console.log("session-destroyed callback", err);
+    })
+    // req.session.distroy()
+    // req.session.cookie.expires = new Date().getTime();
+    // req.session = null //.distroy(function (err) {
     // if (err) res.status(500).json({ success: false, message: err })
     // else res
     // .status(200)
     // .json({ success: true, message: "Successfully Logged out" })
     // })
-    res
-      .status(200)
-      .json({ success: true, message: "Successfully Logged out" })
+
+    return respSuccess(res, "Successfully Logged out")
   }
 }
 
