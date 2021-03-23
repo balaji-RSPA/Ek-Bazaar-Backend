@@ -444,14 +444,12 @@ exports.updateLanguage = async (req, roomId) => {
 exports.checkSellerChat = async (req, res) => {
 
     try {
-        const {
-            chatAthToken, chatUserId, chatUsername, userID
-        } = req
-        console.log(chatAthToken, chatUserId, chatUsername, userID, ' 222222222222222')
+        // const {
+        //     chatAthToken, chatUserId, chatUsername, userID
+        // } = req
 
         const { sellerId } = req.query
         let checkChat = await getChat({ sellerId })
-        console.log("🚀 ~ file: rocketChatController.js ~ line 448 ~ exports.checkSellerChat= ~ checkChat", checkChat)
         if (!checkChat) {
             const seller = await getSellerProfile(sellerId)
             const user = seller[0]
@@ -459,7 +457,6 @@ exports.checkSellerChat = async (req, res) => {
             checkChat = await createChat({ details: chatUser, sellerId: user._id, buyerId: user.buyer || null, userId: user.userId || null })
             // checkChat = await this.userChatLogin({ username: creatChat.details.user.username, password: "active123", customerUserId: user._id })
         }else if(checkChat && checkChat.details === 0){
-            console.log('11111111111111111111')
             const userInfoUrl = `${chatDomain}/api/v1/users.info?username=${checkChat.session.username}`
 
             const userInfo = await axios.get(userInfoUrl, {
