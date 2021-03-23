@@ -6,11 +6,11 @@ content-type: application/json
 # content-type: application/json
 
 # [
-#    {
-#     "vendorId": "L4LI1",
-#     "secondaryId": "L3LI1",
-#     "level2id": "LI1",
-#     "l1": 12,
-#     "name": "Laboratory Apparatus"
+#     {
+#     "vendorId": "L4TEG319",
+#     "secondaryId": "L3TEG31",
+#     "level2id": "TEG3",
+#     "l1": 32,
+#     "name": "GPS Antenna"
 #   }
 # ]

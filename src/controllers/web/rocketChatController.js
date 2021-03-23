@@ -354,7 +354,7 @@ exports.sendMessage = async (req, res) => {
                     'X-User-Id': chatUserId
                 }
             })
-        // console.log(result.data, ' send meeeee ----------------')
+        console.log(result.data, ' send meeeee ----------------')
         // rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
         //     if (err)
         //         return respError(res, err.message)
@@ -363,6 +363,7 @@ exports.sendMessage = async (req, res) => {
         // });
 
     } catch (err) {
+        console.log(err, ' rrrrrrrrrrr')
         return respError(res, err.message)
     }
 
@@ -443,14 +444,32 @@ exports.updateLanguage = async (req, roomId) => {
 exports.checkSellerChat = async (req, res) => {
 
     try {
+        const {
+            chatAthToken, chatUserId, chatUsername, userID
+        } = req
+        console.log(chatAthToken, chatUserId, chatUsername, userID, ' 222222222222222')
+
         const { sellerId } = req.query
         let checkChat = await getChat({ sellerId })
+        console.log("🚀 ~ file: rocketChatController.js ~ line 448 ~ exports.checkSellerChat= ~ checkChat", checkChat)
         if (!checkChat) {
             const seller = await getSellerProfile(sellerId)
             const user = seller[0]
             const chatUser = await this.createChatUser({ name: user.name, email: user.email, username: user.mobile[0].mobile.toString() })
             checkChat = await createChat({ details: chatUser, sellerId: user._id, buyerId: user.buyer || null, userId: user.userId || null })
             // checkChat = await this.userChatLogin({ username: creatChat.details.user.username, password: "active123", customerUserId: user._id })
+        }else if(checkChat && checkChat.details === 0){
+            console.log('11111111111111111111')
+            const userInfoUrl = `${chatDomain}/api/v1/users.info?username=${checkChat.session.username}`
+
+            const userInfo = await axios.get(userInfoUrl, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+            console.log("🚀 ~ file: rocketChatController.js ~ line 471 ~ exports.checkSellerChat= ~ userInfo", userInfo)
         }
         respSuccess(res, checkChat)
     } catch (error) {

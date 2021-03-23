@@ -318,7 +318,7 @@ module.exports.addSecondaryCategories = async (req, res) => {
                     primaryCatId: parentCat._id
                 }
                 const result = await addSecondaryCategory(secData)
-
+                console.log(result.name, index, ' --------------------------- ')
                 const suggestion = {
                     _id: result._id,
                     id: result._id,
@@ -335,6 +335,7 @@ module.exports.addSecondaryCategories = async (req, res) => {
                 // console.log(index, '------', element.primaryCatId, '---', element.l1, 'Count-----')
                 await updatePrimaryCategory(parentCat._id, updateData)
             } else {
+                console.log(' duplicate ---------------')
                 console.log("duplicate level2 record")
             }
 
@@ -344,7 +345,7 @@ module.exports.addSecondaryCategories = async (req, res) => {
 
     } catch (error) {
 
-        respError(error)
+        respError(res, error)
 
     }
 
@@ -413,6 +414,7 @@ module.exports.addBulkProducts = async (req, res) => {
                         secondaryId: parentCat._id
                     }
                     const result = await addProductCategory(productData)
+                    console.log(result.name, index, ' ------------')
                     const suggestion = {
                         _id: result._id,
                         id: result._id,
@@ -434,12 +436,12 @@ module.exports.addBulkProducts = async (req, res) => {
             }
 
         }
-        // console.log('Completed +++++++++++++++')
+        console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
 
     } catch (error) {
 
-        respError(error)
+        respError(res, error)
 
     }
 
