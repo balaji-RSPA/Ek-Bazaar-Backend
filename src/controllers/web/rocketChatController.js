@@ -266,7 +266,7 @@ exports.getHistory = async (req, res) => {
         } = req
 
         const { roomId, limit, offset } = req.query
-        console.log("🚀 ~ file: rocketChatController.js ~ line 244 ~ exports.getHistory= ~ req.query", req.query)
+        // console.log("🚀 ~ file: rocketChatController.js ~ line 244 ~ exports.getHistory= ~ req.query", req.query)
         await this.updateLanguage(req, roomId)
         let _temp = {};
 
@@ -338,10 +338,10 @@ exports.markAsRead = async (req, res) => {
 exports.sendMessage = async (req, res) => {
 
     try {
-        console.log(req.body, ' send message-----')
         const {
             chatAthToken, chatUserId, chatUsername
         } = req
+        console.log(req.body, chatAthToken, chatUserId, chatUsername, ' send message-----')
         const { roomId, message } = req.body
 
         const url = `${chatDomain}/api/v1/chat.postMessage`
@@ -449,12 +449,16 @@ exports.checkSellerChat = async (req, res) => {
         // } = req
 
         const { sellerId } = req.query
+        console.log("🚀 ~ file: rocketChatController.js ~ line 452 ~ exports.checkSellerChat= ~ req.query", req.query)
         let checkChat = await getChat({ sellerId })
+        console.log("🚀 ~ file: rocketChatController.js ~ line 453 ~ exports.checkSellerChat= ~ checkChat", checkChat)
         if (!checkChat) {
             const seller = await getSellerProfile(sellerId)
+            console.log("🚀 ~ file: rocketChatController.js ~ line 456 ~ exports.checkSellerChat= ~ seller", seller)
             const user = seller[0]
-            const chatUser = await this.createChatUser({ name: user.name, email: user.email, username: user.mobile[0].mobile.toString() })
+            const chatUser = await this.createChatUser({ name: user.name, email: `${user.mobile[0].mobile}@ekbazaar.com`/* user.email */, username: user.mobile[0].mobile.toString() })
             checkChat = await createChat({ details: chatUser, sellerId: user._id, buyerId: user.buyer || null, userId: user.userId || null })
+            console.log("🚀 ~ file: rocketChatController.js ~ line 460 ~ exports.checkSellerChat= ~ checkChat", checkChat)
             // checkChat = await this.userChatLogin({ username: creatChat.details.user.username, password: "active123", customerUserId: user._id })
         }else if(checkChat && checkChat.details === 0){
             const userInfoUrl = `${chatDomain}/api/v1/users.info?username=${checkChat.session.username}`
@@ -629,7 +633,7 @@ exports.createChatUser = async (data) => {
         const { name, email, username } = data
         const userToAdd = {
             "name": name,
-            "email": email,
+            "email": `${username}@gmail.com`,
             "username": username,
             "password": "active123",
             "sendWelcomeEmail": false,
