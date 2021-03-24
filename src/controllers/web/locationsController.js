@@ -35,7 +35,7 @@ module.exports.getAllStates = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
     const {sellingStates} = reqQuery
-    let states = await getAllStates(reqQuery);
+    let states = await getAllStates(reqQuery.sellingStates ? {} : reqQuery);
     if(sellingStates) {
       const index = states.findIndex(item => item.name === "pan india")
       console.log("module.exports.getAllStates -> index", index)
