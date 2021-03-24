@@ -6,10 +6,11 @@ module.exports.getAllStates = (reqQuery) =>
   new Promise((resolve, reject) => {
     const skip = parseInt(reqQuery.skip) || 0;
     const limit = parseInt(reqQuery.limit) || 300;
-    States.find(reqQuery)
+    States.find({})
       .skip(skip)
       .limit(limit)
       .then((doc) => {
+        console.log("🚀 ~ file: locationsModule.js ~ line 13 ~ .then ~ doc", doc)
         resolve(doc);
       })
       .catch((error) => {
