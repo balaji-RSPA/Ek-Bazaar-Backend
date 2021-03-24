@@ -50,7 +50,7 @@ const userSchema = new Schema({
   },
   emailAlerts: {
     type: ObjectId,
-    ref: 'emailAlerts'
+    // ref: 'emailAlerts'
   },
   password: {
     type: String,
@@ -69,12 +69,12 @@ const userSchema = new Schema({
     type: Number,
     default: '1'
   },
-  // city: {
-  //   type: ObjectId,
-  //   ref: 'Cities',
-  //   required: false,
-  //   trim: true
-  // },
+  city: {
+    type: ObjectId,
+    // ref: 'Cities',
+    required: false,
+    trim: true
+  },
   // operatingLocation: {
   //   type: ObjectId,
   //   ref: 'States',
@@ -112,10 +112,10 @@ const userSchema = new Schema({
   //   default: null,
   //   trim: true
   // },
-  // preferencesId: [{
-  //   type: ObjectId,
-  //   ref: 'userPreferences'
-  // }],
+  preferencesId: [{
+    type: ObjectId,
+    // ref: 'userPreferences'
+  }],
   // favouriteTendersId: {
   //   type: ObjectId,
   //   ref: 'favoriteTenders'
@@ -132,10 +132,10 @@ const userSchema = new Schema({
     type: { changePassword },
     default: null
   },
-  // planId: [{
-  //   type: ObjectId,
-  //   ref: 'userPlans'
-  // }],
+  planId: [{
+    type: ObjectId,
+    // ref: 'userPlans'
+  }],
   trialExtends: {
     type: Number,
     default: null
@@ -155,14 +155,4 @@ const userSchema = new Schema({
   timestamps: true
 });
 
-// hash user password before saving into database
-// eslint-disable-next-line func-names
-// userSchema.pre('save', function (next) {
-
-//   this.password = bcrypt.hashSync(this.password, bcryptSalt.SALT);
-//   next();
-
-// });
-
-// const Users = model('users', userSchema)
 module.exports = userSchema;
