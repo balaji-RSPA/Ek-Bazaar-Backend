@@ -5,7 +5,8 @@ const {
 } = require('../../utils/respHadler')
 const axios = require("axios")
 const moment = require('moment')
-const chatDomain = "https://chatbot.active.agency"
+const { rocketChatDomain } = require('../../utils/globalConstants')
+const chatDomain = rocketChatDomain; //"https://chatbot.active.agency"
 // const chatDomain = "http://192.168.1.52:3000"
 const { getSellerProfile } = require('../../modules/sellersModule')
 
@@ -338,13 +339,14 @@ exports.markAsRead = async (req, res) => {
 exports.sendMessage = async (req, res) => {
 
     try {
-        console.log(req.body, ' send message-----')
+        console.log(req.body, chatDomain, ' send message-----')
         const {
             chatAthToken, chatUserId, chatUsername
         } = req
-        const { roomId, message } = req.body
+        const { roomId, message, language } = req.body
 
         const url = `${chatDomain}/api/v1/chat.postMessage`
+        const urlTransalte = `${chatDomain}/api/v1/autotranslate.translateMessage`
 
         const result = await axios.post(url, { roomId: roomId, text: message },
             {
@@ -354,7 +356,22 @@ exports.sendMessage = async (req, res) => {
                     'X-User-Id': chatUserId
                 }
             })
-        // console.log(result.data, ' send meeeee ----------------')
+            if(language)
+            {
+
+                const resultTranslate = await axios.post(urlTransalte, {
+                    messageId: result.data.message._id,
+                    targetLanguage: language
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Auth-Token': chatAthToken,
+                        'X-User-Id': chatUserId
+                    }
+                })
+            }
+        console.log(result.data.message._id, ' send meeeee1111111111111 ----------------')
         // rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
         //     if (err)
         //         return respError(res, err.message)
