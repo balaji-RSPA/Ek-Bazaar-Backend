@@ -23,5 +23,8 @@ router
 router
   .route("/logged")
   .get(controller.login);
+  router
+  .route("/user/rfp")
+  .post(controller.postRFP)
 
 module.exports = router;

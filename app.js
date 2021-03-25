@@ -29,7 +29,7 @@ app.set("trust proxy", 1);
 const cookieOptions = {
   path: "/",
   expires: 1000 * 60 * 60 * 24 * 15,
-  domain: ".ekbazaar.com",
+  // domain: ".ekbazaar.com",
   // sameSite: "none",
   httpOnly: true,
   // secure: true,

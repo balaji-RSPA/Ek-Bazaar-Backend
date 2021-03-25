@@ -6,19 +6,19 @@ const hashids = new Hashids();
 const bcrypt = require("bcrypt");
 const { genJwtToken } = require("./jwt_helper");
 const { machineIdSync } = require("node-machine-id");
-const { UserModel } = require("../config/db")
+const { UserModel } = require("../config/db");
 const { globalVaraibles, respError, respSuccess } = require("../utils/helper");
-const { trade, tender, investment } = globalVaraibles.baseURL()
-const { _trade, _tender, _investment } = globalVaraibles.authServiceURL()
+const { trade, tender, investment } = globalVaraibles.baseURL();
+const { _trade, _tender, _investment } = globalVaraibles.authServiceURL();
 
 const encodePassword = (password) => {
   return bcrypt.hashSync(password, 10);
-}
+};
 
 const re = /(\S+)\s+(\S+)/;
 
 // url to make request
-let baseURL = ""
+let baseURL = "";
 
 // Note: express http converts all headers
 // to lower case.
@@ -57,7 +57,7 @@ const appTokenFromRequest = fromAuthHeaderAsBearerToken();
 const appTokenDB = {
   trade_sso_consumer: "l1Q7zkOL59cRqWBkQ12ZiGVW2DBL",
   tenders_sso_consumer: "1g0jJwGmRQhJwvwNOrY4i90kD0m",
-  investment_sso_consumer: 'kOL59cRqWBQhJwvwNOrYkD0iGVW',
+  investment_sso_consumer: "kOL59cRqWBQhJwvwNOrYkD0iGVW",
 };
 
 const alloweOrigin = {
@@ -108,9 +108,9 @@ let userDB = {
       trade_sso_consumer: { role: "user", shareEmail: false },
       tenders_sso_consumer: { role: "user", shareEmail: false },
       sso_consumer: { role: "admin", shareEmail: true },
-      simple_sso_consumer: { role: "user", shareEmail: false }
-    }
-  }
+      simple_sso_consumer: { role: "user", shareEmail: false },
+    },
+  },
 };
 
 // these token are for the validation purpose
@@ -122,26 +122,29 @@ const fillIntrmTokenCache = (origin, id, intrmToken) => {
 const storeApplicationInCache = (origin, id, intrmToken) => {
   if (sessionApp[id] == null) {
     sessionApp[id] = {
-      [originAppName[origin]]: true
+      [originAppName[origin]]: true,
     };
     fillIntrmTokenCache(origin, id, intrmToken);
   } else {
     sessionApp[id][originAppName[origin]] = true;
     fillIntrmTokenCache(origin, id, intrmToken);
   }
-  // console.log({ ...sessionApp }, { ...sessionUser }, { intrmTokenCache });
+  console.log({ ...sessionApp }, { ...sessionUser }, { intrmTokenCache });
 };
 
-const generatePayload = ssoToken => {
+const generatePayload = (ssoToken) => {
   const deviceId = machineIdSync();
-  console.log("🚀 ~ file: index.js ~ line 136 ~ ssoToken", ssoToken)
-  console.log("🚀 ~ file: index.js ~ line 138 ~ intrmTokenCache", intrmTokenCache)
+  console.log("🚀 ~ file: index.js ~ line 136 ~ ssoToken", ssoToken);
+  console.log(
+    "🚀 ~ file: index.js ~ line 138 ~ intrmTokenCache",
+    intrmTokenCache
+  );
   const globalSessionToken = intrmTokenCache[ssoToken][0];
   const appName = intrmTokenCache[ssoToken][1];
-  console.log("🚀 ~ file: index.js ~ line 141 ~ appName", appName)
-  console.log("🚀 ~ file: index.js ~ line 143 ~ sessionUser", sessionUser)
+  console.log("🚀 ~ file: index.js ~ line 141 ~ appName", appName);
+  console.log("🚀 ~ file: index.js ~ line 143 ~ sessionUser", sessionUser);
   const userEmail = sessionUser[globalSessionToken];
-  console.log("🚀 ~ file: index.js ~ line 145 ~ userDB", userDB)
+  console.log("🚀 ~ file: index.js ~ line 145 ~ userDB", userDB);
   const user = userDB[userEmail];
   const appPolicy = user.appPolicy[appName];
   const email = appPolicy.shareEmail === true ? userEmail : undefined;
@@ -154,14 +157,17 @@ const generatePayload = ssoToken => {
       uid: user.userId,
       userId: user.userId,
       // global SessionID for the logout functionality.
-      globalSessionID: globalSessionToken
-    }
+      globalSessionID: globalSessionToken,
+    },
   };
   return payload;
 };
 
 const verifySsoToken = async (req, res, next) => {
-  console.log("🚀 ~ file: index.js ~ line 163 ~ verifySsoToken ~ req", req.query)
+  console.log(
+    "🚀 ~ file: index.js ~ line 163 ~ verifySsoToken ~ req",
+    req.query
+  );
   const appToken = appTokenFromRequest(req);
   const { ssoToken } = req.query;
   // if the application token is not present or ssoToken request is invalid
@@ -187,6 +193,10 @@ const verifySsoToken = async (req, res, next) => {
   }
   // checking if the token passed has been generated
   const payload = generatePayload(ssoToken);
+  console.log(
+    "🚀 ~ file: index.js ~ line 196 ~ verifySsoToken ~ payload",
+    payload
+  );
 
   const token = await genJwtToken(payload);
   // delete the itremCache key for no futher use,
@@ -195,8 +205,15 @@ const verifySsoToken = async (req, res, next) => {
 };
 
 const register = async (req, res, next) => {
-  const { mobile, password, ipAddress, preferredLanguage, countryCode, origin } = req.body;
-  console.log("🚀 ~ file: index.js ~ line 195 ~ register ~ req.body", req.body)
+  const {
+    mobile,
+    password,
+    ipAddress,
+    preferredLanguage,
+    countryCode,
+    origin,
+  } = req.body;
+  console.log("🚀 ~ file: index.js ~ line 195 ~ register ~ req.body", req.body);
   req.body.password = encodePassword(password);
   const tenderUser = {
     countryCode: mobile.countryCode || countryCode,
@@ -205,12 +222,12 @@ const register = async (req, res, next) => {
     password: req.body.password,
     // preferredLanguage
   };
-  if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage
-  const user = await UserModel.create(tenderUser)//.exec()
+  if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage;
+  const user = await UserModel.create(tenderUser); //.exec()
   if (!user) {
     return respError(res, "User not Created");
   }
-  const { _id } = user
+  const { _id } = user;
   userDB = {
     [mobile.mobile || mobile]: {
       password,
@@ -218,28 +235,26 @@ const register = async (req, res, next) => {
       appPolicy: {
         trade_sso_consumer: { role: "user", shareEmail: false },
         tenders_sso_consumer: { role: "user", shareEmail: false },
-        investment_sso_consumer: { role: "user", shareEmail: false }
-      }
-    }
-  }
-  let url = ""
+        investment_sso_consumer: { role: "user", shareEmail: false },
+      },
+    },
+  };
+  let url = "";
   if (origin === "trade") {
     baseURL = trade;
-    url = baseURL + "user"
-    req.query.serviceURL = _trade
-  }
-  else if (origin === "tender") {
+    url = baseURL + "user";
+    req.query.serviceURL = _trade;
+  } else if (origin === "tender") {
     baseURL = tender;
-    url = baseURL + "v1/user"
-    req.query.serviceURL = _tender
-  }
-  else {
+    url = baseURL + "v1/user";
+    req.query.serviceURL = _tender;
+  } else {
     baseURL = investment;
-    url = baseURL + ""
-    req.query.serviceURL = _investment
+    url = baseURL + "";
+    req.query.serviceURL = _investment;
   }
-  
-  console.log("🚀 ~ file: index.js ~ line 235 ~ register ~ url", url)
+
+  // console.log("🚀 ~ file: index.js ~ line 235 ~ register ~ url", url);
   const { serviceURL } = req.query;
   const id = encodedId();
   req.session.user = id;
@@ -251,37 +266,53 @@ const register = async (req, res, next) => {
 
   const intrmid = encodedId();
   storeApplicationInCache(_url.origin, id, intrmid);
-  const response = await axios({ url, method: "POST", data: { user, _user: req.session.user, url: `${serviceURL}?ssoToken=${intrmid}`, mobile, password, ipAddress, preferredLanguage, countryCode, origin } })
-  const { data } = response
-  console.log("🚀 ~ file: index.js ~ line 251 ~ register ~ data", data)
-  req.session.token = data.data.token
-  req.session.ssoToken = intrmid
-  return respSuccess(res, { token: data.data.token, _user: req.session.user }, data.message)
+  const response = await axios({
+    url,
+    method: "POST",
+    data: {
+      user,
+      _user: req.session.user,
+      url: `${serviceURL}?ssoToken=${intrmid}`,
+      mobile,
+      password,
+      ipAddress,
+      preferredLanguage,
+      countryCode,
+      origin,
+    },
+  });
+  const { data } = response;
+  console.log("🚀 ~ file: index.js ~ line 251 ~ register ~ data", data);
+  req.session.token = data.data.token;
+  req.session.ssoToken = intrmid;
+  return respSuccess(
+    res,
+    { token: data.data.token, _user: req.session.user },
+    data.message
+  );
   // return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` });
-}
+};
 
 const doLogin = async (req, res, next) => {
-  console.log("🚀 ~ file: index.js ~ line 204 ~ doLogin ~ req", req.body)
+  console.log("🚀 ~ file: index.js ~ line 204 ~ doLogin ~ req", req.body);
   // do the validation with email and password
   // but the goal is not to do the same in this right now,
   // like checking with Datebase and all, we are skiping these section
   // const { email, password } = req.body;
   const { password, ipAddress, mobile, userType, origin, location } = req.body;
-  let url = ""
+  let url = "";
   if (origin === "trade") {
     baseURL = trade;
-    url = baseURL + "user/login"
-    req.query.serviceURL = _trade
-  }
-  else if (origin === "tender") {
+    url = baseURL + "user/login";
+    req.query.serviceURL = _trade;
+  } else if (origin === "tender") {
     baseURL = tender;
-    url = baseURL + "v1/user/login"
-    req.query.serviceURL = _tender
-  }
-  else {
+    url = baseURL + "v1/user/login";
+    req.query.serviceURL = _tender;
+  } else {
     baseURL = investment;
-    url = baseURL + ""
-    req.query.serviceURL = _investment
+    url = baseURL + "";
+    req.query.serviceURL = _investment;
   }
 
   const user = await UserModel.findOne({ mobile })
@@ -293,15 +324,22 @@ const doLogin = async (req, res, next) => {
       password: 1,
       isPhoneVerified: 1,
       isMobileVerified: 1,
-      countryCode: 1
+      countryCode: 1,
       // _id: -1,
     })
-    .exec()
+    .exec();
 
   if (!user) {
     return respError(res, "User not found");
   }
-  const { name, email, preferredLanguage, isPhoneVerified, isMobileVerified, _id } = user
+  const {
+    name,
+    email,
+    preferredLanguage,
+    isPhoneVerified,
+    isMobileVerified,
+    _id,
+  } = user;
   const registered = await bcrypt.compare(password, user.password);
   userDB = {
     [email]: {
@@ -310,10 +348,10 @@ const doLogin = async (req, res, next) => {
       appPolicy: {
         trade_sso_consumer: { role: "user", shareEmail: false },
         tenders_sso_consumer: { role: "user", shareEmail: false },
-        investment_sso_consumer: { role: "user", shareEmail: false }
-      }
-    }
-  }
+        investment_sso_consumer: { role: "user", shareEmail: false },
+      },
+    },
+  };
 
   if (!registered) return respError(res, "Invalid Credentials");
   else if (!(userDB[email] && registered)) {
@@ -332,15 +370,39 @@ const doLogin = async (req, res, next) => {
 
   const intrmid = encodedId();
   storeApplicationInCache(_url.origin, id, intrmid);
-  const response = await axios({ url, method: "POST", data: { user, url: `${serviceURL}?ssoToken=${intrmid}`, origin, password, ipAddress, mobile, userType, location } })
-  const { data } = response
-  console.log("🚀 ~ file: index.js ~ line 281 ~ doLogin ~ response", response.data)
+  const response = await axios({
+    url,
+    method: "POST",
+    data: {
+      user,
+      url: `${serviceURL}?ssoToken=${intrmid}`,
+      origin,
+      password,
+      ipAddress,
+      mobile,
+      userType,
+      location,
+    },
+  });
+  const { data } = response;
+  console.log(
+    "🚀 ~ file: index.js ~ line 281 ~ doLogin ~ response",
+    response.data
+  );
   if (response.data.success) {
-    req.session.token = data.data.token
-    req.session.ssoToken = intrmid
-    return respSuccess(res, { user: data.data.user, token: data.data.token, activeChat: data.data.activeChat }, data.message)
+    req.session.token = data.data.token;
+    req.session.ssoToken = intrmid;
+    return respSuccess(
+      res,
+      {
+        user: data.data.user,
+        token: data.data.token,
+        activeChat: data.data.activeChat,
+      },
+      data.message
+    );
   } else {
-    respError(res, response.data.message)
+    respError(res, response.data.message);
   }
 };
 
@@ -350,18 +412,19 @@ const login = async (req, res, next) => {
   // This can also be used to verify the origin from where the request has came in
   // for the redirection
   const { origin } = req.query;
-  if (origin === "trade") {
-    req.query.serviceURL = _trade
-  }
-  else if (origin === "tender") {
-    req.query.serviceURL = _tender
-  }
-  else {
-    req.query.serviceURL = _investment
+  if (origin === "trade" || !origin) {
+    req.query.serviceURL = _trade;
+  } else if (origin === "tender") {
+    req.query.serviceURL = _tender;
+  } else {
+    req.query.serviceURL = _investment;
   }
 
   const { serviceURL } = req.query;
-  console.log("🚀 ~ file: index.js ~ line 292 ~ login ~ req.session.user", req.session.user)
+  console.log(
+    "🚀 ~ file: index.js ~ line 292 ~ login ~ req.session.user",
+    req.session.user
+  );
 
   // direct access will give the error inside new URL.
   const intrmid = encodedId();
@@ -374,17 +437,23 @@ const login = async (req, res, next) => {
     }
   }
   if (req.session.user != null && serviceURL == null) {
-    return res.send({ user: req.session.user, url: `${serviceURL}?ssoToken=${intrmid}` })
+    return res.send({
+      user: req.session.user,
+      url: `${serviceURL}?ssoToken=${intrmid}`,
+    });
     // return res.redirect("/");
   }
   // if global session already has the user directly redirect with the token
   if (req.session.user != null && serviceURL != null) {
     const url = new URL(serviceURL);
     storeApplicationInCache(url.origin, req.session.user, intrmid);
-    return respSuccess(res, { user: req.session.user, token: req.session.token })
+    return respSuccess(res, {
+      user: req.session.user,
+      token: req.session.token,
+    });
     // return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` })
   }
-  respError(res, "User is not logged in")
+  respError(res, "User is not logged in");
   // next()
 };
 
@@ -403,7 +472,7 @@ const logout = async (req, res, next) => {
   if (req.session.user !== null && serviceURL !== null) {
     req.sessionStore.destroy(req.session.id, function (err) {
       console.log("session-destroyed callback", err);
-    })
+    });
     // req.session.distroy()
     // req.session.cookie.expires = new Date().getTime();
     // req.session = null //.distroy(function (err) {
@@ -413,8 +482,106 @@ const logout = async (req, res, next) => {
     // .json({ success: true, message: "Successfully Logged out" })
     // })
 
-    return respSuccess(res, "Successfully Logged out")
+    return respSuccess(res, "Successfully Logged out");
   }
-}
+};
 
-module.exports = Object.assign({}, { doLogin, login, verifySsoToken, logout, register, baseURL });
+const postRFP = async (req, res, next) => {
+  const {
+    mobile,
+    name,
+    email,
+    location,
+    productDetails,
+    ipAddress,
+    requestType,
+    sellerId,
+  } = req.body;
+  console.log("🚀 ~ file: index.js ~ line 500 ~ postRFP ~ req.body", req.body)
+
+  let user = await UserModel.findOne({ mobile: mobile.mobile })
+    .select({
+      name: 1,
+      email: 1,
+      mobile: 1,
+      preferredLanguage: 1,
+      password: 1,
+      isPhoneVerified: 1,
+      isMobileVerified: 1,
+      countryCode: 1,
+      // _id: -1,
+    })
+    .exec();
+  let __user = {};
+  let _id = ""
+  if (user) {
+    _id = user._id
+    user = [user];
+  } else {
+    const userData = {
+      name,
+      email,
+      mobile: mobile.mobile,
+      countryCode: mobile.countryCode,
+      password: null,
+    };
+    __user = await UserModel.create(userData);
+    _id = __user._id
+    user = [];
+  }
+
+  const password = encodedId();
+  req.query.serviceURL = _trade;
+  let baseURL = trade;
+  let url = baseURL + "buyer/rfp";
+
+  const { serviceURL } = req.query;
+
+  userDB = {
+    [mobile.mobile || mobile]: {
+      password,
+      userId: _id, // encodedId(), // incase you dont want to share the user-email.
+      appPolicy: {
+        trade_sso_consumer: { role: "user", shareEmail: false },
+        tenders_sso_consumer: { role: "user", shareEmail: false },
+        investment_sso_consumer: { role: "user", shareEmail: false },
+      },
+    },
+  };
+
+  const id = encodedId();
+  req.session.user = id;
+  sessionUser[id] = mobile.mobile || mobile;
+  if (serviceURL == null) {
+    return res.redirect("/");
+  }
+  const _url = new URL(serviceURL);
+
+  const intrmid = encodedId();
+  storeApplicationInCache(_url.origin, id, intrmid);
+  const response = await axios({
+    url,
+    method: "POST",
+    data: {
+      user,
+      __user,
+      _user: req.session.user,
+      url: `${serviceURL}?ssoToken=${intrmid}`,
+      ...req.body,
+    },
+  });
+  if (response.data.success) {
+    respSuccess(res, { ...response.data.data }, response.data.message);
+  } else {
+    respError(res, "Somthing went wrong");
+  }
+  console.log(
+    "🚀 ~ file: index.js ~ line 564 ~ postRFP ~ response",
+    response.data
+  );
+};
+
+module.exports = Object.assign(
+  {},
+  { doLogin, login, verifySsoToken, logout, register, baseURL, postRFP }
+);
