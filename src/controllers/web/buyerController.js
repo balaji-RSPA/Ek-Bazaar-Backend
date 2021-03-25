@@ -30,6 +30,8 @@ const { createToken, messageContent, sendSMS } = require("../../utils/utils");
 const { queSMSBulkInsert, getQueSMS } = SMSQue
 const { bulkInserQemails } = QueEmails;
 
+const {ssoRedirect} = require("../../../sso-tools/checkSSORedirect")
+
 const { sms,MailgunKeys } = require("../../utils/globalConstants")
 const { RFQOneToOne,RFQOneToOneBuyer }  = require("../../utils/templates/smsTemplate/smsTemplate")
 const { username, password, senderID, smsURL } = sms
@@ -148,12 +150,13 @@ module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp
 }
 
 
-module.exports.createRFP = async (req, res) => {
+module.exports.createRFP = async (req, res, next) => {
   try {
-    const { mobile, name, email, location, productDetails, ipAddress, requestType, sellerId } = req.body
+    const { mobile, name, email, location, productDetails, ipAddress, requestType, sellerId, user, __user } = req.body
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
-    const user = await checkUserExistOrNot({ mobile: mobile.mobile })
+    // const user = await checkUserExistOrNot({ mobile: mobile.mobile })
     const url = req.get('origin');
+
     console.log("~ user", user, productDetails)
     if (user && user.length) {
 
@@ -168,7 +171,7 @@ module.exports.createRFP = async (req, res) => {
         mobile: user[0]["mobile"],
         countryCode: user[0]["countryCode"],
         location,
-        userId: user._id
+        userId: user[0]._id
       }
       const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
       let buyer
@@ -259,14 +262,14 @@ module.exports.createRFP = async (req, res) => {
       respSuccess(res, "Your requirement has successfully submitted")
     } else {
       console.log(' not register buyer-----------------')
-      const userData = {
-        name,
-        email,
-        mobile: mobile.mobile,
-        countryCode: mobile.countryCode,
-        password: null
-      }
-      const user = await addUser(userData)
+      // const userData = {
+      //   name,
+      //   email,
+      //   mobile: mobile.mobile,
+      //   countryCode: mobile.countryCode,
+      //   password: null
+      // }
+      const user = __user//await addUser(userData)
       const buyerData = {
         name,
         email,
@@ -301,9 +304,26 @@ module.exports.createRFP = async (req, res) => {
       }
 
       if (buyer && seller) {
-        const deviceId = machineIdSync();
+
+        const data = {
+          url: req.body.url
+        }
+        if (data.url) {
+          const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
+          req.session.ssoToken = ssoToken
+          req.query = {
+            ssoToken: ssoToken
+          }
+        }
+        const response = await ssoRedirect(req, res, next)
+        console.log("🚀 ~ file: buyerController.js ~ line 319 ~ module.exports.createRFP= ~ response", response)
+        const _user = response.user
+        console.log("🚀 ~ file: buyerController.js ~ line 320 ~ module.exports.createRFP= ~ _user", _user)
+        const { token } = response
+
+        const deviceId = _user.deviceId;
         const userAgent = getUserAgent(req.useragent)
-        const token = createToken(deviceId, { userId: buyer.userId });
+        // const token = createToken(deviceId, { userId: buyer.userId });
         const finalData = {
           userAgent,
           userId: buyer.userId,
