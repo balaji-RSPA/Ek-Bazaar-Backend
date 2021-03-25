@@ -81,3 +81,5 @@ exports.imageURLS = {
   registerationFlow: "https://www.tenders.ekbazaar.com/assets/images/registration-flow.png",
   announcements: "https://www.tenders.ekbazaar.com/assets/images/announcement@2x.png"
 }
+
+exports.rocketChatDomain = NODE_ENV === 'production' ? "https://chatbot.ekbazaar.com": "https://chatbot.active.agency"

@@ -5,7 +5,8 @@ const {
 } = require('../../utils/respHadler')
 const axios = require("axios")
 const moment = require('moment')
-const chatDomain = "https://chatbot.active.agency"
+const { rocketChatDomain } = require('../../utils/globalConstants')
+const chatDomain = rocketChatDomain; //"https://chatbot.active.agency"
 // const chatDomain = "http://192.168.1.52:3000"
 const { getSellerProfile } = require('../../modules/sellersModule')
 
@@ -338,7 +339,7 @@ exports.markAsRead = async (req, res) => {
 exports.sendMessage = async (req, res) => {
 
     try {
-        console.log(req.body, ' send message-----')
+        console.log(req.body, chatDomain, ' send message-----')
         const {
             chatAthToken, chatUserId, chatUsername
         } = req
