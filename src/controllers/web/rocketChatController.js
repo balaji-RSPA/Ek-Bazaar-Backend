@@ -10,7 +10,7 @@ const chatDomain = rocketChatDomain; //"https://chatbot.active.agency"
 // const chatDomain = "http://192.168.1.52:3000"
 const { getSellerProfile } = require('../../modules/sellersModule')
 
-const rocketChatClient = new RocketChatApi("https", "chatbot.active.agency", 443)
+const rocketChatClient = new RocketChatApi("https", "chatbot.ekbazaar.com", 443)
 // const rocketChatClient = new RocketChatApi("http", "192.168.1.52", 3000)
 const { Chat } = require('../../modules')
 const { updateChatSession, getChat, createChat, createChatSession } = Chat
@@ -21,8 +21,8 @@ const { updateChatSession, getChat, createChat, createChatSession } = Chat
 
 // }
 const admin = {
-    username: "ramesh",
-    password: "ramesh123"
+    username: "ramesh@active.agency",
+    password: "rameshTechActive"
 }
 
 exports.setChatSession = (data) => {
@@ -36,6 +36,7 @@ exports.userLogin = async (req, res) => {
     try {
         console.log("🚀 ~ file: rocketChatController.js ~ line 35 ~ exports.userLogin= ~ req.body", req.body)
         const chatLogin = await getChat({ userId })
+        console.log("🚀 ~ file: rocketChatController.js ~ line 39 ~ exports.userLogin= ~ chatLogin", chatLogin)
         let activeChat = {}
         if (chatLogin) {
 
@@ -158,7 +159,7 @@ exports.createUser = async (req, res) => {
         const { name, email, username } = req.body
         const userToAdd = {
             "name": name,
-            "email": email,
+            "email": `${username}@gmail.com`,
             "username": username,
             "password": "active123",
             "sendWelcomeEmail": false,
@@ -167,6 +168,7 @@ exports.createUser = async (req, res) => {
             "requirePasswordChange": false,
             "roles": ["user"]
         };
+        console.log(userToAdd, chatDomain, ' 11111111111111111111111111')
         const adminLogin = await inlinUserLogin({ username: admin.username, password: admin.password })
         // console.log("🚀 ~ file: rocketChatController.js ~ line 135 ~ exports.createUser= ~ adminLogin", adminLogin)
 
@@ -380,6 +382,7 @@ exports.sendMessage = async (req, res) => {
         // });
 
     } catch (err) {
+        console.log(err, ' rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
         return respError(res, err.message)
     }
 
@@ -630,7 +633,7 @@ exports.createChatUser = async (data) => {
         const { name, email, username } = data
         const userToAdd = {
             "name": name,
-            "email": email,
+            "email": `${username}@gmail.com`,
             "username": username,
             "password": "active123",
             "sendWelcomeEmail": false,

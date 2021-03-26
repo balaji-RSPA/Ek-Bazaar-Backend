@@ -412,7 +412,7 @@ module.exports.sellerBulkInser = (data) =>
 //       .catch((error) => reject(error))
 //   })
 
-module.exports.getSeller = (id, chkStock) =>
+module.exports.getSeller = (id, chkStock, query) =>
   new Promise((resolve, reject) => {
     let matchVal = null
     if (chkStock === true || chkStock === false) {
@@ -443,9 +443,8 @@ module.exports.getSeller = (id, chkStock) =>
         }
       }
     }
-    Sellers.findOne({
-      userId: id
-    })
+    let _query = query || { userId: id }
+    Sellers.findOne(_query)
       .populate('sellerProductId')
       .populate('sellerType')
       .populate('busenessId')

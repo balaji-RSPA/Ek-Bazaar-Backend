@@ -56,9 +56,10 @@ module.exports.addBuyer = (data) =>
       .catch((error) => reject(error));
   });
 
-module.exports.getBuyer = (id) =>
+module.exports.getBuyer = (id, query) =>
   new Promise((resolve, reject) => {
-    Buyers.findOne({ userId: id })
+    let _query = query || { userId: id }
+    Buyers.findOne(_query)
       .populate({
         path: "location.city",
         model: "cities",

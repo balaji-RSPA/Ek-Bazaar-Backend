@@ -558,12 +558,17 @@ module.exports.updateUser = async (req, res) => {
         sellerData.isEmailSent = true;
         console.log(
           "🚀 ~ file: userController.js ~ line 552 ~ module.exports.updateUser= ~ sellerData",
-          sellerData
+          sellerData,
+          new Date()
         );
         buyerData.isEmailSent = true;
-        buyer = await updateBuyer({ userId: userID }, buyerData);
-        seller = await updateSeller({ userId: userID }, sellerData);
-
+        console.log("widowwwwwwwwwwwwwwwwwwwwwwwwwwwwwww", new Date())
+        await updateBuyer({ _id: buyer._id }, buyerData);
+        await updateSeller({ _id: _seller._id }, sellerData);
+        console.log(
+          "iron mannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+          new Date()
+        );
         // const { successfulMessage } = successfulRegistration({ userType });
         // if (isProd) {
         //   sendSMS(mobile, successfulMessage);
@@ -587,6 +592,10 @@ module.exports.updateUser = async (req, res) => {
           email: user.email,
           username: user.mobile.toString(),
         });
+        console.log(
+          "lokkkkkkkkkkkkkkkkkkkkkkkkkkkiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+          new Date()
+        );
 
         if (chatUser) {
           const chatDetails = await createChat(
@@ -605,14 +614,17 @@ module.exports.updateUser = async (req, res) => {
           });
         }
       } else if (user.email && buyer.isEmailSent) {
-        buyer = await updateBuyer({ userId: userID }, buyerData);
-        seller = await updateSeller({ userId: userID }, sellerData);
+        await updateBuyer({ userId: userID }, buyerData);
+        await updateSeller({ userId: userID }, sellerData);
         // activeChat = await userChatLogin({
         //   username: buyer.mobile.toString(),
         //   password: "active123",
         //   customerUserId: seller.userId,
         // });
       }
+      buyer = await getBuyer(null, {_id: buyer._id})
+      seller= await getSeller(null, null, {_id: _seller._id})
+      console.log("thorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", new Date());
       respSuccess(
         res,
         {
