@@ -272,6 +272,7 @@ exports.getHistory = async (req, res) => {
         let _temp = {};
 
         const url = `${chatDomain}/api/v1/im.history?roomId=${roomId}&offset=${offset}&count=${limit}`
+        console.log("111111111111111111111111111111111",url)
         const history = await axios.get(url, {
             headers: {
                 'Content-Type': 'application/json',
@@ -297,12 +298,14 @@ exports.getHistory = async (req, res) => {
 
 
         }
+        
         return respSuccess(res, { messages: _temp })
         // });
 
 
     } catch (err) {
 
+        console.log("Error-> ", err);
         return respError(res, err.message)
     }
 
@@ -370,6 +373,7 @@ exports.sendMessage = async (req, res) => {
                         'X-User-Id': chatUserId
                     }
                 })
+                console.log("🚀 ~ file: rocketChatController.js ~ line 366 ~ exports.sendMessage= ~ resultTranslate", resultTranslate)
             }
         console.log(result.data.message._id, ' send meeeee1111111111111 ----------------')
         // rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
@@ -422,8 +426,8 @@ exports.updateLanguage = async (req, roomId) => {
     const {
         chatAthToken, chatUserId, chatUsername, userID
     } = req
-    const Details = await getChat({ userId: userID, isLanguageSet: false })
-    if (Details) {
+    const Details = await getChat({ userId: userID/* , isLanguageSet: false */ })
+    if (Details && Details.language) {
 
         const url = `${chatDomain}/api/v1/autotranslate.saveSettings`
 
