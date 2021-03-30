@@ -588,22 +588,22 @@ module.exports.updateUser = async (req, res) => {
           username: user.mobile.toString(),
         });
 
-        if (chatUser) {
-          const chatDetails = await createChat(
-            { userId: seller.userId },
-            {
-              details: chatUser,
-              sellerId: seller._id,
-              buyerId: buyer._id,
-              userId: seller.userId,
-            }
-          );
-          activeChat = await userChatLogin({
-            username: chatDetails.details.user.username,
-            password: "active123",
-            customerUserId: seller.userId,
-          });
-        }
+        // if (chatUser) {
+        //   const chatDetails = await createChat(
+        //     { userId: seller.userId },
+        //     {
+        //       details: chatUser,
+        //       sellerId: seller._id,
+        //       buyerId: buyer._id,
+        //       userId: seller.userId,
+        //     }
+        //   );
+        //   activeChat = await userChatLogin({
+        //     username: chatDetails.details.user.username,
+        //     password: "active123",
+        //     customerUserId: seller.userId,
+        //   });
+        // }
       } else if (user.email && buyer.isEmailSent) {
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
