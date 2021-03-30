@@ -836,6 +836,7 @@ module.exports.updateSeller = (query, data, elastic) =>
       .populate('location.city', 'name')
       .populate('location.state', 'name region')
       .populate('location.country', 'name')
+      .populate('planId')
       .lean()
       .then(async (doc) => {
         // if (doc && elastic) {
