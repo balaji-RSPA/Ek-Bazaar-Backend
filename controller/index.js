@@ -398,6 +398,7 @@ const doLogin = async (req, res, next) => {
         user: data.data.user,
         token: data.data.token,
         activeChat: data.data.activeChat,
+        productCount: data.data.productCount,
       },
       data.message
     );
