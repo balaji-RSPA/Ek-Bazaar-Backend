@@ -63,7 +63,8 @@ if (env) {
   } else if (env.NODE_ENV === 'production') {
 
     // host = 'searchtrade.ekbazaar.com:5085'
-    host = 'searchtradetemp.tech-active.com:5085'
+    // host = 'searchtradetemp.tech-active.com:5085'
+    host = '139.59.19.170:5085'
 
   }
 

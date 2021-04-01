@@ -137,3 +137,14 @@ content-type: application/json
 #     "success": true
 #   }
 # }
+
+
+###
+
+GET https://chatbot.active.agency/api/v1/im.history?roomId=Ebe9DXsF8dPxMT74qEbe9DXsF8dPxMT74q&offset=0&count=25 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+X-Auth-Token: wF8_gNgx_l5FYnWDxri4gBwCyPr78MVSKGOxrhvbvE0
+X-User-Id: 6HzY2yoSjavdWHPRx
+
+
