@@ -342,7 +342,7 @@ const doLogin = async (req, res, next) => {
   } = user;
   const registered = await bcrypt.compare(password, user.password);
   userDB = {
-    [email]: {
+    [user.mobile]: {
       password,
       userId: _id, //encodedId() // incase you dont want to share the user-email.
       appPolicy: {
@@ -354,7 +354,7 @@ const doLogin = async (req, res, next) => {
   };
 
   if (!registered) return respError(res, "Invalid Credentials");
-  else if (!(userDB[email] && registered)) {
+  else if (!(userDB[user.mobile] && registered)) {
     return respError(res, "Invalid Credentials");
   }
 
@@ -362,7 +362,7 @@ const doLogin = async (req, res, next) => {
   const { serviceURL } = req.query;
   const id = encodedId();
   req.session.user = id;
-  sessionUser[id] = email;
+  sessionUser[id] = user.mobile;
   if (serviceURL == null) {
     return res.redirect("/");
   }
@@ -499,6 +499,8 @@ const postRFP = async (req, res, next) => {
     sellerId,
   } = req.body;
   console.log("🚀 ~ file: index.js ~ line 500 ~ postRFP ~ req.body", req.body)
+  console.log("llllllllllllllllllllllllllllllllllll")
+  console.log({ ...sessionApp }, { ...sessionUser }, { intrmTokenCache });
 
   let user = await UserModel.findOne({ mobile: mobile.mobile })
     .select({
@@ -572,14 +574,12 @@ const postRFP = async (req, res, next) => {
     },
   });
   if (response.data.success) {
-    respSuccess(res, { ...response.data.data }, response.data.message);
+    console.log("🚀 ~ file: index.js ~ line 575 ~ postRFP ~ response.data", response.data)
+    if(response.data && response.data.data && response.data.data.token) req.session.token = response.data.data.token
+    return respSuccess(res, { ...response.data.data }, response.data.message);
   } else {
-    respError(res, "Somthing went wrong");
+    return respError(res, "Somthing went wrong");
   }
-  console.log(
-    "🚀 ~ file: index.js ~ line 564 ~ postRFP ~ response",
-    response.data
-  );
 };
 
 module.exports = Object.assign(

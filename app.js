@@ -38,7 +38,7 @@ const cookieOptions = {
 
 app.use(
   session({
-    key: "userId",
+    key: "session",
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: true,
