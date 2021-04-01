@@ -561,8 +561,8 @@ module.exports.updateUser = async (req, res) => {
           sellerData
         );
         buyerData.isEmailSent = true;
-        buyer = await updateBuyer({ userId: userID }, buyerData);
-        seller = await updateSeller({ userId: userID }, sellerData);
+        await updateBuyer({ userId: userID }, buyerData);
+        await updateSeller({ userId: userID }, sellerData);
 
         // const { successfulMessage } = successfulRegistration({ userType });
         // if (isProd) {
@@ -605,14 +605,16 @@ module.exports.updateUser = async (req, res) => {
           });
         }
       } else if (user.email && buyer.isEmailSent) {
-        buyer = await updateBuyer({ userId: userID }, buyerData);
-        seller = await updateSeller({ userId: userID }, sellerData);
+        await updateBuyer({ userId: userID }, buyerData);
+        await updateSeller({ userId: userID }, sellerData);
         // activeChat = await userChatLogin({
         //   username: buyer.mobile.toString(),
         //   password: "active123",
         //   customerUserId: seller.userId,
         // });
       }
+      buyer = await getBuyer(null, {_id: buyer._id})
+      seller = await getSeller(null, null, {_id: seller._id})
       respSuccess(
         res,
         {
