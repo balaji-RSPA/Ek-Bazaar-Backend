@@ -94,3 +94,12 @@ module.exports.getMasterRecords = (reqQuery, range) => new Promise((resolve, rej
         })
 
 })
+
+module.exports.bulkDeleteMasterProducts = (query) =>
+    new Promise((resolve, reject) => {
+        MasterCollection.deleteMany(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })

@@ -67,6 +67,7 @@ const {
   forgetPassword,
   addSeller,
   addbusinessDetails,
+  getSellerVal
 } = sellers;
 const {
   getBuyer,
@@ -74,8 +75,9 @@ const {
   updateBuyer,
   getUserFromUserHash,
   updateEmailVerification,
+  deleteBuyer
 } = buyers;
-const { getMaster, addMaster, updateMaster } = mastercollections;
+const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = mastercollections;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
 // const {username, password, senderID, smsURL} = sms
@@ -778,3 +780,46 @@ module.exports.deleteRecords = async (req, res) =>
       reject(error);
     }
   });
+
+  module.exports.deleteCurrentAccount = async (req, res) => {
+  
+    try {
+       const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
+       const result = await updateUser({_id:userId}, {deleteTrade})
+       if(result){
+         const sellerData = await getSellerVal({_id: sellerId})
+        const _seller = await deleteSellerRecord(sellerId);
+        const _buyer = await deleteBuyer({_id:buyerId})
+        const pQuery = {
+          _id: {
+            $in: sellerData.sellerProductId,
+          },
+        };
+        const delRec =  deleteSellerProducts(pQuery);
+        const delMaster =  bulkDeleteMasterProducts(pQuery);
+        console.log(sellerData, delMaster, ' delete trade and tendor')
+        if(permanentDelete){
+          // delete from investment
+          // delete from tendor
+        }
+       }
+       respSuccess(res, "Deleted Succesfully")
+      
+    } catch (error) {
+
+      respError(res, error.message)
+      
+    }
+  
+  }
+
+  module.exports.deleteAllAccount = async (req, res) => {
+  
+    try {
+      
+    } catch (error) {
+      
+    }
+  
+  }
+

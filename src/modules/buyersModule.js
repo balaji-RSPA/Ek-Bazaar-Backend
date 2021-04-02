@@ -173,3 +173,13 @@ exports.updateEmailVerification = (hash, newData) => new Promise((resolve, rejec
     .then((doc) => resolve(doc))
     .catch(reject)
 })
+
+exports.deleteBuyer = (query) => new Promise((resolve, reject) => {
+  Buyers.deleteOne(query)
+  .then((doc) => {
+    resolve(doc);
+  })
+  .catch((error) => {
+    reject(error);
+  });
+})
