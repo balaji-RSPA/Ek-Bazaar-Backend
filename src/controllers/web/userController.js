@@ -561,8 +561,8 @@ module.exports.updateUser = async (req, res) => {
           sellerData
         );
         buyerData.isEmailSent = true;
-        buyer = await updateBuyer({ userId: userID }, buyerData);
-        seller = await updateSeller({ userId: userID }, sellerData);
+        await updateBuyer({ userId: userID }, buyerData);
+        await updateSeller({ userId: userID }, sellerData);
 
         // const { successfulMessage } = successfulRegistration({ userType });
         // if (isProd) {
@@ -582,37 +582,13 @@ module.exports.updateUser = async (req, res) => {
         };
         sendSingleMail(message);
 
-        const chatUser = await createChatUser({
-          name: user.name,
-          email: user.email,
-          username: user.mobile.toString(),
-        });
-
-        // if (chatUser) {
-        //   const chatDetails = await createChat(
-        //     { userId: seller.userId },
-        //     {
-        //       details: chatUser,
-        //       sellerId: seller._id,
-        //       buyerId: buyer._id,
-        //       userId: seller.userId,
-        //     }
-        //   );
-        //   activeChat = await userChatLogin({
-        //     username: chatDetails.details.user.username,
-        //     password: "active123",
-        //     customerUserId: seller.userId,
-        //   });
-        // }
       } else if (user.email && buyer.isEmailSent) {
-        buyer = await updateBuyer({ userId: userID }, buyerData);
-        seller = await updateSeller({ userId: userID }, sellerData);
-        // activeChat = await userChatLogin({
-        //   username: buyer.mobile.toString(),
-        //   password: "active123",
-        //   customerUserId: seller.userId,
-        // });
+        await updateBuyer({ userId: userID }, buyerData);
+        await updateSeller({ userId: userID }, sellerData);
+
       }
+      buyer = await getBuyer(null, {_id: buyer._id})
+      seller = await getSeller(null, null, {_id: _seller._id})
       respSuccess(
         res,
         {

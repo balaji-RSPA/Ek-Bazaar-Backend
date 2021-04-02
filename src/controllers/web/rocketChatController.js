@@ -158,7 +158,7 @@ exports.createUser = async (req, res) => {
         const { name, email, username } = req.body
         const userToAdd = {
             "name": name,
-            "email": email,
+            "email": `${username}@gmail.com`,
             "username": username,
             "password": "active123",
             "sendWelcomeEmail": false,
@@ -634,7 +634,7 @@ exports.createChatUser = async (data) => {
         const { name, email, username } = data
         const userToAdd = {
             "name": name,
-            "email": email,
+            "email": `${username}@gmail.com`,
             "username": username,
             "password": "active123",
             "sendWelcomeEmail": false,
