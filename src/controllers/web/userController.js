@@ -45,7 +45,7 @@ const {
 } = require("../../utils/templates/emailTemplate/emailTemplateContent");
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan;
-const { createTrialPlan } = SellerPlans;
+const { createTrialPlan, deleteSellerPlans } = SellerPlans;
 const { createChat } = Chat;
 
 const { createChatUser, userChatLogin } = require("./rocketChatController");
@@ -67,6 +67,7 @@ const {
   forgetPassword,
   addSeller,
   addbusinessDetails,
+  getSellerVal
 } = sellers;
 const {
   getBuyer,
@@ -74,8 +75,9 @@ const {
   updateBuyer,
   getUserFromUserHash,
   updateEmailVerification,
+  deleteBuyer
 } = buyers;
-const { getMaster, addMaster, updateMaster } = mastercollections;
+const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = mastercollections;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
 // const {username, password, senderID, smsURL} = sms
@@ -775,3 +777,63 @@ module.exports.deleteRecords = async (req, res) =>
       reject(error);
     }
   });
+
+  module.exports.deleteCurrentAccount = async (req, res) => {
+  
+    try {
+      const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' :'https://investmentapi.tech-active.com/api/permanentlydisable'
+       const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
+       const { userID, token } = req;
+       console.log("🚀 ~ file: userController.js ~ line 790 ~ module.exports.deleteCurrentAccount ~ userID", token)
+       const result = await updateUser({_id:userId}, {deleteTrade})
+       if(result){
+         const sellerData = await getSellerVal({_id: sellerId})
+        const _seller = await deleteSellerRecord(sellerId);
+        const _buyer = await deleteBuyer({_id:buyerId})
+        if(sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length){
+          const pQuery = {
+            _id: {
+              $in: sellerData.sellerProductId,
+            },
+          };
+          const delRec =  deleteSellerProducts(pQuery);
+          const delMaster =  bulkDeleteMasterProducts(pQuery);
+          console.log('master collectiona nd seller product delete')
+        }
+        const delMaster1 =  deleteSellerPlans({sellerId: sellerId});
+        if(permanentDelete){
+          // delete from investment
+          const update = {
+            status: true,
+            reason: deleteTrade.reason
+          }
+          const result = /* await */ updateUser({_id:userId}, {deleteTendor:update, deleteInvestement: update})
+          const res = /* await */ axios.delete(investmentUrl,{
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `ekbazaar|${token}`,
+            }
+        });
+          // delete from tendor
+        }
+       }
+       respSuccess(res, "Deleted Succesfully")
+      
+    } catch (error) {
+
+      respError(res, error.message)
+      
+    }
+  
+  }
+
+  module.exports.deleteAllAccount = async (req, res) => {
+  
+    try {
+      
+    } catch (error) {
+      
+    }
+  
+  }
+

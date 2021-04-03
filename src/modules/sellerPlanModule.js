@@ -2,6 +2,16 @@ const mongoose = require('mongoose')
 const { SellerPlans } = require('../models')
 const moment = require("moment");
 
+module.exports.deleteSellerPlans = (query) =>
+    new Promise((resolve, reject) => {
+console.log("🚀 ~ file: sellerPlanModule.js ~ line 7 ~ query", query)
+        SellerPlans.deleteMany(query)
+        .then((doc) => {
+            resolve(doc)
+        })
+        .catch(reject)
+    })
+
 module.exports.createTrialPlan = (query) =>
     new Promise((resolve, reject) => {
         SellerPlans.create(query)

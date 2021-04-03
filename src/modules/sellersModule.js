@@ -444,6 +444,7 @@ module.exports.getSeller = (id, chkStock, query) =>
       }
     }
     let _query = query || { userId: id }
+    console.log("🚀 ~ file: sellersModule.js ~ line 447 ~ newPromise ~ _query", query)
     Sellers.findOne(_query)
       .populate('sellerProductId')
       .populate('sellerType')

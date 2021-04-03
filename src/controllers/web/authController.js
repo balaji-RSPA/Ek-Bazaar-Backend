@@ -81,22 +81,22 @@ exports.login = async (req, res, next) => {
     console.log("🚀 ~ file: authController.js ~ line 83 ~ exports.login= ~ seller", seller)
     if (userType === 'seller') {
 
-      if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
+     /*  if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
 
-      else if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
+      else */ if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
         const data = {
           mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
         }
         await sellers.updateSeller({ userId: _user._id }, data)
       }
 
-    } else if (userType === 'buyer') {
+    } /* else if (userType === 'buyer') {
 
       if (buyer && buyer.deactivateAccount.status === true)
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
 
-    }
+    } */
 
     console.log("🚀 ~ file: authController.js ~ line 49 ~ exports.login= ~ _user", _user, seller, buyer)
     const result = await bcrypt.compare(password, _user.password);
