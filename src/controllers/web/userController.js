@@ -786,34 +786,40 @@ module.exports.deleteRecords = async (req, res) =>
     try {
       const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' :'https://investmentapi.tech-active.com/api/permanentlydisable'
        const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
-       const { userID } = req;
-       console.log("🚀 ~ file: userController.js ~ line 790 ~ module.exports.deleteCurrentAccount ~ userID", userID)
-      //  const result = await updateUser({_id:userId}, {deleteTrade})
-      //  if(result){
-      //    const sellerData = await getSellerVal({_id: sellerId})
-      //   const _seller = await deleteSellerRecord(sellerId);
-      //   const _buyer = await deleteBuyer({_id:buyerId})
-      //   const pQuery = {
-      //     _id: {
-      //       $in: sellerData.sellerProductId,
-      //     },
-      //   };
-      //   const delRec =  deleteSellerProducts(pQuery);
-      //   const delMaster =  bulkDeleteMasterProducts(pQuery);
-      //   console.log(sellerData, delMaster, ' delete trade and tendor')
-      //   if(permanentDelete){
-      //     // delete from investment
-      //     const res = await axios.delete(investmentUrl,{
-      //       headers: {
-      //           'Content-Type': 'application/json',
-      //           'X-Auth-Token': chatAthToken,
-      //           'X-User-Id': chatUserId
-      //       }
-      //   });
-      //     // delete from tendor
-      //   }
-      //  }
-      //  respSuccess(res, "Deleted Succesfully")
+       const { userID, token } = req;
+       console.log("🚀 ~ file: userController.js ~ line 790 ~ module.exports.deleteCurrentAccount ~ userID", token)
+       const result = await updateUser({_id:userId}, {deleteTrade})
+       if(result){
+         const sellerData = await getSellerVal({_id: sellerId})
+        const _seller = await deleteSellerRecord(sellerId);
+        const _buyer = await deleteBuyer({_id:buyerId})
+        if(sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length){
+          const pQuery = {
+            _id: {
+              $in: sellerData.sellerProductId,
+            },
+          };
+          const delRec =  deleteSellerProducts(pQuery);
+          const delMaster =  bulkDeleteMasterProducts(pQuery);
+          console.log('master collectiona nd seller product delete')
+        }
+        if(permanentDelete){
+          // delete from investment
+          const update = {
+            status: true,
+            reason: deleteTrade.reason
+          }
+          const result = /* await */ updateUser({_id:userId}, {deleteTendor:update, deleteInvestement: update})
+          const res = /* await */ axios.delete(investmentUrl,{
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `ekbazaar|${token}`,
+            }
+        });
+          // delete from tendor
+        }
+       }
+       respSuccess(res, "Deleted Succesfully")
       
     } catch (error) {
 
