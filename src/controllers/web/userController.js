@@ -45,7 +45,7 @@ const {
 } = require("../../utils/templates/emailTemplate/emailTemplateContent");
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan;
-const { createTrialPlan } = SellerPlans;
+const { createTrialPlan, deleteSellerPlans } = SellerPlans;
 const { createChat } = Chat;
 
 const { createChatUser, userChatLogin } = require("./rocketChatController");
@@ -803,6 +803,7 @@ module.exports.deleteRecords = async (req, res) =>
           const delMaster =  bulkDeleteMasterProducts(pQuery);
           console.log('master collectiona nd seller product delete')
         }
+        const delMaster1 =  deleteSellerPlans({sellerId: sellerId});
         if(permanentDelete){
           // delete from investment
           const update = {
