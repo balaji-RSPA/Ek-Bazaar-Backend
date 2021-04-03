@@ -74,6 +74,13 @@ const alloweOrigin = {
   "https://tradeapi.ekbazaar.com": true,
   "https://tradebazaar.tech-active.com": true,
   "https://www.trade.ekbazaar.com": true,
+
+  "http://localhost:8050": true,
+  "http://localhost:8071": true,
+  "https://investmentapi.tech-active.com": true,
+  "https://investmentapi.ekbazaar.com": true,
+  "https://www.investment.ekbazaar.com": true,
+  "https://investment.tech-active.com": true
 };
 
 const deHyphenatedUUID = () => uuidv4().replace(/-/gi, "");
@@ -98,6 +105,13 @@ const originAppName = {
   "https://tradeapi.ekbazaar.com": "trade_sso_consumer",
   "https://tradebazaar.tech-active.com": "trade_sso_consumer",
   "https://www.trade.ekbazaar.com": "trade_sso_consumer",
+
+  "http://localhost:8050": "investment_sso_consumer",
+  "http://localhost:8071": "investment_sso_consumer",
+  "https://investmentapi.tech-active.com": "investment_sso_consumer",
+  "https://investmentapi.ekbazaar.com": "investment_sso_consumer",
+  "https://www.investment.ekbazaar.com": "investment_sso_consumer",
+  "https://investment.tech-active.com": "investment_sso_consumer"
 };
 
 let userDB = {
@@ -311,9 +325,10 @@ const doLogin = async (req, res, next) => {
     req.query.serviceURL = _tender;
   } else {
     baseURL = investment;
-    url = baseURL + "";
+    url = baseURL + "user/login";
     req.query.serviceURL = _investment;
   }
+  console.log("🚀 ~ file: index.js ~ line 329 ~ doLogin ~ url", url)
 
   const user = await UserModel.findOne({ mobile })
     .select({
@@ -340,7 +355,9 @@ const doLogin = async (req, res, next) => {
     isMobileVerified,
     _id,
   } = user;
-  const registered = await bcrypt.compare(password, user.password);
+  console.log("🚀 ~ file: index.js ~ line 357 ~ doLogin ~ user", user)
+  const registered = user.password ? await bcrypt.compare(password, user.password) : true;
+  console.log("🚀 ~ file: index.js ~ line 359 ~ doLogin ~ registered", registered)
   userDB = {
     [user.mobile]: {
       password,
@@ -360,6 +377,7 @@ const doLogin = async (req, res, next) => {
 
   // else redirect
   const { serviceURL } = req.query;
+  console.log("🚀 ~ file: index.js ~ line 379 ~ doLogin ~ serviceURL", serviceURL)
   const id = encodedId();
   req.session.user = id;
   sessionUser[id] = user.mobile;

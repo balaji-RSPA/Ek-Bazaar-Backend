@@ -17,7 +17,9 @@ app.use(cors({
   origin: [
     "https://tradeapi.ekbazaar.com", "https://tradebazaarapi.tech-active.com", "http://localhost:8070", 
     "http://localhost:8085", "https://tradebazaar.tech-active.com", "https://www.trade.ekbazaar.com",
-    "http://localhost:8080", "https://ekbazaar.tech-active.com", "https://www.tenders.ekbazaar.com"],
+    "http://localhost:8080", "https://ekbazaar.tech-active.com", "https://www.tenders.ekbazaar.com",
+    "http://localhost:8071", "https://investment.tech-active.com", "https://www.investment.ekbazaar.com",
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
   credentials: true,
 }))
@@ -53,7 +55,6 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin);
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS, HEAD");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization");
-  // res.header("Access-Control-Expose-Headers", "Set-Cookie");
   next();
 });
 app.use((req, res, next) => {

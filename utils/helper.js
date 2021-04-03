@@ -99,19 +99,19 @@ exports.globalVaraibles = {
             return {
                 trade: "https://tradeapi.ekbazaar.com/api/",
                 tender: "https://api.ekbazaar.com/api/",
-                investment: ""
+                investment: "https://investmentapi.ekbazaar.com/api/"
             }
         } else if (this._IS_DEV_) {
             return {
                 trade: "https://tradebazaarapi.tech-active.com/api/",
                 tender: "https://elastic.tech-active.com:8443/api/",
-                investment: ""
+                investment: "https://investmentapi.tech-active.com/api/"
             }
         } else {
             return {
                 trade: "http://localhost:8070/api/",
                 tender: "http://localhost:8060/api/",
-                investment: ""
+                investment: "http://localhost:8050/api/"
             }
         }
     },
@@ -120,19 +120,19 @@ exports.globalVaraibles = {
             return {
                 _trade: "https://tradeapi.ekbazaar.com",
                 _tender: "https://api.ekbazaar.com",
-                _investment: ""
+                _investment: "https://investmentapi.ekbazaar.com"
             }
         } else if (this._IS_DEV_) {
             return {
                 _trade: "https://tradebazaarapi.tech-active.com",
                 _tender: "https://elastic.tech-active.com:8443",
-                _investment: ""
+                _investment: "https://investmentapi.tech-active.com"
             }
         } else {
             return {
                 _trade: "http://localhost:8070",
                 _tender: "http://localhost:8060",
-                _investment: ""
+                _investment: "http://localhost:8050"
             }
         }
     }
