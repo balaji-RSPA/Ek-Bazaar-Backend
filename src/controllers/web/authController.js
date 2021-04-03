@@ -53,7 +53,6 @@ exports.login = async (req, res, next) => {
 
     if (data.url) {
       const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
-      req.session.ssoToken = ssoToken
       req.query = {
         ssoToken: ssoToken
       }
@@ -61,7 +60,6 @@ exports.login = async (req, res, next) => {
     const _response = await ssoRedirect(req, res, next)
 
     const { user, token } = _response
-    if (token) req.session.token = token
     if (!_user) {
 
       return respAuthFailed(res, undefined, "User not found");
@@ -184,10 +182,6 @@ exports.logout = async (req, res) => {
       console.log("🚀 ~ file: authController.js ~ line 139 ~ exports.logout= ~ response", response)
       if (response.data && response.data.success) {
 
-        req.session = null //.distroy(function (err) {
-        // if (err) return respError(res, error.message)
-        // else return respSuccess(res, 'successfully logged out!');
-        // })
         return respSuccess(res, 'successfully logged out!');
 
       }

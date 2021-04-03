@@ -378,7 +378,6 @@ module.exports.addUser = async (req, res, next) => {
 
       if (url) {
         const ssoToken = url.substring(url.indexOf("=") + 1);
-        req.session.ssoToken = ssoToken;
         req.query = {
           ssoToken: ssoToken,
         };
@@ -386,8 +385,6 @@ module.exports.addUser = async (req, res, next) => {
 
       const _response = await ssoRedirect(req, res, next);
       const { user, token } = _response;
-
-      if (token) req.session.token = token;
 
       const userAgent = getUserAgent(req.useragent);
 
