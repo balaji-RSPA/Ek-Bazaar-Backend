@@ -75,6 +75,7 @@ const {
   updateBuyer,
   getUserFromUserHash,
   updateEmailVerification,
+  checkBuyerExistOrNot,
   deleteBuyer
 } = buyers;
 const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = mastercollections;
@@ -163,10 +164,12 @@ module.exports.sendOtp = async (req, res) => {
     const { mobile, reset } = req.body;
     let otp = 1234;
     const seller = await checkUserExistOrNot({ mobile });
+    const user = await checkBuyerExistOrNot({mobile})
+    console.log("🚀 ~ file: userController.js ~ line 168 ~ module.exports.sendOtp= ~ user", user)
 
     const { otpMessage } = sendOtp({ reset, otp });
 
-    if (seller && seller.length && !reset) {
+    if (seller && seller.length && !reset && user && user.length) {
       return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length))
@@ -299,6 +302,7 @@ module.exports.addUser = async (req, res, next) => {
       isPhoneVerified: true,
       userId: user._id,
     };
+    const _buyer = await getBuyer({mobile})
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
@@ -323,7 +327,7 @@ module.exports.addUser = async (req, res, next) => {
         planType: "trail",
         status: true,
       });
-      if (trialPlan) {
+      if (trialPlan && _buyer && !_buyer.length) {
         const sellerDetails = {
           sellerId: seller._id,
           userId: seller.userId,
