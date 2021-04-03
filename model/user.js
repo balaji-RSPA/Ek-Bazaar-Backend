@@ -149,6 +149,33 @@ const userSchema = new Schema({
       type: String,
       default: null
     }
+  },
+  deleteTendor: {
+    status: {
+      type: Boolean
+    },
+    reason: {
+      type: String,
+      trim: true
+    },
+  },
+  deleteTrade: {
+    status: {
+      type: Boolean
+    },
+    reason: {
+      type: String,
+      trim: true
+    },
+  },
+  deleteInvestement: {
+    status: {
+      type: Boolean
+    },
+    reason: {
+      type: String,
+      trim: true
+    },
   }
 }, {
   versionKey: false,

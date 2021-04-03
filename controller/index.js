@@ -236,8 +236,36 @@ const register = async (req, res, next) => {
     password: req.body.password,
     // preferredLanguage
   };
+
+  let url = "";
+  if (origin === "trade") {
+    baseURL = trade;
+    url = baseURL + "user";
+    req.query.serviceURL = _trade;
+    tenderUser.deleteTrade = {
+      status: false,
+      reason: ""
+    }
+  } else if (origin === "tender") {
+    baseURL = tender;
+    url = baseURL + "v1/user";
+    req.query.serviceURL = _tender;
+    tenderUser.deleteTendor = {
+      status: false,
+      reason: ""
+    }
+  } else {
+    baseURL = investment;
+    url = baseURL + "";
+    req.query.serviceURL = _investment;
+    tenderUser.deleteInvestement = {
+      status: false,
+      reason: ""
+    }
+  }
+
   if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage;
-  const user = await UserModel.create(tenderUser); //.exec()
+  const user = await UserModel.findOneAndUpdate({ mobile: mobile.mobile || mobile }, { $set: tenderUser }, { new: true, upsert: true }); //.exec()
   if (!user) {
     return respError(res, "User not Created");
   }
@@ -253,20 +281,6 @@ const register = async (req, res, next) => {
       },
     },
   };
-  let url = "";
-  if (origin === "trade") {
-    baseURL = trade;
-    url = baseURL + "user";
-    req.query.serviceURL = _trade;
-  } else if (origin === "tender") {
-    baseURL = tender;
-    url = baseURL + "v1/user";
-    req.query.serviceURL = _tender;
-  } else {
-    baseURL = investment;
-    url = baseURL + "";
-    req.query.serviceURL = _investment;
-  }
 
   // console.log("🚀 ~ file: index.js ~ line 235 ~ register ~ url", url);
   const { serviceURL } = req.query;
@@ -314,21 +328,6 @@ const doLogin = async (req, res, next) => {
   // like checking with Datebase and all, we are skiping these section
   // const { email, password } = req.body;
   const { password, ipAddress, mobile, userType, origin, location } = req.body;
-  let url = "";
-  if (origin === "trade") {
-    baseURL = trade;
-    url = baseURL + "user/login";
-    req.query.serviceURL = _trade;
-  } else if (origin === "tender") {
-    baseURL = tender;
-    url = baseURL + "v1/user/login";
-    req.query.serviceURL = _tender;
-  } else {
-    baseURL = investment;
-    url = baseURL + "user/login";
-    req.query.serviceURL = _investment;
-  }
-  console.log("🚀 ~ file: index.js ~ line 329 ~ doLogin ~ url", url)
 
   const user = await UserModel.findOne({ mobile })
     .select({
@@ -340,6 +339,9 @@ const doLogin = async (req, res, next) => {
       isPhoneVerified: 1,
       isMobileVerified: 1,
       countryCode: 1,
+      deleteTrade: 1,
+      deleteInvestement: 1,
+      deleteTendor: 1
       // _id: -1,
     })
     .exec();
@@ -347,6 +349,28 @@ const doLogin = async (req, res, next) => {
   if (!user) {
     return respError(res, "User not found");
   }
+  // console.log("🚀 ~ file: index.js ~ line 319 ~ doLogin ~ user", user)
+
+  let url = "";
+  if (origin === "trade") {
+    baseURL = trade;
+    url = baseURL + "user/login";
+    req.query.serviceURL = _trade;
+    console.log("teri maa ki", user)
+    if (user && user.deleteTrade && user.deleteTrade.status) return respError(res, "User not found")
+  } else if (origin === "tender") {
+    baseURL = tender;
+    url = baseURL + "v1/user/login";
+    req.query.serviceURL = _tender;
+    if (user && user.deleteTendor && user.deleteTendor.status) return respError(res, "User not found")
+  } else {
+    baseURL = investment;
+    url = baseURL + "user/login";
+    req.query.serviceURL = _investment;
+    if (user && user.deleteInvestement && user.deleteInvestement.status) return respError(res, "User not found")
+  }
+  console.log("🚀 ~ file: index.js ~ line 329 ~ doLogin ~ url", url)
+
   const {
     name,
     email,
@@ -593,7 +617,7 @@ const postRFP = async (req, res, next) => {
   });
   if (response.data.success) {
     console.log("🚀 ~ file: index.js ~ line 575 ~ postRFP ~ response.data", response.data)
-    if(response.data && response.data.data && response.data.data.token) req.session.token = response.data.data.token
+    if (response.data && response.data.data && response.data.data.token) req.session.token = response.data.data.token
     return respSuccess(res, { ...response.data.data }, response.data.message);
   } else {
     return respError(res, "Somthing went wrong");
