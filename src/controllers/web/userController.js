@@ -327,7 +327,7 @@ module.exports.addUser = async (req, res, next) => {
         planType: "trail",
         status: true,
       });
-      if (trialPlan && _buyer && !_buyer.length) {
+      if (trialPlan/*  && _buyer && !_buyer.length */) {
         const sellerDetails = {
           sellerId: seller._id,
           userId: seller.userId,
