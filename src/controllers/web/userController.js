@@ -788,7 +788,7 @@ module.exports.deleteRecords = async (req, res) =>
       const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
 
       const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' :'https://investmentapi.tech-active.com/api/permanentlydisable'
-      const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` :`http://localhost:8060/api/v1/deleteTenderUser/${userId}`
+      const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
       console.log("🚀 ~ file: userController.js ~ line 792 ~ module.exports.deleteCurrentAccount ~ tenderUrl", tenderUrl)
        
        const { userID, token } = req;
