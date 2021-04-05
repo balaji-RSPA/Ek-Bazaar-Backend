@@ -156,8 +156,6 @@ module.exports.createRFP = async (req, res, next) => {
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
     // const user = await checkUserExistOrNot({ mobile: mobile.mobile })
     const url = req.get('origin');
-
-    console.log("~ user", user, productDetails)
     if (user && user.length) {
 
       const userData = {
@@ -174,6 +172,10 @@ module.exports.createRFP = async (req, res, next) => {
         userId: user[0]._id
       }
       const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
+      if(exist && exist.length && exist[0].deactivateAccount && exist[0].deactivateAccount.status){
+        return respError(res, " User Account Deactivated")
+      }
+
       let buyer
       if (exist && exist.length) {
         buyer = exist[0]

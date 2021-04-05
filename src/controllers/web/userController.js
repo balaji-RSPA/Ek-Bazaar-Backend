@@ -327,7 +327,7 @@ module.exports.addUser = async (req, res, next) => {
         planType: "trail",
         status: true,
       });
-      if (trialPlan && _buyer && !_buyer.length) {
+      if (trialPlan/*  && _buyer && !_buyer.length */) {
         const sellerDetails = {
           sellerId: seller._id,
           userId: seller.userId,
@@ -785,8 +785,12 @@ module.exports.deleteRecords = async (req, res) =>
   module.exports.deleteCurrentAccount = async (req, res) => {
   
     try {
+      const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
+
       const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' :'https://investmentapi.tech-active.com/api/permanentlydisable'
-       const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
+      const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
+      console.log("🚀 ~ file: userController.js ~ line 792 ~ module.exports.deleteCurrentAccount ~ tenderUrl", tenderUrl)
+       
        const { userID, token } = req;
        console.log("🚀 ~ file: userController.js ~ line 790 ~ module.exports.deleteCurrentAccount ~ userID", token)
        const result = await updateUser({_id:userId}, {deleteTrade})
@@ -812,13 +816,23 @@ module.exports.deleteRecords = async (req, res) =>
             reason: deleteTrade.reason
           }
           const result = /* await */ updateUser({_id:userId}, {deleteTendor:update, deleteInvestement: update})
-          const res = /* await */ axios.delete(investmentUrl,{
+
+          // Delete from Investment
+          const res = axios.delete(investmentUrl,{
             headers: {
                 'Content-Type': 'application/json',
                 'authorization': `ekbazaar|${token}`,
             }
-        });
-          // delete from tendor
+          });
+
+          // Delete From Tender
+          const resTender =  axios.delete(tenderUrl,{
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `ekbazaar|${token}`,
+            }
+          });
+          console.log("🚀 ~ file: userController.js ~ line 835 ~ module.exports.deleteCurrentAccount ~ resTender", resTender)
         }
        }
        respSuccess(res, "Deleted Succesfully")
@@ -826,16 +840,6 @@ module.exports.deleteRecords = async (req, res) =>
     } catch (error) {
 
       respError(res, error.message)
-      
-    }
-  
-  }
-
-  module.exports.deleteAllAccount = async (req, res) => {
-  
-    try {
-      
-    } catch (error) {
       
     }
   
