@@ -27,7 +27,7 @@ module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
   RFP.find(query)
     .skip(skip)
     .limit(limit)
-    .sort({_id: -1})
+    .sort({ _id: -1 })
     .populate({
       path: 'buyerDetails.location.city buyerDetails.location.state'
     })
@@ -79,6 +79,16 @@ module.exports.getBuyer = (id, query) =>
 module.exports.updateBuyer = (query, data) =>
   new Promise((resolve, reject) => {
     Buyers.findOneAndUpdate(query, data, { new: true, upsert: true })
+      .populate({
+        path: "location.city",
+        model: "cities",
+        select: "name"
+      })
+      .populate({
+        path: "location.state",
+        model: "states",
+        select: "name"
+      })
       .then((doc) => {
         resolve(doc);
       })
@@ -151,7 +161,7 @@ exports.getUserFromUserHash = (hashcode) => new Promise((resolve, reject) => {
     _id: 0,
     userHash: 1,
     mobile: 1,
-    name:1
+    name: 1
   })
     .then(doc => {
       resolve(doc)
@@ -176,10 +186,10 @@ exports.updateEmailVerification = (hash, newData) => new Promise((resolve, rejec
 
 exports.deleteBuyer = (query) => new Promise((resolve, reject) => {
   Buyers.deleteOne(query)
-  .then((doc) => {
-    resolve(doc);
-  })
-  .catch((error) => {
-    reject(error);
-  });
+    .then((doc) => {
+      resolve(doc);
+    })
+    .catch((error) => {
+      reject(error);
+    });
 })
