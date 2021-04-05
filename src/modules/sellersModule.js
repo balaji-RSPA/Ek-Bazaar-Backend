@@ -775,7 +775,31 @@ module.exports.updateSeller = (query, data, elastic) =>
       .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
-      .populate('sellerContactId')
+      // .populate('sellerContactId')
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.city location.state location.country",
+          // model: Cities
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.state",
+          model: States,
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.country",
+          model: Countries,
+        }
+      })
       .populate('sellerCompanyId')
       .populate('establishmentId')
 

@@ -302,7 +302,7 @@ module.exports.addUser = async (req, res, next) => {
       isPhoneVerified: true,
       userId: user._id,
     };
-    // const _buyer = await getBuyer({mobile})
+    const _buyer = await getBuyer(null, {mobile: mobile.mobile || mobile})
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
@@ -425,8 +425,14 @@ module.exports.getUserProfile = async (req, res) => {
     const buyer = await getBuyer(userID);
     const userData = {
       user,
-      seller,
-      buyer,
+      seller: {
+        ...seller,
+         ...user
+      },
+      buyer: {
+        ...buyer,
+        ...user
+      },
     };
     respSuccess(res, userData);
   } catch (error) {
@@ -595,8 +601,14 @@ module.exports.updateUser = async (req, res) => {
       respSuccess(
         res,
         {
-          seller,
-          buyer,
+          seller: {
+            ...seller,
+            ...user
+          },
+          buyer: {
+            ...buyer,
+            ...user
+          },
           activeChat,
         },
         user.email && user.isEmailVerified === 1
