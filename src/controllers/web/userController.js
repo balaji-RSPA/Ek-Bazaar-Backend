@@ -789,10 +789,8 @@ module.exports.deleteRecords = async (req, res) =>
 
       const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' :'https://investmentapi.tech-active.com/api/permanentlydisable'
       const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
-      console.log("🚀 ~ file: userController.js ~ line 792 ~ module.exports.deleteCurrentAccount ~ tenderUrl", tenderUrl)
        
        const { userID, token } = req;
-       console.log("🚀 ~ file: userController.js ~ line 790 ~ module.exports.deleteCurrentAccount ~ userID", token)
        const result = await updateUser({_id:userId}, {deleteTrade})
        if(result){
          const sellerData = await getSellerVal({_id: sellerId})
@@ -810,7 +808,7 @@ module.exports.deleteRecords = async (req, res) =>
         }
         const delMaster1 =  deleteSellerPlans({sellerId: sellerId});
         if(permanentDelete){
-          // delete from investment
+          
           const update = {
             status: true,
             reason: deleteTrade.reason
@@ -832,7 +830,6 @@ module.exports.deleteRecords = async (req, res) =>
                 'authorization': `ekbazaar|${token}`,
             }
           });
-          console.log("🚀 ~ file: userController.js ~ line 835 ~ module.exports.deleteCurrentAccount ~ resTender", resTender)
         }
        }
        respSuccess(res, "Deleted Succesfully")
