@@ -348,7 +348,7 @@ module.exports.addUser = async (req, res, next) => {
           planType: trialPlan.type,
           extendDays: trialPlan.days,
           subscriptionId: trialPlan._id,
-          createdOn: new Date(dateNow),
+          createdOn: new Date(),
         };
 
         const planResult = await createTrialPlan(planData);
@@ -378,7 +378,7 @@ module.exports.addUser = async (req, res, next) => {
 
       if (url) {
         const ssoToken = url.substring(url.indexOf("=") + 1);
-        req.session.ssoToken = ssoToken;
+        // req.session.ssoToken = ssoToken;
         req.query = {
           ssoToken: ssoToken,
         };
@@ -387,7 +387,7 @@ module.exports.addUser = async (req, res, next) => {
       const _response = await ssoRedirect(req, res, next);
       const { user, token } = _response;
 
-      if (token) req.session.token = token;
+      // if (token) req.session.token = token;
 
       const userAgent = getUserAgent(req.useragent);
 
@@ -587,40 +587,10 @@ module.exports.updateUser = async (req, res) => {
         };
         sendSingleMail(message);
 
-        const chatUser = await createChatUser({
-          name: user.name,
-          email: user.email,
-          username: user.mobile.toString(),
-        });
-        console.log(
-          "lokkkkkkkkkkkkkkkkkkkkkkkkkkkiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
-          new Date()
-        );
-
-        if (chatUser) {
-          const chatDetails = await createChat(
-            { userId: seller.userId },
-            {
-              details: chatUser,
-              sellerId: seller._id,
-              buyerId: buyer._id,
-              userId: seller.userId,
-            }
-          );
-          activeChat = await userChatLogin({
-            username: chatDetails.details.user.username,
-            password: "active123",
-            customerUserId: seller.userId,
-          });
-        }
       } else if (user.email && buyer.isEmailSent) {
         await updateBuyer({ userId: userID }, buyerData);
         await updateSeller({ userId: userID }, sellerData);
-        // activeChat = await userChatLogin({
-        //   username: buyer.mobile.toString(),
-        //   password: "active123",
-        //   customerUserId: seller.userId,
-        // });
+
       }
       buyer = await getBuyer(null, {_id: buyer._id})
       seller= await getSeller(null, null, {_id: _seller._id})

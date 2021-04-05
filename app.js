@@ -73,17 +73,17 @@ const cookieOptions = {
   // secure: true,
 };
 
-app.use(
-  session({
-    key: "userId",
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      ...cookieOptions,
-    },
-  })
-);
+// app.use(
+//   session({
+//     key: "userId",
+//     secret: "keyboard cat",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       ...cookieOptions,
+//     },
+//   })
+// );
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Origin", req.headers.origin);
