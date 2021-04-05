@@ -144,8 +144,10 @@ const generatePayload = (ssoToken) => {
   console.log("🚀 ~ file: index.js ~ line 141 ~ appName", appName);
   console.log("🚀 ~ file: index.js ~ line 143 ~ sessionUser", sessionUser);
   const userEmail = sessionUser[globalSessionToken];
+  console.log("🚀 ~ file: index.js ~ line 147 ~ generatePayload ~ userEmail", userEmail)
   console.log("🚀 ~ file: index.js ~ line 145 ~ userDB", userDB);
   const user = userDB[userEmail];
+  console.log("🚀 ~ file: index.js ~ line 150 ~ generatePayload ~ user", user)
   const appPolicy = user.appPolicy[appName];
   const email = appPolicy.shareEmail === true ? userEmail : undefined;
   const payload = {
@@ -224,6 +226,7 @@ const register = async (req, res, next) => {
   };
   if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage;
   const user = await UserModel.create(tenderUser); //.exec()
+  console.log("🚀 ~ file: index.js ~ line 229 ~ register ~ user", user)
   if (!user) {
     return respError(res, "User not Created");
   }
@@ -333,6 +336,7 @@ const doLogin = async (req, res, next) => {
     return respError(res, "User not found");
   }
   const {
+    // mobile,
     name,
     email,
     preferredLanguage,
@@ -342,7 +346,7 @@ const doLogin = async (req, res, next) => {
   } = user;
   const registered = await bcrypt.compare(password, user.password);
   userDB = {
-    [email]: {
+    [user.mobile]: {
       password,
       userId: _id, //encodedId() // incase you dont want to share the user-email.
       appPolicy: {
@@ -354,7 +358,7 @@ const doLogin = async (req, res, next) => {
   };
 
   if (!registered) return respError(res, "Invalid Credentials");
-  else if (!(userDB[email] && registered)) {
+  else if (!(userDB[user.mobile] && registered)) {
     return respError(res, "Invalid Credentials");
   }
 
@@ -362,13 +366,14 @@ const doLogin = async (req, res, next) => {
   const { serviceURL } = req.query;
   const id = encodedId();
   req.session.user = id;
-  sessionUser[id] = email;
+  sessionUser[id] = user.mobile;
   if (serviceURL == null) {
     return res.redirect("/");
   }
   const _url = new URL(serviceURL);
 
   const intrmid = encodedId();
+  console.log("🚀 ~ file: index.js ~ line 375 ~ doLogin ~ intrmid", intrmid)
   storeApplicationInCache(_url.origin, id, intrmid);
   const response = await axios({
     url,
@@ -387,7 +392,7 @@ const doLogin = async (req, res, next) => {
   const { data } = response;
   console.log(
     "🚀 ~ file: index.js ~ line 281 ~ doLogin ~ response",
-    response.data
+    response.headers,  response.data, req.session.user
   );
   if (response.data.success) {
     req.session.token = data.data.token;
@@ -395,7 +400,8 @@ const doLogin = async (req, res, next) => {
     return respSuccess(
       res,
       {
-        user: data.data.user,
+        user,
+        _user: data.data.user,
         token: data.data.token,
         activeChat: data.data.activeChat,
       },
@@ -407,10 +413,12 @@ const doLogin = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
+console.log("🚀 ~ file: index.js ~ line 415 ~ login ~ req", req.headers)
   // The req.query will have the redirect url where we need to redirect after successful
   // login and with sso token.
   // This can also be used to verify the origin from where the request has came in
   // for the redirection
+  
   const { origin } = req.query;
   if (origin === "trade" || !origin) {
     req.query.serviceURL = _trade;
@@ -421,9 +429,10 @@ const login = async (req, res, next) => {
   }
 
   const { serviceURL } = req.query;
+  console.log("🚀 ~ file: index.js ~ line 428 ~ login ~ serviceURL", serviceURL)
   console.log(
     "🚀 ~ file: index.js ~ line 292 ~ login ~ req.session.user",
-    req.session.user
+    req.session
   );
 
   // direct access will give the error inside new URL.

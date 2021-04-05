@@ -13,7 +13,7 @@ const genJwtToken = payload =>
       privateCert,
       {
         algorithm: "RS256",
-        expiresIn: "1h",
+        // expiresIn: "1h",
         issuer: ISSUER
       },
       (err, token) => {
