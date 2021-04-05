@@ -302,7 +302,7 @@ module.exports.addUser = async (req, res, next) => {
       isPhoneVerified: true,
       userId: user._id,
     };
-    const _buyer = await getBuyer({mobile})
+    const _buyer = await getBuyer(null, {mobile: mobile.mobile || mobile})
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
