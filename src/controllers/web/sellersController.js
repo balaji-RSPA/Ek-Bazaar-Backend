@@ -598,129 +598,142 @@ module.exports.updateSellerProduct = async (req, res) => {
       files,
       prodDtl
     } = req
-    // console.log('update poroduct---', JSON.parse(body.productDetails))
+    let { offers, productId} = body
+    offers = offers ? JSON.parse(offers) : null
+    console.log('update poroduct---', req.body)
+
     let updateDetail
-    if (body && body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
-      productDetails = JSON.parse(body.productDetails)
-      let findCities = await getSellerSelectedCities(productDetails.serviceCity);
-      if (findCities && findCities.length) {
-        productDetails.serviceCity = findCities.map((val) => ({
-          city: val._id,
-          state: val.state._id,
-          country: val.country,
-          region: val.state && val.state.region
-        }))
+
+    if(offers){
+      const offerData = {
+        offers: offers
       }
-
-      // /* need to optimize the below code*/
-      if (files && files.document) {
-        let data = {
-          Key: `${productDetails.sellerId._id}/${files.document.name}`,
-          body: files.document.data
-        }
-        const _document = await uploadToDOSpace(data)
-        let size = (files.document.size / 1000).toFixed(1)
-        size = `${size} ${size < 1024 ? 'KB' : 'MB'}`;
-        productDetails.productDetails.document = {
-          name: files.document.name,
-          code: _document.Location,
-          size
-        }
-
-      }
-
-      if (files && files.image1) {
-        let data = {
-          Key: `${productDetails.sellerId._id}/${files.image1.name}`,
-          body: files.image1.data
-        }
-        const _image1 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image1 = {
-          name: files.image1.name,
-          code: _image1.Location
-        }
-      }
-
-      if (files && files.image2) {
-        let data = {
-          Key: `${productDetails.sellerId._id}/${files.image2.name}`,
-          body: files.image2.data
-        }
-        const _image2 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image2 = {
-          name: files.image2.name,
-          code: _image2.Location
-        }
-      }
-
-      if (files && files.image3) {
-        let data = {
-          Key: `${productDetails.sellerId._id}/${files.image3.name}`,
-          body: files.image3.data
-        }
-        const _image3 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image3 = {
-          name: files.image3.name,
-          code: _image3.Location
-        }
-      }
-
-      if (files && files.image4) {
-        let data = {
-          Key: `${productDetails.sellerId._id}/${files.image4.name}`,
-          body: files.image4.data
-        }
-        const _image4 = await uploadToDOSpace(data)
-        productDetails.productDetails.image.image4 = {
-          name: files.image4.name,
-          code: _image4.Location
-        }
-      }
-      /* till here*/
-
-      updateDetail = await addProductDetails(productDetails._id, productDetails);
-    } else if (prodDtl) {
-      /*this is for updating the seller document field*/
-      updateDetail = await addProductDetails(prodDtl._id, {
-        "productDetails.document": null,
-        "productDetails.documentName":null
-      });
+      console.log("🚀 ~ file: sellersController.js ~ line 608 ~ module.exports.updateSellerProduct= ~ offers", offerData)
+      updateDetail = await addProductDetails(productId, offerData)
+      console.log("🚀 ~ file: sellersController.js ~ line 609 ~ module.exports.updateSellerProduct= ~ productData", updateDetail)
     }
-    if (body && body.id && body.imageType) {
-      const data = {
-        Key: `${body.sellerId}/${body.fileName}`,
-        body: files.file.data
-      }
-      let ImageVal = await uploadToDOSpace(data)
 
-      let image = body.imageType;
-      let imageVal = `productDetails.image.${image}`
-      let imageNameLoc = {
-        name: body.fileName,
-        code: ImageVal.Location
-      }
-      let imageDtl = {};
-      imageDtl[imageVal] = imageNameLoc;
-      updateDetail = await addProductDetails(body.id, imageDtl)
-    }
-    if (body && body.id && (body.status === false || body.status)) {
-      updateDetail = await addProductDetails(body.id, {
-        "status": body.status
-      })
-    }
-    let seller = await getSellerProfile(updateDetail.sellerId)
-    if (updateDetail) {
-      const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
-      updatedProduct[0]["panIndia"] = body && body.panIndia
-      const priority = await mapPriority(seller && seller.length && seller[0].planId || "")
-      const masterData = await masterMapData(updatedProduct[0], 'update')
-      const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
-      const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: 8 })
-    }
-    // if(body.id && body.inStock){
-    //   
-    // }else
-    respSuccess(res, seller, "Successfully updated")
+    // if (body && body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
+    //   productDetails = JSON.parse(body.productDetails)
+    //   let findCities = await getSellerSelectedCities(productDetails.serviceCity);
+    //   if (findCities && findCities.length) {
+    //     productDetails.serviceCity = findCities.map((val) => ({
+    //       city: val._id,
+    //       state: val.state._id,
+    //       country: val.country,
+    //       region: val.state && val.state.region
+    //     }))
+    //   }
+
+    //   // /* need to optimize the below code*/
+    //   if (files && files.document) {
+    //     let data = {
+    //       Key: `${productDetails.sellerId._id}/${files.document.name}`,
+    //       body: files.document.data
+    //     }
+    //     const _document = await uploadToDOSpace(data)
+    //     let size = (files.document.size / 1000).toFixed(1)
+    //     size = `${size} ${size < 1024 ? 'KB' : 'MB'}`;
+    //     productDetails.productDetails.document = {
+    //       name: files.document.name,
+    //       code: _document.Location,
+    //       size
+    //     }
+
+    //   }
+
+    //   if (files && files.image1) {
+    //     let data = {
+    //       Key: `${productDetails.sellerId._id}/${files.image1.name}`,
+    //       body: files.image1.data
+    //     }
+    //     const _image1 = await uploadToDOSpace(data)
+    //     productDetails.productDetails.image.image1 = {
+    //       name: files.image1.name,
+    //       code: _image1.Location
+    //     }
+    //   }
+
+    //   if (files && files.image2) {
+    //     let data = {
+    //       Key: `${productDetails.sellerId._id}/${files.image2.name}`,
+    //       body: files.image2.data
+    //     }
+    //     const _image2 = await uploadToDOSpace(data)
+    //     productDetails.productDetails.image.image2 = {
+    //       name: files.image2.name,
+    //       code: _image2.Location
+    //     }
+    //   }
+
+    //   if (files && files.image3) {
+    //     let data = {
+    //       Key: `${productDetails.sellerId._id}/${files.image3.name}`,
+    //       body: files.image3.data
+    //     }
+    //     const _image3 = await uploadToDOSpace(data)
+    //     productDetails.productDetails.image.image3 = {
+    //       name: files.image3.name,
+    //       code: _image3.Location
+    //     }
+    //   }
+
+    //   if (files && files.image4) {
+    //     let data = {
+    //       Key: `${productDetails.sellerId._id}/${files.image4.name}`,
+    //       body: files.image4.data
+    //     }
+    //     const _image4 = await uploadToDOSpace(data)
+    //     productDetails.productDetails.image.image4 = {
+    //       name: files.image4.name,
+    //       code: _image4.Location
+    //     }
+    //   }
+    //   /* till here*/
+
+    //   updateDetail = await addProductDetails(productDetails._id, productDetails);
+    // } else if (prodDtl) {
+    //   /*this is for updating the seller document field*/
+    //   updateDetail = await addProductDetails(prodDtl._id, {
+    //     "productDetails.document": null,
+    //     "productDetails.documentName":null
+    //   });
+    // }
+    // if (body && body.id && body.imageType) {
+    //   const data = {
+    //     Key: `${body.sellerId}/${body.fileName}`,
+    //     body: files.file.data
+    //   }
+    //   let ImageVal = await uploadToDOSpace(data)
+
+    //   let image = body.imageType;
+    //   let imageVal = `productDetails.image.${image}`
+    //   let imageNameLoc = {
+    //     name: body.fileName,
+    //     code: ImageVal.Location
+    //   }
+    //   let imageDtl = {};
+    //   imageDtl[imageVal] = imageNameLoc;
+    //   updateDetail = await addProductDetails(body.id, imageDtl)
+    // }
+    // if (body && body.id && (body.status === false || body.status)) {
+    //   updateDetail = await addProductDetails(body.id, {
+    //     "status": body.status
+    //   })
+    // }
+    // let seller = await getSellerProfile(updateDetail.sellerId)
+    // if (updateDetail) {
+    //   const updatedProduct = await getSellerProductDetails({ _id: updateDetail._id })
+    //   updatedProduct[0]["panIndia"] = body && body.panIndia
+    //   const priority = await mapPriority(seller && seller.length && seller[0].planId || "")
+    //   const masterData = await masterMapData(updatedProduct[0], 'update')
+    //   const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
+    //   const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: 8 })
+    // }
+    // // if(body.id && body.inStock){
+    // //   
+    // // }else
+    // respSuccess(res, seller, "Successfully updated")
   } catch (error) {
     console.log(error, ' ipdate data----------------')
     respError(res, error.message)
