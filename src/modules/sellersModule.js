@@ -281,6 +281,17 @@ module.exports.updateUser = (query, data) =>
     Users.findOneAndUpdate(query, data, {
       new: true
     })
+      .select({
+        name: 1,
+        email: 1,
+        mobile: 1,
+        countryCode: 1,
+        isPhoneVerified: 1,
+        isMobileVerified: 1,
+        password: 1,
+        isEmailVerified: 1,
+        // _id: -1,
+      })
       .then((doc) => {
         resolve(doc)
       })
