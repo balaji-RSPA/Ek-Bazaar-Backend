@@ -312,7 +312,7 @@ module.exports.createRFP = async (req, res, next) => {
         }
         if (data.url) {
           const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
-          req.session.ssoToken = ssoToken
+          // req.session.ssoToken = ssoToken
           req.query = {
             ssoToken: ssoToken
           }

@@ -45,7 +45,8 @@ const {
   getSellerProduct,
   getSellerProductDetails,
   // getUpdatedSellerDetails,
-  updateMany
+  updateMany,
+  getProduct
 } = sellers
 const {
   getParentCat,
@@ -392,7 +393,8 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
       status: val.status !== null && val.status !== undefined ? val.status : true,
       batch: 1,
       keywords,
-      serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null
+      serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null,
+      offers: val.offers && val.offers || null 
     }
   } else {
     data = {
@@ -598,8 +600,24 @@ module.exports.updateSellerProduct = async (req, res) => {
       files,
       prodDtl
     } = req
-    // console.log('update poroduct---', JSON.parse(body.productDetails))
+    let { offers, productId, deleteOffer} = body
+    offers = offers ? JSON.parse(offers) : null
+    console.log('update poroduct---', productId, deleteOffer)
+
     let updateDetail
+
+    if(offers){
+      const offerData = {
+        offers: offers
+      }
+      updateDetail = await addProductDetails(productId, offerData)
+    }
+    if(deleteOffer){
+      var updatedProduct = await getProduct({ _id: productId })
+      delete updatedProduct.offers
+      updatedProduct.offers=null
+      updateDetail = await addProductDetails(productId, updatedProduct)
+    }
     if (body && body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
       let findCities = await getSellerSelectedCities(productDetails.serviceCity);
