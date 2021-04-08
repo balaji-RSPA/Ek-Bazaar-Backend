@@ -12,7 +12,12 @@ module.exports.getAllSellerOffers =  async (req, res) => {
         const { query, catId, aggs } = result;
         const seller = await searchFromElastic(query, req.query, {});
         console.log(seller[0], ' thi sos seller offers----------------')
-        return respSuccess(res, ' success')
+        const resp = {
+            total:seller[1],
+            data: seller[0]
+            // relatedCat,
+          };
+        return respSuccess(res, resp)
     } catch (error) {
         
     }
