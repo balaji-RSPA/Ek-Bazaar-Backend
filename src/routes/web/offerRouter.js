@@ -5,4 +5,6 @@ const router = Router();
 const offers = require('../../controllers/web/offersController')
 router.get("/sellerOffers", offers.getAllSellerOffers);
 router.get("/buyerRquest", offers.getAllBuyerRequest);
+router.post("/buyerRquest", offers.buyerRequestOffers);
+router.post("/sellerContactOffers", offers.sellerContactOffer);
 module.exports = router;
