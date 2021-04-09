@@ -24,6 +24,15 @@ const productDetails = new Schema({
     type: String,
     trim: true
   },
+  price:{
+    type: Number
+  },
+  location:{
+    type: Object
+  },
+  validity:{
+    type: Date
+  }
 });
 
 const location = new Schema({

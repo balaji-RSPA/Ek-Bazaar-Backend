@@ -150,8 +150,8 @@ exports.bulkStoreInElastic = (foundDoc) =>
 
 exports.sellerSearch = async (reqQuery) => {
 
-  const { cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId } = reqQuery
-  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ userId", userId)
+  const { offerSearch, cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId } = reqQuery
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ userId", offerSearch)
   let catId = ''
   let query = {
     bool: {
@@ -616,6 +616,17 @@ exports.sellerSearch = async (reqQuery) => {
     }
     query.bool.filter.push(sellerActiveAccount)
   }
+
+  if (offerSearch) {
+
+    console.log('111111111111')
+    query.bool.must.push({
+      "exists": {
+        "field": "offers"
+      }
+    })
+    console.log('2222222222')
+  }
   return {
     query,
     aggs,
@@ -633,9 +644,7 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
       size: limit || 10,
       from: skip || 0,
       query,
-      ...aggs,/* ,
-      highlight, */
-      // sort: sort || { "userId._id.keyword": "desc" }
+      ...aggs,
       sort: [
         // {
         //   "sellerId.planExpired": {
@@ -659,10 +668,12 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
       index: INDEXNAME,
       body,
     };
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 685 ~ newPromise ~ searchQuery", JSON.stringify(searchQuery))
 
     esClient
       .search(searchQuery)
       .then(async (results) => {
+        console.log("🚀 ~ file: elasticSearchModule.js ~ line 690 ~ .then ~ results", results)
         const { count } = await this.getCounts(query); // To get exact count
         resolve([
           results.hits.hits,
@@ -671,7 +682,11 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
           // results.hits.total*/
         ]);
       })
-      .catch(error => reject(error))
+      .catch(error => //{
+        console.log(error, ' kkkkkkkkkkkkkkkkkk')
+        //reject(error)
+      //}
+      )
   })
 
 exports.getCounts = (query) =>

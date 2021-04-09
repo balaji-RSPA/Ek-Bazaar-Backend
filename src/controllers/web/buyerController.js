@@ -156,8 +156,6 @@ module.exports.createRFP = async (req, res, next) => {
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
     // const user = await checkUserExistOrNot({ mobile: mobile.mobile })
     const url = req.get('origin');
-
-    console.log("~ user", user, productDetails)
     if (user && user.length) {
 
       const userData = {

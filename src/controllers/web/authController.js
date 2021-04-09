@@ -1,3 +1,4 @@
+const async = require("async")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
@@ -67,8 +68,9 @@ exports.login = async (req, res, next) => {
     } else if (_user && !_user.password && userType === 'buyer') {
 
       _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
-      _user = await sellers.checkUserExistOrNot({ mobile });
+      // _user = await sellers.checkUserExistOrNot({ mobile });
       _user = _user[0]
+      console.log("🚀 ~ file: authController.js ~ line 70 ~ exports.login= ~ _user", _user)
 
     } else if (_user && !_user.password && userType === 'seller') {
 
@@ -103,27 +105,44 @@ exports.login = async (req, res, next) => {
     console.log("🚀 ~ file: authController.js ~ line 83 ~ exports.login= ~ seller", seller)
     if (userType === 'seller') {
 
-     /*  if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
-        return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
+      const buyerData = {
+        name: _user.name,
+        email: _user.email,
+        countryCode: _user.countryCode,
+        mobile: mobile,
+        userId: _user._id
+      } 
+      buyer = await buyers.updateBuyer({userId: user._id}, buyerData)
 
-      else */ if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
+    }
+
+    if (userType === 'seller') {
+      if(!seller) {
+        const sellerData = {
+          name: _user.name,
+          email: _user.email,
+          mobile: [{
+            countryCode: _user.countryCode,
+            mobile: mobile
+          }],
+          userId: _user._id
+        }
+        seller = await sellers.updateSeller({userId: user._id}, sellerData)
+      }
+      if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
         const data = {
           mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
         }
-        await sellers.updateSeller({ userId: _user._id }, data)
+        seller = await sellers.updateSeller({ userId: _user._id }, data)
       }
 
-    } /* else if (userType === 'buyer') {
-
-      if (buyer && buyer.deactivateAccount.status === true)
-        return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
-
-    } */
+    }
 
     console.log("🚀 ~ file: authController.js ~ line 49 ~ exports.login= ~ _user", _user, seller, buyer)
     const result = await bcrypt.compare(password, _user.password);
     if (result) {
-      const sessionCount = await sellers.getSessionCount(_user._id);
+      // const sessionCount = await sellers.getSessionCount(_user._id);
+      sellers.getSessionCount(_user._id);
 
       const userAgent = getUserAgent(req.useragent);
 
@@ -134,7 +153,8 @@ exports.login = async (req, res, next) => {
         deviceId: user.deviceId,
         ipAddress
       }
-      const result1 = await sellers.handleUserSession(_user._id, finalData);
+      // const result1 = await sellers.handleUserSession(_user._id, finalData);
+      sellers.handleUserSession(_user._id, finalData);
       const productCount = seller && seller.sellerProductId && seller.sellerProductId.length ? true : false
       console.log("🚀 ~ file: authController.js ~ line 119 ~ exports.login= ~ ProductCount", productCount)
       // const chatLogin = await getChat({ userId: _user._id })
