@@ -769,10 +769,11 @@ module.exports.updateSeller = (query, data, elastic) =>
       new: true,
       upsert: true
     })
-      .populate('sellerProductId.')
-      .populate('sellerType.name', 'name')
-      .populate('sellerType.cities.city', 'name')
-      .populate('sellerType.cities.state', 'name region')
+      .populate('sellerProductId')
+      .populate('sellerType')
+      // .populate('sellerType.name', 'name')
+      // .populate('sellerType.cities.city', 'name')
+      // .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
       // .populate('sellerContactId')
