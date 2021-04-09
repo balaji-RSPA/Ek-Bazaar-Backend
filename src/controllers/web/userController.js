@@ -416,14 +416,16 @@ module.exports.getUserProfile = async (req, res) => {
     const buyer = await getBuyer(userID);
     const userData = {
       user,
-      seller: {
-        ...seller,
-         ...user
-      },
-      buyer: {
-        ...buyer,
-        ...user
-      },
+      buyer,
+      seller
+      // seller: {
+      //   ...seller,
+      //    ...user
+      // },
+      // buyer: {
+      //   ...buyer,
+      //   ...user
+      // },
     };
     respSuccess(res, userData);
   } catch (error) {
@@ -667,14 +669,16 @@ module.exports.updateUser = async (req, res) => {
       respSuccess(
         res,
         {
-          seller: {
-            ...seller,
-            ...user
-          },
-          buyer: {
-            ...buyer,
-            ...user
-          },
+          seller,
+          buyer,
+          // seller: {
+          //   ...seller,
+          //   ...user
+          // },
+          // buyer: {
+          //   ...buyer,
+          //   ...user
+          // },
           activeChat,
         },
         user.email && user.isEmailVerified === 1

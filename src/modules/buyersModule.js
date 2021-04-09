@@ -1,6 +1,7 @@
 const {
   Buyers,
-  RFP
+  RFP,
+  SellerOffferContacts
 } = require("../models");
 const User = require('../../config/tenderdb').userModel
 module.exports.postRFP = (data) => new Promise((resolve, reject) => {
@@ -192,4 +193,13 @@ exports.deleteBuyer = (query) => new Promise((resolve, reject) => {
     .catch((error) => {
       reject(error);
     });
+})
+
+module.exports.createSellerContact = (data) => new Promise((resolve, reject) => {
+  SellerOffferContacts.create(data)
+  .then(doc => {
+    resolve(doc)
+  })
+  .catch(error => reject(error))
+
 })

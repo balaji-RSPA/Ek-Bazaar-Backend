@@ -199,3 +199,46 @@ module.exports.getAllBuyerRequest = async (req, res) => {
     }
 
 }
+
+module.exports.buyerRequestOffers = async (req, res) => {
+
+    try {
+        const { details } = req.body
+        const rfp = await postRFP(details)
+        return respSuccess(res, "Offer request done successfully")
+
+    } catch (error) {
+
+        return respError(res, errors.messsage)
+
+    }
+
+}
+
+module.exports.sellerContactOffer = async (req, res) => {
+
+    try {
+        const { details } = req.body
+        const result = await getRFP({ _id: details.rfqId });
+        if (result) {
+            const contactdetails = {
+                ...details,
+                buyerDetails: result && result[0].buyerDetails || "",
+                productDetails: result && result[0].productDetails || "",
+            }
+            console.log("🚀 ~ file: offersController.js ~ line 66 ~ module.exports.sellerContactOffer= ~ result", contactdetails)
+            const responce = await createSellerContact(contactdetails)
+            if (isProd) {
+                const smsData = result && result[0].buyerDetails.mobile ? await sendSMS(result && result[0].buyerDetails.mobile, "Seller responded tou your offer") : "";
+                console.log("🚀 ~ file: offersController.js ~ line 77 ~ module.exports.sellerContactOffer= ~ smsData", smsData)
+            }
+        }
+        return respSuccess(res, "Successfully contacted!")
+
+    } catch (error) {
+
+        respError(res, error.message)
+
+    }
+
+}
