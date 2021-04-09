@@ -76,8 +76,30 @@ exports.login = async (req, res, next) => {
 
     }
 
-    const buyer = await buyers.getBuyer(_user._id);
-    const seller = await sellers.getSeller(_user._id);
+    let buyer = await buyers.getBuyer(_user._id);
+    if(!buyer) {
+      const sellerData = {
+        name: _user.name,
+        email: _user.email,
+        mobile: [{
+          countryCode: _user.countryCode,
+          mobile: mobile
+        }],
+        userId: _user._id
+      }
+      const buyerData = {
+        name: _user.name,
+        email: _user.email,
+        countryCode: _user.countryCode,
+        mobile: mobile,
+        userId: _user._id
+      }
+      await sellers.updateSeller({userId: user._id}, sellerData)
+      buyer = await buyers.updateBuyer({userId: user._id}, buyerData)
+    }
+    let seller = await sellers.getSeller(_user._id);
+
+
     console.log("🚀 ~ file: authController.js ~ line 83 ~ exports.login= ~ seller", seller)
     if (userType === 'seller') {
 

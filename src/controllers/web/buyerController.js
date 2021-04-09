@@ -174,6 +174,9 @@ module.exports.createRFP = async (req, res, next) => {
         userId: user[0]._id
       }
       const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
+      if(exist && exist.length && exist[0].deactivateAccount && exist[0].deactivateAccount.status){
+        return respError(res, " User Account Deactivated")
+      }
       let buyer
       if (exist && exist.length) {
         buyer = exist[0]
@@ -310,7 +313,7 @@ module.exports.createRFP = async (req, res, next) => {
         }
         if (data.url) {
           const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
-          req.session.ssoToken = ssoToken
+          // req.session.ssoToken = ssoToken
           req.query = {
             ssoToken: ssoToken
           }

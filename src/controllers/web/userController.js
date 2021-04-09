@@ -169,7 +169,7 @@ module.exports.sendOtp = async (req, res) => {
 
     const { otpMessage } = sendOtp({ reset, otp });
 
-    if (seller && seller.length && !reset && user && user.length) {
+    if (seller && seller.length && !reset /* && user && user.length */) {
       return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length))
@@ -302,7 +302,7 @@ module.exports.addUser = async (req, res, next) => {
       isPhoneVerified: true,
       userId: user._id,
     };
-    const _buyer = await getBuyer({mobile})
+    // const _buyer = await getBuyer(null, {mobile: mobile.mobile || mobile})
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
@@ -425,8 +425,14 @@ module.exports.getUserProfile = async (req, res) => {
     const buyer = await getBuyer(userID);
     const userData = {
       user,
-      seller,
-      buyer,
+      seller: {
+        ...seller,
+         ...user
+      },
+      buyer: {
+        ...buyer,
+        ...user
+      },
     };
     respSuccess(res, userData);
   } catch (error) {
@@ -595,8 +601,14 @@ module.exports.updateUser = async (req, res) => {
       respSuccess(
         res,
         {
-          seller,
-          buyer,
+          seller: {
+            ...seller,
+            ...user
+          },
+          buyer: {
+            ...buyer,
+            ...user
+          },
           activeChat,
         },
         user.email && user.isEmailVerified === 1
@@ -785,10 +797,12 @@ module.exports.deleteRecords = async (req, res) =>
   module.exports.deleteCurrentAccount = async (req, res) => {
   
     try {
+      const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
+
       const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' :'https://investmentapi.tech-active.com/api/permanentlydisable'
-       const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
+      const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
+       
        const { userID, token } = req;
-       console.log("🚀 ~ file: userController.js ~ line 790 ~ module.exports.deleteCurrentAccount ~ userID", token)
        const result = await updateUser({_id:userId}, {deleteTrade})
        if(result){
          const sellerData = await getSellerVal({_id: sellerId})
@@ -806,19 +820,28 @@ module.exports.deleteRecords = async (req, res) =>
         }
         const delMaster1 =  deleteSellerPlans({sellerId: sellerId});
         if(permanentDelete){
-          // delete from investment
+          
           const update = {
             status: true,
             reason: deleteTrade.reason
           }
           const result = /* await */ updateUser({_id:userId}, {deleteTendor:update, deleteInvestement: update})
-          const res = /* await */ axios.delete(investmentUrl,{
+          
+          // Delete from Investment
+          const res = axios.delete(investmentUrl,{
             headers: {
                 'Content-Type': 'application/json',
                 'authorization': `ekbazaar|${token}`,
             }
         });
-          // delete from tendor
+
+          // Delete From Tender
+          const resTender =  axios.delete(tenderUrl,{
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `ekbazaar|${token}`,
+            }
+          });
         }
        }
        respSuccess(res, "Deleted Succesfully")
@@ -826,16 +849,6 @@ module.exports.deleteRecords = async (req, res) =>
     } catch (error) {
 
       respError(res, error.message)
-      
-    }
-  
-  }
-
-  module.exports.deleteAllAccount = async (req, res) => {
-  
-    try {
-      
-    } catch (error) {
       
     }
   
