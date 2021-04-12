@@ -23,8 +23,8 @@ module.exports.updateRFP = (query, data) => new Promise((resolve, reject) => {
 })
 
 module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
-  const skip = range.skip || 0
-  const limit = range.limit || 1
+  const skip = range && range.skip || 0
+  const limit = range && range.limit || 1000
   RFP.find(query)
     .skip(skip)
     .limit(limit)
@@ -60,6 +60,7 @@ module.exports.addBuyer = (data) =>
 module.exports.getBuyer = (id, query) =>
   new Promise((resolve, reject) => {
     let _query = query || { userId: id }
+    console.log("🚀 ~ file: buyersModule.js ~ line 62 ~ newPromise ~ _query", _query)
     Buyers.findOne(_query)
       .populate({
         path: "location.city",
@@ -197,9 +198,20 @@ exports.deleteBuyer = (query) => new Promise((resolve, reject) => {
 
 module.exports.createSellerContact = (data) => new Promise((resolve, reject) => {
   SellerOffferContacts.create(data)
-  .then(doc => {
-    resolve(doc)
-  })
-  .catch(error => reject(error))
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+
+})
+
+module.exports.deleteBuyerRequest = (query) => new Promise((resolve, reject) => {
+  RFP.deleteOne(query)
+    .then((doc) => {
+      resolve(doc);
+    })
+    .catch((error) => {
+      reject(error);
+    });
 
 })

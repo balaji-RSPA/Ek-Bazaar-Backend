@@ -175,7 +175,6 @@ module.exports.createRFP = async (req, res, next) => {
       if(exist && exist.length && exist[0].deactivateAccount && exist[0].deactivateAccount.status){
         return respError(res, " User Account Deactivated")
       }
-
       let buyer
       if (exist && exist.length) {
         buyer = exist[0]

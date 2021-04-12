@@ -1,5 +1,16 @@
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { sellerSearch, searchFromElastic, getSuggestions } = require('../../modules/elasticSearchModule')
+const { buyers } = require("../../modules");
+const {
+    getRFPData,
+    postRFP,
+    getRFP,
+    createSellerContact,
+    deleteBuyerRequest
+} = buyers;
+const { sendSMS } = require("../../utils/utils");
+const isProd = process.env.NODE_ENV === "production";
+
 const moment = require("moment")
 
 module.exports.getAllOffers = async (req, res) => {
@@ -125,6 +136,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
 
     try {
         const { skip, limit, search, level1, level2 } = req.query
+        console.log("🚀 ~ file: offersController.js ~ line 138 ~ module.exports.getAllSellerOffers= ~ req.query", req.query)
         const query = {
             "bool": {
                 "must": [
@@ -149,15 +161,15 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 }
             })
         }
-        // if(search) {
-        //     query.bool.must.push({
-        //         "term": {
-        //             "parentCategoryId._id": level1
-        //         }
-        //     })
-        // }
+        if(search) {
+            query.bool.must.push({
+                "match_phrase": {
+                    "productDetails.name": search
+                }
+            })
+        }
 
-        const seller = await searchFromElastic(query, req.query, {});
+        const seller = await searchFromElastic(query, {skip: 0, limit: 1000}, {});
         let _seller = seller.length && seller[0]
         let sellerOffers = []
         let buyerRequests = []
@@ -182,18 +194,23 @@ module.exports.getAllSellerOffers = async (req, res) => {
             console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
             return obj
         })
-        return respSuccess(res, {offers: sellerOffers, requests: []})
-    } catch (error) {
+        buyerRequests = await getRFPData({ requestType: 11, "productDetails.validity": { $gte: new Date().toISOString() } }, {skip: 0, limit: 1000})
+        buyerRequests = buyerRequests.length && buyerRequests.map(buyer => {
 
-    }
+            let obj = {
+                title: buyer.productDetails.name.label,
+                location: buyer.productDetails.location.city.label,
+                price: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
+                validity: moment(buyer.productDetails.validity.toDate).format('ll'),
+                btnname: 'View more',
+                seller: false,
+                value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
+                _id: buyer._id // add request Object _id
+            }
+            return obj
 
-}
-
-module.exports.getAllBuyerRequest = async (req, res) => {
-
-    try {
-        console.log(' thi is buyer request----------------')
-
+        })
+        return respSuccess(res, {offers: sellerOffers, requests: buyerRequests})
     } catch (error) {
 
     }
@@ -237,6 +254,54 @@ module.exports.sellerContactOffer = async (req, res) => {
 
     } catch (error) {
 
+        respError(res, error.message)
+
+    }
+
+}
+
+module.exports.getAllBuyerRequest = async (req, res) => {
+
+    try {
+        const { id } = req.params
+        const { skip, limit, search} = req.query
+        const result = await getRFPData({buyerId:  id, requestType: 11, $or: [{'productDetails.name.label': {$regex: `^${search}`, $options: "i"}},{'productDetails.location.city.label': {$regex: `^${search}`, $options: "i"}}, {'productDetails.location.state.label': {$regex: `^${search}`, $options: "i"}}]});
+        let buyerRequests = []
+        if (result) {
+            buyerRequests = result.length && result.map(buyer => {
+                let obj = {
+                    title: buyer.productDetails.name.label,
+                    location: buyer.productDetails.location.city.label,
+                    price: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
+                    validity: moment(buyer.productDetails.validity.toDate).format('ll'),
+                    btnname: 'View more',
+                    seller: true,
+                    value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
+                    _id: buyer._id // add request Object _id
+                }
+                return obj
+    
+            })
+        }
+        return respSuccess(res, buyerRequests)
+
+    } catch (error) {
+        respError(res, error.message)
+
+    }
+
+}
+
+module.exports.deleteBuyerRequest = async (req, res) => {
+
+    try {
+        const { id } = req.params
+        console.log("🚀 ~ file: offersController.js ~ line 299 ~ module.exports.deleteBuyerRequest ~ req.params", req.params)
+        const result = await deleteBuyerRequest({_id: id})
+        console.log("🚀 ~ file: offersController.js ~ line 300 ~ module.exports.deleteBuyerRequest ~ result", result)
+        return respSuccess(res, "Delete Successfully")
+
+    } catch (error) {
         respError(res, error.message)
 
     }

@@ -668,12 +668,12 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
       index: INDEXNAME,
       body,
     };
-    console.log("🚀 ~ file: elasticSearchModule.js ~ line 685 ~ newPromise ~ searchQuery", JSON.stringify(searchQuery))
+    // console.log("🚀 ~ file: elasticSearchModule.js ~ line 685 ~ newPromise ~ searchQuery", JSON.stringify(searchQuery))
 
     esClient
       .search(searchQuery)
       .then(async (results) => {
-        console.log("🚀 ~ file: elasticSearchModule.js ~ line 690 ~ .then ~ results", results)
+        // console.log("🚀 ~ file: elasticSearchModule.js ~ line 690 ~ .then ~ results", results)
         const { count } = await this.getCounts(query); // To get exact count
         resolve([
           results.hits.hits,
