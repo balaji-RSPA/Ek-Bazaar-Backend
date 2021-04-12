@@ -644,9 +644,7 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
       size: limit || 10,
       from: skip || 0,
       query,
-      ...aggs,/* ,
-      highlight, */
-      // sort: sort || { "userId._id.keyword": "desc" }
+      ...aggs,
       sort: [
         // {
         //   "sellerId.planExpired": {

@@ -11,3 +11,11 @@ module.exports.addSellerPlanLog = (data) =>
             })
             .catch((error) => reject(error))
     })
+
+module.exports.getSellerPlansLog = (query) => new Promise((resolve, reject) => {
+    SellerPlanLog.findOne(query)
+        .then((doc) => {
+            resolve(doc)
+        })
+        .catch((error) => reject(error))
+})

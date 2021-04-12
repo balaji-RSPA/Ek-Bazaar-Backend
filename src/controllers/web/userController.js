@@ -45,7 +45,7 @@ const {
 } = require("../../utils/templates/emailTemplate/emailTemplateContent");
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan;
-const { createTrialPlan, deleteSellerPlans } = SellerPlans;
+const { createTrialPlan, deleteSellerPlans, getSellerPlan } = SellerPlans;
 const { createChat } = Chat;
 
 const { createChatUser, userChatLogin } = require("./rocketChatController");
@@ -79,7 +79,7 @@ const {
   deleteBuyer
 } = buyers;
 const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = mastercollections;
-const { addSellerPlanLog } = SellerPlanLogs;
+const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
 // const {username, password, senderID, smsURL} = sms
 
@@ -88,14 +88,14 @@ const ssoRegisterUrl =
   global.environment === "production"
     ? ""
     : global.environment === "staging"
-    ? "https://auth.tech-active.com/simplesso/register"
-    : "http://localhost:3010/simplesso/register";
+      ? "https://auth.tech-active.com/simplesso/register"
+      : "http://localhost:3010/simplesso/register";
 const serviceURL =
   global.environment === "production"
     ? ""
     : global.environment === "staging"
-    ? "https://tradebazaarapi.tech-active.com"
-    : "http://localhost:8070";
+      ? "https://tradebazaarapi.tech-active.com"
+      : "http://localhost:8070";
 
 function encrypt(text) {
   const cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
@@ -164,7 +164,7 @@ module.exports.sendOtp = async (req, res) => {
     const { mobile, reset } = req.body;
     let otp = 1234;
     const seller = await checkUserExistOrNot({ mobile });
-    const user = await checkBuyerExistOrNot({mobile})
+    const user = await checkBuyerExistOrNot({ mobile })
     console.log("🚀 ~ file: userController.js ~ line 168 ~ module.exports.sendOtp= ~ user", user)
 
     const { otpMessage } = sendOtp({ reset, otp });
@@ -279,16 +279,6 @@ module.exports.addUser = async (req, res, next) => {
       url,
     } = req.body;
     const dateNow = new Date();
-    // req.body.password = encodePassword(password);
-    // const tenderUser = {
-    //   countryCode: mobile.countryCode,
-    //   mobile: mobile.mobile,
-    //   isPhoneVerified: 2,
-    //   password: req.body.password,
-    //   preferredLanguage
-    // };
-
-    // const user = await addUser(tenderUser);
 
     req.body.userId = user._id;
     const buyerData = {
@@ -302,7 +292,7 @@ module.exports.addUser = async (req, res, next) => {
       isPhoneVerified: true,
       userId: user._id,
     };
-    const _buyer = await getBuyer(null, {mobile: mobile.mobile || mobile})
+    const _buyer = await getBuyer(null, { mobile: mobile.mobile || mobile })
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
@@ -322,61 +312,62 @@ module.exports.addUser = async (req, res, next) => {
     // const _seller = await updateSeller(seller._id, {
     //   busenessId: bsnsDtls._id,
     // });
+
     if (seller && buyer) {
-      const trialPlan = await getSubscriptionPlanDetail({
-        planType: "trail",
-        status: true,
-      });
-      if (trialPlan/*  && _buyer && !_buyer.length */) {
-        const sellerDetails = {
-          sellerId: seller._id,
-          userId: seller.userId,
-          name: seller.name || null,
-          email: seller.email || null,
-          mobile: seller.mobile || null,
-          sellerType: seller.sellerType || null,
-          paidSeller: seller.paidSeller,
-          planId: seller.planId,
-          trialExtends: seller.trialExtends,
-        };
-        const planData = {
-          name: trialPlan.type,
-          description: trialPlan.description,
-          features: trialPlan.features,
-          days: trialPlan.days,
-          extendTimes: trialPlan.numberOfExtends,
-          exprireDate: dateNow.setDate(
-            dateNow.getDate() + parseInt(trialPlan.days)
-          ),
-          userId: seller.userId,
-          sellerId: seller._id,
-          isTrial: true,
-          planType: trialPlan.type,
-          extendDays: trialPlan.days,
-          subscriptionId: trialPlan._id,
-          createdOn: new Date(),
-        };
+      // const trialPlan = await getSubscriptionPlanDetail({
+      //   planType: "trail",
+      //   status: true,
+      // });
+      // if (trialPlan/*  && _buyer && !_buyer.length */) {
+      //   const sellerDetails = {
+      //     sellerId: seller._id,
+      //     userId: seller.userId,
+      //     name: seller.name || null,
+      //     email: seller.email || null,
+      //     mobile: seller.mobile || null,
+      //     sellerType: seller.sellerType || null,
+      //     paidSeller: seller.paidSeller,
+      //     planId: seller.planId,
+      //     trialExtends: seller.trialExtends,
+      //   };
+      //   const planData = {
+      //     name: trialPlan.type,
+      //     description: trialPlan.description,
+      //     features: trialPlan.features,
+      //     days: trialPlan.days,
+      //     extendTimes: trialPlan.numberOfExtends,
+      //     exprireDate: dateNow.setDate(
+      //       dateNow.getDate() + parseInt(trialPlan.days)
+      //     ),
+      //     userId: seller.userId,
+      //     sellerId: seller._id,
+      //     isTrial: true,
+      //     planType: trialPlan.type,
+      //     extendDays: trialPlan.days,
+      //     subscriptionId: trialPlan._id,
+      //     createdOn: new Date(),
+      //   };
 
-        const planResult = await createTrialPlan(planData);
-        const planDatra = {
-          planId: planResult._id,
-          trialExtends: trialPlan.numberOfExtends,
-        };
-        const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
+      //   const planResult = await createTrialPlan(planData);
+      //   const planDatra = {
+      //     planId: planResult._id,
+      //     trialExtends: trialPlan.numberOfExtends,
+      //   };
+      //   const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
 
-        const planLog = {
-          sellerId: seller._id,
-          userId: seller.userId,
-          sellerPlanId: sellerUpdate.planId,
-          subscriptionId: trialPlan._id,
-          sellerDetails: { ...sellerDetails },
-          planDetails: {
-            ...planData,
-            exprireDate: new Date(planData.exprireDate),
-          },
-        };
-        const log = await addSellerPlanLog(planLog);
-      }
+      //   const planLog = {
+      //     sellerId: seller._id,
+      //     userId: seller.userId,
+      //     sellerPlanId: sellerUpdate.planId,
+      //     subscriptionId: trialPlan._id,
+      //     sellerDetails: { ...sellerDetails },
+      //     planDetails: {
+      //       ...planData,
+      //       exprireDate: new Date(planData.exprireDate),
+      //     },
+      //   };
+      //   const log = await addSellerPlanLog(planLog);
+      // }
 
       // const response = await axios.post(ssoRegisterUrl, { mobile: mobile.mobile, password }, { params: { serviceURL } })
       // const { data } = response
@@ -445,6 +436,7 @@ module.exports.getUserProfile = async (req, res) => {
 module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
+    const dateNow = new Date();
     const _buyer = req.body.buyer || {};
     let {
       name,
@@ -467,10 +459,32 @@ module.exports.updateUser = async (req, res) => {
     };
 
     let _seller = await getSeller(userID);
+    let buyer = await getBuyer(userID);
+    const __usr = await getUserProfile(userID)
     console.log(
       "🚀 ~ file: userController.js ~ line 459 ~ module.exports.updateUser= ~ _seller",
       _seller
     );
+    if (!_seller) {
+      const sellerData = {
+        // name: name || __usr.name,
+        // email: email || __usr.email,
+        mobile: [{
+          mobile: mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
+          countryCode: __usr.countryCode
+        }],
+        userId: userID
+      }
+      const buyerData = {
+        // name: name || __usr.name,
+        // email: email || __usr.email,
+        mobile: mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
+        countryCode: __usr.countryCode,
+        userId: userID
+      }
+      buyer = await updateBuyer({ userId: userID }, buyerData)
+      _seller = await updateSeller({ userId: userID }, sellerData)
+    }
 
     let buyerData = {
       name,
@@ -519,11 +533,6 @@ module.exports.updateUser = async (req, res) => {
       sellerData.busenessId = bsnsDtls._id;
     }
 
-    let buyer = await getBuyer(userID);
-    console.log(
-      "🚀 ~ file: userController.js ~ line 509 ~ module.exports.updateUser= ~ buyer",
-      buyer
-    );
 
     // let keywords = []
     // keywords.push(seller.name.toLowerCase())
@@ -550,7 +559,6 @@ module.exports.updateUser = async (req, res) => {
     let seller = {},
       activeChat = {};
     if (user && buyer && _seller) {
-      // console.log(user, "-----11", buyer, "----------22", seller) userType
       const url = req.get("origin");
       if (user.email && !buyer.isEmailSent) {
         let { token } = req.headers.authorization.split("|")[1];
@@ -572,8 +580,8 @@ module.exports.updateUser = async (req, res) => {
           sellerData
         );
         buyerData.isEmailSent = true;
-        await updateBuyer({ userId: userID }, buyerData);
-        await updateSeller({ userId: userID }, sellerData);
+        buyer = await updateBuyer({ userId: userID }, buyerData);
+        seller = await updateSeller({ userId: userID }, sellerData);
 
         // const { successfulMessage } = successfulRegistration({ userType });
         // if (isProd) {
@@ -594,12 +602,71 @@ module.exports.updateUser = async (req, res) => {
         sendSingleMail(message);
 
       } else if (user.email && buyer.isEmailSent) {
-        await updateBuyer({ userId: userID }, buyerData);
-        await updateSeller({ userId: userID }, sellerData);
-
+        buyer = await updateBuyer({ userId: userID }, buyerData);
+        seller = await updateSeller({ userId: userID }, sellerData);
       }
-      buyer = await getBuyer(null, {_id: buyer._id})
-      seller = await getSeller(null, null, {_id: _seller._id})
+
+      const sellerPlans = await getSellerPlan({ sellerId: seller._id })
+      if (userType === "seller" && !sellerPlans) {
+        const trialPlan = await getSubscriptionPlanDetail({
+          planType: "trail",
+          status: true,
+        });
+        if (trialPlan) {
+          const sellerDetails = {
+            sellerId: seller._id,
+            userId: seller.userId,
+            name: seller.name || name || null,
+            email: seller.email || email || null,
+            mobile: __usr.mobile || null,
+            sellerType: seller.sellerType || null,
+            paidSeller: seller.paidSeller,
+            planId: seller.planId,
+            trialExtends: seller.trialExtends,
+          };
+          const planData = {
+            name: trialPlan.type,
+            description: trialPlan.description,
+            features: trialPlan.features,
+            days: trialPlan.days,
+            extendTimes: trialPlan.numberOfExtends,
+            exprireDate: dateNow.setDate(
+              dateNow.getDate() + parseInt(trialPlan.days)
+            ),
+            userId: seller.userId,
+            sellerId: seller._id,
+            isTrial: true,
+            planType: trialPlan.type,
+            extendDays: trialPlan.days,
+            subscriptionId: trialPlan._id,
+            createdOn: new Date(),
+          };
+
+          const planResult = await createTrialPlan(planData);
+          const planDatra = {
+            planId: planResult._id,
+            trialExtends: trialPlan.numberOfExtends,
+          };
+          const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
+
+          const planLog = {
+            sellerId: seller._id,
+            userId: seller.userId,
+            sellerPlanId: sellerUpdate.planId,
+            subscriptionId: trialPlan._id,
+            sellerDetails: { ...sellerDetails },
+            planDetails: {
+              ...planData,
+              exprireDate: new Date(planData.exprireDate),
+            },
+          };
+          const log = await addSellerPlanLog(planLog);
+        }
+      }
+
+      buyer = await getBuyer(null, { _id: buyer._id })
+      seller = await getSeller(null, null, { _id: _seller._id })
+
       respSuccess(
         res,
         {
@@ -798,6 +865,7 @@ module.exports.deleteRecords = async (req, res) =>
     }
   });
 
+  
   module.exports.deleteCurrentAccount = async (req, res) => {
   
     try {
@@ -857,4 +925,5 @@ module.exports.deleteRecords = async (req, res) =>
     }
   
   }
+
 
