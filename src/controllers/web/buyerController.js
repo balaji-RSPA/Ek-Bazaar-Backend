@@ -156,8 +156,6 @@ module.exports.createRFP = async (req, res, next) => {
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
     // const user = await checkUserExistOrNot({ mobile: mobile.mobile })
     const url = req.get('origin');
-
-    console.log("~ user", user, productDetails)
     if (user && user.length) {
 
       const userData = {
@@ -174,6 +172,10 @@ module.exports.createRFP = async (req, res, next) => {
         userId: user[0]._id
       }
       const exist = await checkBuyerExistOrNot({ mobile: mobile.mobile })
+      if(exist && exist.length && exist[0].deactivateAccount && exist[0].deactivateAccount.status){
+        return respError(res, " User Account Deactivated")
+      }
+
       let buyer
       if (exist && exist.length) {
         buyer = exist[0]
@@ -232,13 +234,16 @@ module.exports.createRFP = async (req, res, next) => {
         await sendEmailBuyer(email)
       }
       if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
-        // const sellerData = await getSellerProfile(sellerId)
+        const sellerData = await getSellerProfile(sellerId)
+        console.log("🚀 ~ file: buyerController.js ~ line 238 ~ module.exports.createRFP= ~ sellerData", sellerData)
         // const constsellerContactNo = sellerDtl && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+        console.log("🚀 ~ file: buyerController.js ~ line 240 ~ module.exports.createRFP= ~ constsellerContactNo", constsellerContactNo)
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
-          await sendSMS(constsellerContactNo.mobile, RFQOneToOne({ productDetails, _loc, name }))
-          await sendSMS(mobile.mobile, RFQOneToOneBuyer())
+          let _resp = await sendSMS(constsellerContactNo.mobile, RFQOneToOne({ productDetails, _loc, name }))
+          console.log("🚀 ~ file: buyerController.js ~ line 244 ~ module.exports.createRFP= ~ _resp", _resp)
+          // await sendSMS(mobile.mobile, RFQOneToOneBuyer())
         } else {
           console.log(' no seller contact number')
         }
@@ -310,7 +315,7 @@ module.exports.createRFP = async (req, res, next) => {
         }
         if (data.url) {
           const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
-          req.session.ssoToken = ssoToken
+          // req.session.ssoToken = ssoToken
           req.query = {
             ssoToken: ssoToken
           }

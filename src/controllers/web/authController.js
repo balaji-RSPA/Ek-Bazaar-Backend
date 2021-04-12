@@ -53,8 +53,6 @@ exports.login = async (req, res, next) => {
 
     if (data.url) {
       const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
-      console.log("🚀 ~ file: authController.js ~ line 56 ~ exports.login= ~ ssoToken", ssoToken)
-      // req.session.ssoToken = ssoToken
       req.query = {
         ssoToken: ssoToken
       }
@@ -63,7 +61,6 @@ exports.login = async (req, res, next) => {
     console.log("🚀 ~ file: authController.js ~ line 63 ~ exports.login= ~ _response", _response)
 
     const { user, token } = _response
-    // if (token) req.session.token = token
     if (!_user) {
 
       return respAuthFailed(res, undefined, "User not found");
@@ -80,27 +77,49 @@ exports.login = async (req, res, next) => {
 
     }
 
-    const buyer = await buyers.getBuyer(_user._id);
-    const seller = await sellers.getSeller(_user._id);
+    let buyer = await buyers.getBuyer(_user._id);
+    if(!buyer) {
+      const sellerData = {
+        name: _user.name,
+        email: _user.email,
+        mobile: [{
+          countryCode: _user.countryCode,
+          mobile: mobile
+        }],
+        userId: _user._id
+      }
+      const buyerData = {
+        name: _user.name,
+        email: _user.email,
+        countryCode: _user.countryCode,
+        mobile: mobile,
+        userId: _user._id
+      }
+      await sellers.updateSeller({userId: user._id}, sellerData)
+      buyer = await buyers.updateBuyer({userId: user._id}, buyerData)
+    }
+    let seller = await sellers.getSeller(_user._id);
+
+
     console.log("🚀 ~ file: authController.js ~ line 83 ~ exports.login= ~ seller", seller)
     if (userType === 'seller') {
 
-      if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
+     /*  if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
 
-      else if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
+      else */ if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
         const data = {
           mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
         }
         await sellers.updateSeller({ userId: _user._id }, data)
       }
 
-    } else if (userType === 'buyer') {
+    } /* else if (userType === 'buyer') {
 
       if (buyer && buyer.deactivateAccount.status === true)
         return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
 
-    }
+    } */
 
     console.log("🚀 ~ file: authController.js ~ line 49 ~ exports.login= ~ _user", _user, seller, buyer)
     const result = await bcrypt.compare(password, _user.password);
@@ -117,9 +136,9 @@ exports.login = async (req, res, next) => {
         ipAddress
       }
       const result1 = await sellers.handleUserSession(_user._id, finalData);
-      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+      const productCount = seller && seller.sellerProductId && seller.sellerProductId.length ? true : false
+      console.log("🚀 ~ file: authController.js ~ line 119 ~ exports.login= ~ ProductCount", productCount)
       // const chatLogin = await getChat({ userId: _user._id })
-
       let activeChat = {
         username: mobile,
         userId: _user._id,
@@ -153,7 +172,7 @@ exports.login = async (req, res, next) => {
       //   console.log(activeChat, '------ New Chat activated-----------')
       // }
 
-      return respSuccess(res, { user, token, activeChat }, "successfully logged in!");
+      return respSuccess(res, { user, token, activeChat, productCount }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");
 
@@ -186,10 +205,6 @@ exports.logout = async (req, res) => {
       console.log("🚀 ~ file: authController.js ~ line 139 ~ exports.logout= ~ response", response)
       if (response.data && response.data.success) {
 
-        // req.session = null //.distroy(function (err) {
-        // if (err) return respError(res, error.message)
-        // else return respSuccess(res, 'successfully logged out!');
-        // })
         return respSuccess(res, 'successfully logged out!');
 
       }

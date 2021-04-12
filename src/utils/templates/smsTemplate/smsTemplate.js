@@ -15,16 +15,28 @@ const _IS_PROD_ = global.environment === "production"
     const otpMessage = params.reset ?
     `Dear Customer,\n\nYour one-time password for change of password on Ekbazaar.com is ${params.otp}.`
      : 
-    `Dear Customer,\n\nYour one-time password for registration on Ekbazaar.com is ${params.otp}.`
+     "'"+ params.otp +"' is your OTP to complete your mobile number verification at Ekbazaar.com."
     return {
       otpMessage
     }
   }
 
-  module.exports.RFQOneToOne = (params) =>`You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}.
-    Details below: ${capitalizeFirstLetter(params.name)}-
-    To view buyer contact details please register or login to ${_IS_PROD_ ? "https://www.trade.ekbazaar.com/signup" : "https://tradebazaar.com/signup"}
-    Ekbazaar-Trade ${_IS_PROD_ ? "https://www.trade.ekbazaar.com" : "https://tradebazaar.com"}`;
+// `You have an inquiry from EkBazaar.com for ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}.. 
+// Details below: (${capitalizeFirstLetter(params.name)} - To view buyer contact details please register or login to ${_IS_PROD_ ? "https://www.trade.ekbazaar.com/signup" : "https://tradebazaar.com/signup"}
+// Ekbazaar-Trade ${_IS_PROD_ ? "https://www.trade.ekbazaar.com" : "https://tradebazaar.com"}
+
+// Note: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
+
+  
+  module.exports.RFQOneToOne = (params) => `You have an inquiry from EkBazaar.com for ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}.. 
+  Details below: (${capitalizeFirstLetter(params.name)} - To view buyer contact details please register or login to ${_IS_PROD_ ? "https://www.trade.ekbazaar.com/signup" : "https://tradebazaar.com/signup"}
+  Ekbazaar-Trade ${_IS_PROD_ ? "https://www.trade.ekbazaar.com" : "https://tradebazaar.com"}
+  
+  Note: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
+  // `You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}.
+  //   Details below: ${capitalizeFirstLetter(params.name)}-
+  //   To view buyer contact details please register or login to ${_IS_PROD_ ? "https://www.trade.ekbazaar.com/signup" : "https://tradebazaar.com/signup"}
+  //   Ekbazaar-Trade ${_IS_PROD_ ? "https://www.trade.ekbazaar.com" : "https://tradebazaar.com"}`;
 
 
   module.exports.RFQOneToOneBuyer = () => `Dear Customer,\n\nThank you for submitting your requirement. We will get back to you soon.`;

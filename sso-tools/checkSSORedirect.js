@@ -8,20 +8,16 @@ async function ssoRedirect(req, res, next) {
   // check if the req has the queryParameter as ssoToken
   // and who is the referer.
   const { ssoToken } = req.query;
-  console.log("🚀 ~ file: checkSSORedirect.js ~ line 11 ~ ssoRedirect ~ ssoToken", ssoToken)
   if (ssoToken != null) {
     try {
       const url = `${ssoServerJWTURL}?ssoToken=${ssoToken}`
       const response = await request({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } })
 
       const { token } = response.data;
-      console.log("🚀 ~ file: checkSSORedirect.js ~ line 17 ~ ssoRedirect ~ response.data", response.data)
       const decoded = await verifyJwtToken(token);
       // now that we have the decoded jwt, use the,
       // global-session-id as the session id so that
       // the logout can be implemented with the global session.
-      // req.session.user = decoded;
-      // console.log("🚀 ~ file: checkSSORedirect.js ~ line 28 ~ ssoRedirect ~ decoded", decoded)
       return { user: decoded, token, response }
     } catch (err) {
       return { error: err.message }

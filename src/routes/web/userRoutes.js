@@ -19,6 +19,7 @@ router.put("/user-update-language", authenticate, user.updateUserLanguage)
 router.post("/user/logout", authenticate, auth.logout)
 router.post("/user/forget-password", user.forgetPassword)
 router.post("/user/update-password", authenticate, user.updateNewPassword)
+router.post("/user/deleteCurrentAccount", authenticate, user.deleteCurrentAccount)
 // router.post("/user/new-password")
 
 module.exports = router;

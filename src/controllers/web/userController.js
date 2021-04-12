@@ -45,7 +45,7 @@ const {
 } = require("../../utils/templates/emailTemplate/emailTemplateContent");
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan;
-const { createTrialPlan } = SellerPlans;
+const { createTrialPlan, deleteSellerPlans, getSellerPlan } = SellerPlans;
 const { createChat } = Chat;
 
 const { createChatUser, userChatLogin } = require("./rocketChatController");
@@ -67,6 +67,7 @@ const {
   forgetPassword,
   addSeller,
   addbusinessDetails,
+  getSellerVal
 } = sellers;
 const {
   getBuyer,
@@ -74,25 +75,27 @@ const {
   updateBuyer,
   getUserFromUserHash,
   updateEmailVerification,
+  checkBuyerExistOrNot,
+  deleteBuyer
 } = buyers;
-const { getMaster, addMaster, updateMaster } = mastercollections;
-const { addSellerPlanLog } = SellerPlanLogs;
+const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = mastercollections;
+const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
-// const {username, password, senderID, smsURL} = sms
+const {username, password, senderID, smsURL} = sms
 
 const isProd = process.env.NODE_ENV === "production";
 const ssoRegisterUrl =
   global.environment === "production"
     ? ""
     : global.environment === "staging"
-    ? "https://auth.tech-active.com/simplesso/register"
-    : "http://localhost:3010/simplesso/register";
+      ? "https://auth.tech-active.com/simplesso/register"
+      : "http://localhost:3010/simplesso/register";
 const serviceURL =
   global.environment === "production"
     ? ""
     : global.environment === "staging"
-    ? "https://tradebazaarapi.tech-active.com"
-    : "http://localhost:8070";
+      ? "https://tradebazaarapi.tech-active.com"
+      : "http://localhost:8070";
 
 function encrypt(text) {
   const cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
@@ -161,32 +164,30 @@ module.exports.sendOtp = async (req, res) => {
     const { mobile, reset } = req.body;
     let otp = 1234;
     const seller = await checkUserExistOrNot({ mobile });
+    const user = await checkBuyerExistOrNot({ mobile })
+    console.log("🚀 ~ file: userController.js ~ line 168 ~ module.exports.sendOtp= ~ user", user)
 
-    const { otpMessage } = sendOtp({ reset, otp });
-
-    if (seller && seller.length && !reset) {
+    
+    if (seller && seller.length && !reset /* && user && user.length */) {
       return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length))
-      return respError(res, "No User found with this number");
-
+    return respError(res, "No User found with this number");
+    
     const checkUser =
-      seller &&
-      seller.length &&
-      seller[0].email &&
-      seller[0].isEmailVerified === 2;
-    if (isProd) {
-      // otp = Math.floor(1000 + Math.random() * 9000);
-      const url = "https://api.ekbazaar.com/api/v1/sendOTP";
-      const resp = await axios.post(url, {
-        mobile,
-      });
+    seller &&
+    seller.length &&
+    seller[0].email &&
+    seller[0].isEmailVerified === 2;
 
-      // let response = await sendSMS(mobile, otpMessage);
-      // if (response && response.data && response.data.otp && checkUser) {
-      if (resp && resp.data && resp.data.data && resp.data.data.otp) {
-        // const otpMessage = otpVerification({ otp: response.data.otp });
-        const otpMessage = otpVerification({ otp: resp.data.data.otp });
+    if (isProd) {
+      otp = Math.floor(1000 + Math.random() * 9000);
+      const { otpMessage } = sendOtp({ reset, otp });
+      let response = await sendSMS(mobile, otpMessage);
+      console.log("🚀 ~ file: userController.js ~ line 187 ~ module.exports.sendOtp= ~ response", response.data)
+      if (response && response.data) {
+        const otpMessage = otpVerification({ otp });
+
         //send email
         if (seller && seller.length && seller[0]["email"]) {
           const message = {
@@ -200,7 +201,7 @@ module.exports.sendOtp = async (req, res) => {
           return respSuccess(
             res,
             {
-              otp: resp.data.data.otp,
+              otp,
             },
             checkUser
               ? "Your OTP has been send successfully, check your email or sms"
@@ -210,7 +211,7 @@ module.exports.sendOtp = async (req, res) => {
       } else {
         console.log("=======Email is not verified yet================");
       }
-      return respSuccess(res, { otp: resp.data.data.otp });
+      return respSuccess(res, { otp });
     } else {
       if (checkUser) {
         const otpMessage = otpVerification({ otp: otp });
@@ -274,16 +275,6 @@ module.exports.addUser = async (req, res, next) => {
       url,
     } = req.body;
     const dateNow = new Date();
-    // req.body.password = encodePassword(password);
-    // const tenderUser = {
-    //   countryCode: mobile.countryCode,
-    //   mobile: mobile.mobile,
-    //   isPhoneVerified: 2,
-    //   password: req.body.password,
-    //   preferredLanguage
-    // };
-
-    // const user = await addUser(tenderUser);
 
     req.body.userId = user._id;
     const buyerData = {
@@ -297,6 +288,7 @@ module.exports.addUser = async (req, res, next) => {
       isPhoneVerified: true,
       userId: user._id,
     };
+    const _buyer = await getBuyer(null, { mobile: mobile.mobile || mobile })
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
@@ -316,61 +308,62 @@ module.exports.addUser = async (req, res, next) => {
     // const _seller = await updateSeller(seller._id, {
     //   busenessId: bsnsDtls._id,
     // });
+
     if (seller && buyer) {
-      const trialPlan = await getSubscriptionPlanDetail({
-        planType: "trail",
-        status: true,
-      });
-      if (trialPlan) {
-        const sellerDetails = {
-          sellerId: seller._id,
-          userId: seller.userId,
-          name: seller.name || null,
-          email: seller.email || null,
-          mobile: seller.mobile || null,
-          sellerType: seller.sellerType || null,
-          paidSeller: seller.paidSeller,
-          planId: seller.planId,
-          trialExtends: seller.trialExtends,
-        };
-        const planData = {
-          name: trialPlan.type,
-          description: trialPlan.description,
-          features: trialPlan.features,
-          days: trialPlan.days,
-          extendTimes: trialPlan.numberOfExtends,
-          exprireDate: dateNow.setDate(
-            dateNow.getDate() + parseInt(trialPlan.days)
-          ),
-          userId: seller.userId,
-          sellerId: seller._id,
-          isTrial: true,
-          planType: trialPlan.type,
-          extendDays: trialPlan.days,
-          subscriptionId: trialPlan._id,
-          createdOn: new Date(),
-        };
+      // const trialPlan = await getSubscriptionPlanDetail({
+      //   planType: "trail",
+      //   status: true,
+      // });
+      // if (trialPlan/*  && _buyer && !_buyer.length */) {
+      //   const sellerDetails = {
+      //     sellerId: seller._id,
+      //     userId: seller.userId,
+      //     name: seller.name || null,
+      //     email: seller.email || null,
+      //     mobile: seller.mobile || null,
+      //     sellerType: seller.sellerType || null,
+      //     paidSeller: seller.paidSeller,
+      //     planId: seller.planId,
+      //     trialExtends: seller.trialExtends,
+      //   };
+      //   const planData = {
+      //     name: trialPlan.type,
+      //     description: trialPlan.description,
+      //     features: trialPlan.features,
+      //     days: trialPlan.days,
+      //     extendTimes: trialPlan.numberOfExtends,
+      //     exprireDate: dateNow.setDate(
+      //       dateNow.getDate() + parseInt(trialPlan.days)
+      //     ),
+      //     userId: seller.userId,
+      //     sellerId: seller._id,
+      //     isTrial: true,
+      //     planType: trialPlan.type,
+      //     extendDays: trialPlan.days,
+      //     subscriptionId: trialPlan._id,
+      //     createdOn: new Date(),
+      //   };
 
-        const planResult = await createTrialPlan(planData);
-        const planDatra = {
-          planId: planResult._id,
-          trialExtends: trialPlan.numberOfExtends,
-        };
-        const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
+      //   const planResult = await createTrialPlan(planData);
+      //   const planDatra = {
+      //     planId: planResult._id,
+      //     trialExtends: trialPlan.numberOfExtends,
+      //   };
+      //   const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
 
-        const planLog = {
-          sellerId: seller._id,
-          userId: seller.userId,
-          sellerPlanId: sellerUpdate.planId,
-          subscriptionId: trialPlan._id,
-          sellerDetails: { ...sellerDetails },
-          planDetails: {
-            ...planData,
-            exprireDate: new Date(planData.exprireDate),
-          },
-        };
-        const log = await addSellerPlanLog(planLog);
-      }
+      //   const planLog = {
+      //     sellerId: seller._id,
+      //     userId: seller.userId,
+      //     sellerPlanId: sellerUpdate.planId,
+      //     subscriptionId: trialPlan._id,
+      //     sellerDetails: { ...sellerDetails },
+      //     planDetails: {
+      //       ...planData,
+      //       exprireDate: new Date(planData.exprireDate),
+      //     },
+      //   };
+      //   const log = await addSellerPlanLog(planLog);
+      // }
 
       // const response = await axios.post(ssoRegisterUrl, { mobile: mobile.mobile, password }, { params: { serviceURL } })
       // const { data } = response
@@ -378,7 +371,6 @@ module.exports.addUser = async (req, res, next) => {
 
       if (url) {
         const ssoToken = url.substring(url.indexOf("=") + 1);
-        // req.session.ssoToken = ssoToken;
         req.query = {
           ssoToken: ssoToken,
         };
@@ -386,8 +378,6 @@ module.exports.addUser = async (req, res, next) => {
 
       const _response = await ssoRedirect(req, res, next);
       const { user, token } = _response;
-
-      // if (token) req.session.token = token;
 
       const userAgent = getUserAgent(req.useragent);
 
@@ -423,8 +413,18 @@ module.exports.getUserProfile = async (req, res) => {
     const userData = {
       user,
       seller,
-      buyer,
+      buyer
+      // seller: {
+      //   ...seller,
+      //   ...user,
+      //   mobile: seller.mobile && seller.mobile.length ? seller.mobile : [{mobile: user.mobile, countryCode: user.countryCode}]
+      // },
+      // buyer: {
+      //   ...buyer,
+      //   ...user
+      // },
     };
+    console.log("🚀 ~ file: userController 3.js ~ line 418 ~ module.exports.getUserProfile= ~ userData", userData)
     respSuccess(res, userData);
   } catch (error) {
     respError(res, error.message);
@@ -456,10 +456,33 @@ module.exports.updateUser = async (req, res) => {
     };
 
     let _seller = await getSeller(userID);
+    let buyer = await getBuyer(userID);
+    const __usr = await getUserProfile(userID)
     console.log(
       "🚀 ~ file: userController.js ~ line 459 ~ module.exports.updateUser= ~ _seller",
       _seller
     );
+    if (!_seller) {
+      const sellerData = {
+        name: name || __usr.name || null,
+        email: email || __usr.email || null ,
+        mobile: [{
+          mobile: mobile &&  mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
+          countryCode: __usr.countryCode
+        }],
+        userId: userID,
+        sellerProductId: []
+      }
+      const buyerData = {
+        name: name || __usr.name || null,
+        email: email || __usr.email || null,
+        mobile: mobile && mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
+        countryCode: __usr.countryCode,
+        userId: userID
+      }
+      buyer = await updateBuyer({ userId: userID }, buyerData)
+      _seller = await updateSeller({ userId: userID }, sellerData)
+    }
 
     let buyerData = {
       name,
@@ -478,6 +501,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer,
     };
+    console.log("🚀 ~ file: userController 3.js ~ line 498 ~ module.exports.updateUser= ~ _buyer", _buyer)
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
       buyerData.mobile = _buyer.mobile[0]["mobile"] || mobile[0]["mobile"];
       buyerData.mobile =
@@ -508,11 +532,6 @@ module.exports.updateUser = async (req, res) => {
       sellerData.busenessId = bsnsDtls._id;
     }
 
-    let buyer = await getBuyer(userID);
-    console.log(
-      "🚀 ~ file: userController.js ~ line 509 ~ module.exports.updateUser= ~ buyer",
-      buyer
-    );
 
     // let keywords = []
     // keywords.push(seller.name.toLowerCase())
@@ -539,7 +558,6 @@ module.exports.updateUser = async (req, res) => {
     let seller = {},
       activeChat = {};
     if (user && buyer && _seller) {
-      // console.log(user, "-----11", buyer, "----------22", seller) userType
       const url = req.get("origin");
       if (user.email && !buyer.isEmailSent) {
         let { token } = req.headers.authorization.split("|")[1];
@@ -558,17 +576,12 @@ module.exports.updateUser = async (req, res) => {
         sellerData.isEmailSent = true;
         console.log(
           "🚀 ~ file: userController.js ~ line 552 ~ module.exports.updateUser= ~ sellerData",
-          sellerData,
-          new Date()
+          sellerData
         );
         buyerData.isEmailSent = true;
-        console.log("widowwwwwwwwwwwwwwwwwwwwwwwwwwwwwww", new Date())
-        await updateBuyer({ _id: buyer._id }, buyerData);
-        await updateSeller({ _id: _seller._id }, sellerData);
-        console.log(
-          "iron mannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
-          new Date()
-        );
+        buyer = await updateBuyer({ userId: userID }, buyerData);
+        seller = await updateSeller({ userId: userID }, sellerData);
+
         // const { successfulMessage } = successfulRegistration({ userType });
         // if (isProd) {
         //   sendSMS(mobile, successfulMessage);
@@ -588,18 +601,89 @@ module.exports.updateUser = async (req, res) => {
         sendSingleMail(message);
 
       } else if (user.email && buyer.isEmailSent) {
-        await updateBuyer({ userId: userID }, buyerData);
-        await updateSeller({ userId: userID }, sellerData);
-
+        buyer = await updateBuyer({ userId: userID }, buyerData);
+        seller = await updateSeller({ userId: userID }, sellerData);
       }
-      buyer = await getBuyer(null, {_id: buyer._id})
-      seller= await getSeller(null, null, {_id: _seller._id})
-      console.log("thorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", new Date());
+      
+      console.log("🚀 ~ file: userController 3.js ~ line 598 ~ module.exports.updateUser= ~ buyer", buyer)
+      console.log("🚀 ~ file: userController 3.js ~ line 599 ~ module.exports.updateUser= ~ seller", seller)
+      const sellerPlans = await getSellerPlan({ sellerId: seller._id })
+      if (userType === "seller" && !sellerPlans) {
+        const dateNow = new Date();
+        const trialPlan = await getSubscriptionPlanDetail({
+          planType: "trail",
+          status: true,
+        });
+        if (trialPlan) {
+          const sellerDetails = {
+            sellerId: seller._id,
+            userId: seller.userId,
+            name: seller.name || name || null,
+            email: seller.email || email || null,
+            mobile: __usr.mobile || null,
+            sellerType: seller.sellerType || null,
+            paidSeller: seller.paidSeller,
+            planId: seller.planId,
+            trialExtends: seller.trialExtends,
+          };
+          const planData = {
+            name: trialPlan.type,
+            description: trialPlan.description,
+            features: trialPlan.features,
+            days: trialPlan.days,
+            extendTimes: trialPlan.numberOfExtends,
+            exprireDate: dateNow.setDate(
+              dateNow.getDate() + parseInt(trialPlan.days)
+            ),
+            userId: seller.userId,
+            sellerId: seller._id,
+            isTrial: true,
+            planType: trialPlan.type,
+            extendDays: trialPlan.days,
+            subscriptionId: trialPlan._id,
+            createdOn: new Date(),
+          };
+
+          const planResult = await createTrialPlan(planData);
+          const planDatra = {
+            planId: planResult._id,
+            trialExtends: trialPlan.numberOfExtends,
+          };
+          const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
+
+          const planLog = {
+            sellerId: seller._id,
+            userId: seller.userId,
+            sellerPlanId: sellerUpdate.planId,
+            subscriptionId: trialPlan._id,
+            sellerDetails: { ...sellerDetails },
+            planDetails: {
+              ...planData,
+              exprireDate: new Date(planData.exprireDate),
+            },
+          };
+          const log = await addSellerPlanLog(planLog);
+        }
+      }
+      
+      buyer = await getBuyer(null, { _id: buyer._id })
+      seller = await getSeller(null, null, { _id: _seller._id })
+      console.log("fiballllllllllllllllllllllllllll")
+
       respSuccess(
         res,
         {
           seller,
           buyer,
+          // seller: {
+          //   ...seller,
+          //   ...user,
+          //   mobile: seller.mobile && seller.mobile.length ? seller.mobile : [{mobile: user.mobile, countryCode: user.countryCode}]
+          // },
+          // buyer: {
+          //   ...buyer,
+          //   ...user
+          // },
           activeChat,
         },
         user.email && user.isEmailVerified === 1
@@ -784,3 +868,67 @@ module.exports.deleteRecords = async (req, res) =>
       reject(error);
     }
   });
+
+module.exports.deleteCurrentAccount = async (req, res) => {
+
+  try {
+    const { deleteTrade, userId, sellerId, buyerId, permanentDelete } = req.body
+
+    const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' : 'https://investmentapi.tech-active.com/api/permanentlydisable'
+    const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
+    console.log("🚀 ~ file: userController.js ~ line 792 ~ module.exports.deleteCurrentAccount ~ tenderUrl", tenderUrl)
+
+    const { userID, token } = req;
+    console.log("🚀 ~ file: userController.js ~ line 790 ~ module.exports.deleteCurrentAccount ~ userID", token)
+    const result = await updateUser({ _id: userId }, { deleteTrade })
+    if (result) {
+      const sellerData = await getSellerVal({ _id: sellerId })
+      const _seller = await deleteSellerRecord(sellerId);
+      const _buyer = await deleteBuyer({ _id: buyerId })
+      if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
+        const pQuery = {
+          _id: {
+            $in: sellerData.sellerProductId,
+          },
+        };
+        const delRec = deleteSellerProducts(pQuery);
+        const delMaster = bulkDeleteMasterProducts(pQuery);
+        console.log('master collectiona nd seller product delete')
+      }
+      const delMaster1 = deleteSellerPlans({ sellerId: sellerId });
+      if (permanentDelete) {
+        // delete from investment
+        const update = {
+          status: true,
+          reason: deleteTrade.reason
+        }
+        const result = /* await */ updateUser({ _id: userId }, { deleteTendor: update, deleteInvestement: update })
+
+        // Delete from Investment
+        const res = axios.delete(investmentUrl, {
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `ekbazaar|${token}`,
+          }
+        });
+
+        // Delete From Tender
+        const resTender = axios.delete(tenderUrl, {
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `ekbazaar|${token}`,
+          }
+        });
+        console.log("🚀 ~ file: userController.js ~ line 835 ~ module.exports.deleteCurrentAccount ~ resTender", resTender)
+      }
+    }
+    respSuccess(res, "Deleted Succesfully")
+
+  } catch (error) {
+
+    respError(res, error.message)
+
+  }
+
+}
+

@@ -2,6 +2,16 @@ const mongoose = require('mongoose')
 const { SellerPlans } = require('../models')
 const moment = require("moment");
 
+module.exports.deleteSellerPlans = (query) =>
+    new Promise((resolve, reject) => {
+        console.log("🚀 ~ file: sellerPlanModule.js ~ line 7 ~ query", query)
+        SellerPlans.deleteMany(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })
+
 module.exports.createTrialPlan = (query) =>
     new Promise((resolve, reject) => {
         SellerPlans.create(query)
@@ -54,18 +64,18 @@ module.exports.updateSellerPlans = (query, data) =>
 exports.getExpirePlans = () => new Promise((resolve, reject) => {
 
     SellerPlans.find({
-        $or:[
+        $or: [
             {
-                exprireDate : {
-                    $gte: new Date(moment().subtract(1,'day').startOf('day')),
+                exprireDate: {
+                    $gte: new Date(moment().subtract(1, 'day').startOf('day')),
                     $lte: new Date(moment().subtract(1, 'day').endOf('day'))
                 }
-            },{
+            }, {
                 exprireDate: {
                     $gte: new Date(moment().subtract(3, 'day').startOf('day')),
                     $lte: new Date(moment().subtract(3, 'day').endOf('day'))
                 }
-            },{
+            }, {
                 exprireDate: {
                     $gte: new Date(moment().subtract(5, 'day').startOf('day')),
                     $lte: new Date(moment().subtract(5, 'day').endOf('day'))
@@ -96,7 +106,7 @@ exports.getExpirePlans = () => new Promise((resolve, reject) => {
                     $lte: new Date(moment().subtract(30, 'day').endOf('day'))
                 }
             },
-                //months
+            //months
             {
                 exprireDate: {
                     $gte: new Date(moment().subtract({ days: 15, months: 1 }).startOf('day')),
@@ -135,12 +145,12 @@ module.exports.getAboutToexpirePlan = () =>
         SellerPlans.find({
             $and: [{
                 expireStatus: false,
-                $or:[
+                $or: [
                     {
-                    exprireDate: {
-                        $gte: new Date(moment().add(7, 'day').startOf('day')),
-                        $lte: new Date(moment().add(7, 'day').endOf('day'))
-                     }
+                        exprireDate: {
+                            $gte: new Date(moment().add(7, 'day').startOf('day')),
+                            $lte: new Date(moment().add(7, 'day').endOf('day'))
+                        }
                     },
                     {
                         exprireDate: {
@@ -175,11 +185,11 @@ module.exports.getAboutToexpirePlan = () =>
                 ]
             }]
         })
-        .populate('sellerId')
-        .then((doc) => {
-            console.log(doc.length)
-            resolve(doc)
-        })
-    .catch((error) => reject(error))
+            .populate('sellerId')
+            .then((doc) => {
+                console.log(doc.length)
+                resolve(doc)
+            })
+            .catch((error) => reject(error))
     })
 

@@ -284,7 +284,7 @@ exports.getHistory = async (req, res) => {
         let _temp = {};
 
         const url = `${chatDomain}/api/v1/im.history?roomId=${roomId}&offset=${offset}&count=${limit}`
-        console.log("111111111111111111111111111111111",url)
+        // console.log("111111111111111111111111111111111",url)
         const history = await axios.get(url, {
             headers: {
                 'Content-Type': 'application/json',

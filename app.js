@@ -2,37 +2,26 @@ require("dotenv").config();
 const { env } = process;
 global.environment = env.NODE_ENV || "production";
 
-const path = require("path");
-const express = require("express");
-const session = require("express-session");
-const useragent = require("express-useragent");
-const fileUpload = require("express-fileupload");
-const cookieParser = require("cookie-parser");
+const path = require('path');
+const express = require('express')
+const useragent = require('express-useragent');
+const fileUpload = require('express-fileupload');
+const cookieParser = require('cookie-parser')
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cron = require("node-cron");
 
-require("./config/db").dbConnection();
-require("./config/tenderdb").conn;
-const Logger = require("./src/utils/logger");
-const config = require("./config/config");
-const isAuthenticated = require("./sso-tools/isAuthenticated");
-const { ssoRedirect } = require("./sso-tools/checkSSORedirect");
-const {
-  sendQueSms,
-  getExpirePlansCron,
-  sendQueEmails,
-  getAboutToExpirePlan,
-} = require("./src/crons/cron");
-const { updatePriority } = require("./src/controllers/web/testController");
-const { respSuccess, respError } = require("./src/utils/respHadler");
-const router = require("./src/routes");
-const { request } = require("./src/utils/request");
-const {
-  authServiceURL,
-  ssoLoginUrl,
-} = require("./src/utils/utils").globalVaraibles;
+require('./config/db').dbConnection();
+require('./config/tenderdb').conn
+const Logger = require('./src/utils/logger');
+const config = require('./config/config')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
+const { updatePriority } = require('./src/controllers/web/testController')
+const { respSuccess, respError } = require("./src/utils/respHadler")
+const router = require('./src/routes');
+const { request } = require("./src/utils/request")
+const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 
 const { serviceURL } = authServiceURL();
 const { tradeDb } = config;
@@ -58,32 +47,10 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-app.set("trust proxy", 1);
-const cookieOptions = {
-  path: "/",
-  expires: 1000 * 60 * 60 * 24 * 15,
-  domain: ".ekbazaar.com",
-  // sameSite: "none",
-  httpOnly: true,
-  // secure: true,
-};
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
-// app.use(
-//   session({
-//     key: "userId",
-//     secret: "keyboard cat",
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: {
-//       ...cookieOptions,
-//     },
-//   })
-// );
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Origin", req.headers.origin);
@@ -117,30 +84,15 @@ app.get("/api/logged", async (req, res, next) => {
   });
   console.log("🚀 ~ file: app.js ~ line 87 ~ app.get ~ response", response);
   const { data } = response;
-  if (data.success)
+  if (data && data.success)
     return respSuccess(res, { user: data.data.user, token: data.data.token });
   else return respError(res, data.message);
-  // next()
-
-  // let user = await ssoRedirect(req, res, next)
-  // if (user && user.error) {
-  //     respSuccess(res, error)
-  // } else if (!user) {
-  //     user = await isAuthenticated(req, res, next)
-  //     if (!user) respSuccess(res, "user is not logged in any app")
-  //     else {
-  //         // req.session.cookie._expires = 60 * 60 * 24
-  //         respSuccess(res, { user, token: req.session.token })
-  //     }
-  // } else {
-  //     respSuccess(res, { user, token: req.session.token })
-  // }
 });
 
 app.post("/capture/:paymentId", async function (req, res) {
   try {
     const result = await captureRazorPayPayment(req, res);
-  } catch (error) {}
+  } catch (error) { }
   // res.send('Its delete records  live')
 });
 
