@@ -281,6 +281,17 @@ module.exports.updateUser = (query, data) =>
     Users.findOneAndUpdate(query, data, {
       new: true
     })
+      .select({
+        name: 1,
+        email: 1,
+        mobile: 1,
+        countryCode: 1,
+        isPhoneVerified: 1,
+        isMobileVerified: 1,
+        password: 1,
+        isEmailVerified: 1,
+        // _id: -1,
+      })
       .then((doc) => {
         resolve(doc)
       })
@@ -444,7 +455,7 @@ module.exports.getSeller = (id, chkStock, query) =>
       }
     }
     let _query = query || { userId: id }
-    console.log("🚀 ~ file: sellersModule.js ~ line 447 ~ newPromise ~ _query", query)
+    console.log("🚀 ~ file: sellersModule.js ~ line 447 ~ newPromise ~ _query", _query)
     Sellers.findOne(_query)
       .populate('sellerProductId')
       .populate('sellerType')
@@ -769,13 +780,38 @@ module.exports.updateSeller = (query, data, elastic) =>
       new: true,
       upsert: true
     })
-      .populate('sellerProductId.')
-      .populate('sellerType.name', 'name')
-      .populate('sellerType.cities.city', 'name')
-      .populate('sellerType.cities.state', 'name region')
+      .populate('sellerProductId')
+      .populate('sellerType')
+      // .populate('sellerType.name', 'name')
+      // .populate('sellerType.cities.city', 'name')
+      // .populate('sellerType.cities.state', 'name region')
       .populate('busenessId')
       .populate('statutoryId')
-      .populate('sellerContactId')
+      // .populate('sellerContactId')
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.city location.state location.country",
+          // model: Cities
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.state",
+          model: States,
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.country",
+          model: Countries,
+        }
+      })
       .populate('sellerCompanyId')
       .populate('establishmentId')
 
@@ -922,6 +958,7 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
   })
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
+console.log("🚀 ~ file: sellersModule.js ~ line 949 ~ id, data", id, data)
     if (id) {
       SelleresProductList.findOneAndUpdate({
         _id: id
@@ -1515,6 +1552,16 @@ module.exports.getUpdatedSellerDetails = (query, skip, limit) => new Promise((re
     })
     .catch((error) => reject(error))
 })
+module.exports.getProduct = (query) =>
+  new Promise((resolve, reject) => {
+    SelleresProductList.findOne(query)
+    .lean()
+      .then((doc) => {
+        // console.log("🚀 ~ file: sellersModule.js ~ line 1498 ~ .then ~ doc", doc)
+        resolve(doc)
+      })
+      .catch(reject)
+  })
 
 // module.exports.updateMany = (query1,query2) => new Promise((resolve, reject) => {
 //   Sellers.updateMany(query1,query2)

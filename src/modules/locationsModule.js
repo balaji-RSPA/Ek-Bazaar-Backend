@@ -10,7 +10,6 @@ module.exports.getAllStates = (reqQuery) =>
       .skip(skip)
       .limit(limit)
       .then((doc) => {
-        console.log("🚀 ~ file: locationsModule.js ~ line 13 ~ .then ~ doc", doc)
         resolve(doc);
       })
       .catch((error) => {
