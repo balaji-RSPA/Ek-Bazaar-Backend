@@ -23,9 +23,9 @@ const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 
-const { suggestions} = require("./elasticsearch-mapping");
+// const { suggestions} = require("./elasticsearch-mapping");
 
-const { suggestionsMapping } = suggestions
+// const { suggestionsMapping } = suggestions
 
 const { serviceURL } = authServiceURL()
 const { tradeDb } = config
@@ -115,15 +115,15 @@ server.on('error', (e) => {
     Logger.error(e)
 });
 
-app.get('/suggestionsMapping', async function (req, res) {
-    try {
-        console.log('test --------------------   ')
-        const result = await suggestionsMapping()
-    } catch (error) {
+// app.get('/suggestionsMapping', async function (req, res) {
+//     try {
+//         console.log('test --------------------   ')
+//         const result = await suggestionsMapping()
+//     } catch (error) {
 
-        res.send(error)
-    }
-})
+//         res.send(error)
+//     }
+// })
 
 server.on('listening', () => {
     console.log(`Listening:${server.address().port}`);
