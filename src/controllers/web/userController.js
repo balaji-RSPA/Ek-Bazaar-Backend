@@ -169,7 +169,7 @@ module.exports.sendOtp = async (req, res) => {
 
     const { otpMessage } = sendOtp({ reset, otp });
 
-    if (seller && seller.length && !reset && user && user.length) {
+    if (seller && seller.length && !reset /* && user && user.length */) {
       return respError(res, "User with this number already exist");
     }
     if (reset && (!seller || !seller.length))
@@ -292,7 +292,7 @@ module.exports.addUser = async (req, res, next) => {
       isPhoneVerified: true,
       userId: user._id,
     };
-    const _buyer = await getBuyer(null, { mobile: mobile.mobile || mobile })
+    // const _buyer = await getBuyer(null, {mobile: mobile.mobile || mobile})
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
@@ -436,6 +436,7 @@ module.exports.getUserProfile = async (req, res) => {
 module.exports.updateUser = async (req, res) => {
   try {
     const { userID } = req;
+    const dateNow = new Date();
     const _buyer = req.body.buyer || {};
     let {
       name,
@@ -897,7 +898,6 @@ module.exports.deleteRecords = async (req, res) =>
             reason: deleteTrade.reason
           }
           const result = /* await */ updateUser({_id:userId}, {deleteTendor:update, deleteInvestement: update})
-
           // Delete from Investment
           const res = axios.delete(investmentUrl,{
             headers: {
@@ -924,5 +924,4 @@ module.exports.deleteRecords = async (req, res) =>
     }
   
   }
-
 
