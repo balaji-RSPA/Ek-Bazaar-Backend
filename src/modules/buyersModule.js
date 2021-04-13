@@ -33,9 +33,10 @@ module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
       path: 'buyerDetails.location.city buyerDetails.location.state'
     })
     .then(doc => {
+    console.log("🚀 ~ file: buyersModule.js ~ line 36 ~ module.exports.getRFPData= ~ doc", doc)
       resolve(doc)
     })
-    .catch(error => reject(error))
+    .catch(error => resolve(error.message))
 
 })
 
