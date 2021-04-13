@@ -84,6 +84,7 @@ exports.sendSMS = async (mobile, message) => new Promise((resolve, reject) => {
   // return result
   axios.get(sendsmsuri)
     .then(response => {
+    console.log("🚀 ~ file: utils.js ~ line 87 ~ exports.sendSMS= ~ response", response.data)
       resolve(response)
     })
     .catch(error => {

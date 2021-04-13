@@ -619,13 +619,12 @@ exports.sellerSearch = async (reqQuery) => {
 
   if (offerSearch) {
 
-    console.log('111111111111')
     query.bool.must.push({
       "exists": {
         "field": "offers"
       }
     })
-    console.log('2222222222')
+
   }
   return {
     query,
@@ -668,12 +667,10 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
       index: INDEXNAME,
       body,
     };
-    console.log("🚀 ~ file: elasticSearchModule.js ~ line 685 ~ newPromise ~ searchQuery", JSON.stringify(searchQuery))
 
     esClient
       .search(searchQuery)
       .then(async (results) => {
-        console.log("🚀 ~ file: elasticSearchModule.js ~ line 690 ~ .then ~ results", results)
         const { count } = await this.getCounts(query); // To get exact count
         resolve([
           results.hits.hits,
@@ -683,7 +680,7 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
         ]);
       })
       .catch(error => //{
-        console.log(error, ' kkkkkkkkkkkkkkkkkk')
+        console.error(error.message)
         //reject(error)
       //}
       )

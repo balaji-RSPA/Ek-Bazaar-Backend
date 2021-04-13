@@ -1,5 +1,6 @@
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { sellerSearch, searchFromElastic, getSuggestions } = require('../../modules/elasticSearchModule')
+const { getRFPData, getRFP } = require("../../modules/buyersModule")
 const moment = require("moment")
 
 module.exports.getAllOffers = async (req, res) => {
@@ -149,13 +150,13 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 }
             })
         }
-        // if(search) {
-        //     query.bool.must.push({
-        //         "term": {
-        //             "parentCategoryId._id": level1
-        //         }
-        //     })
-        // }
+        if (search) {
+            query.bool.must.push({
+                "match_phrase": {
+                    "productDetails.name": search
+                }
+            })
+        }
 
         const seller = await searchFromElastic(query, req.query, {});
         let _seller = seller.length && seller[0]
@@ -164,10 +165,10 @@ module.exports.getAllSellerOffers = async (req, res) => {
         sellerOffers = _seller.length && _seller.map(prod => {
             let _prod = prod["_source"]
             let product = _prod.productSubcategoryId && _prod.productSubcategoryId.length ? _prod.productSubcategoryId[0]["name"] :
-            _prod.poductId && _prod.poductId.length ? _prod.poductId[0]["name"] :
-            _prod.secondaryCategoryId && _prod.secondaryCategoryId.length ? _prod.secondaryCategoryId[0]["name"] :
-            _prod.primaryCategoryId && _prod.primaryCategoryId.length ? _prod.primaryCategoryId[0]["name"] :
-            _prod.parentCategoryId && _prod.parentCategoryId.length ? _prod.parentCategoryId[0]["name"] : ""
+                _prod.poductId && _prod.poductId.length ? _prod.poductId[0]["name"] :
+                    _prod.secondaryCategoryId && _prod.secondaryCategoryId.length ? _prod.secondaryCategoryId[0]["name"] :
+                        _prod.primaryCategoryId && _prod.primaryCategoryId.length ? _prod.primaryCategoryId[0]["name"] :
+                            _prod.parentCategoryId && _prod.parentCategoryId.length ? _prod.parentCategoryId[0]["name"] : ""
 
             let obj = {
                 title: product,
@@ -182,7 +183,25 @@ module.exports.getAllSellerOffers = async (req, res) => {
             console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
             return obj
         })
-        return respSuccess(res, {offers: sellerOffers, requests: []})
+        
+        buyerRequests = await getRFPData({ requestType: 11, "productDetails.validity": { $gte: new Date().toISOString() } }, {skip: 0, limit: 1000})
+        buyerRequests = buyerRequests.length && buyerRequests.map(buyer => {
+
+            let obj = {
+                title: buyer.productDetails.name.label,
+                location: buyer.productDetails.location.city.label,
+                price: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
+                validity: moment(buyer.productDetails.validity.toDate).format('ll'),
+                btnname: 'View more',
+                seller: false,
+                value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
+                _id: buyer._id // add request Object _id
+            }
+            return obj
+
+        })
+        console.log("🚀 ~ file: offersController.js ~ line 187 ~ module.exports.getAllSellerOffers= ~ buyerRequests", buyerRequests)
+        return respSuccess(res, { offers: sellerOffers, requests: buyerRequests })
     } catch (error) {
 
     }
