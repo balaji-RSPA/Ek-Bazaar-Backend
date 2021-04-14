@@ -180,6 +180,7 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].email &&
       seller[0].isEmailVerified === 2;
 
+      console.log("🚀 ~ file: userController.js ~ line 184 ~ module.exports.sendOtp= ~ prod", isProd)
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
       const { otpMessage } = sendOtp({ reset, otp });
