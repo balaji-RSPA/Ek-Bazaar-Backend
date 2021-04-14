@@ -9,9 +9,12 @@ const {
     respError
 } = require('../../utils/respHadler');
 
-const { getMasterRecords, updateMasterBulkProducts, updateMaster } = require('../../modules/masterModule')
+const { getMasterRecords, updateMasterBulkProducts, updateMaster, getMaster, bulkDeleteMasterProducts } = require('../../modules/masterModule')
 
-const { getSellerPlan } = require('../../modules/sellerPlanModule')
+const { getSellerPlan, deleteSellerPlans } = require('../../modules/sellerPlanModule')
+const { getUserList,deleteBuyer, deleteUser } = require('../../modules/buyersModule')
+const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
+const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule')
 
 module.exports.updateLevel2l1Data = async (req, res) => {
 
@@ -122,4 +125,50 @@ module.exports.updatePriority = async (req, res) => new Promise(async (resolve, 
         reject(error)
     }
 
+})
+
+module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, reject) => {
+    try {
+
+        console.log('tyest data delete-----------------')
+        const result = await getUserList({ /* _id: "60696bce36878670aa4863eb"  */name: "test" }, 10)
+        const userIds = []
+        const sellerIds = []
+        if (result && result.length) {
+            for (let index = 0; index < result.length; index++) {
+                const user = result[index];
+                const userId = user._id
+                userIds.push(user._id)
+                const sellers = await getAllSellerData({userId},{ skip:0, limit: 1000})
+                if(sellers && sellers.length){
+                    for (let index = 0; index < sellers.length; index++) {
+                        const _seller = sellers[index];
+                        const sellerId= _seller._id
+                        sellerIds.push(sellerId)
+                        const productids = _seller.sellerProductId
+                        console.log("-- Product ids ", productids)
+                        const m_dele = await bulkDeleteMasterProducts({_id: {$in: productids }})
+                        console.log('-------- delete master---------')
+                        const p_dele = await deleteSellerProducts({_id: {$in: productids }})
+                        console.log('-------- delete  Seller Products---------')
+                        
+                        const delMaster1 = await deleteSellerPlans({ sellerId: sellerId });
+                        console.log('-------- delete  Seller Plan---------')
+                        const _sellerDel = await deleteSellerRecord(sellerId);
+                        console.log('-------- delete  Seller Data---------')
+                        const _buyer = await deleteBuyer({ userId:userId })
+                        console.log('-------- delete  Buyer Data---------')
+                    }
+                }
+
+            }
+            const del = await deleteUser({_id: {$in : userIds}})
+            console.log('------- User Ids Deleted -----------')
+            console.log(sellerIds, userIds, ' -------- deletion comnpletes-------')
+            respSuccess(res, "test")
+        }else{
+            respError(res, "No user list")
+        }
+    } catch (error) {
+        console.log(error, ' jjjjjjjjjjjjjjjjjjjjj') }
 })

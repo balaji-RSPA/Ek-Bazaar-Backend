@@ -33,7 +33,7 @@ module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
       path: 'buyerDetails.location.city buyerDetails.location.state'
     })
     .then(doc => {
-    console.log("🚀 ~ file: buyersModule.js ~ line 36 ~ module.exports.getRFPData= ~ doc", doc)
+      console.log("🚀 ~ file: buyersModule.js ~ line 36 ~ module.exports.getRFPData= ~ doc", doc)
       resolve(doc)
     })
     .catch(error => resolve(error.message))
@@ -215,4 +215,20 @@ module.exports.deleteBuyerRequest = (query) => new Promise((resolve, reject) => 
       reject(error);
     });
 
+})
+
+exports.getUserList = (query, limit) => new Promise((resolve, reject) => {
+  User.find(query)
+    .limit(limit)
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
+})
+exports.deleteUser = (query) => new Promise((resolve, reject) => {
+  User.deleteMany(query)
+    .then(doc => {
+      resolve(doc)
+    })
+    .catch(error => reject(error))
 })

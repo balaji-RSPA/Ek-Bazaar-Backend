@@ -10,7 +10,7 @@ const chatDomain = rocketChatDomain; //"https://chatbot.active.agency"
 // const chatDomain = "http://192.168.1.52:3000"
 const { getSellerProfile } = require('../../modules/sellersModule')
 
-const rocketChatClient = new RocketChatApi("https", "chatbot.active.agency", 443)
+const rocketChatClient = new RocketChatApi("https", "chatbot.ekbazaar.com", 443)
 // const rocketChatClient = new RocketChatApi("http", "192.168.1.52", 3000)
 const { Chat } = require('../../modules')
 const { updateChatSession, getChat, createChat, createChatSession } = Chat
@@ -21,8 +21,8 @@ const { updateChatSession, getChat, createChat, createChatSession } = Chat
 
 // }
 const admin = {
-    username: "ramesh",
-    password: "ramesh123"
+    username: "ramesh@active.agency",
+    password: "rameshTechActive"
 }
 
 exports.setChatSession = (data) => {
@@ -36,6 +36,7 @@ exports.userLogin = async (req, res) => {
     try {
         console.log("🚀 ~ file: rocketChatController.js ~ line 35 ~ exports.userLogin= ~ req.body", req.body)
         const chatLogin = await getChat({ userId })
+        console.log("🚀 ~ file: rocketChatController.js ~ line 39 ~ exports.userLogin= ~ chatLogin", chatLogin)
         let activeChat = {}
         if (chatLogin) {
 
@@ -46,9 +47,19 @@ exports.userLogin = async (req, res) => {
             console.log('------------------- new Chat user creating--------------')
             const chatUser = await this.createChatUser({ name, email, username: username.toString() })
             if (chatUser) {
+                console.log("chatUser-> ", chatUser);
                 const chatDetails = await createChat({ userId }, { details: chatUser, sellerId, buyerId, userId })
                 activeChat = await this.userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: userId })
             }
+            // else{
+            //     let newChatLogin = await getChat({ userId })
+            //     console.log("NewChatLogin Res-> ", newChatLogin)
+            //     if(newChatLogin)
+            //         activeChat = await this.userChatLogin({ username, password: "active123", customerUserId: userId })
+            //     else{
+            //         console.log("NewChatLogin ELSE->")
+            //     }
+            // }
 
         }
 
@@ -167,6 +178,7 @@ exports.createUser = async (req, res) => {
             "requirePasswordChange": false,
             "roles": ["user"]
         };
+        console.log(userToAdd, chatDomain, ' 11111111111111111111111111')
         const adminLogin = await inlinUserLogin({ username: admin.username, password: admin.password })
         // console.log("🚀 ~ file: rocketChatController.js ~ line 135 ~ exports.createUser= ~ adminLogin", adminLogin)
 
@@ -384,6 +396,7 @@ exports.sendMessage = async (req, res) => {
         // });
 
     } catch (err) {
+        console.log(err, ' rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
         return respError(res, err.message)
     }
 
@@ -571,7 +584,7 @@ exports.userChatLogin = async (data) => {
     const { username, password, customerUserId } = data
     try {
         const login = await rocketChatClient.login(username, password)
-        // console.log("🚀 ~ file: rocketChatController.js ~ line 345 ~ exports.userChatLogin= ~ login", login)
+        console.log("🚀 ~ file: rocketChatController.js ~ line 345 ~ exports.userChatLogin= ~ login", login)
         // rocketChatClient.setAuthToken(login.authToken)
         // rocketChatClient.setUserId(login.userId)
         // await this.setChatSession({ authToken: login.authToken, userId: login.userId })

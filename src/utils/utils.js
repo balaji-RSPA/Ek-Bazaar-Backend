@@ -73,15 +73,8 @@ exports.sendBulkSMS = async (mobile, message) => new Promise((resolve, reject) =
 })
 
 exports.sendSMS = async (mobile, message) => new Promise((resolve, reject) => {
-  // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-  // const resp = await axios.post(url, {
-  //   mobile,
-  //   message
-  // })
-  // return resp
+
   const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&dlr-mask=19&dlr-url`
-  // const result = await axios.get(sendsmsuri)
-  // return result
   axios.get(sendsmsuri)
     .then(response => {
     console.log("🚀 ~ file: utils.js ~ line 87 ~ exports.sendSMS= ~ response", response.data)
@@ -90,6 +83,7 @@ exports.sendSMS = async (mobile, message) => new Promise((resolve, reject) => {
     .catch(error => {
       resolve({ error: error.message })
     })
+
 })
 
 exports.messageContent = (productDetails, _loc, name) => {
@@ -160,7 +154,7 @@ module.exports.uploadToDOSpace = (req) => {
 /**
  * List all images from Digital Ocean Space
  */
-module.exports.listAllDigitalOceanDocs = async() => {
+module.exports.listAllDigitalOceanDocs = async () => {
   const params = {
     Bucket
   }

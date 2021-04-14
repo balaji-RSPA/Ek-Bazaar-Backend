@@ -20,6 +20,7 @@ module.exports.sellerProductsBulkInsert = (data) =>
     })
 
 module.exports.searchProducts = (query) => new Promise((resolve, reject) => {
+    console.log("🚀 ~ file: sellerProductModule.js ~ line 23 ~ module.exports.searchProducts= ~ query", query)
     SellerProducts.find(query)
         .then(doc => resolve(doc))
         .catch(error => reject(error))

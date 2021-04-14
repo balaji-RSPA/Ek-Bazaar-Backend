@@ -149,6 +149,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 ]
             }
         }
+
         if (level1) {
             query.bool.must.push({
                 "match": {

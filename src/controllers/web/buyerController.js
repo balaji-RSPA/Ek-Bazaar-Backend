@@ -233,13 +233,16 @@ module.exports.createRFP = async (req, res, next) => {
         await sendEmailBuyer(email)
       }
       if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment === "production") {
-        // const sellerData = await getSellerProfile(sellerId)
+        const sellerData = await getSellerProfile(sellerId)
+        console.log("🚀 ~ file: buyerController.js ~ line 238 ~ module.exports.createRFP= ~ sellerData", sellerData)
         // const constsellerContactNo = sellerDtl && sellerData.length && sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
+        console.log("🚀 ~ file: buyerController.js ~ line 240 ~ module.exports.createRFP= ~ constsellerContactNo", constsellerContactNo)
         if (constsellerContactNo && constsellerContactNo.mobile) {
           console.log('message sending...........')
-          await sendSMS(constsellerContactNo.mobile, RFQOneToOne({ productDetails, _loc, name }))
-          await sendSMS(mobile.mobile, RFQOneToOneBuyer())
+          let _resp = await sendSMS(constsellerContactNo.mobile, RFQOneToOne({ productDetails, _loc, name }))
+          console.log("🚀 ~ file: buyerController.js ~ line 244 ~ module.exports.createRFP= ~ _resp", _resp)
+          // await sendSMS(mobile.mobile, RFQOneToOneBuyer())
         } else {
           console.log(' no seller contact number')
         }
