@@ -136,7 +136,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
 
     try {
         const { skip, limit, search, level1, level2 } = req.query
-        console.log("🚀 ~ file: offersController.js ~ line 138 ~ module.exports.getAllSellerOffers= ~ req.query", req.query)
+        console.log("🚀 ~ file: offersController.js ~ line 139 ~ module.exports.getAllSellerOffers= ~ req.query", req.query)
+        let _query = { requestType: 11, "productDetails.validity": { $gte: new Date().toISOString() }, $and: [] }
         const query = {
             "bool": {
                 "must": [
@@ -148,32 +149,72 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 ]
             }
         }
-        let _query = {}
+
         if (level1) {
             query.bool.must.push({
                 "match": {
                     "parentCategoryId._id": level1
                 }
             })
+            _query["$and"] = [
+                ..._query["$and"],
+                {
+                    $or: [
+                        { "productDetails.name.id": level1 },
+                        { "productDetails.name.level1.id": level1 }
+                    ]
+                }
+            ]
         } else if (level2) {
             query.bool.must.push({
                 "match": {
                     "primaryCategoryId._id": level2
                 }
             })
+            _query["$and"] = [
+                ..._query["$and"],
+                {
+                    $or: [
+                        { "productDetails.name.id": level2 },
+                        { "productDetails.name.level2.id": level2 }
+                    ]
+                }
+            ]
         }
         if (search) {
             query.bool.must.push({
-                "match_phrase": {
-                    "productDetails.name": search
+                "bool": {
+                    "should": [
+                        {
+                            "wildcard": {
+                                "productDetails.name.keyword": `${search}*`
+                            }
+                        },
+                        {
+                            "wildcard": {
+                                "productDetails.name.keyword": `*${search}*`
+                            }
+                        }
+                    ]
                 }
+
             })
-            _query = {
-                $or: [{ 'productDetails.name.label': { $regex: `^${search}`, $options: "i" } }, { 'productDetails.location.city.label': { $regex: `^${search}`, $options: "i" } }, { 'productDetails.location.state.label': { $regex: `^${search}`, $options: "i" } }]
-            }
+            _query["$and"] = [
+                ..._query["$and"],
+                {
+                    $or: [
+                        { "productDetails.name.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.level1.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.level2.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.level3.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.level4.name": { $regex: `^${search}`, $options: "i" } },
+                    ]
+                }
+            ]
         }
 
         const seller = await searchFromElastic(query, { skip: 0, limit: 1000 }, {});
+        console.log("🚀 ~ file: offersController.js ~ line 205 ~ module.exports.getAllSellerOffers= ~ seller", seller)
         let _seller = seller.length && seller[0]
         let sellerOffers = []
         let buyerRequests = []
@@ -195,11 +236,11 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 sellerId: _prod.sellerId._id,
                 _id: prod._id
             }
-            console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
+            console.log("🚀 ~ file: offersController.js ~ line 228 ~ module.exports.getAllSellerOffers= ~ obj", obj)
             return obj
         })
-        _query = { ..._query, requestType: 11, "productDetails.validity": { $gte: new Date().toISOString() } }
         buyerRequests = await getRFPData(_query, { skip: 0, limit: 1000 })
+        console.log("🚀 ~ file: offersController.js ~ line 229 ~ module.exports.getAllSellerOffers= ~ buyerRequests", buyerRequests)
         buyerRequests = buyerRequests.length && buyerRequests.map(buyer => {
 
             let obj = {

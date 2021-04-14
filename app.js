@@ -27,8 +27,8 @@ const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVarai
 
 // const { suggestionsMapping } = suggestions
 
-const { serviceURL } = authServiceURL();
-const { tradeDb } = config;
+const { serviceURL } = authServiceURL()
+const { tradeDb } = config
 
 const app = express();
 // app.use(bodyParser.json({ limit: '200mb' }));

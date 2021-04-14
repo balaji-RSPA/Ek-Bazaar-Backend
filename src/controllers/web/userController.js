@@ -184,7 +184,7 @@ module.exports.sendOtp = async (req, res) => {
       otp = Math.floor(1000 + Math.random() * 9000);
       const { otpMessage } = sendOtp({ reset, otp });
       let response = await sendSMS(mobile, otpMessage);
-      console.log("🚀 ~ file: userController.js ~ line 187 ~ module.exports.sendOtp= ~ response", response.data)
+      console.log("🚀 ~ file: userController.js ~ line 187 ~ module.exports.sendOtp= ~ response", response)
       if (response && response.data) {
         const otpMessage = otpVerification({ otp });
 

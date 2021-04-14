@@ -77,6 +77,7 @@ exports.sendSMS = async (mobile, message) => new Promise((resolve, reject) => {
   const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&dlr-mask=19&dlr-url`
   axios.get(sendsmsuri)
     .then(response => {
+    console.log("🚀 ~ file: utils.js ~ line 87 ~ exports.sendSMS= ~ response", response.data)
       resolve(response)
     })
     .catch(error => {
