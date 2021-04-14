@@ -247,7 +247,7 @@ const register = async (req, res, next) => {
       reason: ""
     }
   }
-
+  
   if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage;
   const user = await UserModel.findOneAndUpdate({ mobile: mobile.mobile || mobile }, { $set: tenderUser }, { new: true, upsert: true }); //.exec()
   if (!user) {
@@ -265,7 +265,6 @@ const register = async (req, res, next) => {
       },
     },
   };
-
   const { serviceURL } = req.query;
   const id = encodedId();
   req.session.user = id;
@@ -274,7 +273,7 @@ const register = async (req, res, next) => {
     return res.redirect("/");
   }
   const _url = new URL(serviceURL);
-
+  
   const intrmid = encodedId();
   storeApplicationInCache(_url.origin, id, intrmid);
   const response = await axios({
@@ -292,6 +291,7 @@ const register = async (req, res, next) => {
       origin,
     },
   });
+  console.log('1111111111111111111111111')
   const { data } = response;
   console.log("🚀 ~ file: index.js ~ line 251 ~ register ~ data", data);
   req.session.token = data.data.token;
@@ -301,7 +301,7 @@ const register = async (req, res, next) => {
     { token: data.data.token, _user: req.session.user },
     data.message
   );
-  // return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` });
+  return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` });
 };
 
 const doLogin = async (req, res, next) => {
@@ -606,7 +606,7 @@ const postRFP = async (req, res, next) => {
     if (response.data && response.data.data && response.data.data.token) req.session.token = response.data.data.token
     return respSuccess(res, { ...response.data.data }, response.data.message);
   } else {
-    return respError(res, "Somthing went wrong");
+    return respError(res, response.data && response.data.message ? response.data.message : "Somthing went wrong");
   }
 };
 
