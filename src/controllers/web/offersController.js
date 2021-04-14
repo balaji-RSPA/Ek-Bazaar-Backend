@@ -136,7 +136,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
 
     try {
         const { skip, limit, search, level1, level2 } = req.query
-        console.log("🚀 ~ file: offersController.js ~ line 138 ~ module.exports.getAllSellerOffers= ~ req.query", req.query)
+        console.log("🚀 ~ file: offersController.js ~ line 139 ~ module.exports.getAllSellerOffers= ~ req.query", req.query)
+        let _query = { requestType: 11, "productDetails.validity": { $gte: new Date().toISOString() }, $and: [] }
         const query = {
             "bool": {
                 "must": [
@@ -154,32 +155,75 @@ module.exports.getAllSellerOffers = async (req, res) => {
                     "parentCategoryId._id": level1
                 }
             })
+            _query["$and"] = [
+                ..._query["$and"],
+                {
+                    $or: [
+                        { "productDetails.name.id": level1 },
+                        { "productDetails.name.level1.id": level1 }
+                    ]
+                }
+            ]
         } else if (level2) {
             query.bool.must.push({
                 "match": {
                     "primaryCategoryId._id": level2
                 }
             })
-        }
-        if(search) {
-            query.bool.must.push({
-                "match_phrase": {
-                    "productDetails.name": search
+            _query["$and"] = [
+                ..._query["$and"],
+                {
+                    $or: [
+                        { "productDetails.name.id": level2 },
+                        { "productDetails.name.level2.id": level2 }
+                    ]
                 }
+            ]
+        }
+        if (search) {
+            query.bool.must.push({
+                "bool": {
+                    "should": [
+                        {
+                            "wildcard": {
+                                "productDetails.name.keyword": `${search}*`
+                            }
+                        },
+                        {
+                            "wildcard": {
+                                "productDetails.name.keyword": `*${search}*`
+                            }
+                        }
+                    ]
+                }
+
             })
+            _query["$and"] = [
+                ..._query["$and"],
+                {
+                    $or: [
+                        { "productDetails.name.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.level1.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.level2.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.level3.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.level4.name": { $regex: `^${search}`, $options: "i" } },
+                    ]
+                }
+            ]
         }
 
-        const seller = await searchFromElastic(query, {skip: 0, limit: 1000}, {});
+        const seller = await searchFromElastic(query, { skip: 0, limit: 1000 }, {});
+        console.log("🚀 ~ file: offersController.js ~ line 205 ~ module.exports.getAllSellerOffers= ~ seller", seller)
         let _seller = seller.length && seller[0]
         let sellerOffers = []
         let buyerRequests = []
         sellerOffers = _seller.length && _seller.map(prod => {
             let _prod = prod["_source"]
             let product = _prod.productSubcategoryId && _prod.productSubcategoryId.length ? _prod.productSubcategoryId[0]["name"] :
-            _prod.poductId && _prod.poductId.length ? _prod.poductId[0]["name"] :
-            _prod.secondaryCategoryId && _prod.secondaryCategoryId.length ? _prod.secondaryCategoryId[0]["name"] :
-            _prod.primaryCategoryId && _prod.primaryCategoryId.length ? _prod.primaryCategoryId[0]["name"] :
-            _prod.parentCategoryId && _prod.parentCategoryId.length ? _prod.parentCategoryId[0]["name"] : ""
+                _prod.poductId && _prod.poductId.length ? _prod.poductId[0]["name"] :
+                    _prod.secondaryCategoryId && _prod.secondaryCategoryId.length ? _prod.secondaryCategoryId[0]["name"] :
+                        _prod.primaryCategoryId && _prod.primaryCategoryId.length ? _prod.primaryCategoryId[0]["name"] :
+                            _prod.parentCategoryId && _prod.parentCategoryId.length ? _prod.parentCategoryId[0]["name"] : ""
 
             let obj = {
                 title: product,
@@ -194,7 +238,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
             // console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
             return obj
         })
-        buyerRequests = await getRFPData({ requestType: 11, "productDetails.validity": { $gte: new Date().toISOString() } }, {skip: 0, limit: 1000})
+        buyerRequests = await getRFPData(_query, { skip: 0, limit: 1000 })
+        console.log("🚀 ~ file: offersController.js ~ line 229 ~ module.exports.getAllSellerOffers= ~ buyerRequests", buyerRequests)
         buyerRequests = buyerRequests.length && buyerRequests.map(buyer => {
 
             let obj = {
@@ -210,7 +255,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
             return obj
 
         })
-        return respSuccess(res, {offers: sellerOffers, requests: buyerRequests})
+        return respSuccess(res, { offers: sellerOffers, requests: buyerRequests })
     } catch (error) {
 
     }
@@ -264,8 +309,8 @@ module.exports.getAllBuyerRequest = async (req, res) => {
 
     try {
         const { id } = req.params
-        const { skip, limit, search} = req.query
-        const result = await getRFPData({buyerId:  id, requestType: 11, $or: [{'productDetails.name.label': {$regex: `^${search}`, $options: "i"}},{'productDetails.location.city.label': {$regex: `^${search}`, $options: "i"}}, {'productDetails.location.state.label': {$regex: `^${search}`, $options: "i"}}]});
+        const { skip, limit, search } = req.query
+        const result = await getRFPData({ buyerId: id, requestType: 11, $or: [{ 'productDetails.name.label': { $regex: `^${search}`, $options: "i" } }, { 'productDetails.location.city.label': { $regex: `^${search}`, $options: "i" } }, { 'productDetails.location.state.label': { $regex: `^${search}`, $options: "i" } }] });
         let buyerRequests = []
         if (result) {
             buyerRequests = result.length && result.map(buyer => {
@@ -280,7 +325,7 @@ module.exports.getAllBuyerRequest = async (req, res) => {
                     _id: buyer._id // add request Object _id
                 }
                 return obj
-    
+
             })
         }
         return respSuccess(res, buyerRequests)
@@ -297,7 +342,7 @@ module.exports.deleteBuyerRequest = async (req, res) => {
     try {
         const { id } = req.params
         console.log("🚀 ~ file: offersController.js ~ line 299 ~ module.exports.deleteBuyerRequest ~ req.params", req.params)
-        const result = await deleteBuyerRequest({_id: id})
+        const result = await deleteBuyerRequest({ _id: id })
         console.log("🚀 ~ file: offersController.js ~ line 300 ~ module.exports.deleteBuyerRequest ~ result", result)
         return respSuccess(res, "Delete Successfully")
 
