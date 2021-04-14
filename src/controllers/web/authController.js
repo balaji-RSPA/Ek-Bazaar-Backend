@@ -41,12 +41,7 @@ exports.login = async (req, res, next) => {
   try {
 
     const { password, ipAddress, mobile, userType } = req.body;
-    console.log("🚀 ~ file: authController.js ~ line 43 ~ exports.login= ~ req.body", req.body)
 
-    // const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
-    // // const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
-    // const { data } = response
-    // let _user = data.user
     let _user = req.body.user
     const data = {
       url: req.body.url
@@ -69,8 +64,7 @@ exports.login = async (req, res, next) => {
 
       _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
       // _user = await sellers.checkUserExistOrNot({ mobile });
-      _user = _user[0]
-      console.log("🚀 ~ file: authController.js ~ line 70 ~ exports.login= ~ _user", _user)
+      _user = _user
 
     } else if (_user && !_user.password && userType === 'seller') {
 
@@ -79,7 +73,7 @@ exports.login = async (req, res, next) => {
     }
 
     let buyer = await buyers.getBuyer(_user._id);
-    if(!buyer) {
+    if (!buyer) {
       const sellerData = {
         name: _user.name,
         email: _user.email,
@@ -96,14 +90,13 @@ exports.login = async (req, res, next) => {
         mobile: mobile,
         userId: _user._id
       }
-      await sellers.updateSeller({userId: user._id}, sellerData)
-      buyer = await buyers.updateBuyer({userId: user._id}, buyerData)
+      await sellers.updateSeller({ userId: user._id }, sellerData)
+      buyer = await buyers.updateBuyer({ userId: user._id }, buyerData)
     }
     let seller = await sellers.getSeller(_user._id);
 
 
-    console.log("🚀 ~ file: authController.js ~ line 83 ~ exports.login= ~ seller", seller)
-    if (userType === 'seller') {
+    if (userType === 'buyer' && !buyer) {
 
       const buyerData = {
         name: _user.name,
@@ -111,13 +104,13 @@ exports.login = async (req, res, next) => {
         countryCode: _user.countryCode,
         mobile: mobile,
         userId: _user._id
-      } 
-      buyer = await buyers.updateBuyer({userId: user._id}, buyerData)
+      }
+      buyer = await buyers.updateBuyer({ userId: user._id }, buyerData)
 
     }
 
-    if (userType === 'seller') {
-      if(!seller) {
+    if (userType === 'seller' && !seller) {
+      if (!seller) {
         const sellerData = {
           name: _user.name,
           email: _user.email,
@@ -127,18 +120,18 @@ exports.login = async (req, res, next) => {
           }],
           userId: _user._id
         }
-        seller = await sellers.updateSeller({userId: user._id}, sellerData)
+        seller = await sellers.updateSeller({ userId: user._id }, sellerData)
       }
-      if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
-        const data = {
-          mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
-        }
-        seller = await sellers.updateSeller({ userId: _user._id }, data)
+    }
+    
+    if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
+      const data = {
+        mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
       }
-
+      seller = await sellers.updateSeller({ userId: _user._id }, data)
     }
 
-    console.log("🚀 ~ file: authController.js ~ line 49 ~ exports.login= ~ _user", _user, seller, buyer)
+
     const result = await bcrypt.compare(password, _user.password);
     if (result) {
       // const sessionCount = await sellers.getSessionCount(_user._id);

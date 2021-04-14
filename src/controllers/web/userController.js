@@ -81,7 +81,7 @@ const {
 const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = mastercollections;
 const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
-// const {username, password, senderID, smsURL} = sms
+const { username, password, senderID, smsURL } = sms
 
 const isProd = process.env.NODE_ENV === "production";
 const ssoRegisterUrl =
@@ -167,7 +167,6 @@ module.exports.sendOtp = async (req, res) => {
     const user = await checkBuyerExistOrNot({ mobile })
     console.log("🚀 ~ file: userController.js ~ line 168 ~ module.exports.sendOtp= ~ user", user)
 
-    const { otpMessage } = sendOtp({ reset, otp });
 
     if (seller && seller.length && !reset /* && user && user.length */) {
       return respError(res, "User with this number already exist");
@@ -180,18 +179,15 @@ module.exports.sendOtp = async (req, res) => {
       seller.length &&
       seller[0].email &&
       seller[0].isEmailVerified === 2;
-    if (isProd) {
-      // otp = Math.floor(1000 + Math.random() * 9000);
-      const url = "https://api.ekbazaar.com/api/v1/sendOTP";
-      const resp = await axios.post(url, {
-        mobile,
-      });
 
-      // let response = await sendSMS(mobile, otpMessage);
-      // if (response && response.data && response.data.otp && checkUser) {
-      if (resp && resp.data && resp.data.data && resp.data.data.otp) {
-        // const otpMessage = otpVerification({ otp: response.data.otp });
-        const otpMessage = otpVerification({ otp: resp.data.data.otp });
+    if (isProd) {
+      otp = Math.floor(1000 + Math.random() * 9000);
+      const { otpMessage } = sendOtp({ reset, otp });
+      let response = await sendSMS(mobile, otpMessage);
+      console.log("🚀 ~ file: userController.js ~ line 187 ~ module.exports.sendOtp= ~ response", response)
+      if (response && response.data) {
+        const otpMessage = otpVerification({ otp });
+
         //send email
         if (seller && seller.length && seller[0]["email"]) {
           const message = {
@@ -205,7 +201,7 @@ module.exports.sendOtp = async (req, res) => {
           return respSuccess(
             res,
             {
-              otp: resp.data.data.otp,
+              otp,
             },
             checkUser
               ? "Your OTP has been send successfully, check your email or sms"
@@ -215,7 +211,7 @@ module.exports.sendOtp = async (req, res) => {
       } else {
         console.log("=======Email is not verified yet================");
       }
-      return respSuccess(res, { otp: resp.data.data.otp });
+      return respSuccess(res, { otp });
     } else {
       if (checkUser) {
         const otpMessage = otpVerification({ otp: otp });
@@ -292,7 +288,7 @@ module.exports.addUser = async (req, res, next) => {
       isPhoneVerified: true,
       userId: user._id,
     };
-    // const _buyer = await getBuyer(null, {mobile: mobile.mobile || mobile})
+    const _buyer = await getBuyer(null, { mobile: mobile.mobile || mobile })
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
@@ -416,17 +412,19 @@ module.exports.getUserProfile = async (req, res) => {
     const buyer = await getBuyer(userID);
     const userData = {
       user,
-      buyer,
-      seller
+      seller,
+      buyer
       // seller: {
       //   ...seller,
-      //    ...user
+      //   ...user,
+      //   mobile: seller.mobile && seller.mobile.length ? seller.mobile : [{mobile: user.mobile, countryCode: user.countryCode}]
       // },
       // buyer: {
       //   ...buyer,
       //   ...user
       // },
     };
+    console.log("🚀 ~ file: userController 3.js ~ line 418 ~ module.exports.getUserProfile= ~ userData", userData)
     respSuccess(res, userData);
   } catch (error) {
     respError(res, error.message);
@@ -467,18 +465,19 @@ module.exports.updateUser = async (req, res) => {
     );
     if (!_seller) {
       const sellerData = {
-        // name: name || __usr.name,
-        // email: email || __usr.email,
+        name: name || __usr.name || null,
+        email: email || __usr.email || null,
         mobile: [{
-          mobile: mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
+          mobile: mobile && mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
           countryCode: __usr.countryCode
         }],
-        userId: userID
+        userId: userID,
+        sellerProductId: []
       }
       const buyerData = {
-        // name: name || __usr.name,
-        // email: email || __usr.email,
-        mobile: mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
+        name: name || __usr.name || null,
+        email: email || __usr.email || null,
+        mobile: mobile && mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
         countryCode: __usr.countryCode,
         userId: userID
       }
@@ -503,6 +502,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer,
     };
+    console.log("🚀 ~ file: userController 3.js ~ line 498 ~ module.exports.updateUser= ~ _buyer", _buyer)
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
       buyerData.mobile = _buyer.mobile[0]["mobile"] || mobile[0]["mobile"];
       buyerData.mobile =
@@ -583,10 +583,10 @@ module.exports.updateUser = async (req, res) => {
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
 
-        // const { successfulMessage } = successfulRegistration({ userType });
-        // if (isProd) {
-        //   sendSMS(mobile, successfulMessage);
-        // }
+        const { successfulMessage } = successfulRegistration({ userType, name });
+        if (isProd) {
+          sendSMS(mobile, successfulMessage);
+        }
 
         let emailMessage = emailSuccessfulRegistration({
           name: user.name,
@@ -608,6 +608,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans) {
+        const dateNow = new Date();
         const trialPlan = await getSubscriptionPlanDetail({
           planType: "trail",
           status: true,
@@ -674,7 +675,8 @@ module.exports.updateUser = async (req, res) => {
           buyer,
           // seller: {
           //   ...seller,
-          //   ...user
+          //   ...user,
+          //   mobile: seller.mobile && seller.mobile.length ? seller.mobile : [{mobile: user.mobile, countryCode: user.countryCode}]
           // },
           // buyer: {
           //   ...buyer,
@@ -865,63 +867,61 @@ module.exports.deleteRecords = async (req, res) =>
     }
   });
 
-  
-  module.exports.deleteCurrentAccount = async (req, res) => {
-  
-    try {
-      const { deleteTrade, userId, sellerId, buyerId, permanentDelete  } = req.body
 
-      const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' :'https://investmentapi.tech-active.com/api/permanentlydisable'
-      const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
-       
-       const { userID, token } = req;
-       const result = await updateUser({_id:userId}, {deleteTrade})
-       if(result){
-         const sellerData = await getSellerVal({_id: sellerId})
-        const _seller = await deleteSellerRecord(sellerId);
-        const _buyer = await deleteBuyer({_id:buyerId})
-        if(sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length){
-          const pQuery = {
-            _id: {
-              $in: sellerData.sellerProductId,
-            },
-          };
-          const delRec =  deleteSellerProducts(pQuery);
-          const delMaster =  bulkDeleteMasterProducts(pQuery);
-          console.log('master collectiona nd seller product delete')
+module.exports.deleteCurrentAccount = async (req, res) => {
+
+  try {
+    const { deleteTrade, userId, sellerId, buyerId, permanentDelete } = req.body
+
+    const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' : 'https://investmentapi.tech-active.com/api/permanentlydisable'
+    const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
+
+    const { userID, token } = req;
+    const result = await updateUser({ _id: userId }, { deleteTrade })
+    if (result) {
+      const sellerData = await getSellerVal({ _id: sellerId })
+      const _seller = await deleteSellerRecord(sellerId);
+      const _buyer = await deleteBuyer({ _id: buyerId })
+      if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
+        const pQuery = {
+          _id: {
+            $in: sellerData.sellerProductId,
+          },
+        };
+        const delRec = deleteSellerProducts(pQuery);
+        const delMaster = bulkDeleteMasterProducts(pQuery);
+        console.log('master collectiona nd seller product delete')
+      }
+      const delMaster1 = deleteSellerPlans({ sellerId: sellerId });
+      if (permanentDelete) {
+
+        const update = {
+          status: true,
+          reason: deleteTrade.reason
         }
-        const delMaster1 =  deleteSellerPlans({sellerId: sellerId});
-        if(permanentDelete){
-          
-          const update = {
-            status: true,
-            reason: deleteTrade.reason
+        const result = /* await */ updateUser({ _id: userId }, { deleteTendor: update, deleteInvestement: update })
+        // Delete from Investment
+        const res = axios.delete(investmentUrl, {
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `ekbazaar|${token}`,
           }
-          const result = /* await */ updateUser({_id:userId}, {deleteTendor:update, deleteInvestement: update})
-          // Delete from Investment
-          const res = axios.delete(investmentUrl,{
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': `ekbazaar|${token}`,
-            }
-          });
+        });
 
-          // Delete From Tender
-          const resTender =  axios.delete(tenderUrl,{
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': `ekbazaar|${token}`,
-            }
-          });
-        }
-       }
-       respSuccess(res, "Deleted Succesfully")
-      
-    } catch (error) {
-
-      respError(res, error.message)
-      
+        // Delete From Tender
+        const resTender = axios.delete(tenderUrl, {
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `ekbazaar|${token}`,
+          }
+        });
+      }
     }
-  
+    respSuccess(res, "Deleted Succesfully")
+
+  } catch (error) {
+
   }
+
+}
 

@@ -57,7 +57,7 @@ const {
 } = category
 
 const { getFilteredCities, getSellerSelectedCities } = location;
-const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct } = mastercollections
+const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct, insertManyEslint, updateESDoc } = mastercollections
 const { updateSellerProducts } = sellerProducts
 
 // module.exports.razorPay = async (req, res) => {
@@ -573,6 +573,7 @@ module.exports.addSellerProduct = async (req, res) => {
         }
         // )
         const mosterResult = await insertManyMaster(masterData)
+        // const elData = insertManyEslint(mosterResult)
 
       }
 
@@ -734,6 +735,9 @@ module.exports.updateSellerProduct = async (req, res) => {
       const masterData = await masterMapData(updatedProduct[0], 'update')
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
       const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: 8 })
+      const esData = JSON.parse(JSON.stringify(masResult));
+      delete esData._id;
+      // const masElsLint =  updateESDoc(masResult._id, esData)
     }
     // if(body.id && body.inStock){
     //   

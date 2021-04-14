@@ -110,8 +110,10 @@ module.exports.getCity = (query, id) =>
 exports.getAllCities = (reqQuery) =>
   new Promise((resolve, reject) => {
     // console.log("reqQuery", reqQuery)
+    console.log("🚀 ~ file: locationsModule.js ~ line 113 ~ reqQuery", typeof reqQuery.limit)
     const skip = parseInt(reqQuery.skip) || 0;
-    const limit = parseInt(reqQuery.limit) || 2000;
+    const limit = parseInt(reqQuery.limit) || 2000 //parseInt(reqQuery.limit) || 2000;
+    console.log("🚀 ~ file: locationsModule.js ~ line 117 ~ newPromise ~ limit", limit)
     const search = reqQuery.search || "";
 
     let { state } = reqQuery;
@@ -149,14 +151,14 @@ exports.getAllCities = (reqQuery) =>
       {
         $sort: {
           name: 1,
-        },
+        }
       },
-      {
-        $skip: skip,
-      },
-      {
-        $limit: limit,
-      },
+      // {
+      //   $skip: 0
+      // },
+      // {
+      //   $limit: limit
+      // },
       {
         $lookup: {
           from: "states",
