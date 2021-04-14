@@ -41,12 +41,7 @@ exports.login = async (req, res, next) => {
   try {
 
     const { password, ipAddress, mobile, userType } = req.body;
-    console.log("🚀 ~ file: authController.js ~ line 43 ~ exports.login= ~ req.body", req.body)
 
-    // const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
-    // // const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
-    // const { data } = response
-    // let _user = data.user
     let _user = req.body.user
     const data = {
       url: req.body.url
@@ -59,7 +54,6 @@ exports.login = async (req, res, next) => {
       }
     }
     const _response = await ssoRedirect(req, res, next)
-    console.log("🚀 ~ file: authController.js ~ line 63 ~ exports.login= ~ _response", _response)
 
     const { user, token } = _response
     if (!_user) {
@@ -70,8 +64,7 @@ exports.login = async (req, res, next) => {
 
       _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
       // _user = await sellers.checkUserExistOrNot({ mobile });
-      _user = _user[0]
-      console.log("🚀 ~ file: authController.js ~ line 70 ~ exports.login= ~ _user", _user)
+      _user = _user
 
     } else if (_user && !_user.password && userType === 'seller') {
 
@@ -103,7 +96,6 @@ exports.login = async (req, res, next) => {
     let seller = await sellers.getSeller(_user._id);
 
 
-    console.log("🚀 ~ file: authController.js ~ line 83 ~ exports.login= ~ seller", seller)
     if (userType === 'buyer' && !buyer) {
 
       const buyerData = {
@@ -140,7 +132,6 @@ exports.login = async (req, res, next) => {
     }
 
 
-    console.log("🚀 ~ file: authController.js ~ line 49 ~ exports.login= ~ _user", _user, seller, buyer)
     const result = await bcrypt.compare(password, _user.password);
     if (result) {
       // const sessionCount = await sellers.getSessionCount(_user._id);
