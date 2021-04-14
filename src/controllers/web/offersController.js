@@ -191,7 +191,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 sellerId: _prod.sellerId._id,
                 _id: prod._id
             }
-            console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
+            // console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
             return obj
         })
         buyerRequests = await getRFPData({ requestType: 11, "productDetails.validity": { $gte: new Date().toISOString() } }, {skip: 0, limit: 1000})
