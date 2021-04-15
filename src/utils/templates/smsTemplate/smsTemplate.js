@@ -8,7 +8,7 @@ module.exports.successfulRegistration = (params) => {
     Thank you for signing up. 
     We have successfully registered your account on Ekbazaar.com.` :
     `Dear ${params.name},
-    
+
     Your account has been activated with 15days free trial.  
      
     Thank you for choosing Ekbazaar.com`

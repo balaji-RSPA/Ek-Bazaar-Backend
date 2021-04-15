@@ -22,6 +22,7 @@ const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
+const { deleteTestData } = require('./src/controllers/web/testController')
 
 // const { suggestions} = require("./elasticsearch-mapping");
 
@@ -96,6 +97,13 @@ app.get("/api/logged", async (req, res, next) => {
 app.post("/capture/:paymentId", async function (req, res) {
   try {
     const result = await captureRazorPayPayment(req, res);
+  } catch (error) { }
+  // res.send('Its delete records  live')
+});
+
+app.get("/deleteTestData", async function (req, res) {
+  try {
+    const result = await deleteTestData(req, res);
   } catch (error) { }
   // res.send('Its delete records  live')
 });
