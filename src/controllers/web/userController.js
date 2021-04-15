@@ -180,11 +180,12 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].email &&
       seller[0].isEmailVerified === 2;
 
-    if (isProd) {
+    if (!isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
-      const { otpMessage } = sendOtp({ reset, otp });
-      let response = await sendSMS(mobile, otpMessage);
-      console.log("🚀 ~ file: userController.js ~ line 187 ~ module.exports.sendOtp= ~ response", response)
+      const { otpMessage, templateId } = sendOtp({ reset, otp });
+      console.log("🚀 ~ file: userController.js ~ line 186 ~ module.exports.sendOtp= ~ otpMessage", otpMessage, templateId)
+      let response = await sendSMS(`+91${mobile}`, otpMessage, templateId);
+      console.log("🚀 ~ file: userController.js ~ line 187 ~ module.exports.sendOtp= ~ response", response.data)
       if (response && response.data) {
         const otpMessage = otpVerification({ otp });
 
@@ -274,6 +275,7 @@ module.exports.addUser = async (req, res, next) => {
       _user,
       url,
     } = req.body;
+    console.log("🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
 
     req.body.userId = user._id;
@@ -459,6 +461,8 @@ module.exports.updateUser = async (req, res) => {
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
     const __usr = await getUserProfile(userID)
+    console.log("🚀 ~ file: userController.js ~ line 464 ~ module.exports.updateUser= ~ userID", userID)
+    console.log("🚀 ~ file: userController.js ~ line 464 ~ module.exports.updateUser= ~ __usr", __usr)
     console.log(
       "🚀 ~ file: userController.js ~ line 459 ~ module.exports.updateUser= ~ _seller",
       _seller
@@ -583,9 +587,13 @@ module.exports.updateUser = async (req, res) => {
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
 
-        const { successfulMessage } = successfulRegistration({ userType, name });
-        if (isProd) {
-          sendSMS(mobile, successfulMessage);
+        const { successfulMessage, templateId } = successfulRegistration({ userType, name });
+        if (!isProd) {
+
+          console.log("🚀 ~ file: userController.js ~ line 592 ~ module.exports.updateUser= ~ `${__usr.countryCode}${mobile}`", `${__usr.countryCode}${mobile}`)
+          let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);          
+          console.log("🚀 ~ file: userController.js ~ line 591 ~ module.exports.updateUser= ~ resp", resp)
+
         }
 
         let emailMessage = emailSuccessfulRegistration({

@@ -57,7 +57,7 @@ exports.globalVaraibles = {
 }
 
 
-exports.sendBulkSMS = async (mobile, message) => new Promise((resolve, reject) => {
+exports.sendBulkSMS = async (mobile, message, templateId) => new Promise((resolve, reject) => {
   console.log('bulk sms', mobile, message)
   const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&category=bulk`
   // const sendsmsuri = smsURL + "?username=" + username + "&password=" + password + "&to=" + mobile + "&from=" + senderID + "&text=" + message.replace("&", "and") + "&category=bulk"
@@ -72,9 +72,10 @@ exports.sendBulkSMS = async (mobile, message) => new Promise((resolve, reject) =
     })
 })
 
-exports.sendSMS = async (mobile, message) => new Promise((resolve, reject) => {
+exports.sendSMS = async (mobile, message, templateId) => new Promise((resolve, reject) => {
 
-  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&dlr-mask=19&dlr-url`
+  // const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&dlr-mask=19&dlr-url`
+  const sendsmsuri = `${smsURL}mobileno=${mobile}&msgtext=${message.replace("&", "and")}&CountryCode=All&smstype=0&pe_id=1701159237759798464&template_id=${templateId}`
   axios.get(sendsmsuri)
     .then(response => {
     console.log("🚀 ~ file: utils.js ~ line 87 ~ exports.sendSMS= ~ response", response.data)

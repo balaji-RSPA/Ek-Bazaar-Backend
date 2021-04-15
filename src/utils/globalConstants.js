@@ -43,34 +43,38 @@ exports.moduleTypes = {
 };
 
 exports.sms = {
-  smsURL: 'http://203.212.70.200/smpp/sendsms',
-  username: 'cn14604',
-  password: 'Admin@14604',
-  senderID: 'EKBZAR'
+  // smsURL: 'http://203.212.70.200/smpp/sendsms',
+  // username: 'cn14604',
+  // password: 'Admin@14604',
+  "senderID": 'EKBZAR',
+  // "smsURL": "http://180.179.218.150/sendurlcomma.aspx?",
+  "userName": 20060709,
+  "password": "NAG@087",
+  "smsURL": "http://180.179.218.150/sendurl.aspx?user=20060709&pwd=NAG@087&senderid=EKBZAR&"
 }
-const {NODE_ENV} = process.env
-exports.siteUrl =  NODE_ENV === "production" ? "https://www.trade.ebazaar.com" : "http://tradebazaar.tech-active.com"
+const { NODE_ENV } = process.env
+exports.siteUrl = NODE_ENV === "production" ? "https://www.trade.ebazaar.com" : "http://tradebazaar.tech-active.com"
 
 exports.accessModules = Object.values(this.moduleTypes);
 
-exports.razorPayCredentials = NODE_ENV === 'production'?
+exports.razorPayCredentials = NODE_ENV === 'production' ?
   {
     // Live
     key_id: 'rzp_live_CTVuq0QYf0mDPH',
     key_secret: 'KOY2qN10NCtcbgZmtpq87wOW',
-  }: {
-  // orbit
-  // key_id: 'rzp_test_jCeoTVbZGMSzfn',
-  // key_secret: 'V8BiRAAeeqxBVheb0xWIBL8E',
+  } : {
+    // orbit
+    // key_id: 'rzp_test_jCeoTVbZGMSzfn',
+    // key_secret: 'V8BiRAAeeqxBVheb0xWIBL8E',
 
-  // akashay
-  // key_id: 'rzp_test_PYGivNOLb4gHKa',
-  // key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
+    // akashay
+    // key_id: 'rzp_test_PYGivNOLb4gHKa',
+    // key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
 
-  // test
-  key_id: 'rzp_test_UZ9n6fsg5YF5wE',
-  key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
-}
+    // test
+    key_id: 'rzp_test_UZ9n6fsg5YF5wE',
+    key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
+  }
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
   logo: "https://ekbazaar.tech-active.com/assets/images/Final.png",
@@ -82,4 +86,4 @@ exports.imageURLS = {
   announcements: "https://www.tenders.ekbazaar.com/assets/images/announcement@2x.png"
 }
 
-exports.rocketChatDomain = NODE_ENV === 'production' ? "https://chatbot.ekbazaar.com": "https://chatbot.active.agency"
+exports.rocketChatDomain = NODE_ENV === 'production' ? "https://chatbot.ekbazaar.com" : "https://chatbot.active.agency"
