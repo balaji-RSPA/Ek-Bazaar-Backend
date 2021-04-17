@@ -151,7 +151,7 @@ exports.bulkStoreInElastic = (foundDoc) =>
 exports.sellerSearch = async (reqQuery) => {
 
   const { offerSearch, cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId } = reqQuery
-  console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ userId", offerSearch)
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
   let catId = ''
   let query = {
     bool: {

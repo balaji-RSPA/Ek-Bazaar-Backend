@@ -529,7 +529,12 @@ module.exports.updateUser = async (req, res) => {
       buyerData.countryCode = _buyer.mobile[0].countryCode;
     }
     delete buyerData && buyerData._id;
-
+    console.log("🚀 ~ file: userController.js ~ line 710 ~ module.exports.updateUser= ~ _seller.sellerType", _seller)
+    if (_seller && sellerType && (!_seller.sellerType || (_seller.sellerType && !_seller.sellerType.length)) && !isProd) {
+      const { successfulMessage, templateId } = successfulRegistration({ userType, name });
+      let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
+      console.log("🚀 ~ file: userController.js ~ line 535 ~ module.exports.updateUser= ~ resp", resp.data)
+    }
     if (business) {
       const bsnsDtls = await addbusinessDetails(_seller._id, {
         name: business,
@@ -587,11 +592,11 @@ module.exports.updateUser = async (req, res) => {
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
 
-        const { successfulMessage, templateId } = successfulRegistration({ userType, name });
         if (!isProd) {
-
+          
+          const { successfulMessage, templateId } = successfulRegistration({ userType, name });
           console.log("🚀 ~ file: userController.js ~ line 592 ~ module.exports.updateUser= ~ `${__usr.countryCode}${mobile}`", `${__usr.countryCode}${mobile}`)
-          let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);          
+          let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
           console.log("🚀 ~ file: userController.js ~ line 591 ~ module.exports.updateUser= ~ resp", resp)
 
         }

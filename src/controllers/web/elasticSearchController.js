@@ -148,11 +148,47 @@ module.exports.serachSeller = async (req, res) => {
       city.name = _city.name
       city.state = _city.state
     }
-    const result = await sellerSearch(reqQuery);
-    // console.log("module.exports.serachSeller -> result", result)
+
+    let result, seller
+    const { productId, primaryId, level5Id, skip, limit } = reqQuery
+    if (level5Id) {
+
+      result = await sellerSearch({ level5Id, skip, limit });
+      const { query, catId, aggs } = result;
+      seller = await searchFromElastic(query, range, aggs);
+      console.log("module.exports.serachSeller -> seller", seller)
+
+      if (seller && seller.length && !seller[0].length) {
+        result = await sellerSearch({ productId, skip, limit });
+        const { query, catId, aggs } = result;
+        seller = await searchFromElastic(query, range, aggs);
+        console.log("module.exports.serachSeller -> seller", seller)
+      }
+
+      if (seller && seller.length && !seller[0].length) {
+        result = await sellerSearch({ primaryId, skip, limit });
+        const { query, catId, aggs } = result;
+        seller = await searchFromElastic(query, range, aggs);
+        console.log("module.exports.serachSeller -> seller", seller)
+      }
+
+
+      const resp = {
+        total: seller[2]["products"]["value"], //seller[1],
+        data: seller[0],
+        city
+        // relatedCat,
+      };
+      return respSuccess(res, resp);
+
+    }
+
+    result = await sellerSearch({ level5Id, skip, limit });
+
     const { query, catId, aggs } = result;
-    const seller = await searchFromElastic(query, range, aggs);
+    seller = await searchFromElastic(query, range, aggs);
     // console.log("module.exports.serachSeller -> seller", seller)
+
     // const relatedCat = await getRelatedPrimaryCategory(primaryCatId);
     const resp = {
       total: seller[2]["products"]["value"], //seller[1],
