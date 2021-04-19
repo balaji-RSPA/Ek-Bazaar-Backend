@@ -884,7 +884,7 @@ module.exports.deleteRecords = async (req, res) =>
 module.exports.deleteCurrentAccount = async (req, res) => {
 
   try {
-    const { deleteTrade, userId, sellerId, buyerId, permanentDelete } = req.body
+    const { deleteTrade, userId, sellerId, buyerId, permanentDelete, investment, tender } = req.body
 
     const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' : 'https://investmentapi.tech-active.com/api/permanentlydisable'
     const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
@@ -892,9 +892,21 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     const { userID, token } = req;
     const result = await updateUser({ _id: userId }, { deleteTrade })
     if (result) {
-      const sellerData = await getSellerVal({ _id: sellerId })
-      const _seller = await deleteSellerRecord(sellerId);
+      let query = {}
+      if(!sellerId) query.userId = userId
+      else query._id = sellerId
+      const sellerData = await getSellerVal(query)
+
+      if(!buyerId) query.userId = userId
+      else query._id = buyerId
       const _buyer = await deleteBuyer({ _id: buyerId })
+
+      delete query._id
+      delete query.userId
+      query.sellerId = sellerData._id
+      
+      const _seller = await deleteSellerRecord(query);
+      
       if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
         const pQuery = {
           _id: {
@@ -905,19 +917,23 @@ module.exports.deleteCurrentAccount = async (req, res) => {
         const delMaster = bulkDeleteMasterProducts(pQuery);
         console.log('master collectiona nd seller product delete')
       }
-      const delMaster1 = deleteSellerPlans({ sellerId: sellerId });
+      const delMaster1 = deleteSellerPlans({ sellerId: sellerData._id });
       if (permanentDelete) {
 
         const update = {
           status: true,
           reason: deleteTrade.reason
         }
-        const result = /* await */ updateUser({ _id: userId }, { deleteTendor: update, deleteInvestement: update })
+        // const result = /* await */ updateUser({ _id: userId }, { deleteTendor: update, deleteInvestement: update })
+
         // Delete from Investment
         const res = axios.delete(investmentUrl, {
           headers: {
             'Content-Type': 'application/json',
             'authorization': `ekbazaar|${token}`,
+          },
+          data: {
+            deleteInvestement: deleteTrade
           }
         });
 
@@ -926,6 +942,9 @@ module.exports.deleteCurrentAccount = async (req, res) => {
           headers: {
             'Content-Type': 'application/json',
             'authorization': `ekbazaar|${token}`,
+          },
+          data: {
+            deleteTendor: deleteTrade
           }
         });
       }
