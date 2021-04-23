@@ -82,4 +82,11 @@ exports.imageURLS = {
   announcements: "https://www.tenders.ekbazaar.com/assets/images/announcement@2x.png"
 }
 
-exports.rocketChatDomain = NODE_ENV === 'production' ? "https://chatbot.ekbazaar.com": "https://chatbot.active.agency"
+exports.rocketChatDomain = NODE_ENV === 'production' ? "chatbot.ekbazaar.com" : "chatbot.active.agency"
+exports.rocketChatAdminLogin = NODE_ENV === 'production' ? {
+  username: "ramesh@active.agency",
+  password: "rameshTechActive"
+} : {
+  username: "ramesh",
+  password: "ramesh123"
+}

@@ -958,7 +958,7 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
   })
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
-console.log("🚀 ~ file: sellersModule.js ~ line 949 ~ id, data", id, data)
+    console.log("🚀 ~ file: sellersModule.js ~ line 949 ~ id, data", id, data)
     if (id) {
       SelleresProductList.findOneAndUpdate({
         _id: id
@@ -1555,7 +1555,7 @@ module.exports.getUpdatedSellerDetails = (query, skip, limit) => new Promise((re
 module.exports.getProduct = (query) =>
   new Promise((resolve, reject) => {
     SelleresProductList.findOne(query)
-    .lean()
+      .lean()
       .then((doc) => {
         // console.log("🚀 ~ file: sellersModule.js ~ line 1498 ~ .then ~ doc", doc)
         resolve(doc)
@@ -1570,3 +1570,13 @@ module.exports.getProduct = (query) =>
 //     })
 //     .catch((error) => reject(error))
 // })
+
+module.exports.getAllSellerData = (query, range) =>
+  new Promise((resolve, reject) => {
+    Sellers.find(query)
+      .then((doc) => {
+        // console.log("🚀 ~ file: sellersModule.js ~ line 1498 ~ .then ~ doc", doc)
+        resolve(doc)
+      })
+      .catch(reject)
+  })

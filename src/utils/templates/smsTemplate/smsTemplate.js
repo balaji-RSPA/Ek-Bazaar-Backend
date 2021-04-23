@@ -26,17 +26,6 @@ const _IS_PROD_ = global.environment === "production"
       otpMessage
     }
   }
-
-// `You have an enquiry from EkBazaar.com for  ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}, 
- 
-// Details below: ${capitalizeFirstLetter(params.name)} 
- 
-// To view buyer contact details please register or login to trade.ekbazaar.com/signup
-
-// Ekbazaar.com`
-
-// Note: Please complete registration on www.trade.ekbazaar.com/signup to get more inquiries`
-
   
   module.exports.RFQOneToOne = (params) => `You have an enquiry from EkBazaar.com for  ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}, 
  
@@ -45,6 +34,7 @@ const _IS_PROD_ = global.environment === "production"
   To view buyer contact details please register or login to trade.ekbazaar.com/signup
   
   Ekbazaar.com`
+  
   // `You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc}.
   //   Details below: ${capitalizeFirstLetter(params.name)}-
   //   To view buyer contact details please register or login to ${_IS_PROD_ ? "https://www.trade.ekbazaar.com/signup" : "https://tradebazaar.com/signup"}
