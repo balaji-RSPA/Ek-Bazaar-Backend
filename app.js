@@ -37,6 +37,7 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: [
+      "http://localhost:3000",
       "https://tradeapi.ekbazaar.com",
       "https://tradebazaarapi.tech-active.com",
       "http://localhost:8070",

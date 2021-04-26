@@ -1,8 +1,9 @@
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { sellers,buyers,category } = require("../../modules");
+const { sellers, buyers, category } = require("../../modules");
 const {
   uploadToDOSpace
-} = require("../../utils/utils")
+} = require("../../utils/utils");
+const { KinesisVideoSignalingChannels } = require("aws-sdk");
 const {
   getSellerProfile,
   getAllSellers,
@@ -11,10 +12,13 @@ const {
   checkUserExistOrNot,
   getSellerProductDtl,
   listAllSellerProduct,
-  addProductDetails
+  addProductDetails,
+  getAllSellerData,
+  sellersOverAllCount
 } = sellers;
 const {
   updateBuyer,
+  getRFPData
 } = buyers;
 const {
   getAllSellerTypes
@@ -33,39 +37,84 @@ module.exports.getSeller = async (req, res) => {
 
 /*Update Buyer Seller And User*/
 module.exports.updateSeller = async (req, res) => {
-  const { _id,name,email,mobile } = req.body
-  try{
-  const userData = {};
-  const buyerData = {};
-  const getUserId = await getSellerProfile(_id);
-  const checkMobile = await checkUserExistOrNot({mobile:mobile[0].mobile});
-  if(checkMobile && 
-    checkMobile.length && 
-    getUserId && 
-    getUserId.length && 
-    JSON.stringify(checkMobile[0]._id) !== JSON.stringify(getUserId[0].userId
-    )){
-    throw new Error("Mobile number is already exist");
-  }
-  if(name){
-    userData.name = name;
-    buyerData.name = name;
-  }
-  if(email){
-    userData.email = email;
-    buyerData.email = email;
-  }
-  if(mobile && mobile.length){
-    userData.mobile = mobile[0].mobile;
-    userData.countryCode = mobile[0].countryCode;
-    buyerData.mobile = mobile[0].mobile;
-    buyerData.countryCode = mobile[0].countryCode;
-  }
-  const user = await updateUser({ _id: getUserId[0].userId }, userData);
-  const seller = await updateSeller({_id}, req.body);
-  const buyer = await updateBuyer({ userId: getUserId[0].userId }, buyerData);
-  respSuccess(res, { user,seller, buyer }, "Updated Successfully");
-  }catch(error){
+  const { id } = req.params
+  const { buyer, sellerId, userID, businessDetails } = req.body
+  const _buyer = buyer || {};
+  console.log("🚀 ~ file: sellerController.js ~ line 41 ~ module.exports.updateSeller= ~ req.body", req.body, id)
+  try {
+    if (_buyer) {
+      console.log(' buyerrrrrrrrrrrrrrrrrrrrrr')
+      // let userData = {
+      //   name: (_buyer && _buyer.name),
+      //   city:
+      //     (_buyer && _buyer.location && _buyer.location.city) || null,
+      //   email: (_buyer && _buyer.email) || null,
+      // };
+
+      // let buyerData = {
+      //   userId: userID,
+      //   ..._buyer,
+      // };
+
+      // let sellerData;
+      // sellerData = {
+      //   userId: userID,
+      //   ..._buyer,
+      // };
+
+      // if ((_buyer.mobile && _buyer.mobile.length)) {
+      //   buyerData.mobile = _buyer.mobile[0]["mobile"];
+      //   buyerData.countryCode =
+      //     _buyer.mobile[0]["countryCode"] || mobile[0]["countryCode"];
+      //   sellerData.mobile = _buyer.mobile;
+      // }
+      // // console.log(buyerData, sellerData, userData, ' rrrrrrrrrrrrrrrrrrr')
+
+      // const __user = await updateUser({ _id: userID }, userData);
+      // const __buyer = await updateBuyer({ userId: userID }, buyerData);
+      // const __seller = await updateSeller({ _id: id }, sellerData);
+    }
+
+    if (businessDetails) {
+      console.log(' Busiunbessssssssssssssssssss')
+      // const bsnsDtls = await addbusinessDetails(sellerID, businessDetails)
+      // newData.busenessId = bsnsDtls._id
+      // seller = await updateSeller({
+      //   _id: sellerID
+      // }, newData)
+    }
+
+    // const userData = {};
+    // const buyerData = {};
+    // const getUserId = await getSellerProfile(id);
+    // const checkMobile = await checkUserExistOrNot({ mobile: mobile[0].mobile });
+    // if (checkMobile &&
+    //   checkMobile.length &&
+    //   getUserId &&
+    //   getUserId.length &&
+    //   JSON.stringify(checkMobile[0]._id) !== JSON.stringify(getUserId[0].userId
+    //   )) {
+    //   throw new Error("Mobile number is already exist");
+    // }
+    // if (name) {
+    //   userData.name = name;
+    //   buyerData.name = name;
+    // }
+    // if (email) {
+    //   userData.email = email;
+    //   buyerData.email = email;
+    // }
+    // if (mobile && mobile.length) {
+    //   userData.mobile = mobile[0].mobile;
+    //   userData.countryCode = mobile[0].countryCode;
+    //   buyerData.mobile = mobile[0].mobile;
+    //   buyerData.countryCode = mobile[0].countryCode;
+    // }
+    // const user = await updateUser({ _id: getUserId[0].userId }, userData);
+    // const seller = await updateSeller({ _id: id }, req.body);
+    // const buyer = await updateBuyer({ userId: getUserId[0].userId }, buyerData);
+    respSuccess(res, "Updated Successfully");
+  } catch (error) {
     respError(res, error.message);
   }
 };
@@ -73,9 +122,10 @@ module.exports.updateSeller = async (req, res) => {
 /*Get all seller*/
 module.exports.getAllSellers = async (req, res) => {
   try {
-    const {sellerType,search,skip,limit} = req.body
-    const sellers = await getAllSellers(sellerType,search,skip,limit);
-    respSuccess(res, sellers);
+    const { sellerType, search, skip, limit } = req.query
+    const sellers = await getAllSellerData({ name: { $regex: `^${search}`, $options: "i" }, userId: { $ne: null } }, { skip: parseInt(skip), limit: parseInt(limit), sort: 1 });
+    const count = await sellersOverAllCount(search)
+    respSuccess(res, { sellers, count });
   } catch (error) {
     respError(res, error.message);
   }
@@ -84,8 +134,8 @@ module.exports.getAllSellers = async (req, res) => {
 /*Get all seller types*/
 module.exports.getAllSellerTypes = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const sellerTypes = await getAllSellerTypes(skip,limit);
+    const { skip, limit } = req.body
+    const sellerTypes = await getAllSellerTypes(skip, limit);
     respSuccess(res, sellerTypes);
   } catch (error) {
     respError(res, error.message);
@@ -94,8 +144,8 @@ module.exports.getAllSellerTypes = async (req, res) => {
 /*Get seller product detail*/
 module.exports.getSellerProductDtl = async (req, res) => {
   try {
-    const {id} = req.params
-    const sellerPrdDtl = await getSellerProductDtl({_id : id});
+    const { id } = req.params
+    const sellerPrdDtl = await getSellerProductDtl({ _id: id });
     respSuccess(res, sellerPrdDtl);
   } catch (error) {
     respError(res, error.message);
@@ -104,8 +154,8 @@ module.exports.getSellerProductDtl = async (req, res) => {
 /*Get all seller products*/
 module.exports.listAllSellerProduct = async (req, res) => {
   try {
-    const {serviceType,search,skip,limit} = req.body
-    const sellerProducts = await listAllSellerProduct(serviceType,search,skip,limit);
+    const { serviceType, search, skip, limit } = req.body
+    const sellerProducts = await listAllSellerProduct(serviceType, search, skip, limit);
     respSuccess(res, sellerProducts);
   } catch (error) {
     respError(res, error.message);
@@ -117,7 +167,7 @@ module.exports.listAllSellerProduct = async (req, res) => {
 module.exports.updateSellerProduct = async (req, res) => {
   try {
     let productDetails = JSON.parse(req.body.productDetails)
-    if(req.files && (req.files.document || req.files.image1 || req.files.image2 || req.files.image3 || req.files.image4)){
+    if (req.files && (req.files.document || req.files.image1 || req.files.image2 || req.files.image3 || req.files.image4)) {
       if (req.files && req.files.document) {
         let data = {
           Key: `${productDetails.sellerId}/${req.files.document.name}`,
@@ -164,8 +214,23 @@ module.exports.updateSellerProduct = async (req, res) => {
         productDetails.productDetails.image.image4.code = _image4.Location;
       }
     }
-    const updatePrdDtl = await addProductDetails(productDetails._id,productDetails);
+    const updatePrdDtl = await addProductDetails(productDetails._id, productDetails);
     respSuccess(res, updatePrdDtl);
+  } catch (error) {
+    respError(res, error.message);
+  }
+};
+module.exports.getRfqRequest = async (req, res) => {
+  try {
+    const {
+      userID,
+      params
+    } = req;
+    let condition = { $and: [{ sellerId: params.id }, { requestType: 1 }] }
+    const RFP = await getRFPData(condition, {});
+    // let totalCount = await getRFP(condition);
+    // totalCount = totalCount.length;
+    respSuccess(res, RFP);
   } catch (error) {
     respError(res, error.message);
   }
