@@ -76,7 +76,7 @@ module.exports.updateSeller = async (req, res) => {
     }
 
     if (businessDetails) {
-      console.log(' Busiunbessssssssssssssssssss')
+      console.log(' Busiunbessssssssssssssssssss')  
       // const bsnsDtls = await addbusinessDetails(sellerID, businessDetails)
       // newData.busenessId = bsnsDtls._id
       // seller = await updateSeller({
