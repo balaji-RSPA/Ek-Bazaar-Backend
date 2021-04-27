@@ -14,7 +14,11 @@ const {
   listAllSellerProduct,
   addProductDetails,
   getAllSellerData,
-  sellersOverAllCount
+  sellersOverAllCount,
+  addbusinessDetails,
+  addStatutoryDetails,
+  addContactDetails,
+  addCompanyDetails
 } = sellers;
 const {
   updateBuyer,
@@ -38,83 +42,124 @@ module.exports.getSeller = async (req, res) => {
 /*Update Buyer Seller And User*/
 module.exports.updateSeller = async (req, res) => {
   const { id } = req.params
-  const { buyer, sellerId, userID, businessDetails } = req.body
+  let { buyer, sellerId, userID, businessDetails, statutoryDetails, contactDetails, companyProfile, establishmentPhotos } = req.body
   const _buyer = buyer || {};
   console.log("🚀 ~ file: sellerController.js ~ line 41 ~ module.exports.updateSeller= ~ req.body", req.body, id)
   try {
-    if (_buyer) {
+    if (buyer) {
       console.log(' buyerrrrrrrrrrrrrrrrrrrrrr')
-      // let userData = {
-      //   name: (_buyer && _buyer.name),
-      //   city:
-      //     (_buyer && _buyer.location && _buyer.location.city) || null,
-      //   email: (_buyer && _buyer.email) || null,
-      // };
+      let userData = {
+        name: (_buyer && _buyer.name),
+        city:
+          (_buyer && _buyer.location && _buyer.location.city) || null,
+        email: (_buyer && _buyer.email) || null,
+      };
 
-      // let buyerData = {
-      //   userId: userID,
-      //   ..._buyer,
-      // };
+      let buyerData = {
+        userId: userID,
+        ..._buyer,
+      };
 
-      // let sellerData;
-      // sellerData = {
-      //   userId: userID,
-      //   ..._buyer,
-      // };
+      let sellerData;
+      sellerData = {
+        userId: userID,
+        ..._buyer,
+      };
 
-      // if ((_buyer.mobile && _buyer.mobile.length)) {
-      //   buyerData.mobile = _buyer.mobile[0]["mobile"];
-      //   buyerData.countryCode =
-      //     _buyer.mobile[0]["countryCode"] || mobile[0]["countryCode"];
-      //   sellerData.mobile = _buyer.mobile;
-      // }
-      // // console.log(buyerData, sellerData, userData, ' rrrrrrrrrrrrrrrrrrr')
+      if ((_buyer.mobile && _buyer.mobile.length)) {
+        buyerData.mobile = _buyer.mobile[0]["mobile"];
+        buyerData.countryCode =
+          _buyer.mobile[0]["countryCode"] || mobile[0]["countryCode"];
+        sellerData.mobile = _buyer.mobile;
+      }
+      // console.log(buyerData, sellerData, userData, ' rrrrrrrrrrrrrrrrrrr')
 
-      // const __user = await updateUser({ _id: userID }, userData);
-      // const __buyer = await updateBuyer({ userId: userID }, buyerData);
-      // const __seller = await updateSeller({ _id: id }, sellerData);
+      const __user = await updateUser({ _id: userID }, userData);
+      const __buyer = await updateBuyer({ userId: userID }, buyerData);
+      const __seller = await updateSeller({ _id: id }, sellerData);
     }
-
+    let newData = {}
+    let seller
     if (businessDetails) {
-      console.log(' Busiunbessssssssssssssssssss')  
-      // const bsnsDtls = await addbusinessDetails(sellerID, businessDetails)
-      // newData.busenessId = bsnsDtls._id
-      // seller = await updateSeller({
-      //   _id: sellerID
-      // }, newData)
+      console.log(' Busiunbessssssssssssssssssss')
+      const bsnsDtls = await addbusinessDetails(id, businessDetails)
+      newData.busenessId = bsnsDtls._id
+      seller = await updateSeller({
+        _id: id
+      }, newData)
+    }
+    if (statutoryDetails) {
+      console.log('ssssssssssssssss')
+      // let statutoryDetails = {
+      //   company: JSON.parse(company),
+      //   CinNumber: JSON.parse(CinNumber),
+      //   GstNumber: JSON.parse(GstNumber),
+      //   IeCode: JSON.parse(IeCode),
+      // }
+      // if (req.files && req.files.multidoc) {
+      //   let data = {
+      //     Key: `${sellerID}/${req.files.multidoc.name}`,
+      //     body: req.files.multidoc.data
+      //   }
+      //   const multidoc = await uploadToDOSpace(data)
+      //   statutoryDetails.company.name = req.files.multidoc.name;
+      //   statutoryDetails.company.code = multidoc.Location;
+      // }
+      // if (req.files && req.files.gst) {
+      //   let data = {
+      //     Key: `${sellerID}/${req.files.gst.name}`,
+      //     body: req.files.gst.data
+      //   }
+      //   const gst = await uploadToDOSpace(data)
+      //   statutoryDetails.GstNumber.name = req.files.gst.name;
+      //   statutoryDetails.GstNumber.code = gst.Location;
+      // }
+      const statutoryDtls = await addStatutoryDetails(
+        id,
+        statutoryDetails,
+      )
+      newData.statutoryId = statutoryDtls._id
+      seller = await updateSeller({
+        _id: id
+      }, newData)
+      console.log("🚀 ~ file: sellerController.js ~ line 120 ~ module.exports.updateSeller= ~ seller", seller)
     }
 
-    // const userData = {};
-    // const buyerData = {};
-    // const getUserId = await getSellerProfile(id);
-    // const checkMobile = await checkUserExistOrNot({ mobile: mobile[0].mobile });
-    // if (checkMobile &&
-    //   checkMobile.length &&
-    //   getUserId &&
-    //   getUserId.length &&
-    //   JSON.stringify(checkMobile[0]._id) !== JSON.stringify(getUserId[0].userId
-    //   )) {
-    //   throw new Error("Mobile number is already exist");
-    // }
-    // if (name) {
-    //   userData.name = name;
-    //   buyerData.name = name;
-    // }
-    // if (email) {
-    //   userData.email = email;
-    //   buyerData.email = email;
-    // }
-    // if (mobile && mobile.length) {
-    //   userData.mobile = mobile[0].mobile;
-    //   userData.countryCode = mobile[0].countryCode;
-    //   buyerData.mobile = mobile[0].mobile;
-    //   buyerData.countryCode = mobile[0].countryCode;
-    // }
-    // const user = await updateUser({ _id: getUserId[0].userId }, userData);
-    // const seller = await updateSeller({ _id: id }, req.body);
-    // const buyer = await updateBuyer({ userId: getUserId[0].userId }, buyerData);
+    if (contactDetails) {
+      console.log('contac details --------------')
+      contactDetails = {
+        ...contactDetails,
+        sellerId: id
+      }
+      const cntctDtls = await addContactDetails(id, contactDetails)
+      seller = await updateSeller({
+        _id: id
+      }, {
+        sellerContactId: cntctDtls._id
+      })
+    }
+    if (companyProfile) {
+      console.log("conpany profile -------------")
+      companyProfile = {
+        ...companyProfile,
+        sellerId: id
+      }
+      const cmpnyPrfl = await addCompanyDetails(id, companyProfile)
+      newData.sellerCompanyId = cmpnyPrfl._id
+      seller = await updateSeller({
+        _id: id
+      }, {
+        sellerCompanyId: cmpnyPrfl._id
+      })
+    }
+    if(establishmentPhotos){
+      console.log('esssssssssssssssss')
+    }
+    
+
     respSuccess(res, "Updated Successfully");
   } catch (error) {
+    console.log(error, ' ------------- error')
     respError(res, error.message);
   }
 };
