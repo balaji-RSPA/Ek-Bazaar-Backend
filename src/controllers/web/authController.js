@@ -43,6 +43,7 @@ exports.login = async (req, res, next) => {
     const { password, ipAddress, mobile, userType } = req.body;
 
     let _user = req.body.user
+    console.log("🚀 ~ file: authController.js ~ line 46 ~ exports.login= ~ _user", _user)
     const data = {
       url: req.body.url
     }
@@ -73,26 +74,27 @@ exports.login = async (req, res, next) => {
     }
 
     let buyer = await buyers.getBuyer(_user._id);
-    if (!buyer) {
-      const sellerData = {
-        name: _user.name,
-        email: _user.email,
-        mobile: [{
-          countryCode: _user.countryCode,
-          mobile: mobile
-        }],
-        userId: _user._id
-      }
-      const buyerData = {
-        name: _user.name,
-        email: _user.email,
-        countryCode: _user.countryCode,
-        mobile: mobile,
-        userId: _user._id
-      }
-      await sellers.updateSeller({ userId: user._id }, sellerData)
-      buyer = await buyers.updateBuyer({ userId: user._id }, buyerData)
-    }
+    console.log("🚀 ~ file: authController.js ~ line 77 ~ exports.login= ~ buyer", buyer)
+    // if (!buyer) {
+    //   const sellerData = {
+    //     name: _user.name,
+    //     email: _user.email,
+    //     mobile: [{
+    //       countryCode: _user.countryCode,
+    //       mobile: mobile
+    //     }],
+    //     userId: _user._id
+    //   }
+    //   const buyerData = {
+    //     name: _user.name,
+    //     email: _user.email,
+    //     countryCode: _user.countryCode,
+    //     mobile: mobile,
+    //     userId: _user._id
+    //   }
+    //   await sellers.updateSeller({ userId: user._id }, sellerData)
+    //   buyer = await buyers.updateBuyer({ userId: user._id }, buyerData)
+    // }
     let seller = await sellers.getSeller(_user._id);
 
 
@@ -123,12 +125,15 @@ exports.login = async (req, res, next) => {
         seller = await sellers.updateSeller({ userId: user._id }, sellerData)
       }
     }
-    
+
     if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
       const data = {
         mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
       }
       seller = await sellers.updateSeller({ userId: _user._id }, data)
+    }
+    if (buyer && !buyer.mobile) {
+      buyer = await buyers.updateBuyer({ userId: user._id }, { mobile: _user.mobile, countryCode: _user.countryCode })
     }
 
 

@@ -151,7 +151,7 @@ exports.bulkStoreInElastic = (foundDoc) =>
 exports.sellerSearch = async (reqQuery) => {
 
   const { offerSearch, cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId } = reqQuery
-  console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ userId", offerSearch)
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
   let catId = ''
   let query = {
     bool: {
@@ -215,49 +215,67 @@ exports.sellerSearch = async (reqQuery) => {
       cityFromKeyWord.forEach(city => {
 
         const searchCity = {
-          "match": {
-            "alias": city
+          "wildcard": {
+            "alias.keyword": `*${city}*`
           }
-        }
+        }        
+
         query.bool.should.push(searchCity)
       })
     } else {
       const searchCity = {
-        "match": {
-          "alias": cityFromKeyWord
+        "wildcard": {
+          "alias.keyword": `*${cityFromKeyWord}*`
         }
       }
-      query.bool.should.push(searchCity)
+      query.bool.must.push(searchCity)
     }
   }
 
   if (stateFromKeyWord) {
     if (Array.isArray(stateFromKeyWord)) {
-      stateFromKeyWord.forEach(city => {
+      stateFromKeyWord.forEach(state => {
 
-        const searchCity = {
-          "match": {
-            "name": city
+        const searchState = {
+          "wildcard": {
+            "name.keyword": `*${state}*`
           }
         }
-        query.bool.should.push(searchCity)
+        query.bool.should.push(searchState)
       })
     } else {
-      const searchCity = {
-        "match": {
-          "name": stateFromKeyWord
+      const searchState = {
+        "wildcard": {
+          "name.keyword": `*${stateFromKeyWord}*`
         }
       }
-      query.bool.should.push(searchCity)
+      query.bool.must.push(searchState)
     }
   }
 
   if (countryFromKeyword) {
+    if (Array.isArray(countryFromKeyword)) {
+      countryFromKeyword.forEach(country => {
 
+        const searchCountry = {
+          "wildcard": {
+            "name.keyword": `*${country}*`
+          }
+        }
+        query.bool.should.push(searchCountry)
+      })
+    } else {
+      const searchCountry = {
+        "wildcard": {
+          "name.keyword": `*${countryFromKeyword}*`
+        }
+      }
+      query.bool.must.push(searchCountry)
+    }
   }
 
   if (keyword) {
-    const { product } = searchProductsBy
+    const { product, city, state, country } = searchProductsBy
     if (product) {
       if (Array.isArray(product)) {
 
@@ -309,6 +327,15 @@ exports.sellerSearch = async (reqQuery) => {
         }
       })
       query.bool.filter.push(sellerActiveAccount)
+    }
+    if(city) {
+
+    }
+    if(state) {
+
+    }
+    if(country) {
+
     }
   }
 
@@ -769,10 +796,8 @@ exports.getAllCitiesElastic = (query) => new Promise((resolve, reject) => {
   esClient
     .search(searchQuery)
     .then(async (results) => {
-      // const { count } = await this.getCounts(query); // To get exact count
       resolve([
         results.hits.hits,
-        // count,
       ]);
     })
     .catch(error => reject(error))
@@ -789,10 +814,26 @@ exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
   esClient
     .search(searchQuery)
     .then(async (results) => {
-      // const { count } = await this.getCounts(query); // To get exact count
       resolve([
         results.hits.hits,
-        // count,
+      ]);
+    })
+    .catch(error => reject(error))
+})
+
+exports.getAllCountriesElastic = query => new Promise((resolve, reject) => {
+  const body = {
+    query
+  }
+  const searchQuery = {
+    index: process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries",
+    body,
+  };
+  esClient
+    .search(searchQuery)
+    .then(async (results) => {
+      resolve([
+        results.hits.hits,
       ]);
     })
     .catch(error => reject(error))

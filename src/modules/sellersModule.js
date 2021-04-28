@@ -1506,9 +1506,10 @@ module.exports.getSellerProduct = (query) =>
       })
       .catch(reject)
   })
-exports.deleteSellerRecord = (id) =>
+exports.deleteSellerRecord = (/* id */ query) =>
   new Promise((resolve, reject) => {
-    Sellers.findByIdAndDelete(id)
+    // Sellers.findByIdAndDelete(id)
+    Sellers.findOneAndDelete(query)
       .then((doc) => {
         resolve(doc)
       })
