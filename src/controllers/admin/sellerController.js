@@ -1,9 +1,10 @@
+const mongoose = require('mongoose');
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { sellers, buyers, category } = require("../../modules");
+const { sellers, buyers, category, mastercollections } = require("../../modules");
 const {
   uploadToDOSpace
 } = require("../../utils/utils");
-const { KinesisVideoSignalingChannels } = require("aws-sdk");
+const _ = require('lodash')
 const {
   getSellerProfile,
   getAllSellers,
@@ -18,7 +19,9 @@ const {
   addbusinessDetails,
   addStatutoryDetails,
   addContactDetails,
-  addCompanyDetails
+  addCompanyDetails,
+  deleteSellerProduct,
+  getSellerVal
 } = sellers;
 const {
   updateBuyer,
@@ -27,6 +30,9 @@ const {
 const {
   getAllSellerTypes
 } = category
+const {
+  deleteMasterProduct
+} = mastercollections
 
 /*Get seller detail*/
 module.exports.getSeller = async (req, res) => {
@@ -42,7 +48,7 @@ module.exports.getSeller = async (req, res) => {
 /*Update Buyer Seller And User*/
 module.exports.updateSeller = async (req, res) => {
   const { id } = req.params
-  let { buyer, sellerId, userID, businessDetails, statutoryDetails, contactDetails, companyProfile, establishmentPhotos } = req.body
+  let { buyer, sellerId, userID, businessDetails, statutoryDetails, contactDetails, companyProfile, establishmentPhotos, deactivateAccount } = req.body
   const _buyer = buyer || {};
   console.log("🚀 ~ file: sellerController.js ~ line 41 ~ module.exports.updateSeller= ~ req.body", req.body, id)
   try {
@@ -154,6 +160,13 @@ module.exports.updateSeller = async (req, res) => {
     }
     if(establishmentPhotos){
       console.log('esssssssssssssssss')
+    }
+    if (deactivateAccount) {
+      seller = await updateSeller({
+        _id: id
+      }, {
+        deactivateAccount
+      })
     }
     
 
@@ -280,3 +293,29 @@ module.exports.getRfqRequest = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+module.exports.deleteSellerProduct = async (req, res) => {
+  console.log("delete product--------")
+  try {
+    const { id } = req.params
+    let result
+    let sellerProduct = await deleteSellerProduct(id)
+    const masterDelete = await deleteMasterProduct(id)
+    let findSeller = await getSellerVal({ _id: sellerProduct.sellerId })
+    if (findSeller) {
+      let objVal = mongoose.Types.ObjectId(id);
+      let arrVal = _.findIndex(findSeller.sellerProductId, objVal);
+      if (arrVal > -1) {
+        findSeller.sellerProductId.splice(arrVal, 1)
+        result = await updateSeller({
+          _id: sellerProduct.sellerId
+        }, findSeller)
+
+      }
+    }
+    respSuccess(res, "Product successfully deleted")
+  } catch (error) {
+    console.log("🚀 ~ file: sellerController.js ~ line 318 ~ module.exports.deleteSellerProduct ~ error", error)
+    respError(res, error.message)
+  }
+}
