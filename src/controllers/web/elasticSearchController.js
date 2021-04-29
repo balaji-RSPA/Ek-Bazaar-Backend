@@ -69,9 +69,15 @@ module.exports.serachSeller = async (req, res) => {
           cities.id = __cities[0]["_id"]
           cities._id = __cities[0]["_id"]
           let replace = cities.alias.filter(name => newKeyword.includes(name))[0]
-          newKeyword = newKeyword.replace(`${replace}`, '')
+          if(replace && newKeyword.split(" ").lastIndexOf(replace) !== 0 && newKeyword.split(" ").length > 1) {
+            newKeyword = newKeyword.split(" ")
+            newKeyword.splice(newKeyword.lastIndexOf(replace), 1)
+            newKeyword = newKeyword.join(" ")
+          } 
+            else cities = {}
         } else cities = {}
         newKeyword = newKeyword.split(" ");
+        
       }
 
       /************ STATES FROM ELASTICSEARCH *************/
