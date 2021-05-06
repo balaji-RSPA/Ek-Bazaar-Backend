@@ -247,7 +247,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 title: buyer.productDetails.name.label,
                 location: buyer.productDetails.location.city.label,
                 price: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
-                validity: moment(buyer.productDetails.validity.toDate).format('ll'),
+                validity: moment(buyer.productDetails.validity.toDate || buyer.productDetails.validity).format('ll'),
                 btnname: 'View more',
                 seller: false,
                 value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
