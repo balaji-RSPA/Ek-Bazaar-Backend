@@ -35,7 +35,7 @@ const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect")
 const { sms, MailgunKeys } = require("../../utils/globalConstants")
 const { RFQOneToOne, RFQOneToOneBuyer } = require("../../utils/templates/smsTemplate/smsTemplate")
 const { username, password, senderID, smsURL } = sms
-
+const {siteUrl} = require('../../utils/globalConstants')
 const getUserAgent = (userAgent) => {
 
   const {
@@ -155,7 +155,10 @@ module.exports.createRFP = async (req, res, next) => {
     const { mobile, name, email, location, productDetails, ipAddress, requestType, sellerId, user, __user } = req.body
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
     // const user = await checkUserExistOrNot({ mobile: mobile.mobile })
-    const url = req.get('origin');
+    const url = siteUrl
+  
+
+
     if (user && user.length) {
 
       const userData = {
