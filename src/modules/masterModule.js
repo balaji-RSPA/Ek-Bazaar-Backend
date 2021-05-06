@@ -131,6 +131,22 @@ module.exports.updateMaster = (query, data) => new Promise((resolve, reject) => 
 
 })
 
+module.exports.updateMasterSellerDetails = (query, data) => new Promise((resolve, reject) => {
+
+    MasterCollection.updateMany(query, data, { new: true })
+        .then((doc) => {
+            // if(doc){
+            //     const esData = JSON.parse(JSON.stringify(doc));
+            //     // await this.updateESDoc(doc._id, esData); // and updated to ES
+            // }
+            resolve(doc);
+        }).catch((error) => {
+            console.log(error)
+            reject(error)
+        })
+
+})
+
 module.exports.deleteMasterProduct = (data) =>
     new Promise((resolve, reject) => {
         MasterCollection.findByIdAndDelete({

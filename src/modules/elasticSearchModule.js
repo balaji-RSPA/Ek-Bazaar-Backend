@@ -288,7 +288,8 @@ exports.sellerSearch = async (reqQuery) => {
       if (Array.isArray(product)) {
 
         // query.bool.must.unshift({ bool: { should: [] } });
-        product.forEach(p => {
+        let prod = [product[0]]
+        prod.forEach(p => {
 
           const searchKey = {
             "match_phrase": {
@@ -378,220 +379,454 @@ exports.sellerSearch = async (reqQuery) => {
     }
     if (city && city.name) {
 
-      const citySorting = [
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "exists": {
-                    "field": "userId"
+      let prod = [product[0]]
+      prod.forEach(p => {
+
+        const citySorting = [
+
+          /********* onboarded searched city seller exact match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "sellerId.location.city"
+                    }
+                  },
+                  {
+                    "match": {
+                      "sellerId.location.city.name": city.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `${p}`
+                    }
                   }
-                },
-                {
-                  "match": {
-                    "sellerId.location.city.name": city.name
-                  }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 10
           },
-          "weight": 15
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "exists": {
-                    "field": "userId"
+          /********* onboard searched city seller partial match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "sellerId.location.city"
+                    }
+                  },
+                  {
+                    "match": {
+                      "sellerId.location.city.name": city.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `*${p}*`
+                    }
                   }
-                },
-                {
-                  "match": {
-                    "serviceCity.city.name": city.name
-                  }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 15
           },
-          "weight": 20
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "match": {
-                    "sellerId.location.city.name": city.name
+
+          /********* onboard searched city in service city seller exact match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "match": {
+                      "serviceCity.city.name": city.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `${p}`
+                    }
                   }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 20
           },
-          "weight": 25
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "match": {
-                    "serviceCity.city.name": city.name
+          /********* onboard searched city in service city seller partial match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "match": {
+                      "serviceCity.city.name": city.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `*${p}*`
+                    }
                   }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 25
           },
-          "weight": 30
-        }
-      ]
-      function_score.functions.push(...citySorting)
+          // {
+          //   "filter": {
+          //     "bool": {
+          //       "must": [
+          //         {
+          //           "match": {
+          //             "sellerId.location.city.name": city.name
+          //           }
+          //         }
+          //       ]
+          //     }
+          //   },
+          //   "weight": 25
+          // },
+          // {
+          //   "filter": {
+          //     "bool": {
+          //       "must": [
+          //         {
+          //           "match": {
+          //             "serviceCity.city.name": city.name
+          //           }
+          //         }
+          //       ]
+          //     }
+          //   },
+          //   "weight": 30
+          // }
+        ]
+        function_score.functions.push(...citySorting)
+      })
     }
     if (state && state.name) {
 
-      const stateSorting = [
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "exists": {
-                    "field": "userId"
+      let prod = [product[0]]
+      prod.forEach(p => {
+
+        const stateSorting = [
+
+          /********* onboarded searched state seller exact match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "sellerId.location.state"
+                    }
+                  },
+                  {
+                    "match": {
+                      "sellerId.location.state.name": state.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `${p}`
+                    }
                   }
-                },
-                {
-                  "match": {
-                    "sellerId.location.state.name": state.name
-                  }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 10
           },
-          "weight": 15
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "exists": {
-                    "field": "userId"
+          /********* onboard searched state seller partial match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "sellerId.location.state"
+                    }
+                  },
+                  {
+                    "match": {
+                      "sellerId.location.state.name": state.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `*${p}*`
+                    }
                   }
-                },
-                {
-                  "match": {
-                    "serviceCity.state.name": state.name
-                  }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 15
           },
-          "weight": 20
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "match": {
-                    "sellerId.location.state.name": state.name
+
+          /********* onboard searched state in service city seller exact match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "match": {
+                      "serviceCity.state.name": state.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `${p}`
+                    }
                   }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 20
           },
-          "weight": 25
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "match": {
-                    "serviceCity.state.name": state.name
+          /********* onboard searched state in service city seller partial match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "match": {
+                      "serviceCity.state.name": state.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `*${p}*`
+                    }
                   }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 25
           },
-          "weight": 30
-        }
-      ]
-      function_score.functions.push(...stateSorting)
+          // {
+          //   "filter": {
+          //     "bool": {
+          //       "must": [
+          //         {
+          //           "match": {
+          //             "sellerId.location.state.name": state.name
+          //           }
+          //         }
+          //       ]
+          //     }
+          //   },
+          //   "weight": 25
+          // },
+          // {
+          //   "filter": {
+          //     "bool": {
+          //       "must": [
+          //         {
+          //           "match": {
+          //             "serviceCity.state.name": state.name
+          //           }
+          //         }
+          //       ]
+          //     }
+          //   },
+          //   "weight": 30
+          // }
+        ]
+        function_score.functions.push(...stateSorting)
+      })
 
     }
     if (country && country.name) {
 
-      const countrySorting = [
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "exists": {
-                    "field": "userId"
+      let prod = [product[0]]
+      prod.forEach(p => {
+
+        const countrySorting = [
+
+          /********* onboarded searched country seller exact match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "sellerId.location.country"
+                    }
+                  },
+                  {
+                    "match": {
+                      "sellerId.location.country.name": country.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `${p}`
+                    }
                   }
-                },
-                {
-                  "match": {
-                    "sellerId.location.country.name": country.name
-                  }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 10
           },
-          "weight": 15
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "exists": {
-                    "field": "userId"
+          /********* onboard searched country seller partial match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "field": "sellerId.location.country"
+                    }
+                  },
+                  {
+                    "match": {
+                      "sellerId.location.country.name": country.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `*${p}*`
+                    }
                   }
-                },
-                {
-                  "match": {
-                    "serviceCity.country.name": country.name
-                  }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 15
           },
-          "weight": 20
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "match": {
-                    "sellerId.location.country.name": country.name
+
+          /********* onboard searched country in service city seller exact match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "match": {
+                      "serviceCity.country.name": country.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `${p}`
+                    }
                   }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 20
           },
-          "weight": 25
-        },
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "match": {
-                    "serviceCity.country.name": country.name
+          /********* onboard searched country in service city seller partial match ********/
+          {
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "exists": {
+                      "field": "userId"
+                    }
+                  },
+                  {
+                    "match": {
+                      "serviceCity.country.name": country.name
+                    }
+                  },
+                  {
+                    "wildcard": {
+                      "keywords.keyword": `*${p}*`
+                    }
                   }
-                }
-              ]
-            }
+                ]
+              }
+            },
+            "weight": 25
           },
-          "weight": 30
-        }
-      ]
-      function_score.functions.push(...countrySorting)
+          // {
+          //   "filter": {
+          //     "bool": {
+          //       "must": [
+          //         {
+          //           "match": {
+          //             "sellerId.location.state.name": state.name
+          //           }
+          //         }
+          //       ]
+          //     }
+          //   },
+          //   "weight": 25
+          // },
+          // {
+          //   "filter": {
+          //     "bool": {
+          //       "must": [
+          //         {
+          //           "match": {
+          //             "serviceCity.state.name": state.name
+          //           }
+          //         }
+          //       ]
+          //     }
+          //   },
+          //   "weight": 30
+          // }
+        ]
+        function_score.functions.push(...countrySorting)
+      })
 
     }
   }
@@ -1108,11 +1343,11 @@ exports.sellerSearch = async (reqQuery) => {
           "filter": {
             "bool": {
               "must": [
-                {
-                  "exists": {
-                    "field": "sellerId.location.country"
-                  }
-                },
+                // {
+                //   "exists": {
+                //     "field": "sellerId.location.country"
+                //   }
+                // },
                 {
                   "match": {
                     "sellerId.location.country.name": "india"
@@ -1133,11 +1368,11 @@ exports.sellerSearch = async (reqQuery) => {
           "filter": {
             "bool": {
               "must": [
-                {
-                  "exists": {
-                    "field": "sellerId.location.country"
-                  }
-                },
+                // {
+                //   "exists": {
+                //     "field": "sellerId.location.country"
+                //   }
+                // },
                 {
                   "match": {
                     "sellerId.location.country.name": "india"
@@ -1411,7 +1646,7 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
         // }
         {
           "_score": {
-            "order": "asc"
+            "order": "desc"
           }
         }
       ]
@@ -1556,6 +1791,7 @@ exports.getAllCountriesElastic = query => new Promise((resolve, reject) => {
   const body = {
     query
   }
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 1794 ~ exports.getAllCountriesElastic=query=>newPromise ~ query", query)
   const searchQuery = {
     index: process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries",
     body,
