@@ -479,6 +479,7 @@ exports.checkSellerChat = async (req, res) => {
     try {
         const { sellerId } = req.query
         let checkChat = await getChat({ sellerId })
+        console.log(checkChat, '111111111111111111111--------------------')
         if (!checkChat) {
             const seller = await getSellerProfile(sellerId)
             const user = seller[0]

@@ -78,12 +78,11 @@ const {
   checkBuyerExistOrNot,
   deleteBuyer
 } = buyers;
-const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts, updateMasterSellerDetails } = mastercollections;
+const { addMaster, updateMaster, bulkDeleteMasterProducts, updateMasterSellerDetails } = mastercollections;
 const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
+const { getMasterRecords } = require("../../modules/masterModule");
 const { username, password, senderID, smsURL } = sms
-const {globalVaraibles} = require('../../utils/utils')
-const {signIn} = globalVaraibles.authServiceURL()
 
 const isProd = process.env.NODE_ENV === "production";
 const ssoRegisterUrl =
@@ -666,20 +665,30 @@ module.exports.updateUser = async (req, res) => {
       // keywords.push(seller.name.toLowerCase())
       // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
       // keywords = _.without(_.uniq(keywords), '', null, undefined)
-
+      let masterRecords = await getMasterRecords({ 'userId._id': seller.userId }, {})
+      console.log("🚀 ~ file: userController.js ~ line 669 ~ module.exports.updateUser= ~ masterRecords", masterRecords)
+      masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
+      let sellerId = masterRecords.sellerId || {}
       const masterData = {
         sellerId: {
+          ...sellerId,
           location: seller.location,
           name: seller.name,
           email: seller.email,
           sellerType: seller.sellerType,
           _id: seller._id,
-          mobile: seller.mobile
-        },
-        userId: {
-          name: seller.name,
-          _id: seller.userId
-        },
+          mobile: seller.mobile,
+          sellerType: {
+            type: Array,
+            default: null
+          },
+          country: seller.location.country,
+          businessName: seller.busenessId.name,
+          userId: {
+            name: seller.name,
+            _id: seller.userId
+          },
+        }
         // keywords
       }
       // const masterResult = await 
@@ -798,7 +807,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({ name: user.name, url: signIn });
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url });
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,

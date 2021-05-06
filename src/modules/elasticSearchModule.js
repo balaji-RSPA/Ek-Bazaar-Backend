@@ -1088,6 +1088,333 @@ exports.sellerSearch = async (reqQuery) => {
     }
   }
 
+  if(level5Id || productId || secondaryId || primaryId || parentId) {
+    const sorting = [
+      /********* onboarded india seller exact match ********/
+      {
+        "filter": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "userId"
+                }
+              },
+              {
+                "exists": {
+                  "field": "sellerId.location.country"
+                }
+              },
+              {
+                "match": {
+                  "sellerId.location.country.name": "india"
+                }
+              }/* ,
+              {
+                "wildcard": {
+                  "keywords.keyword": `${p}`
+                }
+              } */
+            ]
+          }
+        },
+        "weight": 10
+      },
+      /********* onboard india seller partial match ********/
+      {
+        "filter": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "userId"
+                }
+              },
+              {
+                "exists": {
+                  "field": "sellerId.location.country"
+                }
+              },
+              {
+                "match": {
+                  "sellerId.location.country.name": "india"
+                }
+              }/* ,
+              {
+                "wildcard": {
+                  "keywords.keyword": `*${p}*`
+                }
+              } */
+            ]
+          }
+        },
+        "weight": 15
+      },
+
+      /********* onboard foreign seller exact match ********/
+      {
+        "filter": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "userId"
+                }
+              },
+              {
+                "exists": {
+                  "field": "sellerId.location.country"
+                }
+              }/* ,
+              {
+                "wildcard": {
+                  "keywords.keyword": `${p}`
+                }
+              } */
+            ],
+            "must_not": [
+              {
+                "match": {
+                  "sellerId.location.country.name": "india"
+                }
+              }
+            ]
+          }
+        },
+        "weight": 20
+      },
+      /********* onboard foreign seller partial match ********/
+      {
+        "filter": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "userId"
+                }
+              },
+              {
+                "exists": {
+                  "field": "sellerId.location.country"
+                }
+              }/* ,
+              {
+                "wildcard": {
+                  "keywords.keyword": `*${p}*`
+                }
+              } */
+            ],
+            "must_not": [
+              {
+                "match": {
+                  "sellerId.location.country.name": "india"
+                }
+              }
+            ]
+          }
+        },
+        "weight": 25
+      },
+
+      /********* onboard no country seller exact match ********/
+      {
+        "filter": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "userId"
+                }
+              }/* ,
+              {
+                "wildcard": {
+                  "keywords.keyword": `${p}`
+                }
+              } */
+            ],
+            "must_not": [
+              {
+                "exists": {
+                  "field": "sellerId.location.country"
+                }
+              }
+            ]
+          }
+        },
+        "weight": 30
+      },
+      /********* onboard no country seller partial match ********/
+      {
+        "filter": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "userId"
+                }
+              }/* ,
+              {
+                "wildcard": {
+                  "keywords.keyword": `*${p}*`
+                }
+              } */
+            ],
+            "must_not": [
+              {
+                "exists": {
+                  "field": "sellerId.location.country"
+                }
+              }
+            ]
+          }
+        },
+        "weight": 40
+      },
+
+      /********* not onboard india seller exact match ********/
+      {
+        "filter": {
+          "bool": {
+            "must": [
+              // {
+              //   "exists": {
+              //     "field": "sellerId.location.country"
+              //   }
+              // },
+              {
+                "match": {
+                  "sellerId.location.country.name": "india"
+                }
+              }/* ,
+              {
+                "wildcard": {
+                  "keywords.keyword": `${p}`
+                }
+              } */
+            ]
+          }
+        },
+        "weight": 45
+      },
+      /********* not onboard india seller partial match ********/
+      {
+        "filter": {
+          "bool": {
+            "must": [
+              // {
+              //   "exists": {
+              //     "field": "sellerId.location.country"
+              //   }
+              // },
+              {
+                "match": {
+                  "sellerId.location.country.name": "india"
+                }
+              }/* ,
+              {
+                "wildcard": {
+                  "keywords.keyword": `*${p}*`
+                }
+              } */
+            ]
+          }
+        },
+        "weight": 50
+      },
+
+      /********* not onboard foreign seller exact match ********/
+      // {
+      //   "filter": {
+      //     "bool": {
+      //       "must": [
+      //         {
+      //           "wildcard": {
+      //             "keywords.keyword": `${p}`
+      //           }
+      //         }
+      //       ],
+      //       "must_not": [
+      //         {
+      //           "match": {
+      //             "sellerId.location.country.name": "india"
+      //           }
+      //         }
+      //       ]
+      //     }
+      //   },
+      //   "weight": 55
+      // },
+      // /********* not onboard foreign seller partial match ********/
+      // {
+      //   "filter": {
+      //     "bool": {
+      //       "must": [
+      //         {
+      //           "wildcard": {
+      //             "keywords.keyword": `*${p}*`
+      //           }
+      //         }
+      //       ],
+      //       "must_not": [
+      //         {
+      //           "match": {
+      //             "sellerId.location.country.name": "india"
+      //           }
+      //         }
+      //       ]
+      //     }
+      //   },
+      //   "weight": 60
+      // },
+
+      /********* not onboard no country seller exact match ********/
+      // {
+      //   "filter": {
+      //     "bool": {
+      //       "must": [
+      //         {
+      //           "wildcard": {
+      //             "keywords.keyword": `${p}`
+      //           }
+      //         }
+      //       ],
+      //       "must_not": [
+      //         {
+      //           "exists": {
+      //             "field": "sellerId.location.country"
+      //           }
+      //         }
+      //       ]
+      //     }
+      //   },
+      //   "weight": 65
+      // },
+      // /********* not onboard no country seller partial match ********/
+      // {
+      //   "filter": {
+      //     "bool": {
+      //       "must": [
+      //         {
+      //           "wildcard": {
+      //             "keywords.keyword": `*${p}*`
+      //           }
+      //         }
+      //       ],
+      //       "must_not": [
+      //         {
+      //           "exists": {
+      //             "field": "sellerId.location.country"
+      //           }
+      //         }
+      //       ]
+      //     }
+      //   },
+      //   "weight": 70
+      // }
+    ]
+    function_score.functions.push(...sorting)
+  }
+
   if (cityId) {
     if (Array.isArray(cityId)) {
       query.bool.must.unshift({ bool: { should: [] } });
