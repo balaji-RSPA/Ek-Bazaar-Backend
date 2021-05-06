@@ -41,6 +41,7 @@ app.use(
       "https://tradeapi.ekbazaar.com",
       "https://tradebazaarapi.tech-active.com",
       "http://localhost:8070",
+      "http://localhost:8085",
       "http://localhost:8050",
       "https://tradebazaar.tech-active.com",
       "https://www.trade.ekbazaar.com",
