@@ -608,6 +608,7 @@ module.exports.updateSellerProduct = async (req, res) => {
     let updateDetail
 
     if(offers){
+      console.log( offers.validity.toDate.toString(), ' 1111111111111111111111111---------')
       const offerData = {
         offers: offers
       }
