@@ -77,7 +77,16 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
   }
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
-  logo: "https://ekbazaar.tech-active.com/assets/images/Final.png",
+  logo: "http://tradebazaar.tech-active.com/src/Assets/Images/ekbazaarlogo.png",
+  emailVerified: "http://tradebazaar.tech-active.com/src/Assets/Images/Unsubscribe@2x.png",
+  registrationthanks: "http://tradebazaar.tech-active.com/src/Assets/Images/registrationthanks.png",
+  otpverification: "http://tradebazaar.tech-active.com/src/Assets/Images/passwordreset.png",
+  passwordUpdated: "http://tradebazaar.tech-active.com/src/Assets/Images/success.png",
+  invoice: "http://tradebazaar.tech-active.com/src/Assets/Images/invoice_updated.png",
+  planExpired: "http://tradebazaar.tech-active.com/src/Assets/Images/planExpired.png",
+  planExpiring: "http://tradebazaar.tech-active.com/src/Assets/Images/planexpiring.png",
+  planChange: "http://tradebazaar.tech-active.com/src/Assets/Images/planChange.png",
+  enquiry: "http://tradebazaar.tech-active.com/src/Assets/Images/enquiry.png",
   facebook: "https://www.tenders.ekbazaar.com/assets/images/facebook.png",
   twitter: "https://www.tenders.ekbazaar.com/assets/images/twitter.png",
   linkedIn: "https://www.tenders.ekbazaar.com/assets/images/linkedin.png",

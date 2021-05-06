@@ -1,9 +1,12 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
+const {imageURLS} = require('../../globalConstants')
+const {registrationthanks, otpverification, passwordUpdated, invoice, planExpired, planExpiring, planChange, enquiry, passwordUpdated, announcements} = imageURLS
+
 module.exports.emailSuccessfulRegistration = (params) => { //userType
   let message = {
     title : 'Welcome',
-    image: 'https://ekbazaar.tech-active.com/assets/images/registrationthanks.png',
+    image: registrationthanks,
     body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'Thank you for registering.',
     greeting:`Hello ${params.name},`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
@@ -17,7 +20,7 @@ module.exports.emailSuccessfulRegistration = (params) => { //userType
 module.exports.otpVerification = (params) =>{
   let message = {
     title: 'OTP verification',
-    image: 'https://ekbazaar.tech-active.com/assets/images/passwordreset.png',
+    image: otpverification,
     body: `<p>Your one time password is <strong>${params.otp}<strong>.</p><p>Please enter the code and proceed with setting up a new password for your account.</p>`
   }
   return message;
@@ -25,7 +28,7 @@ module.exports.otpVerification = (params) =>{
 module.exports.passwordUpdate = (params) => {
   let message = {
     title: 'Password updated',
-    image: 'https://ekbazaar.tech-active.com/assets/images/success.png',
+    image: passwordUpdated,
     body: `<p><strong>Hello ${params.name},<strong></p><p>Your password has been changed recently. Please use the updated password to login to your account.</p>`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
     buttonLink: `${params.url}/signin`,
@@ -36,15 +39,15 @@ module.exports.passwordUpdate = (params) => {
 module.exports.contactus = (params) => {
   let message = {
     title:`Support request received ${params.id}`,
-    image: 'https://ekbazaar.tech-active.com/assets/images/success.png',
+    image: passwordUpdated,
     body: '<p>Your message has been received and will be soon answered by our support team.</p><br /><p>Thank you for choosing EkBazaar</p>',
   }
   return message;
 }
 module.exports.invoiceContent = (params) => {
   let message = {
-    title: '',
-    image: 'https://ekbazaar.tech-active.com/assets/images/invoice.png',
+    title: 'Invoice',
+    image: invoice,
     body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. The credit card ending x${params.cardNo} has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
     <p style="text-align: left">Plan       : ${params.plan}</p>
     <p style="text-align: left">Valid from : ${moment().format("Do MMM YYYY")}</p>
@@ -60,7 +63,7 @@ module.exports.planExpired = (params)=>{
   if (params.isTrial) {
     message = {
       title: 'Plan expired',
-      image: 'https://ekbazaar.tech-active.com/assets/images/planExpired.png',
+      image: planExpired,
       body: `<p>Your free trial plan has expired on ${moment(params.date).format("Do MMMM YYYY")}.</p><p>You can continue using our services by simply completing your subscription.</p>`,
       buttonName: 'SUBSCRIBE',
       buttonLink: `${params.url}`
@@ -68,7 +71,7 @@ module.exports.planExpired = (params)=>{
   }else{
     message = {
       title: 'Plan expired',
-      image: 'https://ekbazaar.tech-active.com/assets/images/planExpired.png',
+      image: planExpired,
       body: `<p>Your plan has expired. Please renew your plan</p>`,
       buttonName: 'SUBSCRIBE',
       buttonLink: `${params.url}`
@@ -81,7 +84,7 @@ module.exports.planExpiring = (params)=>{
   if (params.isTrial && params.dayDiff) {
     message = {
       title: 'Plan expiring',
-      image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
+      image: planExpiring,
       body: `<p>We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is about to expire in ${params.dayDiff} days and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
@@ -89,7 +92,7 @@ module.exports.planExpiring = (params)=>{
   } else if (params.dayDiff && params.isTrial===false) {
     message = {
       title: 'Plan expiring',
-      image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
+      image: planExpiring,
       body: `<p>Your plan is about to expire in ${params.dayDiff} days.Please renew your plan</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
@@ -97,7 +100,7 @@ module.exports.planExpiring = (params)=>{
   }else{
     message = {
       title: 'Plan expiring',
-      image: 'https://ekbazaar.tech-active.com/assets/images/planExpiring.png',
+      image: planExpiring,
       body: `<p>Your Plan is Expiring Today! Please Renew to access the benefits of a Subscriber</p>`,
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}/pricing`
@@ -108,7 +111,7 @@ module.exports.planExpiring = (params)=>{
 module.exports.RfpEnquiryReceived = (params) => {
   let message = {
     title: 'Enquiry received',
-    image: 'https://ekbazaar.tech-active.com/assets/images/rfpEnquiryReceived.png',
+    image: enquiry,
     body: `<p>You have an enquiry for (${capitalizeFirstLetter(params.productDetails.name.name)}, ${params.productDetails.quantity}${capitalizeFirstLetter(params.productDetails.weight)}) from (${params._loc}) by (${capitalizeFirstLetter(params.name)}) on ${moment().format('Do MMM YYYY')}.</p>`,
     buttonName: 'VIEW BUYER DETAILS',
     buttonLink: `${params.url}/seller/seller-central/enquiry?sellerId=${params.sellerId}&skip=0&limit=10`,
@@ -119,7 +122,7 @@ module.exports.RfpEnquiryReceived = (params) => {
 module.exports.RfpEnquirySend = ()=>{
   let message = {
     title: 'Requirement sent',
-    image: 'https://ekbazaar.tech-active.com/assets/images/success.png',
+    image: passwordUpdated,
     body: `<p>Thank you for submitting your requirements. The seller shall contact you on your shared contact details.</p>`,
   }
   return message;
@@ -127,7 +130,7 @@ module.exports.RfpEnquirySend = ()=>{
 module.exports.planChangedEmail = (params) => {
   let message = {
     title: 'Plan changed',
-    image: 'https://ekbazaar.tech-active.com/assets/images/planChanged.png',
+    image: planChange,
     body: `<p style="text-align: left">Your plan has been changed from ${params.oldPlanType} to ${params.newPlanType}.</p>
     <p style="text-align: left">Valid from : ${moment().format("Do MMM YYYY")}</p>
     <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>
@@ -141,7 +144,7 @@ module.exports.planChangedEmail = (params) => {
 module.exports.listingRemovalReq = () => {
   let message = {
     title: 'Listing removal request',
-    image: 'https://ekbazaar.tech-active.com/assets/images/announcement.png',
+    image: announcements,
     body: `<p>Thank you.</p><p>We will contact you within 7 working days and remove your listing.</p>`,
   }
   return message;
