@@ -1,7 +1,7 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
 const {imageURLS} = require('../../globalConstants')
-const {registrationthanks, otpverification, passwordUpdated, invoice, planExpired, planExpiring, planChange, enquiry, passwordUpdated, announcements} = imageURLS
+const {registrationthanks, otpverification, passwordUpdated, invoice, planExpired, planExpiring, planChange, enquiry, announcements} = imageURLS
 
 module.exports.emailSuccessfulRegistration = (params) => { //userType
   let message = {
