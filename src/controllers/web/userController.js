@@ -78,7 +78,7 @@ const {
   checkBuyerExistOrNot,
   deleteBuyer
 } = buyers;
-const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = mastercollections;
+const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts, updateMasterSellerDetails } = mastercollections;
 const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
 const { username, password, senderID, smsURL } = sms
@@ -680,6 +680,29 @@ module.exports.updateUser = async (req, res) => {
 
       buyer = await getBuyer(null, { _id: buyer._id })
       seller = await getSeller(null, null, { _id: _seller._id })
+
+       // let keywords = []
+    // keywords.push(seller.name.toLowerCase())
+    // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
+    // keywords = _.without(_.uniq(keywords), '', null, undefined)
+
+    const masterData = {
+      sellerId: {
+        location: seller.location,
+        name: seller.name,
+        email: seller.email,
+        sellerType: seller.sellerType,
+        _id: seller._id,
+        mobile: seller.mobile
+      },
+      userId: {
+        name: seller.name,
+        _id: seller.userId
+      },
+      // keywords
+    }
+    // const masterResult = await 
+    updateMasterSellerDetails({ 'userId._id': seller.userId }, masterData)
 
       respSuccess(
         res,
