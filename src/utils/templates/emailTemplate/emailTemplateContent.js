@@ -136,7 +136,7 @@ module.exports.planChangedEmail = (params) => {
     <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>
     `,
     buttonName: 'VIEW YOUR PLAN',
-    buttonLink: `${params.url}/seller/seller-central/seller-account?skip=0&limit=10`,
+    buttonLink: `${params.url}/seller/seller-central/seller-account?skip=0&limit=10&tab=3`,
     extracontent1: `<p style="text-align: center;margin-top:-13px;">Thank you for choosing EK Bazaar. Have a good day.</p>`
   }
   return message;
