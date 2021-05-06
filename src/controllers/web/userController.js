@@ -545,27 +545,7 @@ module.exports.updateUser = async (req, res) => {
     }
 
 
-    // let keywords = []
-    // keywords.push(seller.name.toLowerCase())
-    // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
-    // keywords = _.without(_.uniq(keywords), '', null, undefined)
 
-    // const masterData = {
-    //   sellerId: {
-    //     location: seller.location,
-    //     name: seller.name,
-    //     email: seller.email,
-    //     sellerType: seller.sellerType,
-    //     _id: seller._id,
-    //     mobile: seller.mobile
-    //   },
-    //   userId: {
-    //     name: seller.name,
-    //     _id: seller.userId
-    //   },
-    //   keywords
-    // }
-    // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     let seller = {},
       activeChat = {};
@@ -595,7 +575,7 @@ module.exports.updateUser = async (req, res) => {
         seller = await updateSeller({ userId: userID }, sellerData);
 
         if (isProd) {
-          
+
           const { successfulMessage, templateId } = successfulRegistration({ userType, name });
           console.log("🚀 ~ file: userController.js ~ line 592 ~ module.exports.updateUser= ~ `${__usr.countryCode}${mobile}`", `${__usr.countryCode}${mobile}`)
           let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
@@ -682,29 +662,51 @@ module.exports.updateUser = async (req, res) => {
 
       buyer = await getBuyer(null, { _id: buyer._id })
       seller = await getSeller(null, null, { _id: _seller._id })
+      // let keywords = []
+      // keywords.push(seller.name.toLowerCase())
+      // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
+      // keywords = _.without(_.uniq(keywords), '', null, undefined)
+
+      const masterData = {
+        sellerId: {
+          location: seller.location,
+          name: seller.name,
+          email: seller.email,
+          sellerType: seller.sellerType,
+          _id: seller._id,
+          mobile: seller.mobile
+        },
+        userId: {
+          name: seller.name,
+          _id: seller.userId
+        },
+        // keywords
+      }
+      // const masterResult = await 
+      updateMasterSellerDetails({ 'userId._id': seller.userId }, masterData)
 
        // let keywords = []
     // keywords.push(seller.name.toLowerCase())
     // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
     // keywords = _.without(_.uniq(keywords), '', null, undefined)
 
-    const masterData = {
-      sellerId: {
-        location: seller.location,
-        name: seller.name,
-        email: seller.email,
-        sellerType: seller.sellerType,
-        _id: seller._id,
-        mobile: seller.mobile
-      },
-      userId: {
-        name: seller.name,
-        _id: seller.userId
-      },
-      // keywords
-    }
-    // const masterResult = await 
-    updateMasterSellerDetails({ 'userId._id': seller.userId }, masterData)
+    // const masterData = {
+    //   sellerId: {
+    //     location: seller.location,
+    //     name: seller.name,
+    //     email: seller.email,
+    //     sellerType: seller.sellerType,
+    //     _id: seller._id,
+    //     mobile: seller.mobile
+    //   },
+    //   userId: {
+    //     name: seller.name,
+    //     _id: seller.userId
+    //   },
+    //   // keywords
+    // }
+    // // const masterResult = await 
+    // updateMasterSellerDetails({ 'userId._id': seller.userId }, masterData)
 
       respSuccess(
         res,
@@ -918,20 +920,20 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     const result = await updateUser({ _id: userId }, { deleteTrade })
     if (result) {
       let query = {}
-      if(!sellerId) query.userId = userId
+      if (!sellerId) query.userId = userId
       else query._id = sellerId
       const sellerData = await getSellerVal(query)
 
-      if(!buyerId) query.userId = userId
+      if (!buyerId) query.userId = userId
       else query._id = buyerId
       const _buyer = await deleteBuyer({ _id: buyerId })
 
       delete query._id
       delete query.userId
       query.sellerId = sellerData._id
-      
+
       const _seller = await deleteSellerRecord(query);
-      
+
       if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
         const pQuery = {
           _id: {
