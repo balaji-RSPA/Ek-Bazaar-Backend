@@ -5,12 +5,12 @@ const {
 } = require('../../utils/respHadler')
 const axios = require("axios")
 const moment = require('moment')
-const { rocketChatDomain } = require('../../utils/globalConstants')
-const chatDomain = rocketChatDomain; //"https://chatbot.active.agency"
+const { rocketChatDomain, rocketChatAdminLogin } = require('../../utils/globalConstants')
+const chatDomain = `https://${rocketChatDomain}` //"https://chatbot.active.agency"
 // const chatDomain = "http://192.168.1.52:3000"
 const { getSellerProfile } = require('../../modules/sellersModule')
 
-const rocketChatClient = new RocketChatApi("https", "chatbot.ekbazaar.com", 443)
+const rocketChatClient = new RocketChatApi("https", rocketChatDomain, 443)
 // const rocketChatClient = new RocketChatApi("http", "192.168.1.52", 3000)
 const { Chat } = require('../../modules')
 const { updateChatSession, getChat, createChat, createChatSession } = Chat
@@ -21,8 +21,8 @@ const { updateChatSession, getChat, createChat, createChatSession } = Chat
 
 // }
 const admin = {
-    username: "ramesh@active.agency",
-    password: "rameshTechActive"
+    username: rocketChatAdminLogin.username,
+    password: rocketChatAdminLogin.password
 }
 
 exports.setChatSession = (data) => {

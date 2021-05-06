@@ -12,7 +12,7 @@ const {
 const { getMasterRecords, updateMasterBulkProducts, updateMaster, getMaster, bulkDeleteMasterProducts } = require('../../modules/masterModule')
 
 const { getSellerPlan, deleteSellerPlans } = require('../../modules/sellerPlanModule')
-const { getUserList,deleteBuyer, deleteUser } = require('../../modules/buyersModule')
+const { getUserList, deleteBuyer, deleteUser } = require('../../modules/buyersModule')
 const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
 const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule')
 
@@ -171,5 +171,6 @@ module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, 
         //     respError(res, "No user list")
         // }
     } catch (error) {
-        console.log(error, ' jjjjjjjjjjjjjjjjjjjjj') }
+        console.log(error, ' jjjjjjjjjjjjjjjjjjjjj')
+    }
 })

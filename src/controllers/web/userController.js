@@ -82,6 +82,8 @@ const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = masterc
 const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
 const { username, password, senderID, smsURL } = sms
+const {globalVaraibles} = require('../../utils/utils')
+const {signIn} = globalVaraibles.authServiceURL()
 
 const isProd = process.env.NODE_ENV === "production";
 const ssoRegisterUrl =
@@ -180,7 +182,7 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].email &&
       seller[0].isEmailVerified === 2;
 
-    if (!isProd) {
+    if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
       const { otpMessage, templateId } = sendOtp({ reset, otp });
       console.log("🚀 ~ file: userController.js ~ line 186 ~ module.exports.sendOtp= ~ otpMessage", otpMessage, templateId)
@@ -530,7 +532,7 @@ module.exports.updateUser = async (req, res) => {
     }
     delete buyerData && buyerData._id;
     console.log("🚀 ~ file: userController.js ~ line 710 ~ module.exports.updateUser= ~ _seller.sellerType", _seller)
-    if (_seller && sellerType && (!_seller.sellerType || (_seller.sellerType && !_seller.sellerType.length)) && !isProd) {
+    if (_seller && sellerType && (!_seller.sellerType || (_seller.sellerType && !_seller.sellerType.length)) && isProd) {
       const { successfulMessage, templateId } = successfulRegistration({ userType, name });
       let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
       console.log("🚀 ~ file: userController.js ~ line 535 ~ module.exports.updateUser= ~ resp", resp.data)
@@ -592,7 +594,7 @@ module.exports.updateUser = async (req, res) => {
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
 
-        if (!isProd) {
+        if (isProd) {
           
           const { successfulMessage, templateId } = successfulRegistration({ userType, name });
           console.log("🚀 ~ file: userController.js ~ line 592 ~ module.exports.updateUser= ~ `${__usr.countryCode}${mobile}`", `${__usr.countryCode}${mobile}`)
@@ -794,7 +796,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url });
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: signIn });
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,

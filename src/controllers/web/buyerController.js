@@ -232,7 +232,7 @@ module.exports.createRFP = async (req, res, next) => {
         })
         await sendEmailBuyer(email)
       }
-      if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment !== "production") {
+      if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment == "production") {
 
         const sellerData = await getSellerProfile(sellerId)
         const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
@@ -268,7 +268,7 @@ module.exports.createRFP = async (req, res, next) => {
         // await sendSingleMail(message)
         // await sendSMS(mobile, RFQOneToOneBuyer())
 
-        if (global.environment !== "production") {
+        if (global.environment == "production") {
 
           let { message, templateId } = RFQOneToOneBuyer()
           await sendSMS(mobile.mobile, message, templateId)
@@ -378,7 +378,7 @@ module.exports.createRFP = async (req, res, next) => {
           })
           await sendEmailBuyer(email)
         }
-        if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment !== "production") {
+        if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment == "production") {
 
           // const sellerData = await getSellerProfile(sellerId)
           const constsellerContactNo = sellerDtl && sellerDtl.length && sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
@@ -413,7 +413,7 @@ module.exports.createRFP = async (req, res, next) => {
           // await sendSingleMail(message)
           //  await sendSMS(mobile, RFQOneToOneBuyer())
           // this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
-          if (global.environment !== "production") {
+          if (global.environment == "production") {
 
             let { message, templateId } = RFQOneToOneBuyer()
             let resp = await sendSMS(mobile.mobile, message, templateId)
