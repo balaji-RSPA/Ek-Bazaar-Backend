@@ -75,6 +75,7 @@ module.exports.getAllOffers = async (req, res) => {
         }
 
         const data = await searchFromElastic(query, { skip: 0, limit: 2000 }, aggs);
+        console.log("🚀 ~ file: offersController.js ~ line 78 ~ module.exports.getAllOffers= ~ data", JSON.stringify(data[2]))
         let aggsCount = data[2];
         let arrayObj = []
         let level1 = aggsCount.level1 && aggsCount.level1.buckets
@@ -112,6 +113,7 @@ module.exports.getAllOffers = async (req, res) => {
                 return _obj
 
             }))
+            console.log(obj, products,' 111111111111111111111111111111111')
 
             obj = {
                 ...obj,
@@ -247,7 +249,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 title: buyer.productDetails.name.label,
                 location: buyer.productDetails.location.city.label,
                 price: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
-                validity: moment(buyer.productDetails.validity.toDate).format('ll'),
+                validity: moment(buyer.productDetails.validity.toDate || buyer.productDetails.validity).format('ll'),
                 btnname: 'View more',
                 seller: false,
                 value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,

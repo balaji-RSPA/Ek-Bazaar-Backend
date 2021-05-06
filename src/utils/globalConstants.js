@@ -77,7 +77,16 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
   }
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
-  logo: "https://ekbazaar.tech-active.com/assets/images/Final.png",
+  logo: "https://tradebazaar.tech-active.com/assets/images/ekbazaarlogo.png",  
+  emailVerified: "https://tradebazaar.tech-active.com/assets/images/Unsubscribe@2x.png",
+  registrationthanks: "https://tradebazaar.tech-active.com/assets/images/registrationthanks.png",
+  otpverification: "https://tradebazaar.tech-active.com/assets/images/passwordreset.png",
+  passwordUpdated: "https://tradebazaar.tech-active.com/assets/images/success.png",
+  invoice: "https://tradebazaar.tech-active.com/assets/images/invoice_updated.png",
+  planExpired: "https://tradebazaar.tech-active.com/assets/images/planExpired.png",
+  planExpiring: "https://tradebazaar.tech-active.com/assets/images/planexpiring.png",
+  planChange: "https://tradebazaar.tech-active.com/assets/images/planChange.png",
+  enquiry: "https://tradebazaar.tech-active.com/assets/images/enquiry.png",
   facebook: "https://www.tenders.ekbazaar.com/assets/images/facebook.png",
   twitter: "https://www.tenders.ekbazaar.com/assets/images/twitter.png",
   linkedIn: "https://www.tenders.ekbazaar.com/assets/images/linkedin.png",

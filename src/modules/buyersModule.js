@@ -24,7 +24,7 @@ module.exports.updateRFP = (query, data) => new Promise((resolve, reject) => {
 
 module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
   const skip = range && range.skip || 0
-  const limit = range && range.limit || 1000
+  const limit = range && range.limit || 10000
   RFP.find(query)
     .skip(skip)
     .limit(limit)
@@ -33,7 +33,6 @@ module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
       path: 'buyerDetails.location.city buyerDetails.location.state'
     })
     .then(doc => {
-      console.log("🚀 ~ file: buyersModule.js ~ line 36 ~ module.exports.getRFPData= ~ doc", doc)
       resolve(doc)
     })
     .catch(error => resolve(error.message))
@@ -225,6 +224,33 @@ exports.getUserList = (query, limit) => new Promise((resolve, reject) => {
     })
     .catch(error => reject(error))
 })
+
+// exports.getUserList = (reqQuery = '') => new Promise((resolve, reject) => {
+//     console.log("🚀 ~ file: buyersModule.js ~ line 230 ~ exports.getUserList= ~ reqQuery", reqQuery)
+//     // const skip = parseInt(reqQuery.skip);
+//     // const limit = parseInt(reqQuery.limit);
+//     const search = reqQuery.search || ''
+//     console.log("🚀 ~ file: buyersModule.js ~ line 234 ~ exports.getUserList= ~ search", search)
+
+//     const match = {
+//       $match: {
+//         $or: [{
+//           mobile: parseInt(search)
+//         }]
+
+//       }
+//     }
+//     console.log("🚀 ~ file: buyersModule.js ~ line 259 ~ exports.getUserList= ~ match", JSON.stringify(match))
+
+//     const execQuery = User.aggregate([match])
+
+//     execQuery.then((doc) => {
+
+//       resolve(doc)
+
+//     }).catch(reject)
+
+// });
 exports.deleteUser = (query) => new Promise((resolve, reject) => {
   User.deleteMany(query)
     .then(doc => {

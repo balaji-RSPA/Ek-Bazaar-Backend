@@ -692,6 +692,8 @@ exports.getSellerProfile = (id) =>
 module.exports.getAllSellers = (sellerType, searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
     let searchQry = {};
+    skip = skip || 0
+    limit = limit || 10
     if (searchQuery && sellerType) {
       searchQry = {
         $and: [
@@ -1574,10 +1576,34 @@ module.exports.getProduct = (query) =>
 
 module.exports.getAllSellerData = (query, range) =>
   new Promise((resolve, reject) => {
+    const skip = range.skip || 0
+    const limit = range.limit || 10
+    const sort = range.sort || ''
     Sellers.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ _id: sort ? -1 : 1 })
       .then((doc) => {
         // console.log("🚀 ~ file: sellersModule.js ~ line 1498 ~ .then ~ doc", doc)
         resolve(doc)
       })
       .catch(reject)
   })
+
+exports.sellersOverAllCount = (search) => new Promise((resolve, reject) => {
+  Sellers.aggregate([{
+    $match: {
+      name: {
+        $regex: `^${search}`,
+        $options: 'i'
+      },
+      userId: {
+        $ne: null
+      }
+    }
+  }, {
+    $count: 'count'
+  }]).then((doc) => resolve(doc.length ? doc[0].count : 0))
+    .catch(reject)
+
+})

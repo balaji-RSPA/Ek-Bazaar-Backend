@@ -82,6 +82,8 @@ const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts, updateMast
 const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
 const { username, password, senderID, smsURL } = sms
+const {globalVaraibles} = require('../../utils/utils')
+const {signIn} = globalVaraibles.authServiceURL()
 
 const isProd = process.env.NODE_ENV === "production";
 const ssoRegisterUrl =
@@ -817,7 +819,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url });
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: signIn });
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
