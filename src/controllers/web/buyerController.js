@@ -156,9 +156,6 @@ module.exports.createRFP = async (req, res, next) => {
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
     // const user = await checkUserExistOrNot({ mobile: mobile.mobile })
     const url = siteUrl
-  
-
-
     if (user && user.length) {
 
       const userData = {
@@ -261,6 +258,7 @@ module.exports.createRFP = async (req, res, next) => {
       } else if (!sellerId && requestType === 2) {
 
         this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
+        console.log(email, "lllllllllllllllllllllllllllll")
         await sendEmailBuyer(email)
         // const message = {
         //   from: MailgunKeys.senderMail,
