@@ -43,14 +43,20 @@ exports.globalVaraibles = {
     if (this._IS_PROD_) {
       return {
         serviceURL: "https://tradeapi.ekbazaar.com",
+        pricing: "https://www.trade.ekbazaar.com/pricing",
+        signIn: "https://www.trade.ekbazaar.com/signin"
       }
     } else if (this._IS_DEV_) {
       return {
-        serviceURL: "https://tradebazaarapi.tech-active.com"
+        serviceURL: "https://tradebazaarapi.tech-active.com",
+        pricing: "https://tradebazaar.tech-active.com/pricing",
+        signIn: "https://tradebazaar.tech-active.com/signin"
       }
     } else {
       return {
-        serviceURL: "http://localhost:8070"
+        serviceURL: "http://localhost:8070",
+        pricing: "http://localhost:8085/pricing",
+        signIn: "http://localhost:8085/signin"
       }
     }
   }

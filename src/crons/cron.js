@@ -17,7 +17,9 @@ const {
     MailgunKeys
 } = require("../utils/globalConstants");
 const { sendSingleMail } = require('../utils/mailgunService')
-
+const {globalVaraibles} = require('../utils/utils')
+const isProd = globalVaraibles._IS_PROD_
+const {pricing} = globalVaraibles.authServiceURL()
 
 
 exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) => {
@@ -83,14 +85,14 @@ exports.getExpirePlansCron = async (req, res) =>
             const sellerPlanIds = []
             const emailData = []
             // const smsData = []
-             let url = '';
-             if (process.env.NODE_ENV === "production") {
-                 url = `https://ekbazaar.tech-active.com`
-             } else if (process.env.NODE_ENV === 'development') {
-                 url = `http://localhost:8085`
-             } else if (process.env.NODE_ENV === 'staging') {
-                 url = `http://ekbazaar.tech-active.com`
-             }
+            //  let url = '';
+            //  if (process.env.NODE_ENV === "production") {
+            //      url = `https://www.trade.ebazaar.com/pricing`
+            //  } else if (process.env.NODE_ENV === 'development') {
+            //      url = `http://localhost:8085/pricing`
+            //  } else if (process.env.NODE_ENV === 'staging') {
+            //      url = `https://tradebazaar.tech-active.com/pricing`
+            //  }
             const result = await getExpirePlans();
             if (result.length > 0) {
                 for (let index = 0; index < result.length; index++) {
@@ -119,7 +121,7 @@ exports.getExpirePlansCron = async (req, res) =>
                             toEmail: element.sellerId.email,
                             name: element.sellerId.name,
                             subject: "Plan Expired",
-                            body: planExpired({date : element.exprireDate,isTrial : element.isTrial,url:url})
+                            body: planExpired({date : element.exprireDate,isTrial : element.isTrial,url:pricing})
                         };
                         emailData.push(data)
                         console.log(emailData, ' email')
@@ -325,14 +327,14 @@ exports.getAboutToExpirePlan = async (req,res) =>{
     try{
         const emailData = []
         const smsData = []
-        let url = '';
-        if (process.env.NODE_ENV === "production") {
-            url = `https://ekbazaar.tech-active.com`
-        } else if (process.env.NODE_ENV === 'development') {
-            url = `http://localhost:8085`
-        } else if (process.env.NODE_ENV === 'staging') {
-            url = `http://ekbazaar.tech-active.com`
-        }
+        // let url = '';
+        // if (process.env.NODE_ENV === "production") {
+        //     url = `https://ekbazaar.tech-active.com`
+        // } else if (process.env.NODE_ENV === 'development') {
+        //     url = `http://localhost:8085`
+        // } else if (process.env.NODE_ENV === 'staging') {
+        //     url = `http://ekbazaar.tech-active.com`
+        // }
         const result = await getAboutToexpirePlan();
         for (let index = 0; index < (result && result.length); index++) {
             const element = result[index];
@@ -361,7 +363,7 @@ exports.getAboutToExpirePlan = async (req,res) =>{
                     toEmail: element.sellerId.email,
                     name: element.sellerId.name,
                     subject: "Plan About To Expire",
-                    body: planExpiring({date:element.exprireDate, isTrial : element.isTrial, url: url,dayDiff}),
+                    body: planExpiring({date:element.exprireDate, isTrial : element.isTrial, url: pricing,dayDiff}),
                 };
                 emailData.push(data)
             }
