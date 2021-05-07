@@ -248,6 +248,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
             // console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
             return obj
         })
+        // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx", JSON.stringify(_query))
         buyerRequests = await getRFPData(_query, { skip: 0, limit: 1000 })
         console.log("🚀 ~ file: offersController.js ~ line 229 ~ module.exports.getAllSellerOffers= ~ buyerRequests", buyerRequests)
         buyerRequests = buyerRequests.length && buyerRequests.map(buyer => {
@@ -275,7 +276,16 @@ module.exports.getAllSellerOffers = async (req, res) => {
 module.exports.buyerRequestOffers = async (req, res) => {
 
     try {
-        const { details } = req.body
+        let  { details } = req.body
+        // details = {
+        //     ...details,
+        //     productDetails:{
+        //         ...details.productDetails,
+        //         validity: new Date(`${details.productDetails.validity} EST`).toString()
+        //     },
+
+        // }
+        // const g = new Date(`${details.productDetails.validity} EST`)
         const rfp = await postRFP(details)
         return respSuccess(res, "Offer request done successfully")
 
