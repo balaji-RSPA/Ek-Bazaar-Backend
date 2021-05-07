@@ -16,6 +16,15 @@ const moment = require("moment")
 module.exports.getAllOffers = async (req, res) => {
 
     try {
+        console.log( new Date().toISOString(), ' wwwwwwwwwwwww')
+        // const q1 = { requestType: 11, 'productDetails.name.label': "Plier", "productDetails.validity": { $gte: new Date().toISOString() }
+        // }
+        // const sss = await getRFP(q1)
+        // console.log(JSON.stringify(sss[0]), sss.length,' 2222222222222222222222')
+        // for (let i = 0; i < sss.length; i++) {
+        //     let item = level1[i]
+        //     let obj = {}
+        // }
 
         const query = {
             "bool": {
@@ -75,7 +84,6 @@ module.exports.getAllOffers = async (req, res) => {
         }
 
         const data = await searchFromElastic(query, { skip: 0, limit: 2000 }, aggs);
-        console.log("🚀 ~ file: offersController.js ~ line 78 ~ module.exports.getAllOffers= ~ data", JSON.stringify(data[2]))
         let aggsCount = data[2];
         let arrayObj = []
         let level1 = aggsCount.level1 && aggsCount.level1.buckets
@@ -113,15 +121,14 @@ module.exports.getAllOffers = async (req, res) => {
                 return _obj
 
             }))
-            console.log(obj, products,' 111111111111111111111111111111111')
-
+            
             obj = {
                 ...obj,
                 title: `${cat.name}(${item.doc_count})`,
                 products
             }
             arrayObj.push(obj)
-
+            
         }
 
         respSuccess(res, { offersCount: arrayObj })
