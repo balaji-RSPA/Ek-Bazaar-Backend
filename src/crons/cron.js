@@ -123,6 +123,7 @@ exports.getExpirePlansCron = async (req, res) =>
                             subject: "Plan Expired",
                             body: planExpired({date : element.exprireDate,isTrial : element.isTrial,url:pricing})
                         };
+                       
                         emailData.push(data)
                         console.log(emailData, ' email')
                         console.log(sellerPlanIds, ' ids')

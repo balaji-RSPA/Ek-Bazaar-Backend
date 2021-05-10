@@ -106,6 +106,7 @@ module.exports.planExpiring = (params)=>{
       buttonLink: `${params.url}/pricing`
     }
   }
+  
   return message;
 }
 module.exports.RfpEnquiryReceived = (params) => {
@@ -117,7 +118,6 @@ module.exports.RfpEnquiryReceived = (params) => {
     buttonLink: `${params.url}/seller/seller-central/enquiry?sellerId=${params.sellerId}&skip=0&limit=10`,
     extracontent1: `<p style="text-align: center;margin-top:-13px;">Thank you for choosing EkBazaar</p>`
   }
-  console.log(message, "messaggggggggggggggggg")
   return message;
 }
 module.exports.RfpEnquirySend = ()=>{

@@ -700,7 +700,7 @@ module.exports.updateUser = async (req, res) => {
           activeChat,
         },
         user.email && user.isEmailVerified === 1
-          ? "Updated Successfully and check your email to activate your email"
+          ? "Your profile details are updated successfully"
           : "Updated Successfully"
       );
     } else {
