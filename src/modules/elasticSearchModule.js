@@ -379,7 +379,7 @@ exports.sellerSearch = async (reqQuery) => {
     }
     if (city && city.name) {
 
-      let prod = [product[0]]
+      let prod = product //[product[0]]
       prod.forEach(p => {
 
         const citySorting = [
@@ -529,7 +529,7 @@ exports.sellerSearch = async (reqQuery) => {
     }
     if (state && state.name) {
 
-      let prod = [product[0]]
+      let prod = product //[product[0]]
       prod.forEach(p => {
 
         const stateSorting = [
@@ -680,7 +680,7 @@ exports.sellerSearch = async (reqQuery) => {
     }
     if (country && country.name) {
 
-      let prod = [product[0]]
+      let prod = product //[product[0]]
       prod.forEach(p => {
 
         const countrySorting = [

@@ -439,6 +439,7 @@ module.exports.updateUser = async (req, res) => {
     const { userID } = req;
     const dateNow = new Date();
     const _buyer = req.body.buyer || {};
+    console.log("🚀 ~ file: userController.js ~ line 442 ~ module.exports.updateUser= ~ _buyer", _buyer)
     let {
       name,
       email,
@@ -449,6 +450,7 @@ module.exports.updateUser = async (req, res) => {
       sellerType,
       userType,
     } = req.body;
+      console.log("🚀 ~ file: userController.js ~ line 452 ~ module.exports.updateUser= ~ location", location)
 
     let userData = {
       name: (_buyer && _buyer.name) || name,
@@ -570,6 +572,8 @@ module.exports.updateUser = async (req, res) => {
           sellerData
         );
         buyerData.isEmailSent = true;
+        console.log("🚀 ~ file: userController.js ~ line 577 ~ module.exports.updateUser= ~ sellerData", sellerData)
+        console.log("🚀 ~ file: userController.js ~ line 577 ~ module.exports.updateUser= ~ buyerData", buyerData)
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
 
@@ -597,7 +601,9 @@ module.exports.updateUser = async (req, res) => {
 
       } else if (user.email && buyer.isEmailSent) {
         buyer = await updateBuyer({ userId: userID }, buyerData);
+        console.log("🚀 ~ file: userController.js ~ line 604 ~ module.exports.updateUser= ~ buyerData", buyerData)
         seller = await updateSeller({ userId: userID }, sellerData);
+        console.log("🚀 ~ file: userController.js ~ line 606 ~ module.exports.updateUser= ~ sellerData", sellerData)
       }
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
@@ -661,6 +667,7 @@ module.exports.updateUser = async (req, res) => {
 
       buyer = await getBuyer(null, { _id: buyer._id })
       seller = await getSeller(null, null, { _id: _seller._id })
+      console.log("🚀 ~ file: userController.js ~ line 664 ~ module.exports.updateUser= ~ seller", seller)
       // let keywords = []
       // keywords.push(seller.name.toLowerCase())
       // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
