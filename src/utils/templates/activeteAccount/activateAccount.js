@@ -3,6 +3,7 @@ const {
 } = require('../../globalConstants')
 const {
     logo,
+    registerationFlow,
     facebook,
     twitter,
     linkedIn
@@ -226,7 +227,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                         <tr>
                             <td style="padding: 0px 16.66% 10px 16.66%; text-align: center; display: block;">
                                 <img style="width: 100%"
-                                     src="http://cdn.htmlemailtemplates.net/images/vol2/registration-flow.png"
+                                     src=${registerationFlow}
                                      alt="Activate Your Account">
                             </td>
                         </tr>

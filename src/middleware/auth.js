@@ -127,8 +127,8 @@ const checkRequestTime = (userId, deviceId, token) => new Promise((resolve, reje
 
 exports.authenticate = async (req, res, next) => {
 
+  console.log("🚀 ~ file: auth.js ~ line 130 ~ exports.authenticate= ~ token", req.headers.authorization)
   const token = req.headers.authorization.split('|')[1];
-  console.log("🚀 ~ file: auth.js ~ line 130 ~ exports.authenticate= ~ token", token)
   try {
 
     const decoded = await verifyJwtToken(token) //jwt.verify(token, JWTTOKEN);

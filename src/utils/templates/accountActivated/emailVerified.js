@@ -3,6 +3,7 @@ const {
 } = require('../../globalConstants')
 const {
     logo,
+    emailVerified,
     facebook,
     twitter,
     linkedIn
@@ -225,7 +226,7 @@ exports.emailVerified = (params) => new Promise((resolve, reject) => {
                             </tr>
                             <tr>
                                 <td style="padding: 20px 0; text-align: center">
-                                    <img src="http://cdn.htmlemailtemplates.net/images/vol2/accountactivated@2x.png" aria-hidden="true"
+                                    <img src=${emailVerified} aria-hidden="true"
                                          width="142"
                                          height="100" alt="alt_text"
                                          border="0"
