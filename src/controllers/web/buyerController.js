@@ -155,10 +155,11 @@ module.exports.createRFP = async (req, res, next) => {
     const { mobile, name, email, location, productDetails, ipAddress, requestType, sellerId, user, __user } = req.body
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
     // const user = await checkUserExistOrNot({ mobile: mobile.mobile })
-    const url = siteUrl
-  
-
-
+    const { NODE_ENV } = process.env
+    const siteURL = NODE_ENV === "production" ? "https://www.trade.ebazaar.com" : "https://tradebazaar.tech-active.com"
+    const url = siteURL
+    // const url = req.get('origin')
+    console.log(url, "oooooooooooooooooooo")
     if (user && user.length) {
 
       const userData = {
