@@ -78,12 +78,11 @@ const {
   checkBuyerExistOrNot,
   deleteBuyer
 } = buyers;
-const { getMaster, addMaster, updateMaster, bulkDeleteMasterProducts } = mastercollections;
+const { addMaster, updateMaster, bulkDeleteMasterProducts, updateMasterSellerDetails } = mastercollections;
 const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
+const { getMasterRecords } = require("../../modules/masterModule");
 const { username, password, senderID, smsURL } = sms
-const {globalVaraibles} = require('../../utils/utils')
-const {signIn} = globalVaraibles.authServiceURL()
 
 const isProd = process.env.NODE_ENV === "production";
 const ssoRegisterUrl =
@@ -440,6 +439,7 @@ module.exports.updateUser = async (req, res) => {
     const { userID } = req;
     const dateNow = new Date();
     const _buyer = req.body.buyer || {};
+    console.log("🚀 ~ file: userController.js ~ line 442 ~ module.exports.updateUser= ~ _buyer", _buyer)
     let {
       name,
       email,
@@ -450,6 +450,7 @@ module.exports.updateUser = async (req, res) => {
       sellerType,
       userType,
     } = req.body;
+      console.log("🚀 ~ file: userController.js ~ line 452 ~ module.exports.updateUser= ~ location", location)
 
     let userData = {
       name: (_buyer && _buyer.name) || name,
@@ -545,27 +546,7 @@ module.exports.updateUser = async (req, res) => {
     }
 
 
-    // let keywords = []
-    // keywords.push(seller.name.toLowerCase())
-    // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
-    // keywords = _.without(_.uniq(keywords), '', null, undefined)
 
-    // const masterData = {
-    //   sellerId: {
-    //     location: seller.location,
-    //     name: seller.name,
-    //     email: seller.email,
-    //     sellerType: seller.sellerType,
-    //     _id: seller._id,
-    //     mobile: seller.mobile
-    //   },
-    //   userId: {
-    //     name: seller.name,
-    //     _id: seller.userId
-    //   },
-    //   keywords
-    // }
-    // const masterResult = await updateMaster({ 'userId._id': seller.userId }, masterData)
 
     let seller = {},
       activeChat = {};
@@ -591,11 +572,13 @@ module.exports.updateUser = async (req, res) => {
           sellerData
         );
         buyerData.isEmailSent = true;
+        console.log("🚀 ~ file: userController.js ~ line 577 ~ module.exports.updateUser= ~ sellerData", sellerData)
+        console.log("🚀 ~ file: userController.js ~ line 577 ~ module.exports.updateUser= ~ buyerData", buyerData)
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
 
         if (isProd) {
-          
+
           const { successfulMessage, templateId } = successfulRegistration({ userType, name });
           console.log("🚀 ~ file: userController.js ~ line 592 ~ module.exports.updateUser= ~ `${__usr.countryCode}${mobile}`", `${__usr.countryCode}${mobile}`)
           let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
@@ -618,7 +601,9 @@ module.exports.updateUser = async (req, res) => {
 
       } else if (user.email && buyer.isEmailSent) {
         buyer = await updateBuyer({ userId: userID }, buyerData);
+        console.log("🚀 ~ file: userController.js ~ line 604 ~ module.exports.updateUser= ~ buyerData", buyerData)
         seller = await updateSeller({ userId: userID }, sellerData);
+        console.log("🚀 ~ file: userController.js ~ line 606 ~ module.exports.updateUser= ~ sellerData", sellerData)
       }
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
@@ -682,6 +667,39 @@ module.exports.updateUser = async (req, res) => {
 
       buyer = await getBuyer(null, { _id: buyer._id })
       seller = await getSeller(null, null, { _id: _seller._id })
+      console.log("🚀 ~ file: userController.js ~ line 664 ~ module.exports.updateUser= ~ seller", seller)
+      // let keywords = []
+      // keywords.push(seller.name.toLowerCase())
+      // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
+      // keywords = _.without(_.uniq(keywords), '', null, undefined)
+      let masterRecords = await getMasterRecords({ 'userId._id': seller.userId }, {})
+      console.log("🚀 ~ file: userController.js ~ line 669 ~ module.exports.updateUser= ~ masterRecords", masterRecords)
+      masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
+      let sellerId = masterRecords.sellerId || {}
+      const masterData = {
+        sellerId: {
+          ...sellerId,
+          location: seller.location,
+          name: seller.name,
+          email: seller.email,
+          sellerType: seller.sellerType,
+          _id: seller._id,
+          mobile: seller.mobile,
+          sellerType: {
+            type: Array,
+            default: null
+          },
+          country: seller.location.country,
+          businessName: seller.busenessId.name,
+          userId: {
+            name: seller.name,
+            _id: seller.userId
+          },
+        }
+        // keywords
+      }
+      // const masterResult = await 
+      updateMasterSellerDetails({ 'userId._id': seller.userId }, masterData)
 
       respSuccess(
         res,
@@ -700,7 +718,7 @@ module.exports.updateUser = async (req, res) => {
           activeChat,
         },
         user.email && user.isEmailVerified === 1
-          ? "Updated Successfully and check your email to activate your email"
+          ? "Your profile details are updated successfully"
           : "Updated Successfully"
       );
     } else {
@@ -796,7 +814,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({ name: user.name, url: signIn });
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url });
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
@@ -895,20 +913,20 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     const result = await updateUser({ _id: userId }, { deleteTrade })
     if (result) {
       let query = {}
-      if(!sellerId) query.userId = userId
+      if (!sellerId) query.userId = userId
       else query._id = sellerId
       const sellerData = await getSellerVal(query)
 
-      if(!buyerId) query.userId = userId
+      if (!buyerId) query.userId = userId
       else query._id = buyerId
       const _buyer = await deleteBuyer({ _id: buyerId })
 
       delete query._id
       delete query.userId
       query.sellerId = sellerData._id
-      
+
       const _seller = await deleteSellerRecord(query);
-      
+
       if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
         const pQuery = {
           _id: {

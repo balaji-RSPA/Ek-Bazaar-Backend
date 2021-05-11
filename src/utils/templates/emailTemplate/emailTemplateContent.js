@@ -31,7 +31,7 @@ module.exports.passwordUpdate = (params) => {
     image: passwordUpdated,
     body: `<p><strong>Hello ${params.name},<strong></p><p>Your password has been changed recently. Please use the updated password to login to your account.</p>`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
-    buttonLink: `${params.url}/signin`,
+    buttonLink: `${params.url}`,
     extracontent1: `<p style="text-align:center;margin-top: -13px;">If you did not make the change. <a href='${params.url}/contact'>Please contact support.</a></p>`
   }
   return message;
@@ -106,6 +106,7 @@ module.exports.planExpiring = (params)=>{
       buttonLink: `${params.url}/pricing`
     }
   }
+  
   return message;
 }
 module.exports.RfpEnquiryReceived = (params) => {
