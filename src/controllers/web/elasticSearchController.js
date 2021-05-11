@@ -2,7 +2,7 @@ const camelcaseKeys = require("camelcase-keys");
 const { parse } = require("querystring")
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { elastic, category, location } = require("../../modules");
-const { addSellerBulkIndex, sellerSearch, searchFromElastic, getSuggestions, getAllCitiesElastic, getAllStatesElastic, getAllCountriesElastic } = elastic;
+const { addSellerBulkIndex, sellerSearch, searchFromElastic, getCountByCountry, getSuggestions, getAllCitiesElastic, getAllStatesElastic, getAllCountriesElastic } = elastic;
 const {
   /* getPrimaryCategory, */ getRelatedPrimaryCategory,
   getCatId,
@@ -26,6 +26,8 @@ module.exports.addSellerBulkIndex = async (req, res) => {
   }
 };
 
+const { searchKeywords } = require("../../utils/searchKeywords");
+
 module.exports.serachSeller = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query);
@@ -39,7 +41,12 @@ module.exports.serachSeller = async (req, res) => {
     //   }
     // }
 
-    let { productId, primaryId, level5Id, secondaryId, parentId, skip, limit } = reqQuery
+
+    let { productId, primaryId, level5Id, secondaryId, parentId, skip, limit, country } = reqQuery
+    if (country) {
+      reqQuery._country = reqQuery.country
+      reqQuery.country = undefined
+    }
     console.log("🚀 ~ file: elasticSearchController.js ~ line 43 ~ module.exports.serachSeller= ~ secondaryId", secondaryId, typeof primaryId)
     secondaryId = typeof secondaryId === "object" ? `${secondaryId}` : secondaryId
     console.log("🚀 ~ file: elasticSearchController.js ~ line 43 ~ module.exports.serachSeller= ~ level5Id", reqQuery)
@@ -76,8 +83,11 @@ module.exports.serachSeller = async (req, res) => {
       const { keyword, skip, limit } = reqQuery
 
       let newKeyword = keyword.toLowerCase().trim()
-      newKeyword = newKeyword.includes(" mills") ? newKeyword.replace(" mills", " mill") : newKeyword
+      // newKeyword = newKeyword.includes(" mills") ? newKeyword.replace(" mills", " mill") : newKeyword
+      newKeyword = newKeyword.includes("channapatna toys") ? newKeyword.replace("channapatna toys", "chennapatna toys") : newKeyword
+
       newKeyword = newKeyword.replace(" in ", " ");
+      newKeyword = newKeyword.replace(" in", " ");
       newKeyword = newKeyword.replace(",", "")
       newKeyword = newKeyword.split(" ");
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 48 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
@@ -155,6 +165,7 @@ module.exports.serachSeller = async (req, res) => {
           let replace = cities.alias.filter(name => newKeyword.includes(name))[0]
           console.log("🚀 ~ file: elasticSearchController.js ~ line 94 ~ module.exports.serachSeller= ~ replace", replace)
           if (replace && newKeyword.split(" ").lastIndexOf(replace) !== 0 && newKeyword.split(" ").length > 1 && !newKeyword.includes("/")) {
+            reqQuery.cityId = cities._id
             newKeyword = newKeyword.split(" ")
             newKeyword.splice(newKeyword.lastIndexOf(replace.split(" ")[0]), replace.split(" ").length)
             newKeyword = newKeyword.join(" ")
@@ -178,9 +189,26 @@ module.exports.serachSeller = async (req, res) => {
       // }
 
       newKeyword = [newKeyword.filter(item => item).join(" ")]
-      cities.name ? newKeyword.push(cities.name) : ""
-      states.name ? newKeyword.push(states.name) : ""
-      countries.name ? newKeyword.push(countries.name) : ""
+      // console.log("🚀 ~ file: elasticSearchController.js ~ line 191 ~ module.exports.serachSeller= ~ searchKeywords", searchKeywords, newKeyword)
+      // let word = newKeyword.join(" ").split(" ")
+      // console.log("🚀 ~ file: elasticSearchController.js ~ line 189 ~ module.exports.serachSeller= ~ word", word)
+      // for (let i = 0; i < word.length; i++) {
+      //   let pluralIndex = -1
+      //   let singularIndex = -1
+      //   pluralIndex = searchKeywords.findIndex(item => item == word[i])
+      //   singularIndex = searchKeywords.findIndex(item => item.slice(0, item.length -1) == word[i])
+      //   if(singularIndex !== -1) {
+      //     newKeyword = [word[i], searchKeywords[singularIndex]]
+      //     break;
+      //   }
+      //   if (pluralIndex !== -1) {
+      //     newKeyword = [word[i], word[i].slice(0, word[i].length - 1)]
+      //     break;
+      //   }
+      // }
+      // newKeyword = newKeyword[0]
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 189 ~ module.exports.serachSeller= ~ newKeyword", newKeyword)
+
       // if(!cities.name && !states.name && !countries.name) {
       //   newKeyword = keyword.toLowerCase().trim()
       //   newKeyword = newKeyword.replace(" in ", " ");
@@ -191,16 +219,30 @@ module.exports.serachSeller = async (req, res) => {
         city: cities,
         state: states,
         country: countries,
-        product: newKeyword
+        product: newKeyword,
       }
 
       /************** SELLERS SEARCH RESULTS ************/
-      const result = await sellerSearch(reqQuery);
+      let result = await sellerSearch(reqQuery);
+      let countryCount = {}
+      if (reqQuery._country) {
+        console.log("🚀 ~ file: elasticSearchController.js ~ line 229 ~ module.exports.serachSeller= ~ reqQuery._country", reqQuery._country, reqQuery.country)
+        countryCount = await getCountByCountry(result.query)
+        countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+        reqQuery.country = reqQuery._country
+        result = await sellerSearch(reqQuery);
+      }
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 231 ~ module.exports.serachSeller= ~ countryCount", countryCount)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 228 ~ module.exports.serachSeller= ~ countryCount", countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"])
+
       query = result.query
       console.log("🚀 ~ file: elasticSearchController.js ~ line 192 ~ module.exports.serachSeller= ~ query", query)
       let { aggs, catId } = result;
       const seller = await searchFromElastic(query, range, aggs);
 
+      cities.name ? newKeyword.push(cities.name) : ""
+      states.name ? newKeyword.push(states.name) : ""
+      countries.name ? newKeyword.push(countries.name) : ""
       console.log("module.exports.serachSeller -> seller", seller)
       // const product = await getProductByName({ name: { $regex: reg, $options: "si" } })
       // let primaryCatId, relatedCat, secCat, primCat
@@ -230,7 +272,8 @@ module.exports.serachSeller = async (req, res) => {
         city: cities,
         state: states,
         country: countries,
-        productSearchKeyword: newKeyword
+        productSearchKeyword: newKeyword,
+        countryCount: !countryCount.length ? seller[2]["result"]["buckets"] : countryCount
       };
 
       return respSuccess(res, resp);
@@ -259,12 +302,25 @@ module.exports.serachSeller = async (req, res) => {
     if (level5Id) {
 
       result = await sellerSearch({ level5Id, skip, limit });
+      let countryCount = {}
+      if (reqQuery._country) {
+        countryCount = await getCountByCountry(result.query)
+        countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+        country = reqQuery._country
+        result = await sellerSearch({ level5Id, country, skip, limit });
+      }
       const { query, catId, aggs } = result;
       seller = await searchFromElastic(query, range, aggs);
       console.log("module.exports.serachSeller -> seller", seller)
 
       if (seller && seller.length && !seller[0].length) {
         result = await sellerSearch({ productId, skip, limit });
+        if (reqQuery._country) {
+          countryCount = await getCountByCountry(result.query)
+          countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+          country = reqQuery._country
+          result = await sellerSearch({ productId, country, skip, limit });
+        }
         const { query, catId, aggs } = result;
         seller = await searchFromElastic(query, range, aggs);
         console.log("module.exports.serachSeller -> seller", seller)
@@ -272,6 +328,12 @@ module.exports.serachSeller = async (req, res) => {
 
       if (seller && seller.length && !seller[0].length) {
         result = await sellerSearch({ primaryId, skip, limit });
+        if (reqQuery._country) {
+          countryCount = await getCountByCountry(result.query)
+          countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+          country = reqQuery._country
+          result = await sellerSearch({ primaryId, country, skip, limit });
+        }
         const { query, catId, aggs } = result;
         seller = await searchFromElastic(query, range, aggs);
         console.log("module.exports.serachSeller -> seller", seller)
@@ -281,7 +343,8 @@ module.exports.serachSeller = async (req, res) => {
       const resp = {
         total: seller[2]["products"]["value"], //seller[1],
         data: seller[0],
-        city
+        city,
+        countryCount: !countryCount.length ? seller[2]["result"]["buckets"] : countryCount
         // relatedCat,
       };
       return respSuccess(res, resp);
@@ -292,12 +355,25 @@ module.exports.serachSeller = async (req, res) => {
       console.log("🚀 ~ file: elasticSearchController.js ~ line 286 ~ module.exports.serachSeller= ~ secondaryId", secondaryId)
 
       result = await sellerSearch({ secondaryId, skip, limit });
+      let countryCount = {}
+      if (reqQuery._country) {
+        countryCount = await getCountByCountry(result.query)
+        countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+        country = reqQuery._country
+        result = await sellerSearch({ secondaryId, country, skip, limit });
+      }
       const { query, catId, aggs } = result;
       seller = await searchFromElastic(query, range, aggs);
       console.log("module.exports.serachSeller -> seller", seller)
 
       if (seller && seller.length && !seller[0].length) {
         result = await sellerSearch({ primaryId, skip, limit });
+        if (reqQuery._country) {
+          countryCount = await getCountByCountry(result.query)
+          countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+          country = reqQuery._country
+          result = await sellerSearch({ primaryId, country, skip, limit });
+        }
         const { query, catId, aggs } = result;
         seller = await searchFromElastic(query, range, aggs);
         console.log("module.exports.serachSeller -> seller", seller)
@@ -305,6 +381,12 @@ module.exports.serachSeller = async (req, res) => {
 
       if (seller && seller.length && !seller[0].length) {
         result = await sellerSearch({ parentId, skip, limit });
+        if (reqQuery._country) {
+          countryCount = await getCountByCountry(result.query)
+          countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+          country = reqQuery._country
+          result = await sellerSearch({ parentId, country, skip, limit });
+        }
         const { query, catId, aggs } = result;
         seller = await searchFromElastic(query, range, aggs);
         console.log("module.exports.serachSeller -> seller", seller)
@@ -314,7 +396,8 @@ module.exports.serachSeller = async (req, res) => {
       const resp = {
         total: seller[2]["products"]["value"], //seller[1],
         data: seller[0],
-        city
+        city,
+        countryCount: !countryCount.length ? seller[2]["result"]["buckets"] : countryCount
         // relatedCat,
       };
       return respSuccess(res, resp);
@@ -322,8 +405,15 @@ module.exports.serachSeller = async (req, res) => {
     }
 
     result = await sellerSearch(reqQuery);
-
+    let countryCount = {}
+    if (reqQuery._country) {
+      countryCount = await getCountByCountry(result.query)
+      countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+      reqQuery.country = reqQuery._country
+      result = await sellerSearch(reqQuery);
+    }
     const { query, catId, aggs } = result;
+
     seller = await searchFromElastic(query, range, aggs);
     // console.log("module.exports.serachSeller -> seller", seller)
 
@@ -331,7 +421,8 @@ module.exports.serachSeller = async (req, res) => {
     const resp = {
       total: seller[2]["products"]["value"], //seller[1],
       data: seller[0],
-      city
+      city,
+      countryCount: !countryCount.length ? seller[2]["result"]["buckets"] : countryCount
       // relatedCat,
     };
     return respSuccess(res, resp);

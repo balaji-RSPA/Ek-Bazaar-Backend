@@ -19,7 +19,8 @@ function dbConnection() {
   };
   // if (env.NODE_ENV === 'production') {
 
-  url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+  // url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+  url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
   options = {
     ...options,
     keepAlive: true,
@@ -65,6 +66,7 @@ if (env) {
     // host = 'searchtrade.ekbazaar.com:5085'
     // host = 'searchtradetemp.tech-active.com:5085'
     host = '139.59.19.170:5085'
+    host = '139.59.95.19:5085'
 
   }
 

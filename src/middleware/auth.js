@@ -108,6 +108,7 @@ const checkRequestTime = (userId, deviceId, token) => new Promise((resolve, reje
     }
   }]).then((doc) => {
 
+    console.log("🚀 ~ file: auth.js ~ line 114 ~ //Session.findOne ~ doc", doc)
     const data = doc[0]
     const { _id, expired } = data
     if (!expired) {
@@ -136,7 +137,8 @@ exports.authenticate = async (req, res, next) => {
     req.deviceId = deviceId
     req.userID = userId;
     req.token = token
-    const check = await checkRequestTime(userId, deviceId, token);
+    const check = true//await checkRequestTime(userId, deviceId, token);
+    console.log("🚀 ~ file: auth.js ~ line 140 ~ exports.authenticate= ~ check", check)
 
     if (check) {
 

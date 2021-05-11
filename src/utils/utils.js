@@ -33,7 +33,7 @@ const s3 = new AWS.S3({
 });
 
 exports.globalVaraibles = {
-  _IS_PROD_: process.env.NODE_ENV === "production",
+  _IS_PROD_: process.env.NODE_ENV === "development",
   _IS_DEV_: process.env.NODE_ENV === "staging",
   ssoLoginUrl: "login",
   ssoLogoutUrl: "logout",
