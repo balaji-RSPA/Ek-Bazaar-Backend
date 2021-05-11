@@ -394,7 +394,7 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
       batch: 1,
       keywords,
       serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null,
-      offers: val.offers && val.offers || null 
+      offers: val.offers && val.offers || null
     }
   } else {
     data = {
@@ -601,23 +601,35 @@ module.exports.updateSellerProduct = async (req, res) => {
       files,
       prodDtl
     } = req
-    let { offers, productId, deleteOffer} = body
+    let { offers, productId, deleteOffer } = body
     offers = offers ? JSON.parse(offers) : null
     console.log('update poroduct---', productId, deleteOffer)
 
     let updateDetail
 
-    if(offers){
-      console.log( offers.validity.toDate.toString(), ' 1111111111111111111111111---------')
+    if (offers) {
+      // var d1 = new Date(offers.validity.toDate);
+      // d1.setMinutes(d1.getMinutes() + 480);
+      // var d2 = new Date(offers.validity.fromDate);
+      // d2.setMinutes(d2.getMinutes() + 480);
+      // console.log((offers.validity.toDate).toISOString(), ' 1111111111111111111111')
       const offerData = {
-        offers: offers
+        // offers: offers,
+        offers: {
+          ...offers,
+          validity: {
+            fromDate: new Date(`${offers.validity.fromDate} EST`),
+            toDate: new Date(`${offers.validity.toDate} EST`)
+          }
+        }
       }
+      // [new Date(), subDays(new Date(), 1)]
       updateDetail = await addProductDetails(productId, offerData)
     }
-    if(deleteOffer){
+    if (deleteOffer) {
       var updatedProduct = await getProduct({ _id: productId })
       delete updatedProduct.offers
-      updatedProduct.offers=null
+      updatedProduct.offers = null
       updateDetail = await addProductDetails(productId, updatedProduct)
     }
     if (body && body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
@@ -703,7 +715,7 @@ module.exports.updateSellerProduct = async (req, res) => {
       /*this is for updating the seller document field*/
       updateDetail = await addProductDetails(prodDtl._id, {
         "productDetails.document": null,
-        "productDetails.documentName":null
+        "productDetails.documentName": null
       });
     }
     if (body && body.id && body.imageType) {

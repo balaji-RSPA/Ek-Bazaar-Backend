@@ -1208,6 +1208,7 @@
 <<<<<<< HEAD
 >>>>>>> noor
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 8d2a2647b017598ed478217f4bb02d4b54567b5b
 {"error":{},"level":"error","message":"uncaughtException: Unexpected token '<<'\n/home/dev/public_html/trade-api/src/modules/elasticSearchModule.js:291\n<<<<<<< HEAD\n^^\n\nSyntaxError: Unexpected token '<<'\n    at Module._compile (internal/modules/cjs/loader.js:895:18)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/src/modules/sellersModule.js:47:5)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/src/modules/index.js:4:17)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)","stack":"/home/dev/public_html/trade-api/src/modules/elasticSearchModule.js:291\n<<<<<<< HEAD\n^^\n\nSyntaxError: Unexpected token '<<'\n    at Module._compile (internal/modules/cjs/loader.js:895:18)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/src/modules/sellersModule.js:47:5)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/src/modules/index.js:4:17)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)","exception":true,"date":"Thu May 06 2021 11:01:40 GMT+0000 (Coordinated Universal Time)","process":{"pid":26164,"uid":1000,"gid":1000,"cwd":"/home/dev/public_html/trade-api","execPath":"/usr/bin/node","version":"v12.14.0","argv":["/usr/bin/node","/home/dev/public_html/trade-api/app.js"],"memoryUsage":{"rss":76247040,"heapTotal":56070144,"heapUsed":29218808,"external":19677051}},"os":{"loadavg":[0.00537109375,0.01904296875,0],"uptime":3562616},"trace":[{"column":18,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":895,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":5,"file":"/home/dev/public_html/trade-api/src/modules/sellersModule.js","function":null,"line":47,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":17,"file":"/home/dev/public_html/trade-api/src/modules/index.js","function":null,"line":4,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false}],"timestamp":"2021-05-06T11:01:40.284Z"}
 {"error":{},"level":"error","message":"uncaughtException: Unexpected token '<<'\n/home/dev/public_html/trade-api/src/modules/elasticSearchModule.js:291\n<<<<<<< HEAD\n^^\n\nSyntaxError: Unexpected token '<<'\n    at Module._compile (internal/modules/cjs/loader.js:895:18)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/src/modules/sellersModule.js:47:5)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/src/modules/index.js:4:17)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)","stack":"/home/dev/public_html/trade-api/src/modules/elasticSearchModule.js:291\n<<<<<<< HEAD\n^^\n\nSyntaxError: Unexpected token '<<'\n    at Module._compile (internal/modules/cjs/loader.js:895:18)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/src/modules/sellersModule.js:47:5)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/src/modules/index.js:4:17)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)","exception":true,"date":"Thu May 06 2021 11:07:50 GMT+0000 (Coordinated Universal Time)","process":{"pid":26502,"uid":1000,"gid":1000,"cwd":"/home/dev/public_html/trade-api","execPath":"/usr/bin/node","version":"v12.14.0","argv":["/usr/bin/node","/home/dev/public_html/trade-api/app.js"],"memoryUsage":{"rss":76558336,"heapTotal":55808000,"heapUsed":28976288,"external":19668859}},"os":{"loadavg":[0.00146484375,0,0],"uptime":3562986},"trace":[{"column":18,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":895,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":5,"file":"/home/dev/public_html/trade-api/src/modules/sellersModule.js","function":null,"line":47,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":17,"file":"/home/dev/public_html/trade-api/src/modules/index.js","function":null,"line":4,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false}],"timestamp":"2021-05-06T11:07:50.485Z"}
@@ -1292,3 +1293,79 @@
 >>>>>>> noor
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-10T13:46:01.981Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-10T13:46:30.274Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T11:32:57.959Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T11:45:20.809Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:28:55.142Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:32:12.251Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:40:41.532Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:41:15.797Z"}
+=======
+>>>>>>> bbcde4ffc657b78f9313adfc4b11215b536571d7
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:30:44.209Z"}
+>>>>>>> noor
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:46:50.013Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:49:51.663Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:50:42.349Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:52:50.978Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:53:38.221Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:53:43.262Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:54:50.520Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T12:57:07.394Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:05:23.128Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:26:01.790Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:26:55.875Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:28:17.616Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:33:35.257Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:39:57.729Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:41:12.623Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:42:07.255Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:43:27.790Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:43:49.067Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:43:54.487Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:47:40.707Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:53:58.619Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:54:38.605Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:57:42.418Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:59:27.341Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T13:59:47.919Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-06T14:00:26.836Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T02:11:30.046Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T02:23:19.530Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T02:25:19.272Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T02:25:24.882Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T02:26:53.657Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T02:27:58.489Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T02:28:32.867Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T02:57:44.593Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:03:18.130Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:06:28.563Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:07:02.009Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:07:26.883Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:10:24.614Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:12:09.973Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:13:11.701Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:14:36.632Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:21:46.628Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:24:15.490Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:26:15.183Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:28:41.407Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:40:19.456Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:44:48.843Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:44:59.139Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:48:00.176Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:48:19.057Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:51:18.117Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:51:20.438Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:54:52.271Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T03:58:14.481Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T04:07:13.026Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T04:11:13.836Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T04:12:37.244Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T04:13:43.229Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T04:14:05.477Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T04:14:59.373Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T04:18:24.691Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-07T04:20:59.411Z"}
+>>>>>>> a91819a64b7f86347d94fceae8e9a676aebc94f5
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-11T05:29:03.283Z"}
