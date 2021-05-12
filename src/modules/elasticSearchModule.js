@@ -173,9 +173,9 @@ exports.sellerSearch = async (reqQuery) => {
     functions: []
   }
 
-  if(country) {
+  if (country) {
     console.log("🚀 ~ file: elasticSearchModule.js ~ line 177 ~ exports.sellerSearch= ~ country", country)
-    if(Array.isArray(country)) {
+    if (Array.isArray(country)) {
       country.forEach(cntry => {
         let countryFilter = {
           "match": {
@@ -379,6 +379,22 @@ exports.sellerSearch = async (reqQuery) => {
     }
     if (city && city.name) {
 
+      let cityFilter = [
+        {
+          "match": {
+            "sellerId.location.city.name": city.name
+          }
+        },
+        {
+          "match": {
+            "serviceCity.city.name": city.name
+          }
+        }
+      ]
+
+      query.bool.should.push(...cityFilter)
+      query.bool["minimum_should_match"] = 1
+
       let prod = product //[product[0]]
       prod.forEach(p => {
 
@@ -528,6 +544,22 @@ exports.sellerSearch = async (reqQuery) => {
       })
     }
     if (state && state.name) {
+
+      let stateFilter = [
+        {
+          "match": {
+            "sellerId.location.state.name": state.name
+          }
+        },
+        {
+          "match": {
+            "serviceCity.state.name": state.name
+          }
+        }
+      ]
+
+      query.bool.should.push(...stateFilter)
+      query.bool["minimum_should_match"] = 1
 
       let prod = product //[product[0]]
       prod.forEach(p => {
@@ -679,6 +711,22 @@ exports.sellerSearch = async (reqQuery) => {
 
     }
     if (country && country.name) {
+
+      let countryFilter = [
+        {
+          "match": {
+            "sellerId.location.country.name": country.name
+          }
+        },
+        {
+          "match": {
+            "serviceCity.country.name": country.name
+          }
+        }
+      ]
+
+      query.bool.should.push(...countryFilter)
+      query.bool["minimum_should_match"] = 1
 
       let prod = product //[product[0]]
       prod.forEach(p => {
@@ -983,10 +1031,11 @@ exports.sellerSearch = async (reqQuery) => {
                   "field": "sellerId.name.keyword"
                 }
               }
-            }
+            }           
           }
         }
       }
+      
     } else {
       const categoryMatch = {
         "match": {
@@ -1003,11 +1052,36 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
+          },
+          "result": {
+            "terms": {
+              "field": "sellerId.location.country.name.keyword",
+              "size": 200
+            },
+            "aggs": {
+              "countryCount": {
+                "cardinality": {
+                  "field": "sellerId.name.keyword"
+                }
+              }
+            }           
           }
         }
       }
     }
     query.bool.filter.push(sellerActiveAccount)
+    if(!keyword) {
+      aggs.aggs.result = {
+        ...aggs.aggs.result,
+        "aggs": {
+          "countryCount": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
+        }
+      }
+    }
   }
 
   if (secondaryId) {
@@ -1530,90 +1604,6 @@ exports.sellerSearch = async (reqQuery) => {
       };
       query.bool.must.push(locationMatch);
 
-      const citySorting = [
-
-        /********* onboarded searched city seller exact match ********/
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "exists": {
-                    "field": "userId"
-                  }
-                },
-                {
-                  "exists": {
-                    "field": "sellerId.location.city"
-                  }
-                },
-                {
-                  "match": {
-                    "sellerId.location.city._id": cityId
-                  }
-                }/* ,
-                {
-                  "wildcard": {
-                    "keywords.keyword": `${p}`
-                  }
-                } */
-              ]
-            }
-          },
-          "weight": 10
-        },
-
-        /********* onboard searched city in service city seller exact match ********/
-        {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "exists": {
-                    "field": "userId"
-                  }
-                },
-                {
-                  "match": {
-                    "serviceCity.city._id": cityId
-                  }
-                }
-              ]
-            }
-          },
-          "weight": 20
-        },
-        // {
-        //   "filter": {
-        //     "bool": {
-        //       "must": [
-        //         {
-        //           "match": {
-        //             "sellerId.location.city.name": city.name
-        //           }
-        //         }
-        //       ]
-        //     }
-        //   },
-        //   "weight": 25
-        // },
-        // {
-        //   "filter": {
-        //     "bool": {
-        //       "must": [
-        //         {
-        //           "match": {
-        //             "serviceCity.city.name": city.name
-        //           }
-        //         }
-        //       ]
-        //     }
-        //   },
-        //   "weight": 30
-        // }
-      ]
-      function_score.functions.push(...citySorting)
-
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
@@ -2071,7 +2061,36 @@ exports.getCounts = (query) =>
   });
 
 exports.getCountByCountry = (query) => new Promise((resolve, reject) => {
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query)
 
+  // let filtered1 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => {
+  //   return item["match"]["sellerId.location.country.name"] || item["match"]["serviceCity.country.name"]
+  // })
+
+  // let filtered2 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.state.name"] || item["match"]["serviceCity.state.name"])
+
+  // let filtered3 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.city.name"] || item["match"]["serviceCity.city.name"])
+
+  // if (filtered1.length) {
+
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.country.name"]), 1)
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.country.name"]), 1)
+
+  // } else if (filtered2.length) {
+
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.state.name"]), 1)
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.state.name"]), 1)
+
+  // } else if (filtered3.length) {
+
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+
+  // }
+
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.should)
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.must)
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2041 ~ exports.getCountByCountry= ~ filtered", filtered1, filtered2, filtered3)
   let aggs = {
     "collapse": {
       "field": "sellerId.name.keyword"
@@ -2102,7 +2121,7 @@ exports.getCountByCountry = (query) => new Promise((resolve, reject) => {
     from: 0,
     query,
     ...aggs,
-    
+
   };
 
   const searchQuery = {
@@ -2118,7 +2137,7 @@ exports.getCountByCountry = (query) => new Promise((resolve, reject) => {
         results.aggregations
       ]);
     })
-    .catch(error => 
+    .catch(error =>
       console.error(error.message)
     )
 })
