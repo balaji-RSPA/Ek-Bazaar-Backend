@@ -1476,24 +1476,47 @@ module.exports.getSellerProduct = (query) =>
       .populate("sellerId")
       .populate({
         path: "sellerId",
-        populate: "location.city location.state busenessId statutoryId sellerCompanyId sellerContactId sellerType"
+        populate: {
+          path: "sellerContactId",
+          populate: "location.city location.state location.country"
+        }
+      })
+      .populate({
+        path: "sellerId",
+        populate: {
+          path: "busenessId"
+        }
+      })
+      .populate({
+        path: "sellerId",
+        populate: {
+          path: "statutoryId"
+        }
+      })
+      .populate({
+        path: "sellerId",
+        populate: {
+          path: "sellerCompanyId"
+        }
+      })
+      .populate({
+        path: "sellerId",
+        populate: {
+          path: "sellerType"
+        }
+      })
+      .populate({
+        path: "sellerId",
+        populate: { path: "location.city" }
+      })
+      .populate({
+        path: "sellerId",
+        populate: { path: "location.state" }
       })
       .populate("serviceType")
       .populate("parentCategoryId")
       .populate("primaryCategoryId")
       .populate("secondaryCategoryId")
-      // .populate({
-      //   path: "sellerId",
-      //   // model: "sellers",
-      //   populate: {
-      //     path: "sellerContactId",
-      //     // model: SellersContact,
-      //     populate: "location.city location.state",
-      //     // populate: {
-      //     //   path: "location.city location.state"
-      //     // }
-      //   }
-      // })
       .populate("poductId")
       .populate("productSubcategoryId")
       // .populate({
