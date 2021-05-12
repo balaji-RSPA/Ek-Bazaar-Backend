@@ -603,7 +603,7 @@ module.exports.updateSellerProduct = async (req, res) => {
     } = req
     let { offers, productId, deleteOffer } = body
     offers = offers ? JSON.parse(offers) : null
-    console.log('update poroduct---', productId, deleteOffer)
+    console.log('update poroduct---', productId, deleteOffer, offers)
 
     let updateDetail
 
@@ -614,14 +614,14 @@ module.exports.updateSellerProduct = async (req, res) => {
       // d2.setMinutes(d2.getMinutes() + 480);
       // console.log((offers.validity.toDate).toISOString(), ' 1111111111111111111111')
       const offerData = {
-        // offers: offers,
-        offers: {
-          ...offers,
-          validity: {
-            fromDate: new Date(`${offers.validity.fromDate} EST`),
-            toDate: new Date(`${offers.validity.toDate} EST`)
-          }
-        }
+        offers: offers,
+        // offers: {
+        //   ...offers,
+        //   validity: {
+        //     fromDate: new Date(`${offers.validity.fromDate} EST`),
+        //     toDate: new Date(`${offers.validity.toDate} EST`)
+        //   }
+        // }
       }
       // [new Date(), subDays(new Date(), 1)]
       updateDetail = await addProductDetails(productId, offerData)
