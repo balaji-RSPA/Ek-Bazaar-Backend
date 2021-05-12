@@ -1289,6 +1289,7 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-10T11:53:44.245Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-10T12:00:56.117Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-10T12:09:17.576Z"}
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-10T13:45:08.846Z"}
 >>>>>>> noor
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-10T13:46:01.981Z"}
@@ -1372,3 +1373,6 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-11T07:05:36.875Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-11T07:13:20.118Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-05-12T06:15:34.796Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2021-05-12T06:15:01.968Z"}
+>>>>>>> noor
