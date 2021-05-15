@@ -15,6 +15,18 @@ if (process.env.NODE_ENV === "production") {
       replicaName: "rs1",
       server_port: "8070",
     },
+    // tradeDb: {
+    //   // replicaset
+    //   host1: "143.110.184.87",
+    //   host2: "139.59.6.17",
+    //   host3: "128.199.22.189",
+    //   port: "5006",
+    //   // user: "root",
+    //   // password: "Gill7OfDyogh",
+    //   database: "tradedb",
+    //   replicaName: "rs1",
+    //   server_port: "8070",
+    // },
     // tradedb: {
     //   host: "tradedbtemp.tech-active.com",
     //   // host: "tradedb.ekbazaar.com",

@@ -150,7 +150,7 @@ exports.bulkStoreInElastic = (foundDoc) =>
 
 exports.sellerSearch = async (reqQuery) => {
 
-  const { offerSearch, cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId } = reqQuery
+  const { offerSearch, cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId, country } = reqQuery
   console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
   let catId = ''
   let query = {
@@ -171,6 +171,28 @@ exports.sellerSearch = async (reqQuery) => {
       }
     },
     functions: []
+  }
+
+  if (country) {
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 177 ~ exports.sellerSearch= ~ country", country)
+    if (Array.isArray(country)) {
+      country.forEach(cntry => {
+        let countryFilter = {
+          "match": {
+            "sellerId.location.country.name.keyword": cntry
+          }
+        }
+        query.bool.should.push(countryFilter)
+      })
+      query.bool["minimum_should_match"] = 1
+    } else {
+      let countryFilter = {
+        "match": {
+          "sellerId.location.country.name.keyword": country
+        }
+      }
+      query.bool.must.push(countryFilter)
+    }
   }
 
   const sellerActiveAccount = {
@@ -299,41 +321,6 @@ exports.sellerSearch = async (reqQuery) => {
 
           query.bool.must.push(searchKey)
 
-          // /** level 5 **/
-          // query.bool.should.push({
-          //   "match_phrase": {
-          //     "productSubcategoryId.name": p
-          //   }
-          // })
-
-          // /** level 4 **/
-          // productMatch.push({
-          //   "match_phrase": {
-          //     "poductId.name": p
-          //   }
-          // })
-
-          // /** level 3 **/
-          // productMatch.push({
-          //   "match_phrase": {
-          //     "secondaryCategoryId.name": p
-          //   }
-          // })
-
-          // /** level 2 **/
-          // productMatch.push({
-          //   "match_phrase": {
-          //     "primaryCategoryId.name": p
-          //   }
-          // })
-
-          // /** level 1 **/
-          // productMatch.push({
-          //   "match_phrase": {
-          //     "parentCategoryId.name": p
-          //   }
-          // })
-
         })
 
         aggs = {
@@ -344,6 +331,19 @@ exports.sellerSearch = async (reqQuery) => {
             "products": {
               "cardinality": {
                 "field": "sellerId.name.keyword"
+              }
+            },
+            "result": {
+              "terms": {
+                "field": "sellerId.location.country.name.keyword",
+                "size": 200
+              },
+              "aggs": {
+                "countryCount": {
+                  "cardinality": {
+                    "field": "sellerId.name.keyword"
+                  }
+                }
               }
             }
           }
@@ -378,6 +378,22 @@ exports.sellerSearch = async (reqQuery) => {
       query.bool.filter.push(sellerActiveAccount)
     }
     if (city && city.name) {
+
+      let cityFilter = [
+        {
+          "match": {
+            "sellerId.location.city.name": city.name
+          }
+        },
+        {
+          "match": {
+            "serviceCity.city.name": city.name
+          }
+        }
+      ]
+
+      query.bool.should.push(...cityFilter)
+      query.bool["minimum_should_match"] = 1
 
       let prod = product //[product[0]]
       prod.forEach(p => {
@@ -529,6 +545,22 @@ exports.sellerSearch = async (reqQuery) => {
     }
     if (state && state.name) {
 
+      let stateFilter = [
+        {
+          "match": {
+            "sellerId.location.state.name": state.name
+          }
+        },
+        {
+          "match": {
+            "serviceCity.state.name": state.name
+          }
+        }
+      ]
+
+      query.bool.should.push(...stateFilter)
+      query.bool["minimum_should_match"] = 1
+
       let prod = product //[product[0]]
       prod.forEach(p => {
 
@@ -679,6 +711,22 @@ exports.sellerSearch = async (reqQuery) => {
 
     }
     if (country && country.name) {
+
+      let countryFilter = [
+        {
+          "match": {
+            "sellerId.location.country.name": country.name
+          }
+        },
+        {
+          "match": {
+            "serviceCity.country.name": country.name
+          }
+        }
+      ]
+
+      query.bool.should.push(...countryFilter)
+      query.bool["minimum_should_match"] = 1
 
       let prod = product //[product[0]]
       prod.forEach(p => {
@@ -838,15 +886,6 @@ exports.sellerSearch = async (reqQuery) => {
       }
     }
     query.bool.must.push(seller)
-    // aggs = {
-    //   "aggs": {
-    //     "products": {
-    //       "cardinality": {
-    //         "field": "name.keyword"
-    //       }
-    //     }
-    //   }
-    // }
   }
 
   if (search) {
@@ -890,6 +929,19 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
+        },
+        "result": {
+          "terms": {
+            "field": "sellerId.location.country.name.keyword",
+            "size": 200
+          },
+          "aggs": {
+            "countryCount": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
+          }
         }
       }
     }
@@ -928,6 +980,19 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
+        },
+        "result": {
+          "terms": {
+            "field": "sellerId.location.country.name.keyword",
+            "size": 200
+          },
+          "aggs": {
+            "countryCount": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
+          }
         }
       }
     }
@@ -954,9 +1019,23 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
+          },
+          "result": {
+            "terms": {
+              "field": "sellerId.location.country.name.keyword",
+              "size": 200
+            },
+            "aggs": {
+              "countryCount": {
+                "cardinality": {
+                  "field": "sellerId.name.keyword"
+                }
+              }
+            }           
           }
         }
       }
+      
     } else {
       const categoryMatch = {
         "match": {
@@ -973,11 +1052,36 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
+          },
+          "result": {
+            "terms": {
+              "field": "sellerId.location.country.name.keyword",
+              "size": 200
+            },
+            "aggs": {
+              "countryCount": {
+                "cardinality": {
+                  "field": "sellerId.name.keyword"
+                }
+              }
+            }           
           }
         }
       }
     }
     query.bool.filter.push(sellerActiveAccount)
+    if(!keyword) {
+      aggs.aggs.result = {
+        ...aggs.aggs.result,
+        "aggs": {
+          "countryCount": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
+        }
+      }
+    }
   }
 
   if (secondaryId) {
@@ -1009,6 +1113,19 @@ exports.sellerSearch = async (reqQuery) => {
         "products": {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
+          }
+        },
+        "result": {
+          "terms": {
+            "field": "sellerId.location.country.name.keyword",
+            "size": 200
+          },
+          "aggs": {
+            "countryCount": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
           }
         }
       }
@@ -1045,6 +1162,19 @@ exports.sellerSearch = async (reqQuery) => {
         "products": {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
+          }
+        },
+        "result": {
+          "terms": {
+            "field": "sellerId.location.country.name.keyword",
+            "size": 200
+          },
+          "aggs": {
+            "countryCount": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
           }
         }
       }
@@ -1083,12 +1213,25 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
+        },
+        "result": {
+          "terms": {
+            "field": "sellerId.location.country.name.keyword",
+            "size": 200
+          },
+          "aggs": {
+            "countryCount": {
+              "cardinality": {
+                "field": "sellerId.name.keyword"
+              }
+            }
+          }
         }
       }
     }
   }
 
-  if(level5Id || productId || secondaryId || primaryId || parentId) {
+  if (level5Id || productId || secondaryId || primaryId || parentId) {
     const sorting = [
       /********* onboarded india seller exact match ********/
       {
@@ -1436,6 +1579,19 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
+          },
+          "result": {
+            "terms": {
+              "field": "sellerId.location.country.name.keyword",
+              "size": 200
+            },
+            "aggs": {
+              "countryCount": {
+                "cardinality": {
+                  "field": "sellerId.name.keyword"
+                }
+              }
+            }
           }
         }
       }
@@ -1447,6 +1603,7 @@ exports.sellerSearch = async (reqQuery) => {
         },
       };
       query.bool.must.push(locationMatch);
+
       aggs = {
         "collapse": {
           "field": "sellerId.name.keyword"
@@ -1455,6 +1612,19 @@ exports.sellerSearch = async (reqQuery) => {
           "products": {
             "cardinality": {
               "field": "sellerId.name.keyword"
+            }
+          },
+          "result": {
+            "terms": {
+              "field": "sellerId.location.country.name.keyword",
+              "size": 200
+            },
+            "aggs": {
+              "countryCount": {
+                "cardinality": {
+                  "field": "sellerId.name.keyword"
+                }
+              }
             }
           }
         }
@@ -1473,15 +1643,12 @@ exports.sellerSearch = async (reqQuery) => {
 
   }
 
-  console.log("🚀 ~ file: elasticSearchModule.js ~ line 712 ~ exports.sellerSearch= ~ function_score", function_score)
   function_score.query = query
   if (searchProductsBy && ((searchProductsBy.city && searchProductsBy.city.name) || (searchProductsBy.state && searchProductsBy.state.name) || (searchProductsBy.country && searchProductsBy.country.name))) {
   } else if (searchProductsBy && searchProductsBy.product && searchProductsBy.product.length) {
     let i = 10
 
-    console.log("🚀 ~ file: elasticSearchModule.js ~ line 887 ~ exports.sellerSearch= ~ searchProductsBy ajjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", searchProductsBy)
     searchProductsBy.product.forEach(p => {
-      console.log("🚀 ~ file: elasticSearchModule.js ~ line 888 ~ exports.sellerSearch= ~ p", p)
 
       const sorting = [
         /********* onboarded india seller exact match ********/
@@ -1810,130 +1977,8 @@ exports.sellerSearch = async (reqQuery) => {
       console.log("🚀 ~ file: elasticSearchModule.js ~ line 1210 ~ exports.sellerSearch= ~  function_score.functions", function_score.functions)
 
     })
-  } /* else {
-    console.log("aya else me???????????????????????????????????????????????????????????????")
-    const sorting = [
-      {
-        "filter": {
-          "bool": {
-            "must": [
-              {
-                "exists": {
-                  "field": "userId"
-                }
-              },
-              {
-                "exists": {
-                  "field": "sellerId.location.country"
-                }
-              },
-              {
-                "match": {
-                  "sellerId.location.country.name": "india"
-                }
-              },
-              {
-                "wildcard": {
-                  "keywords.keyword": ``
-                }
-              }
-            ]
-          }
-        },
-        "weight": 10
-      },
-      {
-        "filter": {
-          "bool": {
-            "must": [
-              {
-                "exists": {
-                  "field": "userId"
-                }
-              },
-              {
-                "exists": {
-                  "field": "sellerId.location.country"
-                }
-              }
-            ],
-            "must_not": [
-              {
-                "match": {
-                  "sellerId.location.country.name": "india"
-                }
-              }
-            ]
-          }
-        },
-        "weight": 15
-      },
-      {
-        "filter": {
-          "bool": {
-            "must": [
-              {
-                "exists": {
-                  "field": "userId"
-                }
-              }
-            ],
-            "must_not": [
-              {
-                "exists": {
-                  "field": "sellerId.location.country"
-                }
-              }
-            ]
-          }
-        },
-        "weight": 20
-      },
-      {
-        "filter": {
-          "bool": {
-            "must": [
-              {
-                "match": {
-                  "sellerId.location.country.name": "india"
-                }
-              }
-            ]
-          }
-        },
-        "weight": 25
-      },
-      {
-        "filter": {
-          "bool": {
-            "must_not": [
-              {
-                "match": {
-                  "sellerId.location.country.name": "india"
-                }
-              }
-            ]
-          }
-        },
-        "weight": 30
-      },
-      {
-        "filter": {
-          "bool": {
-            "must_not": [
-              {
-                "exists": {
-                  "field": "sellerId.location.country"
-                }
-              }
-            ]
-          }
-        },
-        "weight": 35
-      }
-    ]
-    function_score.functions.push(...sorting)
-  } */
+  }
+
   query = {
     function_score
   }
@@ -2014,6 +2059,88 @@ exports.getCounts = (query) =>
       .then(resolve)
       .catch(reject);
   });
+
+exports.getCountByCountry = (query) => new Promise((resolve, reject) => {
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query)
+
+  // let filtered1 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => {
+  //   return item["match"]["sellerId.location.country.name"] || item["match"]["serviceCity.country.name"]
+  // })
+
+  // let filtered2 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.state.name"] || item["match"]["serviceCity.state.name"])
+
+  // let filtered3 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.city.name"] || item["match"]["serviceCity.city.name"])
+
+  // if (filtered1.length) {
+
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.country.name"]), 1)
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.country.name"]), 1)
+
+  // } else if (filtered2.length) {
+
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.state.name"]), 1)
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.state.name"]), 1)
+
+  // } else if (filtered3.length) {
+
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+
+  // }
+
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.should)
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.must)
+  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2041 ~ exports.getCountByCountry= ~ filtered", filtered1, filtered2, filtered3)
+  let aggs = {
+    "collapse": {
+      "field": "sellerId.name.keyword"
+    },
+    "aggs": {
+      "products": {
+        "cardinality": {
+          "field": "sellerId.name.keyword"
+        }
+      },
+      "result": {
+        "terms": {
+          "field": "sellerId.location.country.name.keyword",
+          "size": 200
+        },
+        "aggs": {
+          "countryCount": {
+            "cardinality": {
+              "field": "sellerId.name.keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+  const body = {
+    size: 500,
+    from: 0,
+    query,
+    ...aggs,
+
+  };
+
+  const searchQuery = {
+    index: INDEXNAME,
+    body,
+  };
+
+  esClient
+    .search(searchQuery)
+    .then(async (results) => {
+      resolve([
+        // results.hits.hits,
+        results.aggregations
+      ]);
+    })
+    .catch(error =>
+      console.error(error.message)
+    )
+})
 
 /*
 
@@ -2118,7 +2245,7 @@ exports.getAllCountriesElastic = query => new Promise((resolve, reject) => {
   const body = {
     query
   }
-    console.log("🚀 ~ file: elasticSearchModule.js ~ line 1794 ~ exports.getAllCountriesElastic=query=>newPromise ~ query", query)
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 1794 ~ exports.getAllCountriesElastic=query=>newPromise ~ query", query)
   const searchQuery = {
     index: process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries",
     body,
