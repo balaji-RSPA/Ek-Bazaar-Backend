@@ -1474,26 +1474,27 @@ module.exports.getSellerProduct = (query) =>
         path: 'productDetails.sellingCountries',
       })
       .populate("sellerId")
-      .populate({
-        path: "sellerId",
-        populate: "location.city location.state busenessId statutoryId sellerCompanyId sellerContactId sellerType"
-      })
+      // .populate({
+      //   path: "sellerId",
+      //   // populate: "location.city location.state busenessId statutoryId sellerCompanyId sellerContactId sellerType"
+      //   populate: "location.city location.state"
+      // })
       .populate("serviceType")
       .populate("parentCategoryId")
       .populate("primaryCategoryId")
       .populate("secondaryCategoryId")
-      // .populate({
-      //   path: "sellerId",
-      //   // model: "sellers",
-      //   populate: {
-      //     path: "sellerContactId",
-      //     // model: SellersContact,
-      //     populate: "location.city location.state",
-      //     // populate: {
-      //     //   path: "location.city location.state"
-      //     // }
-      //   }
-      // })
+      .populate({
+        path: "sellerId",
+        // model: "sellers",
+        populate: {
+          path: "sellerContactId busenessId statutoryId sellerCompanyId sellerType location.city location.state",
+          // model: SellersContact,
+          populate: "location.city location.state location.country",
+          // populate: {
+          //   path: "location.city location.state"
+          // }
+        }
+      })
       .populate("poductId")
       .populate("productSubcategoryId")
       // .populate({

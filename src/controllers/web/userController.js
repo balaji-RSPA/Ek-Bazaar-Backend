@@ -667,7 +667,7 @@ module.exports.updateUser = async (req, res) => {
 
       buyer = await getBuyer(null, { _id: buyer._id })
       seller = await getSeller(null, null, { _id: _seller._id })
-      console.log("🚀 ~ file: userController.js ~ line 664 ~ module.exports.updateUser= ~ seller", seller)
+      console.log("🚀 ~ file: userController.js ~ line 664 ~ module.exports.updateUser= ~ seller", seller, seller.name)
       // let keywords = []
       // keywords.push(seller.name.toLowerCase())
       // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
@@ -690,7 +690,7 @@ module.exports.updateUser = async (req, res) => {
             default: null
           },
           country: seller.location.country,
-          businessName: seller.busenessId.name,
+          businessName: seller.busenessId && seller.busenessId.name,
           userId: {
             name: seller.name,
             _id: seller.userId
@@ -725,6 +725,7 @@ module.exports.updateUser = async (req, res) => {
       respError(res, "Failed to update");
     }
   } catch (error) {
+    console.log(error, ' gggggggg -------------')
     respError(res, error.message);
   }
 };
