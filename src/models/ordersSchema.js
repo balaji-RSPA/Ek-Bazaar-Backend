@@ -93,6 +93,10 @@ const orderSchema = new Schema({
         type: String,
         default: null
     },
+    country: {
+        type: String,
+        default: null
+    },
     sellerDetails: {
         type: Object /* sellerDetailsSchema */ ,
         default: null
@@ -121,6 +125,14 @@ const orderSchema = new Schema({
         default: null
     },
     gstAmount: {
+        type: Number,
+        default: null
+    },
+    cgstAmount: {
+        type: Number,
+        default: null
+    },
+    sgstAmount: {
         type: Number,
         default: null
     },
