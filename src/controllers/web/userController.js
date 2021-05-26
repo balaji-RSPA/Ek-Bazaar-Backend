@@ -667,7 +667,7 @@ module.exports.updateUser = async (req, res) => {
 
       buyer = await getBuyer(null, { _id: buyer._id })
       seller = await getSeller(null, null, { _id: _seller._id })
-      console.log("🚀 ~ file: userController.js ~ line 664 ~ module.exports.updateUser= ~ seller", seller, seller.name)
+      console.log("🚀 ~ file: userController.js ~ line 664 ~ module.exports.updateUser= ~ seller", seller)
       // let keywords = []
       // keywords.push(seller.name.toLowerCase())
       // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
