@@ -66,7 +66,7 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
             // currency: orderDetails && orderDetails.currency || '',
             currency: orderDetails && orderDetails.currency === 'INR' ? "₹" : '$' || '',
-            currencyInWords: toWords.convert(orderDetails && orderDetails.total, { currency: true }),
+            currencyInWords: toWords.convert(orderDetails && orderDetails.total/* , { currency: true } */),
             country: orderDetails && orderDetails.country || '',
             currencyFlag: orderDetails && orderDetails.currency === 'INR' ? true : ''
 
