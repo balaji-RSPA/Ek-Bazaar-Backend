@@ -275,6 +275,7 @@ module.exports.updateSeller = async (req, res) => {
     }
     respSuccess(res, seller, 'Profile updated successfully')
   } catch (error) {
+    console.log(error, ' ggggggg ---------------')
     respError(res, error.message)
   }
 }
