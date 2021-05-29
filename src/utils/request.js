@@ -3,9 +3,9 @@ const { _IS_PROD_, _IS_DEV_, authServiceURL } = require("./utils").globalVaraibl
 const { serviceURL } = authServiceURL()
 
 const baseURL = _IS_PROD_ ? 'https://auth.ekbazaar.com/simplesso/' :
-  _IS_DEV_ ? 'https://auth.tech-active.com/simplesso/' :
+  // _IS_DEV_ ? 'https://auth.tech-active.com/simplesso/' :
     'http://localhost:3010/simplesso/'
-
+console.log(baseURL, ' 111111111111111111')
 axios.defaults.withCredentials = true;
 const request = axios.create({
   withCredentials: true,

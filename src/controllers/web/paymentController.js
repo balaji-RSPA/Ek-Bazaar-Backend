@@ -258,7 +258,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
 
                         const sellerDetails = {
                             name: orderDetails.name,
-                            email: seller.email,
+                            email: orderDetails.email || seller.email,
                             sellerType: seller.sellerType,
                             groupId: planDetails.groupType,
                             location: seller.location,
@@ -407,7 +407,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         } else {
                             console.log("================sms not send===========")
                         }
-                        if (seller && seller.email && planTo && planFrom && checkPaidSeller) {
+                        if (orderDetails && orderDetails.email/* seller && seller.email */ && planTo && planFrom && checkPaidSeller) {
                             let planChangedEmailMsg = planChangedEmail({
                                 oldPlanType,
                                 newPlanType: _p_details.planType,
@@ -416,7 +416,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             })
                             const message = {
                                 from: MailgunKeys.senderMail,
-                                to: seller.email,
+                                to: orderDetails && orderDetails.email || seller.email,
                                 subject: 'Plan changed',
                                 html: commonTemplate(planChangedEmailMsg),
                             }
@@ -424,7 +424,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         } else {
                             console.log("==============Plan Changed Email Not Send====================")
                         }
-                        if (seller && seller.email) {
+                        if (orderDetails && orderDetails.email) {
                             let invoiceEmailMsg = invoiceContent({
                                 plan: _p_details.planType,
                                 till: _p_details.exprireDate,
@@ -434,7 +434,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             });
                             const message = {
                                 from: MailgunKeys.senderMail,
-                                to: seller.email,
+                                to: orderDetails.email || seller.email,
                                 subject: 'Ekbazaar Subscription activated successfully',
                                 html: commonTemplate(invoiceEmailMsg),
                                 attachment: invoice.attachement
@@ -443,7 +443,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 //     path: invoice.Location
                                 // }]
                             }
-                        /* await */ sendSingleMail(message)
+                            /* await */ sendSingleMail(message)
                         } else {
                             console.log("==============Invoice Not Send====================")
                         }
