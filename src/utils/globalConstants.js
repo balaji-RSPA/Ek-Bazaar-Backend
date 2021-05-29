@@ -59,9 +59,13 @@ exports.accessModules = Object.values(this.moduleTypes);
 
 exports.razorPayCredentials = NODE_ENV === 'production' ?
   {
-    // Live
-    key_id: 'rzp_live_CTVuq0QYf0mDPH',
-    key_secret: 'KOY2qN10NCtcbgZmtpq87wOW',
+    // Live subramany
+    // key_id: 'rzp_live_CTVuq0QYf0mDPH',
+    // key_secret: 'KOY2qN10NCtcbgZmtpq87wOW',
+
+    // tech active
+    key_id: 'rzp_live_XD55IMcWecgyGW',
+    key_secret: 'ZjFLNOH3YsDhhoH9Nf676kDn',
   } : {
     // orbit
     // key_id: 'rzp_test_jCeoTVbZGMSzfn',
@@ -71,9 +75,13 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
     // key_id: 'rzp_test_PYGivNOLb4gHKa',
     // key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
 
-    // test
-    key_id: 'rzp_test_UZ9n6fsg5YF5wE',
-    key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
+    // test subramanya
+    // key_id: 'rzp_test_UZ9n6fsg5YF5wE',
+    // key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
+
+    //tech active
+    key_id: 'rzp_test_7xMhKwGh9PRlRA',
+    key_secret: 'e2bNdsdat2NeW73aYEICwjvc'
   }
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
