@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const { genJwtToken } = require("./jwt_helper");
 const { machineIdSync } = require("node-machine-id");
 const { UserModel } = require("../config/db");
-const { globalVaraibles, respError, respSuccess } = require("../utils/helper");
+const { globalVaraibles, respError, respSuccess, respAuthFailed } = require("../utils/helper");
 const { trade, tender, investment } = globalVaraibles.baseURL();
 const { _trade, _tender, _investment } = globalVaraibles.authServiceURL();
 
@@ -61,6 +61,9 @@ const appTokenDB = {
 };
 
 const alloweOrigin = {
+  "http://localhost:8081": true,
+  "https://www.onebazaar.com": true,
+
   "http://localhost:8060": true,
   "http://localhost:8080": true,
   "https://elastic.tech-active.com:8443": true,
@@ -92,6 +95,9 @@ const sessionUser = {};
 const sessionApp = {};
 
 const originAppName = {
+  "http://localhost:8081": "onebazaar",
+  "https://www.onebazaar.com": "onebazaar",
+
   "http://localhost:8060": "tenders_sso_consumer",
   "http://localhost:8080": "tenders_sso_consumer",
   "https://elastic.tech-active.com:8443": "tenders_sso_consumer",
@@ -148,18 +154,10 @@ const storeApplicationInCache = (origin, id, intrmToken) => {
 
 const generatePayload = (ssoToken) => {
   const deviceId = machineIdSync();
-  console.log("🚀 ~ file: index.js ~ line 136 ~ ssoToken", ssoToken);
-  console.log(
-    "🚀 ~ file: index.js ~ line 138 ~ intrmTokenCache",
-    intrmTokenCache
-  );
+
   const globalSessionToken = intrmTokenCache[ssoToken][0];
   const appName = intrmTokenCache[ssoToken][1];
-  console.log("🚀 ~ file: index.js ~ line 141 ~ appName", appName);
-  console.log("🚀 ~ file: index.js ~ line 143 ~ sessionUser", sessionUser);
   const userEmail = sessionUser[globalSessionToken];
-  console.log("🚀 ~ file: index.js ~ line 147 ~ generatePayload ~ userEmail", userEmail)
-  console.log("🚀 ~ file: index.js ~ line 145 ~ userDB", userDB);
   const user = userDB[userEmail];
   console.log("🚀 ~ file: index.js ~ line 150 ~ generatePayload ~ user", user)
   const appPolicy = user.appPolicy[appName];
@@ -180,10 +178,6 @@ const generatePayload = (ssoToken) => {
 };
 
 const verifySsoToken = async (req, res, next) => {
-  console.log(
-    "🚀 ~ file: index.js ~ line 163 ~ verifySsoToken ~ req",
-    req.query
-  );
   const appToken = appTokenFromRequest(req);
   const { ssoToken } = req.query;
   // if the application token is not present or ssoToken request is invalid
@@ -209,10 +203,6 @@ const verifySsoToken = async (req, res, next) => {
   }
   // checking if the token passed has been generated
   const payload = generatePayload(ssoToken);
-  console.log(
-    "🚀 ~ file: index.js ~ line 196 ~ verifySsoToken ~ payload",
-    payload
-  );
 
   const token = await genJwtToken(payload);
   // delete the itremCache key for no futher use,
@@ -229,7 +219,6 @@ const register = async (req, res, next) => {
     countryCode,
     origin,
   } = req.body;
-  console.log("🚀 ~ file: index.js ~ line 195 ~ register ~ req.body", req.body);
   req.body.password = encodePassword(password);
   const tenderUser = {
     countryCode: mobile.countryCode || countryCode,
@@ -285,8 +274,6 @@ const register = async (req, res, next) => {
       },
     },
   };
-
-  // console.log("🚀 ~ file: index.js ~ line 235 ~ register ~ url", url);
   const { serviceURL } = req.query;
   const id = encodedId();
   req.session.user = id;
@@ -355,6 +342,9 @@ const doLogin = async (req, res, next) => {
 
   if (!user) {
     return respError(res, "User not found");
+  }
+  if (user && userType && userType === "seller" && !user.password) {
+    respAuthFailed(res, undefined, "user not found")
   }
   // console.log("🚀 ~ file: index.js ~ line 319 ~ doLogin ~ user", user)
 
@@ -476,11 +466,6 @@ const login = async (req, res, next) => {
   }
 
   const { serviceURL } = req.query;
-  console.log("🚀 ~ file: index.js ~ line 428 ~ login ~ serviceURL", serviceURL)
-  console.log(
-    "🚀 ~ file: index.js ~ line 292 ~ login ~ req.session.user",
-    req.session
-  );
 
   // direct access will give the error inside new URL.
   const intrmid = encodedId();
@@ -506,10 +491,11 @@ const login = async (req, res, next) => {
     return respSuccess(res, {
       user: req.session.user,
       token: req.session.token,
+      langCode: req.session.featuredLanguage
     });
     // return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` })
   }
-  respError(res, "User is not logged in");
+  respError(res, {message: "User is not logged in", langCode: req.session.featuredLanguage});
   // next()
 };
 
@@ -637,7 +623,27 @@ const postRFP = async (req, res, next) => {
   }
 };
 
+const setUserLanguage = async (req, res, next) => {
+  const { langCode } = req.body
+  const id = encodedId();
+  req.session.user = id;
+  sessionUser[id] = "onebazaar";
+  const _url = new URL(globalVaraibles.url);
+
+  const intrmid = encodedId();
+  storeApplicationInCache(_url.origin, id, intrmid);
+  req.session.featuredLanguage = langCode
+  console.log("🚀 ~ file: index 2.js ~ line 640 ~ setUserLanguage ~ req.session.featuredLanguage", req.session.featuredLanguage)
+
+  return respSuccess(res, { langCode })
+}
+
+const getUserLanguage = async (req, res, next) => {
+  console.log("🚀 ~ file: index 2.js ~ line 646 ~ getUserLanguage ~ req.session.featuredLanguage", req.session.featuredLanguage)
+  return respSuccess(res, { langCode: req.session.featuredLanguage })
+}
+
 module.exports = Object.assign(
   {},
-  { doLogin, login, verifySsoToken, logout, register, baseURL, postRFP }
+  { doLogin, login, verifySsoToken, logout, register, baseURL, postRFP, setUserLanguage, getUserLanguage }
 );

@@ -94,6 +94,7 @@ exports.globalVaraibles = {
     ssoLogoutUrl: "logout",
     ssoRegisterUrl: "register",
     ssoServerJWTURL: "verifytoken",
+    url: "https://www.onebazaar.com",
     baseURL: function () {
         if (this._IS_PROD_) {
             return {

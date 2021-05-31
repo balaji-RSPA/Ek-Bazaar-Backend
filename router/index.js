@@ -23,8 +23,14 @@ router
 router
   .route("/logged")
   .get(controller.login);
-  router
+router
   .route("/user/rfp")
-  .post(controller.postRFP)
+  .post(controller.postRFP);
+router
+.route("/setUserLang")
+.post(controller.setUserLanguage)
+router
+.route("/getUserLang")
+.get(controller.getUserLanguage)
 
 module.exports = router;

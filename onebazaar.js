@@ -17,6 +17,8 @@ app.use(cors({
   origin: [
     "https://www.onebazaar.com",
     "https://www.trade.onebazaar.com", "https://tradeapi.onebazaar.com/",
+    "https://www.tenders.onebazaar.com", "https://api.onebazaar.com/",
+    "https://www.investment.onebazaar.com", "https://investmentapi.onebazaar.com/",
     "https://tradeapi.ekbazaar.com", "https://tradebazaarapi.tech-active.com", "http://localhost:8070", 
     "http://localhost:8085", "https://tradebazaar.tech-active.com", "https://www.trade.ekbazaar.com",
     "http://localhost:8080", "https://ekbazaar.tech-active.com", "https://www.tenders.ekbazaar.com",
@@ -33,7 +35,7 @@ app.set("trust proxy", 1);
 const cookieOptions = {
   path: "/",
   expires: 1000 * 60 * 60 * 24 * 15,
-  domain: ".ekbazaar.com",
+  domain: ".onebazaar.com",
   // sameSite: "none",
   httpOnly: true,
   // secure: true,
