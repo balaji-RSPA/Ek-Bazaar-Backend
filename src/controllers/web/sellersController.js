@@ -609,21 +609,20 @@ module.exports.updateSellerProduct = async (req, res) => {
     let updateDetail
 
     if (offers) {
-      // var d1 = new Date(offers.validity.toDate);
-      // d1.setMinutes(d1.getMinutes() + 480);
-      // var d2 = new Date(offers.validity.fromDate);
-      // d2.setMinutes(d2.getMinutes() + 480);
-      // console.log((offers.validity.toDate).toISOString(), ' 1111111111111111111111')
+      var d1 = new Date(offers.validity.toDate);
+      var d2 = new Date(offers.validity.fromDate);
+      console.log(d1, d2, ' 1111111111111111111111')
       const offerData = {
         // offers: offers,
         offers: {
           ...offers,
           validity: {
-            fromDate: new Date(`${offers.validity.fromDate} EST`),
-            toDate: new Date(`${offers.validity.toDate} EST`)
+            fromDate: new Date(`${offers.validity.fromDate}`),
+            toDate: new Date(`${offers.validity.toDate}`)
           }
         }
       }
+      console.log(offerData,' zzzzzzzzzzzzzzzzzz')
       // [new Date(), subDays(new Date(), 1)]
       updateDetail = await addProductDetails(productId, offerData)
     }
