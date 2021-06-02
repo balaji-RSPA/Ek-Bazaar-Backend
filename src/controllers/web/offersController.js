@@ -84,7 +84,7 @@ module.exports.getAllOffers = async (req, res) => {
                 }
             }
         }
-
+        console.log(JSON.stringify(query), ' ------------------')
         const data = await searchFromElastic(query, { skip: 0, limit: 2000 }, aggs);
         let aggsCount = data[2];
         let arrayObj = []
@@ -136,7 +136,7 @@ module.exports.getAllOffers = async (req, res) => {
         respSuccess(res, { offersCount: arrayObj })
 
     } catch (error) {
-
+        console.log(error, ' elastic error-------------')
         respError(res, error.message)
 
     }
@@ -165,6 +165,14 @@ module.exports.getAllSellerOffers = async (req, res) => {
                     {
                         "exists": {
                             "field": "offers"
+                        }
+                    },
+                    {
+                        "range": {
+                            "offers.validity.toDate": {
+                                // "gte": new Date().toISOString()
+                                "gte": new Date(moment.utc().startOf('day'))
+                            }
                         }
                     }
                 ]
@@ -233,7 +241,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 }
             ]
         }
-
+        console.log(JSON.stringify(query), ' 444444444444444444444')
         const seller = await searchFromElastic(query, { skip: 0, limit: 1000 }, {});
         // console.log("🚀 ~ file: offersController.js ~ line 205 ~ module.exports.getAllSellerOffers= ~ seller", seller)
         let _seller = seller.length && seller[0]

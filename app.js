@@ -78,9 +78,11 @@ app.use(express.static(path.join(__dirname, "public")));
 const server = require("http").Server(app);
 
 app.use(router);
-app.get("/", function (req, res) {
-  console.log("Home page");
-  res.send("It's Ekbazaar Trade beta api server");
+app.get("/", async function (req, res) {
+  // console.log("Home page");
+  // res.send("It's Ekbazaar Trade beta api server");
+  // await getAboutToExpirePlan()
+  await getExpirePlansCron();
 });
 
 app.get("/api/logged", async (req, res, next) => {

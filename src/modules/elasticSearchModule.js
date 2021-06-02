@@ -2041,7 +2041,7 @@ exports.searchFromElastic = (query, range, aggs, sort) =>
         ]);
       })
       .catch(error => //{
-        console.error(error.message)
+        console.error(error)
         //reject(error)
         //}
       )

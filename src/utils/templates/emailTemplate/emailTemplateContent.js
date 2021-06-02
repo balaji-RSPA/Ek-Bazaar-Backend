@@ -5,7 +5,7 @@ const {registrationthanks, otpverification, passwordUpdated, invoice, planExpire
 
 module.exports.emailSuccessfulRegistration = (params) => { //userType
   let message = {
-    title : 'Welcome',
+    title : 'Ekbazaar Trade- Successful Registration',
     image: registrationthanks,
     body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'Thank you for registering.',
     greeting:`Hello ${params.name},`,
@@ -19,7 +19,7 @@ module.exports.emailSuccessfulRegistration = (params) => { //userType
 }
 module.exports.otpVerification = (params) =>{
   let message = {
-    title: 'OTP verification',
+    title: 'Ekbazaar Trade- OTP verification',
     image: otpverification,
     body: `<p>Your one time password is <strong>${params.otp}<strong>.</p><p>Please enter the code and proceed with setting up a new password for your account.</p>`
   }
@@ -27,7 +27,7 @@ module.exports.otpVerification = (params) =>{
 }
 module.exports.passwordUpdate = (params) => {
   let message = {
-    title: 'Password updated',
+    title: 'Ekbazaar Trade- Password Update',
     image: passwordUpdated,
     body: `<p><strong>Hello ${params.name},<strong></p><p>Your password has been changed recently. Please use the updated password to login to your account.</p>`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
@@ -46,7 +46,7 @@ module.exports.contactus = (params) => {
 }
 module.exports.invoiceContent = (params) => {
   let message = {
-    title: 'Invoice',
+    title: 'Ekbazaar Trade- Invoice',
     image: invoice,
     body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. The credit card ending x${params.cardNo} has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
     <p style="text-align: left">Plan       : ${params.plan}</p>
@@ -62,7 +62,7 @@ module.exports.planExpired = (params)=>{
   let message = '';
   if (params.isTrial) {
     message = {
-      title: 'Plan expired',
+      title: 'Ekbazaar Trade- Plan Expired',
       image: planExpired,
       body: `<p>Your free trial plan has expired on ${moment(params.date).format("Do MMMM YYYY")}.</p><p>You can continue using our services by simply completing your subscription.</p>`,
       buttonName: 'SUBSCRIBE',
@@ -70,7 +70,7 @@ module.exports.planExpired = (params)=>{
     }
   }else{
     message = {
-      title: 'Plan expired',
+      title: 'Ekbazaar Trade- Plan Expired',
       image: planExpired,
       body: `<p>Your plan has expired. Please renew your plan</p>`,
       buttonName: 'SUBSCRIBE',
@@ -83,27 +83,27 @@ module.exports.planExpiring = (params)=>{
   let message = ''
   if (params.isTrial && params.dayDiff) {
     message = {
-      title: 'Plan expiring',
+      title: 'Ekbazaar Trade- Plan About To Expire',
       image: planExpiring,
       body: `<p>We hope you’re enjoying your free trial.</p><p>Unfortunately, your free trial period is about to expire in ${params.dayDiff} days and will officially end on ${moment(params.date).format('Do MMMM YYYY')}.</p><p>You can continue using our services by simply subscribing to one of our affordable plans.</p>`,
       buttonName: 'PRICING PLANS',
-      buttonLink: `${params.url}/pricing`
+      buttonLink: `${params.url}`
     }
   } else if (params.dayDiff && params.isTrial===false) {
     message = {
-      title: 'Plan expiring',
+      title: 'Ekbazaar Trade- Plan About To Expire',
       image: planExpiring,
       body: `<p>Your plan is about to expire in ${params.dayDiff} days.Please renew your plan</p>`,
       buttonName: 'PRICING PLANS',
-      buttonLink: `${params.url}/pricing`
+      buttonLink: `${params.url}`
     }
   }else{
     message = {
-      title: 'Plan expiring',
+      title: 'Ekbazaar Trade- Plan About To Expire',
       image: planExpiring,
       body: `<p>Your Plan is Expiring Today! Please Renew to access the benefits of a Subscriber</p>`,
       buttonName: 'PRICING PLANS',
-      buttonLink: `${params.url}/pricing`
+      buttonLink: `${params.url}`
     }
   }
   
@@ -111,7 +111,7 @@ module.exports.planExpiring = (params)=>{
 }
 module.exports.RfpEnquiryReceived = (params) => {
   let message = {
-    title: 'Enquiry received',
+    title: 'Ekbazaar Trade- Product Enquiry',
     image: enquiry,
     body: `<p>You have an enquiry for (${capitalizeFirstLetter(params.productDetails.name.name)}, ${params.productDetails.quantity}${capitalizeFirstLetter(params.productDetails.weight)}) from (${params._loc}) by (${capitalizeFirstLetter(params.name)}) on ${moment().format('Do MMM YYYY')}.</p>`,
     buttonName: 'VIEW BUYER DETAILS',
@@ -122,7 +122,7 @@ module.exports.RfpEnquiryReceived = (params) => {
 }
 module.exports.RfpEnquirySend = ()=>{
   let message = {
-    title: 'Requirement sent',
+    title: 'Ekbazaar Trade- Requirement Sent',
     image: passwordUpdated,
     body: `<p>Thank you for submitting your requirements. The seller shall contact you on your shared contact details.</p>`,
   }
@@ -130,7 +130,7 @@ module.exports.RfpEnquirySend = ()=>{
 }
 module.exports.planChangedEmail = (params) => {
   let message = {
-    title: 'Plan changed',
+    title: 'Ekbazaar Trade- Plan changed',
     image: planChange,
     body: `<p style="text-align: left">Your plan has been changed from ${params.oldPlanType} to ${params.newPlanType}.</p>
     <p style="text-align: left">Valid from : ${moment().format("Do MMM YYYY")}</p>

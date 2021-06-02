@@ -156,6 +156,8 @@ module.exports.createRFP = async (req, res, next) => {
     console.log("🚀 ~ file: buyerController.js ~ line 37 ~ module.exports.createRFP= ~ req.body", req.body)
     // const user = await checkUserExistOrNot({ mobile: mobile.mobile })
     const { NODE_ENV } = process.env
+    const url_ = req.get("origin");
+    console.log("1111111111 ------------- ", url_)
     const siteURL = NODE_ENV === "production" ? "https://www.trade.ebazaar.com" : "https://tradebazaar.tech-active.com"
     const url = siteURL
     // const url = req.get('origin')
@@ -234,7 +236,7 @@ module.exports.createRFP = async (req, res, next) => {
           productDetails,
           name
         })
-        await sendEmailBuyer(email)
+        await sendEmailBuyer(email)   
       }
       if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment == "production") {
 
