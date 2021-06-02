@@ -371,7 +371,7 @@ exports.sendMessage = async (req, res) => {
                     'X-User-Id': chatUserId
                 }
             })
-            if(language)
+            if(language && language !== 'en')
             {
 
                 const resultTranslate = await axios.post(urlTransalte, {
