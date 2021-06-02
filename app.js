@@ -79,10 +79,8 @@ const server = require("http").Server(app);
 
 app.use(router);
 app.get("/", async function (req, res) {
-  // console.log("Home page");
-  // res.send("It's Ekbazaar Trade beta api server");
-  // await getAboutToExpirePlan()
-  await getExpirePlansCron();
+  console.log("Home page");
+  res.send("It's Ekbazaar Trade beta api server");
 });
 
 app.get("/api/logged", async (req, res, next) => {
