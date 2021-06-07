@@ -178,7 +178,7 @@ module.exports.sendOtp = async (req, res) => {
     seller &&
     seller.length &&
     seller[0].email &&
-    seller[0].isEmailVerified === 2;
+    seller[0].isEmailVerified === 2; 
 
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
