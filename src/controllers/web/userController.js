@@ -447,12 +447,13 @@ module.exports.updateUser = async (req, res) => {
       sellerType,
       userType,
     } = req.body;
-
+    
+    console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
     let userData = {
       name: (_buyer && _buyer.name) || name,
       city:
-        (_buyer && _buyer.location && _buyer.location.city) ||
-        location.city ||
+        (_buyer && _buyer.location && _buyer.location.city && _buyer.location.city) ||
+        location && location.city ||
         null,
       email: (_buyer && _buyer.email) || email || null,
     };

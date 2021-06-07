@@ -72,6 +72,11 @@ module.exports.getBuyer = (id, query) =>
         model: "states",
         select: "name"
       })
+      .populate({
+        path: "location.country",
+        model: "countries",
+        select: "name"
+      })
       .then((doc) => {
         resolve(doc);
       })

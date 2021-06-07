@@ -356,7 +356,8 @@ module.exports.deleteSellerProduct = async (req, res) => {
 }
 
 // function masterMapData(val, keywords) {
-const masterMapData = (val, type) => new Promise((resolve, reject) => {
+const masterMapData = (val, type, contactDetails = null) => new Promise((resolve, reject) => {
+  console.log("🚀 ~ xxxxxxxxxxxxxxxxxxxxxxx ----------- xxxxxxxxxxxxxxxx", contactDetails)
   const _Scity = [];
   let serviceProductData;
   if (val.serviceCity && val.serviceCity.length) {
@@ -418,7 +419,8 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
         paidSeller: val.sellerId.paidSeller || false,
         international: val.sellerId.international || false,
         deactivateAccount: val.sellerId.deactivateAccount && val.sellerId.deactivateAccount.status || false,
-        businessName: val.sellerId.busenessId && val.sellerId.busenessId.name || null
+        businessName: val.sellerId.busenessId && val.sellerId.busenessId.name || null,
+        contactDetails: contactDetails,
       } || null,
       userId: val.sellerId && val.sellerId.userId && {
         name: val.sellerId.name || null,
@@ -476,10 +478,37 @@ module.exports.addSellerProduct = async (req, res) => {
   try {
     let result
     let sellerId = req.body && req.body[0] && req.body[0].sellerId
+    let productContact = null;
     // console.log("🚀 ~ file: sellersController.js ~ line 390 ~ module.exports.addSellerProduct= ~ sellerId", req.body)
     if (sellerId) {
       const findSeller = await getSellerProfile(sellerId);
-      // console.log("🚀 ~ file: sellersController.js ~ line 497 ~ module.exports.addSellerProduct= ~ findSeller", findSeller)
+      const contactDetails = findSeller && findSeller.length && findSeller[0].sellerContactId || null
+      console.log("🚀 ~ file: sellersController.js ~ line 497 ~ module.exports.addSellerProduct= ~ findSeller", contactDetails)
+      if (contactDetails) {
+        const { email, alternativNumber, location, website } = contactDetails
+        productContact = {
+          email: email || null,
+          alternativNumber: alternativNumber || null,
+          website: website || null,
+          location: {
+            address: location && location.address || null,
+            pincode: location && location.pincode || null,
+            country: location && location.country && {
+              _id: location.country._id || null,
+              name: location.country.name || null,
+              iso: location.country.iso || null
+            } || null,
+            state: location && location.state && {
+              _id: location.state._id || null,
+              name: location.state.name || null
+            } || null,
+            city: location && location.city && {
+              _id: location.city._id || null,
+              name: location.city.name || null
+            } || null
+          }
+        }
+      }
       const userId = findSeller && findSeller.length && findSeller[0].userId || null
       const serviceType = findSeller && findSeller.length && findSeller[0].sellerType.length && findSeller[0].sellerType[0]._id || null
       let resultVal = []
@@ -512,6 +541,8 @@ module.exports.addSellerProduct = async (req, res) => {
         }
       }
       // const findSeller = await getSellerProfile(sellerId);
+      console.log(resultVal, ' 2222222222222222222222')
+
       result = await addSellerProduct(resultVal)
       const que = {
         _id: { $in: result }
@@ -527,7 +558,7 @@ module.exports.addSellerProduct = async (req, res) => {
           const val = proDetails[index];
 
           const priority = await mapPriority(findSeller && findSeller.length && findSeller[0].planId || "")
-          const formateData = await masterMapData(val, 'insert')
+          const formateData = await masterMapData(val, 'insert', productContact)
           const updatePro = await updateSellerProducts({ _id: val._id }, { keywords: formateData.keywords })
           masterData.push({ ...formateData, priority })
           // return ({
@@ -622,7 +653,7 @@ module.exports.updateSellerProduct = async (req, res) => {
           }
         }
       }
-      console.log(offerData,' zzzzzzzzzzzzzzzzzz')
+      console.log(offerData, ' zzzzzzzzzzzzzzzzzz')
       // [new Date(), subDays(new Date(), 1)]
       updateDetail = await addProductDetails(productId, offerData)
     }

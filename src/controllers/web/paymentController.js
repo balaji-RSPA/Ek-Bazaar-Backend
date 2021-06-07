@@ -411,7 +411,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             let planChangedEmailMsg = planChangedEmail({
                                 oldPlanType,
                                 newPlanType: _p_details.planType,
-                                expiryDate: sellerPlanDetails && sellerPlanDetails.exprireDate,
+                                till:  _p_details.exprireDate,
                                 url
                             })
                             const message = {

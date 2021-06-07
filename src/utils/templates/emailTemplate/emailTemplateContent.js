@@ -27,7 +27,7 @@ module.exports.otpVerification = (params) =>{
 }
 module.exports.passwordUpdate = (params) => {
   let message = {
-    title: 'Ekbazaar Trade- Password Update',
+    title: 'Ekbazaar Trade- Password Updated',
     image: passwordUpdated,
     body: `<p><strong>Hello ${params.name},<strong></p><p>Your password has been changed recently. Please use the updated password to login to your account.</p>`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
@@ -111,7 +111,7 @@ module.exports.planExpiring = (params)=>{
 }
 module.exports.RfpEnquiryReceived = (params) => {
   let message = {
-    title: 'Ekbazaar Trade- Product Enquiry',
+    title: 'Ekbazaar Trade- Enquiry Received',
     image: enquiry,
     body: `<p>You have an enquiry for (${capitalizeFirstLetter(params.productDetails.name.name)}, ${params.productDetails.quantity}${capitalizeFirstLetter(params.productDetails.weight)}) from (${params._loc}) by (${capitalizeFirstLetter(params.name)}) on ${moment().format('Do MMM YYYY')}.</p>`,
     buttonName: 'VIEW BUYER DETAILS',
@@ -129,6 +129,7 @@ module.exports.RfpEnquirySend = ()=>{
   return message;
 }
 module.exports.planChangedEmail = (params) => {
+console.log("🚀 ~ file: emailTemplateContent.js ~ line 132 ~ params", params)
   let message = {
     title: 'Ekbazaar Trade- Plan changed',
     image: planChange,
@@ -144,7 +145,7 @@ module.exports.planChangedEmail = (params) => {
 }
 module.exports.listingRemovalReq = () => {
   let message = {
-    title: 'Listing removal request',
+    title: 'Listing Removal Request',
     image: announcements,
     body: `<p>Thank you.</p><p>We will contact you within 7 working days and remove your listing.</p>`,
   }
