@@ -1,23 +1,23 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
-const {imageURLS} = require('../../globalConstants')
-const {registrationthanks, otpverification, passwordUpdated, invoice, planExpired, planExpiring, planChange, enquiry, announcements} = imageURLS
+const { imageURLS } = require('../../globalConstants')
+const { registrationthanks, otpverification, passwordUpdated, invoice, planExpired, planExpiring, planChange, enquiry, announcements } = imageURLS
 
 module.exports.emailSuccessfulRegistration = (params) => { //userType
   let message = {
-    title : 'Ekbazaar Trade- Successful Registration',
+    title: 'Ekbazaar Trade- Successful Registration',
     image: registrationthanks,
     body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'Thank you for registering.',
-    greeting:`Hello ${params.name},`,
+    greeting: `Hello ${params.name},`,
     buttonName: 'LOGIN TO YOUR ACCOUNT',
     buttonLink: `${params.url}/signin`,
     extraTitle: 'Have a question?',
-    extracontent1: `Please <a href='${params.url}/contact'>contact our team</a> via direct messaging or email. We would be happy to help you.`,
+    extracontent1: `Please <a href='${params.url}/contact'>contact our team</a> via direct messaging or email. <p>We would be happy to help you.</p>`,
     extracontent2: 'Thank you for choosing EkBazaar. We hope you enjoy our services.'
   }
   return message;
 }
-module.exports.otpVerification = (params) =>{
+module.exports.otpVerification = (params) => {
   let message = {
     title: 'Ekbazaar Trade- OTP verification',
     image: otpverification,
@@ -38,7 +38,7 @@ module.exports.passwordUpdate = (params) => {
 }
 module.exports.contactus = (params) => {
   let message = {
-    title:`Support request received ${params.id}`,
+    title: `Support request received ${params.id}`,
     image: passwordUpdated,
     body: '<p>Your message has been received and will be soon answered by our support team.</p><br /><p>Thank you for choosing EkBazaar</p>',
   }
@@ -58,7 +58,7 @@ module.exports.invoiceContent = (params) => {
   }
   return message;
 }
-module.exports.planExpired = (params)=>{
+module.exports.planExpired = (params) => {
   let message = '';
   if (params.isTrial) {
     message = {
@@ -68,7 +68,7 @@ module.exports.planExpired = (params)=>{
       buttonName: 'SUBSCRIBE',
       buttonLink: `${params.url}`
     }
-  }else{
+  } else {
     message = {
       title: 'Ekbazaar Trade- Plan Expired',
       image: planExpired,
@@ -79,7 +79,7 @@ module.exports.planExpired = (params)=>{
   }
   return message;
 }
-module.exports.planExpiring = (params)=>{
+module.exports.planExpiring = (params) => {
   let message = ''
   if (params.isTrial && params.dayDiff) {
     message = {
@@ -89,7 +89,7 @@ module.exports.planExpiring = (params)=>{
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}`
     }
-  } else if (params.dayDiff && params.isTrial===false) {
+  } else if (params.dayDiff && params.isTrial === false) {
     message = {
       title: 'Ekbazaar Trade- Plan About To Expire',
       image: planExpiring,
@@ -97,7 +97,7 @@ module.exports.planExpiring = (params)=>{
       buttonName: 'PRICING PLANS',
       buttonLink: `${params.url}`
     }
-  }else{
+  } else {
     message = {
       title: 'Ekbazaar Trade- Plan About To Expire',
       image: planExpiring,
@@ -106,7 +106,7 @@ module.exports.planExpiring = (params)=>{
       buttonLink: `${params.url}`
     }
   }
-  
+
   return message;
 }
 module.exports.RfpEnquiryReceived = (params) => {
@@ -120,7 +120,7 @@ module.exports.RfpEnquiryReceived = (params) => {
   }
   return message;
 }
-module.exports.RfpEnquirySend = ()=>{
+module.exports.RfpEnquirySend = () => {
   let message = {
     title: 'Ekbazaar Trade- Requirement Sent',
     image: passwordUpdated,
@@ -129,7 +129,7 @@ module.exports.RfpEnquirySend = ()=>{
   return message;
 }
 module.exports.planChangedEmail = (params) => {
-console.log("🚀 ~ file: emailTemplateContent.js ~ line 132 ~ params", params)
+  console.log("🚀 ~ file: emailTemplateContent.js ~ line 132 ~ params", params)
   let message = {
     title: 'Ekbazaar Trade- Plan changed',
     image: planChange,
@@ -145,9 +145,10 @@ console.log("🚀 ~ file: emailTemplateContent.js ~ line 132 ~ params", params)
 }
 module.exports.listingRemovalReq = () => {
   let message = {
-    title: 'Listing Removal Request',
+    title: 'Ekbazaar Trade- Listing Removal Request',
     image: announcements,
-    body: `<p>Thank you.</p><p>We will contact you within 7 working days and remove your listing.</p>`,
+    // body: `<p>Thank you.</p><p>We will contact you within 7 working days and remove your listing.</p>`,
+    body: `<p>Your request for removing your product listing has been received. We shall contact you shortly in this regard and take necessary action.</p>`,
   }
   return message;
 }

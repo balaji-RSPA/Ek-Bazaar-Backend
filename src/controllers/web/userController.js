@@ -166,7 +166,6 @@ module.exports.sendOtp = async (req, res) => {
     let otp = 1234;
     const seller = await checkUserExistOrNot({ mobile });
     const user = await checkBuyerExistOrNot({ mobile })
-    console.log("🚀 ~ file: userController.js ~ line 168 ~ module.exports.sendOtp= ~ user", user)
 
 
     if (seller && seller.length && !reset /* && user && user.length */) {
@@ -176,10 +175,10 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "No User found with this number");
 
     const checkUser =
-      seller &&
-      seller.length &&
-      seller[0].email &&
-      seller[0].isEmailVerified === 2;
+    seller &&
+    seller.length &&
+    seller[0].email &&
+    seller[0].isEmailVerified === 2;
 
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
