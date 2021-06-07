@@ -332,7 +332,7 @@ exports.sellerSearch = async (reqQuery) => {
               "cardinality": {
                 "field": "sellerId.name.keyword"
               }
-            },
+            }/* ,
             "result": {
               "terms": {
                 "field": "sellerId.location.country.name.keyword",
@@ -345,7 +345,7 @@ exports.sellerSearch = async (reqQuery) => {
                   }
                 }
               }
-            }
+            } */
           }
         }
       } else {
@@ -929,7 +929,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -942,7 +942,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
   }
@@ -980,7 +980,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -993,7 +993,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
   }
@@ -1019,7 +1019,7 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
-          },
+          }/* ,
           "result": {
             "terms": {
               "field": "sellerId.location.country.name.keyword",
@@ -1032,7 +1032,7 @@ exports.sellerSearch = async (reqQuery) => {
                 }
               }
             }           
-          }
+          } */
         }
       }
       
@@ -1052,7 +1052,7 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
-          },
+          }/* ,
           "result": {
             "terms": {
               "field": "sellerId.location.country.name.keyword",
@@ -1065,7 +1065,7 @@ exports.sellerSearch = async (reqQuery) => {
                 }
               }
             }           
-          }
+          } */
         }
       }
     }
@@ -1114,7 +1114,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -1127,7 +1127,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
 
@@ -1163,7 +1163,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -1176,7 +1176,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
   }
@@ -1213,7 +1213,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -1226,7 +1226,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
   }
@@ -1579,7 +1579,7 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
-          },
+          }/* ,
           "result": {
             "terms": {
               "field": "sellerId.location.country.name.keyword",
@@ -1592,7 +1592,7 @@ exports.sellerSearch = async (reqQuery) => {
                 }
               }
             }
-          }
+          } */
         }
       }
     } else {
@@ -1613,7 +1613,7 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
-          },
+          }/* ,
           "result": {
             "terms": {
               "field": "sellerId.location.country.name.keyword",
@@ -1626,7 +1626,7 @@ exports.sellerSearch = async (reqQuery) => {
                 }
               }
             }
-          }
+          } */
         }
       }
     }
@@ -2063,34 +2063,37 @@ exports.getCounts = (query) =>
 exports.getCountByCountry = (query) => new Promise((resolve, reject) => {
   // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query)
 
-  // let filtered1 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => {
-  //   return item["match"]["sellerId.location.country.name"] || item["match"]["serviceCity.country.name"]
-  // })
+  //let filtered1 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => {
+    //return item["match"]["sellerId.location.country.name"] || item["match"]["serviceCity.country.name"]
+  //})
 
-  // let filtered2 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.state.name"] || item["match"]["serviceCity.state.name"])
+  //let filtered2 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.state.name"] || item["match"]["serviceCity.state.name"])
 
-  // let filtered3 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.city.name"] || item["match"]["serviceCity.city.name"])
+  //let filtered3 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.city.name"] || item["match"]["serviceCity.city.name"])
 
-  // if (filtered1.length) {
+  //if (filtered1.length) {
 
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.country.name"]), 1)
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.country.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.country.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.country.name"]), 1)
 
-  // } else if (filtered2.length) {
+  //} else if (filtered2.length) {
 
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.state.name"]), 1)
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.state.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.state.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.state.name"]), 1)
 
-  // } else if (filtered3.length) {
+  //} else if (filtered3.length) {
 
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
 
-  // }
+  //}
 
-  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.should)
-  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.must)
-  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2041 ~ exports.getCountByCountry= ~ filtered", filtered1, filtered2, filtered3)
+  //console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query/* .bool.should */)
+  // if(!query.function_score.query.bool.should.length) delete  query.function_score.query.bool.should
+  //console.log(query.function_score.query.bool)
+  //console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.must)
+  //console.log("🚀 ~ file: elasticSearchModule.js ~ line 2041 ~ exports.getCountByCountry= ~ filtered", filtered1, filtered2, filtered3)
+  //query = query.function_score.query
   let aggs = {
     "collapse": {
       "field": "sellerId.name.keyword"

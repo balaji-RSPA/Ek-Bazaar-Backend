@@ -82,7 +82,7 @@ const server = require("http").Server(app);
 app.use(router);
 app.get("/", function (req, res) {
   console.log("Home page");
-  res.send("It's Ekbazaar Trade beta api server");
+  res.send("It's Onebazaar Trade beta api server");
 });
 
 app.get("/api/logged", async (req, res, next) => {
@@ -140,7 +140,7 @@ async function indexing() {
 
 app.use(router);
 
-server.listen(tradeDb.server_port);
+server.listen(8040);
 
 server.on("error", (e) => {
   console.log(e, "Can't start the server!");

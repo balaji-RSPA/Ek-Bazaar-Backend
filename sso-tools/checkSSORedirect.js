@@ -1,17 +1,19 @@
 const url = require("url");
 const axios = require("axios");
 const { verifyJwtToken } = require("./jwt_verify");
-const { request } = require("../src/utils/request")
+const { request, requestOnebazaar } = require("../src/utils/request")
 const { ssoServerJWTURL } = require("../src/utils/utils").globalVaraibles
 
 async function ssoRedirect(req, res, next) {
   // check if the req has the queryParameter as ssoToken
   // and who is the referer.
+  console.log("🚀 ~ file: checkSSORedirect.js ~ line 32 ~ req", req.body._base)
   const { ssoToken } = req.query;
+  const { _base } = req.body
   if (ssoToken != null) {
     try {
       const url = `${ssoServerJWTURL}?ssoToken=${ssoToken}`
-      const response = await request({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } })
+      const response = _base && _base.includes("onebazaar") ? await requestOnebazaar({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } }) : await request({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } })
 
       const { token } = response.data;
       const decoded = await verifyJwtToken(token);
@@ -29,6 +31,7 @@ async function ssoRedirect(req, res, next) {
 
 const _ssoRedirect = () => {
   return async function (req, res, next) {
+    console.log("🚀 ~ file: checkSSORedirect.js ~ line 32 ~ req", req.headers, req.origin)
     // check if the req has the queryParameter as ssoToken
     // and who is the referer.
     const { ssoToken } = req.query;

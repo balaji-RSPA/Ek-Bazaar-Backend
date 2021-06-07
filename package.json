@@ -4,6 +4,7 @@
     "description": "Trade Bazaar",
     "scripts": {
         "start": "nodemon app.js",
+        "preserve": "nodemon onebazaar.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],

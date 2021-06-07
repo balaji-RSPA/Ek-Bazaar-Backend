@@ -28,4 +28,25 @@ request.interceptors.response.use(
   },
 )
 
-module.exports = { request }
+const requestOnebazaar = axios.create({
+  withCredentials: true,
+  baseURL: "https://auth.onebazaar.com/simplesso"
+})
+
+requestOnebazaar.interceptors.request.use(async (config) => {
+  // console.log("🚀 ~ file: request.js ~ line 15 ~ request.interceptors.request.use ~ config", config)
+  config.headers.origin = serviceURL
+  return config
+}, Promise.reject)
+
+requestOnebazaar.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (err) => {
+    //   console.log("🚀 ~ file: request.js ~ line 33 ~ err", err)  
+    return Promise.reject
+  },
+)
+
+module.exports = { request, requestOnebazaar }
