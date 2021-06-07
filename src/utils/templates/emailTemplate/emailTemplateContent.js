@@ -19,7 +19,7 @@ module.exports.emailSuccessfulRegistration = (params) => { //userType
 }
 module.exports.otpVerification = (params) => {
   let message = {
-    title: 'Ekbazaar Trade- OTP verification',
+    title: 'Ekbazaar Trade- OTP Verification',
     image: otpverification,
     body: `<p>Your one time password is <strong>${params.otp}<strong>.</p><p>Please enter the code and proceed with setting up a new password for your account.</p>`
   }
