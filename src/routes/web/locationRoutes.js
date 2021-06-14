@@ -24,4 +24,6 @@ router.post("/uploadNewCities", location.uploadNewCities)
 // router.post("/uploadCityAlias", location.uploadCityAlias)
 // router.get("/updateCityAlias", location.updateCityAlias)
 
+// router.post("/uploadPhoneCountryCode", location.uploadPhoneCountryCode)
+
 module.exports = router;

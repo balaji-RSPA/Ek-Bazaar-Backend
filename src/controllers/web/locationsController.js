@@ -17,8 +17,35 @@ const {
   statesBulkInsert,
   citiesBulkInsert,
   countiesBulkInsert,
-  getAllCitiesUpdate
+  getAllCitiesUpdate,
+  getCountryData,
+  updateCountry
 } = location;
+
+module.exports.uploadPhoneCountryCode = async (req, res) => {
+
+  try {
+    const data = req.body
+    if (data.length) {
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        console.log(index, element.CountryCode, ' index -----------')
+        if (element && element.InternationalDialing) {
+          const checkData = await getCountryData({ "iso": element.CountryCode.toLowerCase() })
+          if (checkData) {
+            const rec = await updateCountry({ "iso": element.CountryCode.toLowerCase() }, { country_calling_code: element.InternationalDialing })
+          }
+        }
+
+      }
+      console.log('===== Country Upload Data Completed =====')
+      respSuccess(res, "Data yoload completed")
+    }
+
+  } catch (error) {
+    respError(res, error)
+  }
+}
 
 module.exports.getAllCities = async (req, res) => {
   try {

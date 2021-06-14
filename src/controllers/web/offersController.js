@@ -10,18 +10,20 @@ const {
 } = buyers;
 const { sendSMS } = require("../../utils/utils");
 const isProd = process.env.NODE_ENV === "production";
-
+const _ = require('lodash')
 const moment = require("moment")
 
 module.exports.getAllOffers = async (req, res) => {
 
     try {
+        const requestIds = []
+        let newRecords = []
         const q1 = {
-            requestType: 11, $or: [{
+            requestType: 11, $or: [/* {
                 "productDetails.validity": {
                     $gte: new Date().toISOString(),
                 }
-            }, {
+            }, */ {
                 "productDetails.validity": {
                     $gte: new Date(moment().startOf('day')),
                 }
@@ -29,13 +31,14 @@ module.exports.getAllOffers = async (req, res) => {
         }
         const buyerRequest = await getRFP(q1)
         const requestIds1 = buyerRequest && buyerRequest.length && buyerRequest.map((val) => {
-            return val.productDetails.name.search !== 'level1' ? val.productDetails.name.level1 && val.productDetails.name.level1.id : val.productDetails.name.id
+            if (val.productDetails.name.search !== 'level1') {
+                requestIds.push(val.productDetails.name.level1 && val.productDetails.name.level1.id)
+                requestIds.push(val.productDetails.name.level2 && val.productDetails.name.level2.id)
+            } else {
+                requestIds.push(val.productDetails.name.id)
+            }
+        }) || []
 
-        }) || []
-        const requestIds2 = buyerRequest && buyerRequest.length && buyerRequest.map((val) => {
-            return val.productDetails.name.level2 && val.productDetails.name.level2.id
-        }) || []
-        const requestIds = requestIds1.concat(requestIds2)
         const query = {
             "bool": {
                 "must": [
@@ -121,6 +124,8 @@ module.exports.getAllOffers = async (req, res) => {
             const catExist = requestIds && requestIds.length && requestIds.filter((val) => (val === item.key)).length
             if (catExist) {
                 documentCount += catExist
+            } else {
+
             }
 
             let products = item.level2.buckets && item.level2.buckets.length && await Promise.all(item.level2.buckets.map(async elem => {
@@ -128,6 +133,7 @@ module.exports.getAllOffers = async (req, res) => {
 
                 let _count = elem.doc_count
                 const _catExist = requestIds && requestIds.length && requestIds.filter((val) => val === elem.key).length
+
                 if (_catExist) {
                     _count = elem.doc_count + _catExist
                 }
@@ -154,6 +160,42 @@ module.exports.getAllOffers = async (req, res) => {
             arrayObj.push(obj)
 
         }
+        // let test = []
+        let ids = []
+        arrayObj && arrayObj.length && arrayObj.map((v) => {
+            ids.push(v._id)
+            v.products && v.products.length && ids.push(v.products[0]._id)
+        })
+        const deff = _.intersection(requestIds, ids)
+        let newArray = []
+        buyerRequest.map((val) => {
+            if ((val.productDetails && val.productDetails.name && val.productDetails.name.level2 && !val.productDetails.name.level2.id.toString()) || val.productDetails && val.productDetails.name && val.productDetails.name.level1 && !val.productDetails.name.level1.id.toString() || !ids.includes(val.productDetails.name.id.toString())) {
+                // console.log(val, ' &&&&&&&&&&&&&&77')
+                newArray.push(val)
+            }
+        })
+        console.log(JSON.stringify(newArray), ' gggggggggggggggggggg')
+
+        // const www = buyerRequest && buyerRequest.length && buyerRequest.map((val, index) => {
+        //     if (val.productDetails.name.search === 'level1') {
+        //         const dd = arrayObj && arrayObj.length && arrayObj.some((el) => {
+        //             return el._id !== val.productDetails.name.id;
+        //         });
+        //         const newCell = {
+        //             "_id": val.productDetails.name.search === 'level1' ? val.productDetails.name.id : val.productDetails.name.level1.id,
+        //             "title": val.productDetails.name.search === 'level1' ? `${val.productDetails.name.name}(${1})` : val.productDetails.name.level1.name,
+        //             "products": val.productDetails.name.level2 ? [
+        //                 {
+        //                     "count": 2,
+        //                     "_id": val.productDetails.name.level2 && val.productDetails.name.level2.id || null,
+        //                     "key": val.productDetails.name.level2 && val.productDetails.name.level2.name || null
+        //                 }
+        //             ] : null
+        //         }
+        //         !dd && !dd.length && test.push(newCell)
+        //     }
+        // })
+        // console.log(JSON.stringify(test), www, ' kkkkkkkkkkkkkkk')
         respSuccess(res, { offersCount: arrayObj })
 
     } catch (error) {
