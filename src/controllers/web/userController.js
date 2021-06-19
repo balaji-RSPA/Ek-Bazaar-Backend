@@ -424,7 +424,7 @@ module.exports.getUserProfile = async (req, res) => {
       //   ...user
       // },
     };
-    console.log("🚀 ~ file: userController 3.js ~ line 418 ~ module.exports.getUserProfile= ~ userData", userData)
+    // console.log("🚀 ~ file: userController 3.js ~ line 418 ~ module.exports.getUserProfile= ~ userData", userData)
     respSuccess(res, userData);
   } catch (error) {
     respError(res, error.message);
