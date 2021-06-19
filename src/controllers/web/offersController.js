@@ -154,7 +154,7 @@ module.exports.getAllOffers = async (req, res) => {
 
             obj = {
                 ...obj,
-                title: `${cat.name}(${documentCount})`,
+                title: `${cat.name} (${documentCount})`,
                 products
             }
             arrayObj.push(obj)
@@ -174,7 +174,7 @@ module.exports.getAllOffers = async (req, res) => {
                 newArray.push(val)
             }
         })
-        console.log(JSON.stringify(newArray), ' gggggggggggggggggggg')
+        console.log(newArray, ' gggggggggggggggggggg')
 
         // const www = buyerRequest && buyerRequest.length && buyerRequest.map((val, index) => {
         //     if (val.productDetails.name.search === 'level1') {

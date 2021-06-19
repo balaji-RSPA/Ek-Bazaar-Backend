@@ -128,7 +128,7 @@ module.exports.updateSeller = async (req, res) => {
       GstNumber,
       IeCode,
     } = req.body
-    // console.log("🚀 ~ file: sellersController.js ~ line 84 ~ module.exports.updateSeller= ~ req.body", req.body)
+    console.log("🚀 ~ file: sellersController.js ~ line 84 ~ module.exports.updateSeller= ~ req.body", req.body)
     const {
       userID
     } = req
@@ -146,6 +146,7 @@ module.exports.updateSeller = async (req, res) => {
     }
     //statutoryDetails
     if (company || CinNumber || GstNumber || IeCode || (req.files && (req.files.multidoc || req.files.gst))) {
+      console.log(req.files,' ramesh ---------------------')
       let statutoryDetails = {
         company: JSON.parse(company),
         CinNumber: JSON.parse(CinNumber),
@@ -170,14 +171,15 @@ module.exports.updateSeller = async (req, res) => {
         statutoryDetails.GstNumber.name = req.files.gst.name;
         statutoryDetails.GstNumber.code = gst.Location;
       }
-      const statutoryDtls = await addStatutoryDetails(
-        sellerID,
-        statutoryDetails,
-      )
-      newData.statutoryId = statutoryDtls._id
-      seller = await updateSeller({
-        _id: sellerID
-      }, newData)
+      console.log(statutoryDetails, ' Shetttttttttttttttttttt')
+      // const statutoryDtls = await addStatutoryDetails(
+      //   sellerID,
+      //   statutoryDetails,
+      // )
+      // newData.statutoryId = statutoryDtls._id
+      // seller = await updateSeller({
+      //   _id: sellerID
+      // }, newData)
     }
     if (contactDetails) {
       contactDetails = {
@@ -636,7 +638,7 @@ module.exports.updateSellerProduct = async (req, res) => {
     } = req
     let { offers, productId, deleteOffer } = body
     offers = offers ? JSON.parse(offers) : null
-    console.log('update poroduct---', productId, deleteOffer)
+    // console.log('update poroduct---', productId, deleteOffer)
 
     let updateDetail
 
@@ -666,7 +668,6 @@ module.exports.updateSellerProduct = async (req, res) => {
     }
     if (body && body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
-      console.log("🚀 -----------555555555555555555----------------", productDetails)
       let findCities = await getSellerSelectedCities(productDetails.serviceCity);
       if (findCities && findCities.length) {
         productDetails.serviceCity = findCities.map((val) => ({
@@ -779,12 +780,10 @@ module.exports.updateSellerProduct = async (req, res) => {
       updatedProduct[0]["panIndia"] = body && body.panIndia
       const priority = await mapPriority(seller && seller.length && seller[0].planId || "")
       const masterData = await masterMapData(updatedProduct[0], 'update')
-      // console.log(masterData.productDetails, "-------- yyyyyyyyyyyyy -----------")
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
       const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: priority })
       // const esData = JSON.parse(JSON.stringify(masResult));
       // esData && esData._id && delete esData._id;
-      // console.log(esData._id, ' ------------ WWWWWWWWWWWww -----------')
       // const masElsLint =  updateESDoc(masResult._id, esData)
     }
     respSuccess(res, seller, "Successfully updated")
