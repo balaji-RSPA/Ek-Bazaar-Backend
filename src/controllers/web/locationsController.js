@@ -50,7 +50,6 @@ module.exports.uploadPhoneCountryCode = async (req, res) => {
 module.exports.getAllCities = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
-    console.log("🚀 ~ file: locationsController.js ~ line 26 ~ module.exports.getAllCities= ~ reqQuery", reqQuery)
     // console.log("module.exports.getAllCities -> req.query", reqQuery)
     const cities = await getAllCities(req.query);
     respSuccess(res, cities);
