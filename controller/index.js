@@ -61,29 +61,19 @@ const appTokenDB = {
 };
 
 const alloweOrigin = {
-  "http://localhost:8081": true,
-  "https://www.onebazaar.com": true,
-
+  /** ekbazaar development + beta + live **/
+  // tenders
   "http://localhost:8060": true,
-  "http://localhost:8080": true,
   "https://elastic.tech-active.com:8443": true,
   "https://api.ekbazaar.com": true,
-  "https://ekbazaar.tech-active.com": true,
-  "https://www.tenders.ekbazaar.com": true,
-
+  //trade
   "http://localhost:8070": true,
-  "http://localhost:8085": true,
   "https://tradebazaarapi.tech-active.com": true,
   "https://tradeapi.ekbazaar.com": true,
-  "https://tradebazaar.tech-active.com": true,
-  "https://www.trade.ekbazaar.com": true,
-
+  //investment
   "http://localhost:8050": true,
-  "http://localhost:8071": true,
   "https://investmentapi.tech-active.com": true,
-  "https://investmentapi.ekbazaar.com": true,
-  "https://www.investment.ekbazaar.com": true,
-  "https://investment.tech-active.com": true
+  "https://investmentapi.ekbazaar.com": true
 };
 
 const deHyphenatedUUID = () => uuidv4().replace(/-/gi, "");
@@ -95,29 +85,19 @@ const sessionUser = {};
 const sessionApp = {};
 
 const originAppName = {
-  "http://localhost:8081": "onebazaar",
-  "https://www.onebazaar.com": "onebazaar",
-
+  /** ekbazaar development + beta + live **/
+  //tenders
   "http://localhost:8060": "tenders_sso_consumer",
-  "http://localhost:8080": "tenders_sso_consumer",
   "https://elastic.tech-active.com:8443": "tenders_sso_consumer",
   "https://api.ekbazaar.com": "tenders_sso_consumer",
-  "https://ekbazaar.tech-active.com": "tenders_sso_consumer",
-  "https://www.tenders.ekbazaar.com": "tenders_sso_consumer",
-
+  //trade
   "http://localhost:8070": "trade_sso_consumer",
-  "http://localhost:8085": "trade_sso_consumer",
   "https://tradebazaarapi.tech-active.com": "trade_sso_consumer",
   "https://tradeapi.ekbazaar.com": "trade_sso_consumer",
-  "https://tradebazaar.tech-active.com": "trade_sso_consumer",
-  "https://www.trade.ekbazaar.com": "trade_sso_consumer",
-
+  //investment
   "http://localhost:8050": "investment_sso_consumer",
-  "http://localhost:8071": "investment_sso_consumer",
   "https://investmentapi.tech-active.com": "investment_sso_consumer",
   "https://investmentapi.ekbazaar.com": "investment_sso_consumer",
-  "https://www.investment.ekbazaar.com": "investment_sso_consumer",
-  "https://investment.tech-active.com": "investment_sso_consumer"
 };
 
 let userDB = {
@@ -212,6 +192,7 @@ const verifySsoToken = async (req, res, next) => {
 
 const register = async (req, res, next) => {
   const {
+    email,
     mobile,
     password,
     ipAddress,
@@ -219,10 +200,12 @@ const register = async (req, res, next) => {
     countryCode,
     origin,
   } = req.body;
+  console.log("🚀 ~ file: index.js ~ line 203 ~ register ~ req.body", req.body, Boolean(mobile.mobile), Boolean("123"))
   req.body.password = encodePassword(password);
   const tenderUser = {
-    countryCode: mobile.countryCode || countryCode,
-    mobile: mobile.mobile || mobile,
+    email,
+    countryCode: Boolean(mobile.countryCode) && mobile.countryCode || countryCode || null,
+    mobile: Boolean(mobile.mobile) && parseInt(mobile.mobile) || mobile && parseInt(mobile) || null,
     isPhoneVerified: 2,
     password: req.body.password,
     // preferredLanguage
@@ -264,7 +247,7 @@ const register = async (req, res, next) => {
   }
   const { _id } = user;
   userDB = {
-    [mobile.mobile || mobile]: {
+    [tenderUser.mobile || tenderUser.email]: {
       password,
       userId: _id, //encodedId() // incase you dont want to share the user-email.
       appPolicy: {
@@ -277,7 +260,7 @@ const register = async (req, res, next) => {
   const { serviceURL } = req.query;
   const id = encodedId();
   req.session.user = id;
-  sessionUser[id] = mobile.mobile || mobile;
+  sessionUser[id] = tenderUser.mobile || tenderUser.email;
   if (serviceURL == null) {
     return res.redirect("/");
   }
@@ -292,6 +275,7 @@ const register = async (req, res, next) => {
       user,
       _user: req.session.user,
       url: `${serviceURL}?ssoToken=${intrmid}`,
+      email,
       mobile,
       password,
       ipAddress,
@@ -321,9 +305,11 @@ const doLogin = async (req, res, next) => {
   // but the goal is not to do the same in this right now,
   // like checking with Datebase and all, we are skiping these section
   // const { email, password } = req.body;
-  const { password, ipAddress, mobile, userType, origin, location } = req.body;
-
-  const user = await UserModel.findOne({ mobile })
+  const { password, ipAddress, mobile, userType, origin, location, countryCode, email } = req.body;
+  let query = {}
+  if (req.body.email) query = { email: req.body.email }
+  else query = { mobile, countryCode }
+  const user = await UserModel.findOne(query)
     .select({
       name: 1,
       email: 1,
@@ -366,15 +352,15 @@ const doLogin = async (req, res, next) => {
     req.query.serviceURL = _investment;
     if (user && user.deleteInvestement && user.deleteInvestement.status) return respError(res, "User not found")
   }
-  console.log("🚀 ~ file: index.js ~ line 329 ~ doLogin ~ url", url)
+  console.log("🚀 ~ file: index.js ~ line 329 ~ doLogin ~ url", user)
 
   const {
     // mobile,
-    name,
-    email,
-    preferredLanguage,
-    isPhoneVerified,
-    isMobileVerified,
+    // name,
+    // email,
+    // preferredLanguage,
+    // isPhoneVerified,
+    // isMobileVerified,
     _id,
   } = user;
   console.log("🚀 ~ file: index.js ~ line 357 ~ doLogin ~ user", user)
@@ -423,6 +409,8 @@ const doLogin = async (req, res, next) => {
       mobile,
       userType,
       location,
+      email,
+      countryCode
     },
   });
   const { data } = response;
@@ -495,7 +483,7 @@ const login = async (req, res, next) => {
     });
     // return res.send({ user, url: `${serviceURL}?ssoToken=${intrmid}` })
   }
-  respError(res, {message: "User is not logged in", langCode: req.session.featuredLanguage});
+  respError(res, { message: "User is not logged in", langCode: req.session.featuredLanguage });
   // next()
 };
 

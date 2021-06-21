@@ -15,12 +15,17 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors({
   origin: [
-    "https://www.onebazaar.com",
-    "https://www.trade.onebazaar.com", "https://tradeapi.onebazaar.com/",
-    "https://tradeapi.ekbazaar.com", "https://tradebazaarapi.tech-active.com", "http://localhost:8070", 
-    "http://localhost:8085", "https://tradebazaar.tech-active.com", "https://www.trade.ekbazaar.com",
-    "http://localhost:8080", "https://ekbazaar.tech-active.com", "https://www.tenders.ekbazaar.com",
-    "http://localhost:8071", "https://investment.tech-active.com", "https://www.investment.ekbazaar.com",
+    /** development **/
+    "http://localhost:8085", "http://localhost:8080", "http://localhost:8071",
+    /** ekbazaar beta + live **/
+    "https://www.trade.ekbazaar.com", "https://tradebazaar.tech-active.com",
+    "https://www.tenders.ekbazaar.com", "https://ekbazaar.tech-active.com",
+    "https://www.investment.ekbazaar.com", "https://investment.tech-active.com",
+    /** onebazaar beta **/
+    "https://onebazaar.tech-active.com",
+    "https://tradeonebazaar.tech-active.com",
+    "https://tendersonebazaar.tech-active.com",
+    "https://investmentonebazaar.tech-active.com"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
   credentials: true,

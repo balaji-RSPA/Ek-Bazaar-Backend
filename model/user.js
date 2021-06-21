@@ -32,13 +32,13 @@ const userSchema = new Schema({
   },
   countryCode: {
     type: String,
-    required: true
+    required: false
   },
   mobile: {
     type: Number,
     trim: true,
-    required: true,
-    unique: true,
+    required: false,
+    unique: false,
     // validate: [validatePhone, 'Please fill a valid phone number']
   },
   email: {
