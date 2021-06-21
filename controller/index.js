@@ -239,7 +239,13 @@ const register = async (req, res, next) => {
   }
 
   if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage;
-  const user = await UserModel.create(tenderUser); //.exec()
+  const findUser = await UserModel.findOne({mobile:tenderUser.mobile});
+  let user;
+  if(findUser){
+     user = await UserModel.findOneAndUpdate({mobile:findUser.mobile},tenderUser); //.exec()
+  }else{
+     user = await UserModel.create(tenderUser); //.exec()
+  }
   console.log("🚀 ~ file: index.js ~ line 229 ~ register ~ user", user)
   // const user = await UserModel.findOneAndUpdate({ mobile: mobile.mobile || mobile }, { $set: tenderUser }, { new: true, upsert: true }); //.exec()
   if (!user) {
