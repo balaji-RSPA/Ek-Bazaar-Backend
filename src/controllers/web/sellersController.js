@@ -128,7 +128,6 @@ module.exports.updateSeller = async (req, res) => {
       GstNumber,
       IeCode,
     } = req.body
-    console.log("🚀 ~ file: sellersController.js ~ line 84 ~ module.exports.updateSeller= ~ req.body", req.body)
     const {
       userID
     } = req
@@ -146,7 +145,6 @@ module.exports.updateSeller = async (req, res) => {
     }
     //statutoryDetails
     if (company || CinNumber || GstNumber || IeCode || (req.files && (req.files.multidoc || req.files.gst))) {
-      console.log(req.files,' ramesh ---------------------')
       let statutoryDetails = {
         company: JSON.parse(company),
         CinNumber: JSON.parse(CinNumber),
@@ -171,15 +169,14 @@ module.exports.updateSeller = async (req, res) => {
         statutoryDetails.GstNumber.name = req.files.gst.name;
         statutoryDetails.GstNumber.code = gst.Location;
       }
-      console.log(statutoryDetails, ' Shetttttttttttttttttttt')
-      // const statutoryDtls = await addStatutoryDetails(
-      //   sellerID,
-      //   statutoryDetails,
-      // )
-      // newData.statutoryId = statutoryDtls._id
-      // seller = await updateSeller({
-      //   _id: sellerID
-      // }, newData)
+      const statutoryDtls = await addStatutoryDetails(
+        sellerID,
+        statutoryDetails,
+      )
+      newData.statutoryId = statutoryDtls._id
+      seller = await updateSeller({
+        _id: sellerID
+      }, newData)
     }
     if (contactDetails) {
       contactDetails = {
@@ -638,14 +635,13 @@ module.exports.updateSellerProduct = async (req, res) => {
     } = req
     let { offers, productId, deleteOffer } = body
     offers = offers ? JSON.parse(offers) : null
-    // console.log('update poroduct---', productId, deleteOffer)
+    console.log('update poroduct---', body, productId, deleteOffer)
 
     let updateDetail
 
     if (offers) {
       var d1 = new Date(offers.validity.toDate);
       var d2 = new Date(offers.validity.fromDate);
-      console.log(d1, d2, ' 1111111111111111111111')
       const offerData = {
         // offers: offers,
         offers: {
@@ -656,7 +652,6 @@ module.exports.updateSellerProduct = async (req, res) => {
           }
         }
       }
-      console.log(offerData, ' zzzzzzzzzzzzzzzzzz')
       // [new Date(), subDays(new Date(), 1)]
       updateDetail = await addProductDetails(productId, offerData)
     }
