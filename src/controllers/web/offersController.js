@@ -16,16 +16,26 @@ const moment = require("moment")
 module.exports.getAllOffers = async (req, res) => {
 
     try {
-        console.log( new Date().toISOString(), ' wwwwwwwwwwwww')
-        // const q1 = { requestType: 11, 'productDetails.name.label': "Plier", "productDetails.validity": { $gte: new Date().toISOString() }
-        // }
-        // const sss = await getRFP(q1)
-        // console.log(JSON.stringify(sss[0]), sss.length,' 2222222222222222222222')
-        // for (let i = 0; i < sss.length; i++) {
-        //     let item = level1[i]
-        //     let obj = {}
-        // }
+        const q1 = {
+            requestType: 11, $or: [{
+                "productDetails.validity": {
+                    $gte: new Date().toISOString(),
+                }
+            }, {
+                "productDetails.validity": {
+                    $gte: new Date(moment().startOf('day')),
+                }
+            }]
+        }
+        const buyerRequest = await getRFP(q1)
+        const requestIds1 = buyerRequest && buyerRequest.length && buyerRequest.map((val) => {
+            return val.productDetails.name.search !== 'level1' ? val.productDetails.name.level1 && val.productDetails.name.level1.id : val.productDetails.name.id
 
+        }) || []
+        const requestIds2 = buyerRequest && buyerRequest.length && buyerRequest.map((val) => {
+            return val.productDetails.name.level2 && val.productDetails.name.level2.id
+        }) || []
+        const requestIds = requestIds1.concat(requestIds2)
         const query = {
             "bool": {
                 "must": [
@@ -37,7 +47,8 @@ module.exports.getAllOffers = async (req, res) => {
                     {
                         "range": {
                             "offers.validity.toDate": {
-                                "gte": new Date().toISOString()
+                                // "gte": new Date().toISOString()
+                                "gte": new Date(moment.utc().startOf('day'))
                             }
                         }
                     }
@@ -82,7 +93,6 @@ module.exports.getAllOffers = async (req, res) => {
                 }
             }
         }
-
         const data = await searchFromElastic(query, { skip: 0, limit: 2000 }, aggs);
         let aggsCount = data[2];
         let arrayObj = []
@@ -90,6 +100,7 @@ module.exports.getAllOffers = async (req, res) => {
 
         for (let i = 0; i < level1.length; i++) {
             let item = level1[i]
+            let documentCount = item.doc_count
             let obj = {}
 
             const query = {
@@ -107,9 +118,22 @@ module.exports.getAllOffers = async (req, res) => {
                 if (cat.id) obj._id = cat.id
             }
 
+            const catExist = requestIds && requestIds.length && requestIds.filter((val) => (val === item.key)).length
+            if (catExist) {
+                documentCount += catExist
+            }
+
             let products = item.level2.buckets && item.level2.buckets.length && await Promise.all(item.level2.buckets.map(async elem => {
 
-                let _obj = { count: elem.doc_count }
+
+                let _count = elem.doc_count
+                const _catExist = requestIds && requestIds.length && requestIds.filter((val) => val === elem.key).length
+                if (_catExist) {
+                    _count = elem.doc_count + _catExist
+                }
+                let _obj = {
+                    count: _count
+                }
 
                 query.bool.must.match.id = elem.key
                 let _cat = await getSuggestions(query, { skip: 0, limit: 1 }, false, {})
@@ -121,20 +145,19 @@ module.exports.getAllOffers = async (req, res) => {
                 return _obj
 
             }))
-            
+
             obj = {
                 ...obj,
-                title: `${cat.name}(${item.doc_count})`,
+                title: `${cat.name}(${documentCount})`,
                 products
             }
             arrayObj.push(obj)
-            
-        }
 
+        }
         respSuccess(res, { offersCount: arrayObj })
 
     } catch (error) {
-
+        console.log(error, ' elastic error-------------')
         respError(res, error.message)
 
     }
@@ -145,14 +168,31 @@ module.exports.getAllSellerOffers = async (req, res) => {
 
     try {
         const { skip, limit, search, level1, level2 } = req.query
-        console.log("🚀 ~ file: offersController.js ~ line 139 ~ module.exports.getAllSellerOffers= ~ req.query", req.query)
-        let _query = { requestType: 11, "productDetails.validity": { $gte: new Date().toISOString() }, $and: [] }
+        let _query = {
+            requestType: 11, $or: [{
+                "productDetails.validity": {
+                    $gte: new Date().toISOString(),
+                }
+            }, {
+                "productDetails.validity": {
+                    $gte: new Date(moment().startOf('day')),
+                }
+            }], $and: []
+        }
         const query = {
             "bool": {
                 "must": [
                     {
                         "exists": {
                             "field": "offers"
+                        }
+                    },
+                    {
+                        "range": {
+                            "offers.validity.toDate": {
+                                // "gte": new Date().toISOString()
+                                "gte": new Date(moment.utc().startOf('day'))
+                            }
                         }
                     }
                 ]
@@ -221,9 +261,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 }
             ]
         }
-
         const seller = await searchFromElastic(query, { skip: 0, limit: 1000 }, {});
-        console.log("🚀 ~ file: offersController.js ~ line 205 ~ module.exports.getAllSellerOffers= ~ seller", seller)
         let _seller = seller.length && seller[0]
         let sellerOffers = []
         let buyerRequests = []
@@ -248,9 +286,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
             // console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
             return obj
         })
-        // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx", JSON.stringify(_query))
         buyerRequests = await getRFPData(_query, { skip: 0, limit: 1000 })
-        console.log("🚀 ~ file: offersController.js ~ line 229 ~ module.exports.getAllSellerOffers= ~ buyerRequests", buyerRequests)
         buyerRequests = buyerRequests.length && buyerRequests.map(buyer => {
 
             let obj = {
@@ -268,6 +304,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
         })
         return respSuccess(res, { offers: sellerOffers, requests: buyerRequests })
     } catch (error) {
+        console.log(error, ' eeee')
+        return respError(res, error.message)
 
     }
 
@@ -276,16 +314,16 @@ module.exports.getAllSellerOffers = async (req, res) => {
 module.exports.buyerRequestOffers = async (req, res) => {
 
     try {
-        let  { details } = req.body
-        // details = {
-        //     ...details,
-        //     productDetails:{
-        //         ...details.productDetails,
-        //         validity: new Date(`${details.productDetails.validity} EST`).toString()
-        //     },
+        let { details } = req.body
+        console.log(details.productDetails.validity, new Date(details.productDetails.validity))
+        details = {
+            ...details,
+            productDetails: {
+                ...details.productDetails,
+                validity: new Date(details.productDetails.validity)
+            },
 
-        // }
-        // const g = new Date(`${details.productDetails.validity} EST`)
+        }
         const rfp = await postRFP(details)
         return respSuccess(res, "Offer request done successfully")
 
@@ -338,7 +376,7 @@ module.exports.getAllBuyerRequest = async (req, res) => {
                     title: buyer.productDetails.name.label,
                     location: buyer.productDetails.location.city.label,
                     price: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
-                    validity: moment(buyer.productDetails.validity.toDate).format('ll'),
+                    validity: moment(buyer.productDetails.validity).format('ll'),
                     btnname: 'View more',
                     seller: true,
                     value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,

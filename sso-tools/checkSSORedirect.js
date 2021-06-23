@@ -22,6 +22,7 @@ async function ssoRedirect(req, res, next) {
       // the logout can be implemented with the global session.
       return { user: decoded, token, response }
     } catch (err) {
+      console.log(err, ' eeeeeeeeeeeeeeeeeeeeee')
       return { error: err.message }
     }
   }

@@ -221,7 +221,7 @@ exports.emailVerified = (params) => new Promise((resolve, reject) => {
                             <tbody>
                             <tr>
                                 <td style="padding: 40px 40px 20px 40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:20px; font-weight:600; letter-spacing:0.07em; line-height:2em;">
-                                    Email Verified
+                                Ekbazaar Trade Email verified
                                 </td>
                             </tr>
                             <tr>

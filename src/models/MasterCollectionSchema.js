@@ -223,52 +223,52 @@ const telephoneSchema = new Schema({
 
 const offerSchema = new Schema({
     price: {
-      price: {
-        type: String,
-        trim: true
-      },
-      unit: {
-        type: String,
-        trim: true
-      }
+        price: {
+            type: String,
+            trim: true
+        },
+        unit: {
+            type: String,
+            trim: true
+        }
     },
     qty: {
-      qty: {
-        type: String,
-        trim: true
-      },
-      unit: {
-        type: String,
-        trim: true
-      }
-    },
-    location:{
-      city: {
-        label:{
-          type: String
+        qty: {
+            type: String,
+            trim: true
         },
-        value:{
-          type: ObjectId
+        unit: {
+            type: String,
+            trim: true
         }
-      },
-      state: {
-        label:{
-          type: String
-        },
-        value:{
-          type: ObjectId
-        }
-      }
     },
-    validity:{
-      fromDate: {
-        type: Date
-      },
-      toDate:{
-        type: Date
-      }
+    location: {
+        city: {
+            label: {
+                type: String
+            },
+            value: {
+                type: ObjectId
+            }
+        },
+        state: {
+            label: {
+                type: String
+            },
+            value: {
+                type: ObjectId
+            }
+        }
+    },
+    validity: {
+        fromDate: {
+            type: Date
+        },
+        toDate: {
+            type: Date
+        }
     }
-  })
+})
 
 
 const masterCollectionSchema = new Schema(
@@ -308,6 +308,43 @@ const masterCollectionSchema = new Schema(
                     type: String,
                     default: null
                 }
+            },
+            contactDetails: {
+                location: {
+                    city: {
+                        type: nameSchema,
+                        default: null
+                    },
+                    state: {
+                        type: nameSchema,
+                        default: null
+                    },
+                    country: {
+                        type: nameSchema,
+                        default: null
+                    },
+                    address: {
+                        type: String,
+                        default: null
+                    },
+                    pincode: {
+                        type: String,
+                        default: null
+                    }
+                },
+                alternativNumber: {
+                    type: Number,
+                    default: null
+                },
+                email: {
+                    type: String,
+                    default: null
+                },
+                website: {
+                    type: String,
+                    default: null
+                },
+
             },
             sellerType: {
                 type: Array,

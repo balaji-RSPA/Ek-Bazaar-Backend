@@ -5,7 +5,7 @@ const { serviceURL } = authServiceURL()
 const baseURL = _IS_PROD_ ? 'https://auth.ekbazaar.com/simplesso/' :
   _IS_DEV_ ? 'https://auth.tech-active.com/simplesso/' :
     'http://localhost:3010/simplesso/'
-
+    
 axios.defaults.withCredentials = true;
 const request = axios.create({
   withCredentials: true,

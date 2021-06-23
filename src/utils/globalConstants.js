@@ -59,9 +59,13 @@ exports.accessModules = Object.values(this.moduleTypes);
 
 exports.razorPayCredentials = NODE_ENV === 'production' ?
   {
-    // Live
-    key_id: 'rzp_live_CTVuq0QYf0mDPH',
-    key_secret: 'KOY2qN10NCtcbgZmtpq87wOW',
+    // Live subramany
+    // key_id: 'rzp_live_CTVuq0QYf0mDPH',
+    // key_secret: 'KOY2qN10NCtcbgZmtpq87wOW',
+
+    // tech active
+    key_id: 'rzp_live_XD55IMcWecgyGW',
+    key_secret: 'ZjFLNOH3YsDhhoH9Nf676kDn',
   } : {
     // orbit
     // key_id: 'rzp_test_jCeoTVbZGMSzfn',
@@ -71,28 +75,32 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
     // key_id: 'rzp_test_PYGivNOLb4gHKa',
     // key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
 
-    // test
-    key_id: 'rzp_test_UZ9n6fsg5YF5wE',
-    key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
+    // test subramanya
+    // key_id: 'rzp_test_UZ9n6fsg5YF5wE',
+    // key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
+
+    //tech active
+    key_id: 'rzp_test_7xMhKwGh9PRlRA',
+    key_secret: 'e2bNdsdat2NeW73aYEICwjvc'
   }
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
-  logo: "https://tradebazaar.tech-active.com/assets/images/ekbazaarlogo.png",  
-  emailVerified: "https://tradebazaar.tech-active.com/assets/images/Unsubscribe@2x.png",
-  registrationthanks: "https://tradebazaar.tech-active.com/assets/images/registrationthanks.png",
-  otpverification: "https://tradebazaar.tech-active.com/assets/images/passwordreset.png",
-  passwordUpdated: "https://tradebazaar.tech-active.com/assets/images/success.png",
-  invoice: "https://tradebazaar.tech-active.com/assets/images/invoice_updated.png",
-  planExpired: "https://tradebazaar.tech-active.com/assets/images/planExpired.png",
-  planExpiring: "https://tradebazaar.tech-active.com/assets/images/planexpiring.png",
-  planChange: "https://tradebazaar.tech-active.com/assets/images/planChange.png",
-  enquiry: "https://tradebazaar.tech-active.com/assets/images/enquiry.png",
+  logo: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",  
+  emailVerified: "https://tradebazaarapi.tech-active.com/images/Unsubscribe.png",
+  registrationthanks: "https://tradebazaarapi.tech-active.com/images/registrationthanks.png",
+  otpverification: "https://tradebazaarapi.tech-active.com/images/passwordreset.png",
+  passwordUpdated: "https://tradebazaarapi.tech-active.com/images/success.png",
+  invoice: "https://tradebazaarapi.tech-active.com/images/invoice_updated.png",
+  planExpired: "https://tradebazaarapi.tech-active.com/images/planExpired.png",
+  planExpiring: "https://tradebazaarapi.tech-active.com/images/planExpiring.png",
+  planChange: "https://tradebazaarapi.tech-active.com/images/planChanged.png",
+  enquiry: "https://tradebazaarapi.tech-active.com/images/enquiry.png",
   facebook: "https://www.tenders.ekbazaar.com/assets/images/facebook.png",
   twitter: "https://www.tenders.ekbazaar.com/assets/images/twitter.png",
   linkedIn: "https://www.tenders.ekbazaar.com/assets/images/linkedin.png",
-  accountActivated: "https://www.tenders.ekbazaar.com/assets/images/accountactivated@2x.png",
-  registerationFlow: "https://www.tenders.ekbazaar.com/assets/images/registration-flow.png",
-  announcements: "https://www.tenders.ekbazaar.com/assets/images/announcement@2x.png"
+  accountActivated: "https://tradebazaarapi.tech-active.com/images/accountactivated@2x.png",
+  registerationFlow: "https://tradebazaarapi.tech-active.com/images/registration-flow.png",
+  announcements: "https://tradebazaarapi.tech-active.com/images/announcement@2x.png"
 }
 
 exports.rocketChatDomain = NODE_ENV === 'production' ? "chatbot.ekbazaar.com" : "chatbot.active.agency"

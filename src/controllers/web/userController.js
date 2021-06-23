@@ -166,7 +166,6 @@ module.exports.sendOtp = async (req, res) => {
     let otp = 1234;
     const seller = await checkUserExistOrNot({ mobile });
     const user = await checkBuyerExistOrNot({ mobile })
-    console.log("🚀 ~ file: userController.js ~ line 168 ~ module.exports.sendOtp= ~ user", user)
 
 
     if (seller && seller.length && !reset /* && user && user.length */) {
@@ -176,17 +175,15 @@ module.exports.sendOtp = async (req, res) => {
       return respError(res, "No User found with this number");
 
     const checkUser =
-      seller &&
-      seller.length &&
-      seller[0].email &&
-      seller[0].isEmailVerified === 2;
+    seller &&
+    seller.length &&
+    seller[0].email &&
+    seller[0].isEmailVerified === 2; 
 
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
       const { otpMessage, templateId } = sendOtp({ reset, otp });
-      console.log("🚀 ~ file: userController.js ~ line 186 ~ module.exports.sendOtp= ~ otpMessage", otpMessage, templateId)
       let response = await sendSMS(`+91${mobile}`, otpMessage, templateId);
-      console.log("🚀 ~ file: userController.js ~ line 187 ~ module.exports.sendOtp= ~ response", response.data)
       if (response && response.data) {
         const otpMessage = otpVerification({ otp });
 
@@ -439,7 +436,6 @@ module.exports.updateUser = async (req, res) => {
     const { userID } = req;
     const dateNow = new Date();
     const _buyer = req.body.buyer || {};
-    console.log("🚀 ~ file: userController.js ~ line 442 ~ module.exports.updateUser= ~ _buyer", _buyer)
     let {
       name,
       email,
@@ -450,13 +446,13 @@ module.exports.updateUser = async (req, res) => {
       sellerType,
       userType,
     } = req.body;
-      console.log("🚀 ~ file: userController.js ~ line 452 ~ module.exports.updateUser= ~ location", location)
-
+    
+    console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
     let userData = {
       name: (_buyer && _buyer.name) || name,
       city:
-        (_buyer && _buyer.location && _buyer.location.city) ||
-        location.city ||
+        (_buyer && _buyer.location && _buyer.location.city && _buyer.location.city) ||
+        location && location.city ||
         null,
       email: (_buyer && _buyer.email) || email || null,
     };
@@ -464,12 +460,6 @@ module.exports.updateUser = async (req, res) => {
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
     const __usr = await getUserProfile(userID)
-    console.log("🚀 ~ file: userController.js ~ line 464 ~ module.exports.updateUser= ~ userID", userID)
-    console.log("🚀 ~ file: userController.js ~ line 464 ~ module.exports.updateUser= ~ __usr", __usr)
-    console.log(
-      "🚀 ~ file: userController.js ~ line 459 ~ module.exports.updateUser= ~ _seller",
-      _seller
-    );
     if (!_seller) {
       const sellerData = {
         name: name || __usr.name || null,
@@ -509,7 +499,6 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       ..._buyer,
     };
-    console.log("🚀 ~ file: userController 3.js ~ line 498 ~ module.exports.updateUser= ~ _buyer", _buyer)
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
       buyerData.mobile = _buyer.mobile[0]["mobile"] || mobile[0]["mobile"];
       buyerData.mobile =
@@ -532,11 +521,9 @@ module.exports.updateUser = async (req, res) => {
       buyerData.countryCode = _buyer.mobile[0].countryCode;
     }
     delete buyerData && buyerData._id;
-    console.log("🚀 ~ file: userController.js ~ line 710 ~ module.exports.updateUser= ~ _seller.sellerType", _seller)
     if (_seller && sellerType && (!_seller.sellerType || (_seller.sellerType && !_seller.sellerType.length)) && isProd) {
       const { successfulMessage, templateId } = successfulRegistration({ userType, name });
       let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
-      console.log("🚀 ~ file: userController.js ~ line 535 ~ module.exports.updateUser= ~ resp", resp.data)
     }
     if (business) {
       const bsnsDtls = await addbusinessDetails(_seller._id, {
@@ -544,9 +531,6 @@ module.exports.updateUser = async (req, res) => {
       });
       sellerData.busenessId = bsnsDtls._id;
     }
-
-
-
 
     let seller = {},
       activeChat = {};
@@ -567,22 +551,14 @@ module.exports.updateUser = async (req, res) => {
         sendSingleMail(message);
 
         sellerData.isEmailSent = true;
-        console.log(
-          "🚀 ~ file: userController.js ~ line 552 ~ module.exports.updateUser= ~ sellerData",
-          sellerData
-        );
         buyerData.isEmailSent = true;
-        console.log("🚀 ~ file: userController.js ~ line 577 ~ module.exports.updateUser= ~ sellerData", sellerData)
-        console.log("🚀 ~ file: userController.js ~ line 577 ~ module.exports.updateUser= ~ buyerData", buyerData)
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
 
         if (isProd) {
 
           const { successfulMessage, templateId } = successfulRegistration({ userType, name });
-          console.log("🚀 ~ file: userController.js ~ line 592 ~ module.exports.updateUser= ~ `${__usr.countryCode}${mobile}`", `${__usr.countryCode}${mobile}`)
           let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
-          console.log("🚀 ~ file: userController.js ~ line 591 ~ module.exports.updateUser= ~ resp", resp)
 
         }
 
@@ -601,9 +577,7 @@ module.exports.updateUser = async (req, res) => {
 
       } else if (user.email && buyer.isEmailSent) {
         buyer = await updateBuyer({ userId: userID }, buyerData);
-        console.log("🚀 ~ file: userController.js ~ line 604 ~ module.exports.updateUser= ~ buyerData", buyerData)
         seller = await updateSeller({ userId: userID }, sellerData);
-        console.log("🚀 ~ file: userController.js ~ line 606 ~ module.exports.updateUser= ~ sellerData", sellerData)
       }
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
@@ -667,39 +641,42 @@ module.exports.updateUser = async (req, res) => {
 
       buyer = await getBuyer(null, { _id: buyer._id })
       seller = await getSeller(null, null, { _id: _seller._id })
-      console.log("🚀 ~ file: userController.js ~ line 664 ~ module.exports.updateUser= ~ seller", seller)
       // let keywords = []
       // keywords.push(seller.name.toLowerCase())
       // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
       // keywords = _.without(_.uniq(keywords), '', null, undefined)
       let masterRecords = await getMasterRecords({ 'userId._id': seller.userId }, {})
-      console.log("🚀 ~ file: userController.js ~ line 669 ~ module.exports.updateUser= ~ masterRecords", masterRecords)
-      masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
-      let sellerId = masterRecords.sellerId || {}
-      const masterData = {
-        sellerId: {
-          ...sellerId,
-          location: seller.location,
-          name: seller.name,
-          email: seller.email,
-          sellerType: seller.sellerType,
-          _id: seller._id,
-          mobile: seller.mobile,
-          sellerType: {
-            type: Array,
-            default: null
-          },
-          country: seller.location.country,
-          businessName: seller.busenessId.name,
-          userId: {
+
+      if (masterRecords && masterRecords.length) {
+
+        console.log("🚀 ~ file: userController.js ~ line 669 ~ module.exports.updateUser= ~ masterRecords", masterRecords)
+        masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
+        let sellerId = masterRecords.sellerId || {}
+        const masterData = {
+          sellerId: {
+            ...sellerId,
+            location: seller.location,
             name: seller.name,
-            _id: seller.userId
-          },
+            email: seller.email,
+            sellerType: seller.sellerType,
+            _id: seller._id,
+            mobile: seller.mobile,
+            sellerType: {
+              type: Array,
+              default: null
+            },
+            country: seller.location.country,
+            businessName: seller.busenessId && seller.busenessId.name,
+            userId: {
+              name: seller.name,
+              _id: seller.userId
+            },
+          }
+          // keywords
         }
-        // keywords
+        // const masterResult = await 
+        updateMasterSellerDetails({ 'userId._id': seller.userId }, masterData)
       }
-      // const masterResult = await 
-      updateMasterSellerDetails({ 'userId._id': seller.userId }, masterData)
 
       respSuccess(
         res,
@@ -725,6 +702,7 @@ module.exports.updateUser = async (req, res) => {
       respError(res, "Failed to update");
     }
   } catch (error) {
+    console.log(error, ' gggggggg -------------')
     respError(res, error.message);
   }
 };
@@ -814,14 +792,14 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url });
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url+'/signin' });
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
         subject: "Password Update",
         html: commonTemplate(updatePasswordMsg),
       };
-      await sendSingleMail(message);
+      /* await */ sendSingleMail(message);
     }
     respSuccess(res, user, "Password Updated Successfully");
   } catch (error) {
