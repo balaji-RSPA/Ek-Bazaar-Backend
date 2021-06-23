@@ -167,11 +167,12 @@ module.exports.sendOtp = async (req, res) => {
     let otp = 1234;
     let otpMessage = otpVerification({ otp });
     let query = {}
-    if (mobile) query = { mobile, countryCode }
+    if (mobile) query = { mobile, $or: [{ countryCode }, { 'countryCode': '+91' }] }
     else query = { email }
     console.log("🚀 ~ file: userController.js ~ line 172 ~ module.exports.sendOtp= ~ query", query)
     const seller = await checkUserExistOrNot(query);
     const user = await checkBuyerExistOrNot(query)
+    console.log("🚀 ~ file: userController.js ~ line 174 ~ module.exports.sendOtp= ~ seller", seller, user)
 
     if (seller && seller.length && !reset /* && user && user.length */) {
       return respError(res, "User already exist");

@@ -47,6 +47,7 @@ module.exports.addContact = async (req, res) => {
   }
    respSuccess(res, result, "Your request has been successfully submitted")
   } catch (error) {
+    console.log("🚀 ~ file: contactController.js ~ line 50 ~ module.exports.addContact= ~ error", error)
     respError(res, error.message);
   }
 };

@@ -24,10 +24,10 @@ module.exports.getAllOffers = async (req, res) => {
                     $gte: new Date().toISOString(),
                 }
             }, */ {
-                "productDetails.validity": {
-                    $gte: new Date(moment().startOf('day')),
-                }
-            }]
+                    "productDetails.validity": {
+                        $gte: new Date(moment().startOf('day')),
+                    }
+                }]
         }
         const buyerRequest = await getRFP(q1)
         const requestIds1 = buyerRequest && buyerRequest.length && buyerRequest.map((val) => {
@@ -161,20 +161,20 @@ module.exports.getAllOffers = async (req, res) => {
 
         }
         // let test = []
-        let ids = []
-        arrayObj && arrayObj.length && arrayObj.map((v) => {
-            ids.push(v._id)
-            v.products && v.products.length && ids.push(v.products[0]._id)
-        })
-        const deff = _.intersection(requestIds, ids)
-        let newArray = []
-        buyerRequest.map((val) => {
-            if ((val.productDetails && val.productDetails.name && val.productDetails.name.level2 && !val.productDetails.name.level2.id.toString()) || val.productDetails && val.productDetails.name && val.productDetails.name.level1 && !val.productDetails.name.level1.id.toString() || !ids.includes(val.productDetails.name.id.toString())) {
-                // console.log(val, ' &&&&&&&&&&&&&&77')
-                newArray.push(val)
-            }
-        })
-        console.log(newArray, ' gggggggggggggggggggg')
+        // let ids = []
+        // arrayObj && arrayObj.length && arrayObj.map((v) => {
+        //     ids.push(v._id)
+        //     v.products && v.products.length && ids.push(v.products[0]._id)
+        // })
+        // const deff = _.intersection(requestIds, ids)
+        // let newArray = []
+        // buyerRequest.map((val) => {
+        //     if ((val.productDetails && val.productDetails.name && val.productDetails.name.level2 && !val.productDetails.name.level2.id.toString()) || val.productDetails && val.productDetails.name && val.productDetails.name.level1 && !val.productDetails.name.level1.id.toString() || !ids.includes(val.productDetails.name.id.toString())) {
+        //         // console.log(val, ' &&&&&&&&&&&&&&77')
+        //         newArray.push(val)
+        //     }
+        // })
+        // console.log(newArray, ' gggggggggggggggggggg')
 
         // const www = buyerRequest && buyerRequest.length && buyerRequest.map((val, index) => {
         //     if (val.productDetails.name.search === 'level1') {
@@ -339,7 +339,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 btnname: 'View more',
                 seller: false,
                 value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
-                _id: buyer._id // add request Object _id
+                _id: buyer._id, // add request Object _id
+                quantity: `${buyer.productDetails.quantity} ${buyer.productDetails.weight}`
             }
             return obj
 

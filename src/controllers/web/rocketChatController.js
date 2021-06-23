@@ -385,9 +385,9 @@ exports.sendMessage = async (req, res) => {
                         'X-User-Id': chatUserId
                     }
                 })
-                console.log("🚀 ~ file: rocketChatController.js ~ line 366 ~ exports.sendMessage= ~ resultTranslate", resultTranslate)
+                // console.log("🚀 ~ file: rocketChatController.js ~ line 366 ~ exports.sendMessage= ~ resultTranslate", resultTranslate)
             }
-        console.log(result.data.message._id, ' send meeeee1111111111111 ----------------')
+        // console.log(result.data.message._id, ' send meeeee1111111111111 ----------------')
         // rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
         //     if (err)
         //         return respError(res, err.message)
