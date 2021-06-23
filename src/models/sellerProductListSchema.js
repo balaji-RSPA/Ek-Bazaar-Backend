@@ -100,29 +100,29 @@ const offerSchema = new Schema({
       trim: true
     }
   },
-  location:{
+  location: {
     city: {
-      label:{
+      label: {
         type: String
       },
-      value:{
+      value: {
         type: ObjectId
       }
     },
     state: {
-      label:{
+      label: {
         type: String
       },
-      value:{
+      value: {
         type: ObjectId
       }
     }
   },
-  validity:{
+  validity: {
     fromDate: {
       type: Date
     },
-    toDate:{
+    toDate: {
       type: Date
     }
   }
@@ -198,6 +198,9 @@ const productDetailsSchema = new Schema({
     type: ObjectId,
     ref: City,
     default: null,
+  },
+  others: {
+    type: String
   },
   sellingCountries: [{
     type: ObjectId,

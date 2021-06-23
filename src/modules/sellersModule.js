@@ -226,7 +226,7 @@ exports.deleteAllSessionLog = (userId) =>
       .catch(reject)
   })
 
-module.exports.checkUserExistOrNot = (query) =>
+  module.exports.checkUserExistOrNot = (query) =>
   new Promise((resolve, reject) => {
     Users.find(query)
       .select({
@@ -455,7 +455,7 @@ module.exports.getSeller = (id, chkStock, query) =>
       }
     }
     let _query = query || { userId: id }
-    console.log("🚀 ~ file: sellersModule.js ~ line 447 ~ newPromise ~ _query", _query)
+    // console.log("🚀 ~ file: sellersModule.js ~ line 447 ~ newPromise ~ _query", _query)
     Sellers.findOne(_query)
       .populate('sellerProductId')
       .populate('sellerType')
@@ -960,7 +960,6 @@ module.exports.addEstablishmentPhotos = (sellerId, photos) =>
   })
 module.exports.addProductDetails = (id, data) =>
   new Promise((resolve, reject) => {
-    console.log("🚀 ~ file: sellersModule.js ~ line 949 ~ id, data", id, data)
     if (id) {
       SelleresProductList.findOneAndUpdate({
         _id: id

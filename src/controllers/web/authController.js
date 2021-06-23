@@ -40,7 +40,7 @@ const getUserAgent = (userAgent) => {
 exports.login = async (req, res, next) => {
   try {
 
-    const { password, ipAddress, mobile, userType } = req.body;
+    const { password, ipAddress, mobile, userType, email, countryCode } = req.body;
 
     let _user = req.body.user
     console.log("🚀 ~ file: authController.js ~ line 46 ~ exports.login= ~ _user", _user)
@@ -58,6 +58,9 @@ exports.login = async (req, res, next) => {
     console.log("🚀 ~ file: authController.js ~ line 58 ~ exports.login= ~ _response", _response)
 
     const { user, token } = _response
+    let query = {}
+    if (email) query = { email }
+    else query = { mobile, countryCode }
     if (!_user) {
 
       return respAuthFailed(res, undefined, "User not found");
