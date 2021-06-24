@@ -268,6 +268,7 @@ module.exports.getUserProfile = (id) =>
         password: 1,
         isPhoneVerified: 1,
         isMobileVerified: 1,
+        isEmailVerified: 1
         // _id: -1,
       })
       .then((doc) => {
