@@ -24,10 +24,10 @@ module.exports.getAllOffers = async (req, res) => {
                     $gte: new Date().toISOString(),
                 }
             }, */ {
-                "productDetails.validity": {
-                    $gte: new Date(moment().startOf('day')),
-                }
-            }]
+                    "productDetails.validity": {
+                        $gte: new Date(moment().startOf('day')),
+                    }
+                }]
         }
         const buyerRequest = await getRFP(q1)
         const requestIds1 = buyerRequest && buyerRequest.length && buyerRequest.map((val) => {
@@ -339,7 +339,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 btnname: 'View more',
                 seller: false,
                 value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
-                _id: buyer._id // add request Object _id
+                _id: buyer._id, // add request Object _id
+                quantity: `${buyer.productDetails.quantity} ${buyer.productDetails.weight}`
             }
             return obj
 
