@@ -160,7 +160,7 @@ app.post("/uploadInternationalCity", async function (req, res) {
     const result = await uploadInternationalCity(req, res);
     console.log('city---')
   } catch (error) { }
-  // res.send('Its delete records  live')
+  res.send('Its delete records  live')
 });
 
 
