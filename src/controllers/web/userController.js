@@ -143,8 +143,8 @@ module.exports.getAccessToken = async (req, res) => {
 
 module.exports.checkUserExistOrNot = async (req, res) => {
   try {
-    const { mobile } = req.body;
-    const seller = await checkUserExistOrNot({ mobile });
+    const { mobile, email } = req.body;
+    const seller = await checkUserExistOrNot(mobile ? { mobile } : { email });
     console.log(
       "🚀 ~ file: userController.js ~ line 113 ~ module.exports.checkUserExistOrNot= ~ seller",
       seller
