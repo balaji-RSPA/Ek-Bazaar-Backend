@@ -15,6 +15,7 @@ const { getSellerPlan, deleteSellerPlans } = require('../../modules/sellerPlanMo
 const { getUserList, deleteBuyer, deleteUser } = require('../../modules/buyersModule')
 const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
 const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule')
+const { getCountryData, addCity, getCity } = require('../../modules/locationsModule')
 
 module.exports.updateLevel2l1Data = async (req, res) => {
 
@@ -172,5 +173,49 @@ module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, 
         // }
     } catch (error) {
         console.log(error, ' jjjjjjjjjjjjjjjjjjjjj')
+    }
+})
+
+module.exports.uploadInternationalCity = async (req, res) => new Promise(async (resolve, reject) => {
+
+    try {
+        const data = req.body
+
+        if (data && data.length) {
+
+            for (let index = 0; index < data.length; index++) {
+                const element = data[index];
+                const country = await getCountryData({ serialNo: element.countryCode.toString() })
+                const name = element.city.toLowerCase()
+                // console.log(name, element, ' --------------')
+                const cData = {
+                    name,
+                    state: null,
+                    country: country && country._id,
+                    iso2: element && element.iso2 || null,
+                    iso3: element && element.iso3 || null,
+                    alias: [name]
+                }
+                const city = await getCity({
+                    name: {
+                        $regex: name, $options: 'i'
+                    }
+                })
+                if (!city) {
+                    const _city = await addCity(cData)
+                } else {
+                    console.log(name, ' ---- Exist city ----')
+                }
+                console.log(index, name, '--------------- Index')
+            }
+
+        }
+        console.log('----- Uploade All Data Succesfully---------')
+        respSuccess(res, 'uploaded---')
+
+    } catch (error) {
+
+        respError(res, error)
+
     }
 })

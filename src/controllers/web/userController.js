@@ -143,16 +143,23 @@ module.exports.getAccessToken = async (req, res) => {
 
 module.exports.checkUserExistOrNot = async (req, res) => {
   try {
-    const { mobile } = req.body;
-    const seller = await checkUserExistOrNot({ mobile });
+    const { mobile, countryCode, email } = req.body;
+    console.log("🚀 ~ file: userController.js ~ line 147 ~ module.exports.checkUserExistOrNot= ~ req.body", req.body)
+    let query = {}
+    if (mobile) query = { mobile, 'countryCode': countryCode || "+91" }
+    else query = { email }
+    console.log("🚀 ~ file: userController.js ~ line 151 ~ module.exports.checkUserExistOrNot= ~ query", query)
+    const seller = await checkUserExistOrNot(query);
     console.log(
       "🚀 ~ file: userController.js ~ line 113 ~ module.exports.checkUserExistOrNot= ~ seller",
       seller
     );
-    if (seller && seller.length) {
+    if (seller && seller.length && !seller[0]["deleteTrade"]["status"]) {
       if (seller[0]["password"]) seller[0]["password"] = true;
       else seller[0]["password"] = false;
       return respSuccess(res, seller[0], "User with number already exist");
+    } else if(seller && seller.length && seller[0]["deleteTrade"]["status"]) {
+      return respError(res, "Account associated with the number is deleted. Please try to register.")
     }
     return respError(res, "No User found with this number");
   } catch (error) {
@@ -167,14 +174,13 @@ module.exports.sendOtp = async (req, res) => {
     let otp = 1234;
     let otpMessage = otpVerification({ otp });
     let query = {}
-    if (mobile) query = { mobile, $or: [{ countryCode }, { 'countryCode': '+91' }] }
+    if (mobile) query = { mobile, 'countryCode': countryCode || '+91' }
     else query = { email }
-    console.log("🚀 ~ file: userController.js ~ line 172 ~ module.exports.sendOtp= ~ query", query)
     const seller = await checkUserExistOrNot(query);
-    const user = await checkBuyerExistOrNot(query)
-    console.log("🚀 ~ file: userController.js ~ line 174 ~ module.exports.sendOtp= ~ seller", seller, user)
+    console.log("🚀 ~ file: userController.js ~ line 173 ~ module.exports.sendOtp= ~ seller", seller)
+    // const user = await checkBuyerExistOrNot(query)
 
-    if (seller && seller.length && !reset /* && user && user.length */) {
+    if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
       return respError(res, "User already exist");
     }
     if (reset && (!seller || !seller.length))
@@ -187,7 +193,7 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].isEmailVerified === 2;
 
     if (isProd) {
-      otp = Math.floor(1000 + Math.random() * 9000);
+      // otp = Math.floor(1000 + Math.random() * 9000);
       otpMessage = otpVerification({ otp });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
@@ -269,7 +275,7 @@ module.exports.addUser = async (req, res, next) => {
 
     req.body.userId = user._id;
     const buyerData = {
-      countryCode: Boolean(mobile.mobile) ? mobile.countryCode : null,
+      countryCode: Boolean(mobile.countryCode) ? mobile.countryCode : "+91",
       mobile: Boolean(mobile.mobile) ? mobile.mobile : null,
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
@@ -447,35 +453,37 @@ module.exports.updateUser = async (req, res) => {
 
     console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
     const __usr = await getUserProfile(userID)
+    console.log("🚀 ~ file: userController.js ~ line 456 ~ module.exports.updateUser= ~ __usr", __usr)
     let userData = {
-      name: (_buyer && _buyer.name) || name,
+      name: (Boolean(_buyer && _buyer.name) && _buyer.name) || (Boolean(name) && name) || __usr.name,
       city:
-        (_buyer && _buyer.location && _buyer.location.city && _buyer.location.city) ||
+        (_buyer && _buyer.location && Boolean(_buyer.location.city) && _buyer.location.city) ||
         (location && location.city) ||
         null,
-      email: (_buyer && _buyer.email) || email || __usr.email,
-      mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (mobile && parseInt(mobile)) || __usr.mobile,
-      countryCode: (mobile && mobile.countryCode) || countryCode || __usr.countryCode
+      email: (Boolean(_buyer && _buyer.email) && _buyer.email) || (Boolean(email) && email) || __usr.email,
+      mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (Boolean(mobile) && parseInt(mobile)) || __usr.mobile,
+      countryCode: (mobile && Boolean(mobile.countryCode)&& mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
     };
+    console.log("🚀 ~ file: userController.js ~ line 467 ~ module.exports.updateUser= ~ userData", userData)
 
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
     if (!_seller) {
       const sellerData = {
-        name: name || __usr.name || null,
-        email: email || __usr.email || null,
+        name: (Boolean(name) && name) || __usr.name || null,
+        email: (Boolean(email) && email) || __usr.email || null,
         mobile: [{
-          mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || mobile || (__usr.mobile && __usr.mobile.toString()),
-          countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || countryCode || __usr.countryCode
+          mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
+          countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
         }],
         userId: userID,
         sellerProductId: []
       }
       const buyerData = {
-        name: name || __usr.name || null,
-        email: email || __usr.email || null,
-        mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || mobile || (__usr.mobile && __usr.mobile.toString()),
-        countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || countryCode || __usr.countryCode,
+        name: (Boolean(name) && name) || __usr.name || null,
+        email: (Boolean(email) && email) || __usr.email || null,
+        mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
+        countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode,
         userId: userID
       }
       buyer = await updateBuyer({ userId: userID }, buyerData)
@@ -487,8 +495,8 @@ module.exports.updateUser = async (req, res) => {
       email,
       location,
       userId: userID,
-      mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || mobile || (__usr.mobile && __usr.mobile.toString()),
-      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || countryCode || __usr.countryCode,
+      mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
+      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode,
       ..._buyer,
     };
     let sellerData;
@@ -499,8 +507,8 @@ module.exports.updateUser = async (req, res) => {
       sellerType: sellerType ? [sellerType] : _seller.sellerType,
       userId: userID,
       mobile: [{
-        mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || mobile || (__usr.mobile && __usr.mobile.toString()),
-        countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || countryCode || __usr.countryCode
+        mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
+        countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
       }],
       ..._buyer,
     };
@@ -889,16 +897,22 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       if (!sellerId) query.userId = userId
       else query._id = sellerId
       const sellerData = await getSellerVal(query)
+      console.log("🚀 ~ file: userController.js ~ line 898 ~ module.exports.deleteCurrentAccount ~ sellerData", sellerData)
 
       if (!buyerId) query.userId = userId
       else query._id = buyerId
       const _buyer = await deleteBuyer({ _id: buyerId })
+      console.log("🚀 ~ file: userController.js ~ line 902 ~ module.exports.deleteCurrentAccount ~ _buyer", _buyer)
 
       delete query._id
       delete query.userId
-      query.sellerId = sellerData._id
+      if(!sellerId) query.userId = userId
+      else query._id = sellerData._id
+      // query._id = sellerData._id
+      console.log("🚀 ~ file: userController.js ~ line 906 ~ module.exports.deleteCurrentAccount ~ query", query)
 
       const _seller = await deleteSellerRecord(query);
+      console.log("🚀 ~ file: userController.js ~ line 908 ~ module.exports.deleteCurrentAccount ~ _seller", _seller)
 
       if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
         const pQuery = {
@@ -906,11 +920,14 @@ module.exports.deleteCurrentAccount = async (req, res) => {
             $in: sellerData.sellerProductId,
           },
         };
+        console.log("🚀 ~ file: userController.js ~ line 915 ~ module.exports.deleteCurrentAccount ~ pQuery", pQuery)
         const delRec = deleteSellerProducts(pQuery);
+        console.log("🚀 ~ file: userController.js ~ line 916 ~ module.exports.deleteCurrentAccount ~ delRec", delRec)
         const delMaster = bulkDeleteMasterProducts(pQuery);
         console.log('master collectiona nd seller product delete')
       }
       const delMaster1 = deleteSellerPlans({ sellerId: sellerData._id });
+      console.log("🚀 ~ file: userController.js ~ line 920 ~ module.exports.deleteCurrentAccount ~ delMaster1", delMaster1)
       if (permanentDelete) {
 
         const update = {
@@ -929,6 +946,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
             deleteInvestement: deleteTrade
           }
         });
+        console.log("🚀 ~ file: userController.js ~ line 938 ~ module.exports.deleteCurrentAccount ~ res", res)
 
         // Delete From Tender
         const resTender = axios.delete(tenderUrl, {
@@ -940,6 +958,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
             deleteTendor: deleteTrade
           }
         });
+        console.log("🚀 ~ file: userController.js ~ line 950 ~ module.exports.deleteCurrentAccount ~ resTender", resTender)
       }
     }
     respSuccess(res, "Deleted Succesfully")

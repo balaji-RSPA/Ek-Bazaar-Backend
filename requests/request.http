@@ -311,4 +311,17 @@ content-type: application/json
 #   }
 # ]
 
+# ####
+# POST  https://tradeapi.ekbazaar.com/uploadInternationalCity HTTP/1.1
+# content-type: application/json
+
+# [
+#   {
+#     "countryCode": 79,
+#     "city": "Halluin",
+#     "iso2": "FR",
+#     "iso3": "FRA"
+#   }
+# ]
+
 

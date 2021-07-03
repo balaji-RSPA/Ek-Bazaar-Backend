@@ -13,7 +13,7 @@ async function ssoRedirect(req, res, next) {
   if (ssoToken != null) {
     try {
       const url = `${ssoServerJWTURL}?ssoToken=${ssoToken}`
-      const response = _base && _base.includes("onebazaar") ? await requestOnebazaar({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } }) : await request({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } })
+      const response = _base && (_base.includes("onebazaar") || _base.includes("localhost")) ? await requestOnebazaar({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } }) : await request({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } })
 
       const { token } = response.data;
       const decoded = await verifyJwtToken(token);

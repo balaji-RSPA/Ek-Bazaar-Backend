@@ -22,7 +22,7 @@ const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
-const { deleteTestData } = require('./src/controllers/web/testController')
+const { deleteTestData, uploadInternationalCity } = require('./src/controllers/web/testController')
 
 // const { suggestions} = require("./elasticsearch-mapping");
 
@@ -37,19 +37,12 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: [
+      "http://localhost:8086",
       "http://localhost:3000",
-      "https://www.onebazaar.com",
-      "https://www.trade.onebazaar.com",
-      "https://tradeapi.ekbazaar.com",
-      "https://tradebazaarapi.tech-active.com",
       "http://localhost:8070",
       "http://localhost:8085",
-      "http://localhost:8050",
-      "https://tradebazaar.tech-active.com",
-      "https://www.trade.ekbazaar.com",
-      "http://localhost:8080",
-      "https://ekbazaar.tech-active.com",
-      "https://www.tenders.ekbazaar.com",
+      "https://trade.ekbazaar.com",
+      "https://trade.onebazaar.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -156,6 +149,14 @@ server.on("error", (e) => {
 //       res.send(error)
 //   }
 // })
+
+app.post("/uploadInternationalCity", async function (req, res) {
+  try {
+    const result = await uploadInternationalCity(req, res);
+    console.log('city---')
+  } catch (error) { }
+  res.send('Its delete records  live')
+});
 
 
 server.on("listening", () => {
