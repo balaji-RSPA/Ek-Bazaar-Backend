@@ -128,7 +128,6 @@ module.exports.updateSeller = async (req, res) => {
       GstNumber,
       IeCode,
     } = req.body
-    // console.log("🚀 ~ file: sellersController.js ~ line 84 ~ module.exports.updateSeller= ~ req.body", req.body)
     const {
       userID
     } = req
@@ -357,7 +356,6 @@ module.exports.deleteSellerProduct = async (req, res) => {
 
 // function masterMapData(val, keywords) {
 const masterMapData = (val, type, contactDetails = null) => new Promise((resolve, reject) => {
-  console.log("🚀 ~ xxxxxxxxxxxxxxxxxxxxxxx ----------- xxxxxxxxxxxxxxxx", contactDetails)
   const _Scity = [];
   let serviceProductData;
   if (val.serviceCity && val.serviceCity.length) {
@@ -391,7 +389,7 @@ const masterMapData = (val, type, contactDetails = null) => new Promise((resolve
   let data;
   if (type === "update") {
     data = {
-      productDetails: val.productDetails && val.productDetails || null,
+      productDetails: val.productDetails && val.productDetails && { ...val.productDetails } || null,
       status: val.status !== null && val.status !== undefined ? val.status : true,
       batch: 1,
       keywords,
@@ -558,6 +556,7 @@ module.exports.addSellerProduct = async (req, res) => {
           const val = proDetails[index];
 
           const priority = await mapPriority(findSeller && findSeller.length && findSeller[0].planId || "")
+          console.log(' 55555555555555555 ')
           const formateData = await masterMapData(val, 'insert', productContact)
           const updatePro = await updateSellerProducts({ _id: val._id }, { keywords: formateData.keywords })
           masterData.push({ ...formateData, priority })
@@ -613,9 +612,10 @@ module.exports.addSellerProduct = async (req, res) => {
         findSeller[0].sellerProductId = findSeller[0].sellerProductId && findSeller[0].sellerProductId.length !== 0 ? [...result, ...findSeller[0].sellerProductId] : result;
         // findSeller[0].sellerProductId.concat(result)
       }
+      console.log(findSeller, findSeller[0].sellerProductId, '33333333333333333333')
       seller = await updateSeller({
         _id: sellerId
-      }, findSeller[0])
+      }, { sellerProductId: findSeller[0].sellerProductId })
 
       respSuccess(res, seller, "Successfully added product")
     }
@@ -635,14 +635,13 @@ module.exports.updateSellerProduct = async (req, res) => {
     } = req
     let { offers, productId, deleteOffer } = body
     offers = offers ? JSON.parse(offers) : null
-    console.log('update poroduct---', productId, deleteOffer)
+    console.log('update poroduct---', body, productId, deleteOffer)
 
     let updateDetail
 
     if (offers) {
       var d1 = new Date(offers.validity.toDate);
       var d2 = new Date(offers.validity.fromDate);
-      console.log(d1, d2, ' 1111111111111111111111')
       const offerData = {
         // offers: offers,
         offers: {
@@ -653,7 +652,6 @@ module.exports.updateSellerProduct = async (req, res) => {
           }
         }
       }
-      console.log(offerData, ' zzzzzzzzzzzzzzzzzz')
       // [new Date(), subDays(new Date(), 1)]
       updateDetail = await addProductDetails(productId, offerData)
     }
@@ -778,14 +776,11 @@ module.exports.updateSellerProduct = async (req, res) => {
       const priority = await mapPriority(seller && seller.length && seller[0].planId || "")
       const masterData = await masterMapData(updatedProduct[0], 'update')
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
-      const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: 8 })
-      const esData = JSON.parse(JSON.stringify(masResult));
-      delete esData._id;
+      const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: priority })
+      // const esData = JSON.parse(JSON.stringify(masResult));
+      // esData && esData._id && delete esData._id;
       // const masElsLint =  updateESDoc(masResult._id, esData)
     }
-    // if(body.id && body.inStock){
-    //   
-    // }else
     respSuccess(res, seller, "Successfully updated")
   } catch (error) {
     console.log(error, ' ipdate data----------------')

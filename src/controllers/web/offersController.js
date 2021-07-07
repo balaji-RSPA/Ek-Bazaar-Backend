@@ -10,21 +10,34 @@ const {
 } = buyers;
 const { sendSMS } = require("../../utils/utils");
 const isProd = process.env.NODE_ENV === "production";
-
+const _ = require('lodash')
 const moment = require("moment")
 
 module.exports.getAllOffers = async (req, res) => {
 
     try {
-        console.log(moment.utc().startOf('day'), new Date(moment.utc().startOf('day')), new Date().toISOString(), ' wwwwwwwwwwwww')
-        // const q1 = { requestType: 11, 'productDetails.name.label': "Plier", "productDetails.validity": { $gte: new Date().toISOString() }
-        // }
-        // const sss = await getRFP(q1)
-        // console.log(JSON.stringify(sss[0]), sss.length,' 2222222222222222222222')
-        // for (let i = 0; i < sss.length; i++) {
-        //     let item = level1[i]
-        //     let obj = {}
-        // }
+        const requestIds = []
+        let newRecords = []
+        const q1 = {
+            requestType: 11, $or: [/* {
+                "productDetails.validity": {
+                    $gte: new Date().toISOString(),
+                }
+            }, */ {
+                    "productDetails.validity": {
+                        $gte: new Date(moment().startOf('day')),
+                    }
+                }]
+        }
+        const buyerRequest = await getRFP(q1)
+        const requestIds1 = buyerRequest && buyerRequest.length && buyerRequest.map((val) => {
+            if (val.productDetails.name.search !== 'level1') {
+                requestIds.push(val.productDetails.name.level1 && val.productDetails.name.level1.id)
+                requestIds.push(val.productDetails.name.level2 && val.productDetails.name.level2.id)
+            } else {
+                requestIds.push(val.productDetails.name.id)
+            }
+        }) || []
 
         const query = {
             "bool": {
@@ -45,7 +58,6 @@ module.exports.getAllOffers = async (req, res) => {
                 ]
             }
         }
-        console.log(JSON.stringify(query), ' cccccccccccccccccccccc --------------')
 
         const aggs = {
             "aggs": {
@@ -84,7 +96,6 @@ module.exports.getAllOffers = async (req, res) => {
                 }
             }
         }
-        console.log(JSON.stringify(query), ' ------------------')
         const data = await searchFromElastic(query, { skip: 0, limit: 2000 }, aggs);
         let aggsCount = data[2];
         let arrayObj = []
@@ -92,6 +103,7 @@ module.exports.getAllOffers = async (req, res) => {
 
         for (let i = 0; i < level1.length; i++) {
             let item = level1[i]
+            let documentCount = item.doc_count
             let obj = {}
 
             const query = {
@@ -109,9 +121,25 @@ module.exports.getAllOffers = async (req, res) => {
                 if (cat.id) obj._id = cat.id
             }
 
+            const catExist = requestIds && requestIds.length && requestIds.filter((val) => (val === item.key)).length
+            if (catExist) {
+                documentCount += catExist
+            } else {
+
+            }
+
             let products = item.level2.buckets && item.level2.buckets.length && await Promise.all(item.level2.buckets.map(async elem => {
 
-                let _obj = { count: elem.doc_count }
+
+                let _count = elem.doc_count
+                const _catExist = requestIds && requestIds.length && requestIds.filter((val) => val === elem.key).length
+
+                if (_catExist) {
+                    _count = elem.doc_count + _catExist
+                }
+                let _obj = {
+                    count: _count
+                }
 
                 query.bool.must.match.id = elem.key
                 let _cat = await getSuggestions(query, { skip: 0, limit: 1 }, false, {})
@@ -126,13 +154,48 @@ module.exports.getAllOffers = async (req, res) => {
 
             obj = {
                 ...obj,
-                title: `${cat.name}(${item.doc_count})`,
+                title: `${cat.name} (${documentCount})`,
                 products
             }
             arrayObj.push(obj)
 
         }
+        // let test = []
+        // let ids = []
+        // arrayObj && arrayObj.length && arrayObj.map((v) => {
+        //     ids.push(v._id)
+        //     v.products && v.products.length && ids.push(v.products[0]._id)
+        // })
+        // const deff = _.intersection(requestIds, ids)
+        // let newArray = []
+        // buyerRequest.map((val) => {
+        //     if ((val.productDetails && val.productDetails.name && val.productDetails.name.level2 && !val.productDetails.name.level2.id.toString()) || val.productDetails && val.productDetails.name && val.productDetails.name.level1 && !val.productDetails.name.level1.id.toString() || !ids.includes(val.productDetails.name.id.toString())) {
+        //         // console.log(val, ' &&&&&&&&&&&&&&77')
+        //         newArray.push(val)
+        //     }
+        // })
+        // console.log(newArray, ' gggggggggggggggggggg')
 
+        // const www = buyerRequest && buyerRequest.length && buyerRequest.map((val, index) => {
+        //     if (val.productDetails.name.search === 'level1') {
+        //         const dd = arrayObj && arrayObj.length && arrayObj.some((el) => {
+        //             return el._id !== val.productDetails.name.id;
+        //         });
+        //         const newCell = {
+        //             "_id": val.productDetails.name.search === 'level1' ? val.productDetails.name.id : val.productDetails.name.level1.id,
+        //             "title": val.productDetails.name.search === 'level1' ? `${val.productDetails.name.name}(${1})` : val.productDetails.name.level1.name,
+        //             "products": val.productDetails.name.level2 ? [
+        //                 {
+        //                     "count": 2,
+        //                     "_id": val.productDetails.name.level2 && val.productDetails.name.level2.id || null,
+        //                     "key": val.productDetails.name.level2 && val.productDetails.name.level2.name || null
+        //                 }
+        //             ] : null
+        //         }
+        //         !dd && !dd.length && test.push(newCell)
+        //     }
+        // })
+        // console.log(JSON.stringify(test), www, ' kkkkkkkkkkkkkkk')
         respSuccess(res, { offersCount: arrayObj })
 
     } catch (error) {
@@ -147,11 +210,10 @@ module.exports.getAllSellerOffers = async (req, res) => {
 
     try {
         const { skip, limit, search, level1, level2 } = req.query
-        // console.log("🚀 ~ file: offersController.js ~ line 139 ~ module.exports.getAllSellerOffers= ~ req.query", req.query)
         let _query = {
             requestType: 11, $or: [{
                 "productDetails.validity": {
-                    $gte: new Date(moment().startOf('day')),
+                    $gte: new Date().toISOString(),
                 }
             }, {
                 "productDetails.validity": {
@@ -241,9 +303,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 }
             ]
         }
-        console.log(JSON.stringify(query), ' 444444444444444444444')
         const seller = await searchFromElastic(query, { skip: 0, limit: 1000 }, {});
-        // console.log("🚀 ~ file: offersController.js ~ line 205 ~ module.exports.getAllSellerOffers= ~ seller", seller)
         let _seller = seller.length && seller[0]
         let sellerOffers = []
         let buyerRequests = []
@@ -268,9 +328,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
             // console.log("🚀 ~ file: offersController.js ~ line 201 ~ module.exports.getAllSellerOffers= ~ obj", obj)
             return obj
         })
-        // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx", JSON.stringify(_query))
         buyerRequests = await getRFPData(_query, { skip: 0, limit: 1000 })
-        console.log("🚀 ~ file: offersController.js ~ line 229 ~ module.exports.getAllSellerOffers= ~ buyerRequests", buyerRequests)
         buyerRequests = buyerRequests.length && buyerRequests.map(buyer => {
 
             let obj = {
@@ -281,7 +339,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 btnname: 'View more',
                 seller: false,
                 value: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
-                _id: buyer._id // add request Object _id
+                _id: buyer._id, // add request Object _id
+                quantity: `${buyer.productDetails.quantity} ${buyer.productDetails.weight}`
             }
             return obj
 

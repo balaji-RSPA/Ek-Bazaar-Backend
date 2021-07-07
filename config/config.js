@@ -3,30 +3,30 @@ let config;
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
 if (process.env.NODE_ENV === "production") {
   config = {
-    // tradeDb: {
-    //   // replicaset
-    //   host1: "159.65.145.186",
-    //   host2: "128.199.29.212",
-    //   host3: "143.110.177.149",
-    //   port: "5006",
-    //   user: "dev",
-    //   password: "active.123",
-    //   database: "tradedb",
-    //   replicaName: "rs1",
-    //   server_port: "8070",
-    // },
     tradeDb: {
       // replicaset
-      host1: "143.110.184.87",
-      host2: "139.59.6.17",
-      host3: "128.199.22.189",
+      host1: "159.65.145.186",
+      host2: "128.199.29.212",
+      host3: "143.110.177.149",
       port: "5006",
-      // user: "root",
-      // password: "Gill7OfDyogh",
+      user: "dev",
+      password: "active.123",
       database: "tradedb",
       replicaName: "rs1",
       server_port: "8070",
     },
+    // tradeDb: {
+    //   // replicaset
+    //   host1: "143.110.184.87",
+    //   host2: "139.59.6.17",
+    //   host3: "128.199.22.189",
+    //   port: "5006",
+    //   // user: "root",
+    //   // password: "Gill7OfDyogh",
+    //   database: "tradedb",
+    //   replicaName: "rs1",
+    //   server_port: "8070",
+    // },
     // tradedb: {
     //   host: "tradedbtemp.tech-active.com",
     //   // host: "tradedb.ekbazaar.com",

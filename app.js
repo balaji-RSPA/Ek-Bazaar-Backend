@@ -22,7 +22,7 @@ const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
-const { deleteTestData } = require('./src/controllers/web/testController')
+const { deleteTestData, uploadInternationalCity } = require('./src/controllers/web/testController')
 
 // const { suggestions} = require("./elasticsearch-mapping");
 
@@ -40,6 +40,7 @@ app.use(
       "http://localhost:3000",
       "https://tradeapi.ekbazaar.com",
       "https://tradebazaarapi.tech-active.com",
+      "https://tradeonebazaar.tech-active.com",
       "http://localhost:8070",
       "http://localhost:8085",
       "http://localhost:8050",
@@ -48,6 +49,8 @@ app.use(
       "http://localhost:8080",
       "https://ekbazaar.tech-active.com",
       "https://www.tenders.ekbazaar.com",
+      "http://admin.ekbazaar.tech-active.com",
+      "https://admin.ekbazaar.tech-active.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -155,13 +158,21 @@ server.on("error", (e) => {
 //   }
 // })
 
+app.post("/uploadInternationalCity", async function (req, res) {
+  try {
+    const result = await uploadInternationalCity(req, res);
+    console.log('city---')
+  } catch (error) { }
+  res.send('Its delete records  live')
+});
+
 
 server.on("listening", () => {
   console.log(`Listening:${server.address().port}`);
   Logger.info(`Listening:${server.address().port}`);
 });
 
-if (env.NODE_ENV === "production") {
+if (env.NODE_ENV === "production1") {
   const queSms = cron.schedule("* * * * *", async () => {
     queSms.stop();
     console.log(
@@ -178,7 +189,7 @@ if (env.NODE_ENV === "production") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
   const planExpire = cron.schedule(
     "50 23 * * *",
     async () => {

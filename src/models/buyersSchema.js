@@ -63,12 +63,12 @@ const buyerSchema = new Schema(
     },
     countryCode: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     mobile: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     alternateNumber: {

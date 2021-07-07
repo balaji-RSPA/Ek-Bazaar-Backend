@@ -84,14 +84,18 @@ const productDetailsSchema = new Schema({
     },
     countryOfOrigin: {
         type: nameSchema,
-        // default: null
+        default: null
     },
     regionOfOrigin: {
         type: nameSchema,
-        // default: null
+        default: null
     },
     cityOfOrigin: {
         type: nameSchema,
+        default: null
+    },
+    others: {
+        type: String
     },
     sellingCountries: {
         type: [nameSchema]

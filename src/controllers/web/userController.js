@@ -143,8 +143,8 @@ module.exports.getAccessToken = async (req, res) => {
 
 module.exports.checkUserExistOrNot = async (req, res) => {
   try {
-    const { mobile } = req.body;
-    const seller = await checkUserExistOrNot({ mobile });
+    const { mobile, email } = req.body;
+    const seller = await checkUserExistOrNot(mobile ? { mobile } : { email });
     console.log(
       "🚀 ~ file: userController.js ~ line 113 ~ module.exports.checkUserExistOrNot= ~ seller",
       seller
@@ -162,59 +162,38 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
-    const { mobile, reset } = req.body;
+    const { mobile, reset, email, countryCode } = req.body;
+    console.log("🚀 ~ file: userController.js ~ line 166 ~ module.exports.sendOtp= ~ req.body", req.body)
     let otp = 1234;
-    const seller = await checkUserExistOrNot({ mobile });
-    const user = await checkBuyerExistOrNot({ mobile })
-
+    let otpMessage = otpVerification({ otp });
+    let query = {}
+    if (mobile) query = { mobile, $or: [{ countryCode }, { 'countryCode': '+91' }] }
+    else query = { email }
+    console.log("🚀 ~ file: userController.js ~ line 172 ~ module.exports.sendOtp= ~ query", query)
+    const seller = await checkUserExistOrNot(query);
+    const user = await checkBuyerExistOrNot(query)
+    console.log("🚀 ~ file: userController.js ~ line 174 ~ module.exports.sendOtp= ~ seller", seller, user)
 
     if (seller && seller.length && !reset /* && user && user.length */) {
-      return respError(res, "User with this number already exist");
+      return respError(res, "User already exist");
     }
     if (reset && (!seller || !seller.length))
-      return respError(res, "No User found with this number");
+      return respError(res, "User Not found");
 
     const checkUser =
-    seller &&
-    seller.length &&
-    seller[0].email &&
-    seller[0].isEmailVerified === 2; 
+      seller &&
+      seller.length &&
+      seller[0].email &&
+      seller[0].isEmailVerified === 2;
 
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
-      const { otpMessage, templateId } = sendOtp({ reset, otp });
-      let response = await sendSMS(`+91${mobile}`, otpMessage, templateId);
-      if (response && response.data) {
-        const otpMessage = otpVerification({ otp });
-
-        //send email
-        if (seller && seller.length && seller[0]["email"]) {
-          const message = {
-            from: MailgunKeys.senderMail,
-            to: seller[0].email,
-            subject: "OTP Verification",
-            html: commonTemplate(otpMessage),
-          };
-          await sendSingleMail(message);
-
-          return respSuccess(
-            res,
-            {
-              otp,
-            },
-            checkUser
-              ? "Your OTP has been send successfully, check your email or sms"
-              : ""
-          );
-        }
-      } else {
-        console.log("=======Email is not verified yet================");
-      }
-      return respSuccess(res, { otp });
-    } else {
-      if (checkUser) {
-        const otpMessage = otpVerification({ otp: otp });
-        //send email
+      otpMessage = otpVerification({ otp });
+      if (mobile) {
+        const { otpMessage, templateId } = sendOtp({ reset, otp });
+        let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
+        console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
+      } else if (checkUser || (email && !reset)) {
         const message = {
           from: MailgunKeys.senderMail,
           to: seller[0].email,
@@ -222,18 +201,29 @@ module.exports.sendOtp = async (req, res) => {
           html: commonTemplate(otpMessage),
         };
         await sendSingleMail(message);
+
+        return respSuccess(res, { otp }, checkUser || (email && !reset) ? "Your OTP has been send successfully, check your email or sms" : "");
       } else {
         console.log("=======Email is not verified yet================");
       }
-      return respSuccess(
-        res,
-        {
-          otp,
-        },
-        checkUser
-          ? "Your OTP has been send successfully, check your email or sms"
-          : ""
-      );
+      return respSuccess(res, { otp });
+    } else {
+      if (mobile) {
+        return respSuccess(res, { otp }, "Your OTP has been send successfully, check your email or sms");
+      } else if (checkUser || (email && !reset)) {
+        //send email
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: email || seller.length && seller[0].email,
+          subject: "OTP Verification",
+          html: commonTemplate(otpMessage),
+        };
+        await sendSingleMail(message);
+        return respSuccess(res, { otp }, checkUser || email ? "Your OTP has been send successfully, check your email or sms" : "");
+      } else {
+        console.log("=======Email is not verified yet================");
+      }
+      return respError(res, "Invalid Input");
     }
   } catch (error) {
     return respError(res, error.message);
@@ -265,6 +255,7 @@ const getUserAgent = (userAgent) => {
 module.exports.addUser = async (req, res, next) => {
   try {
     const {
+      email,
       password,
       mobile,
       ipAddress,
@@ -278,17 +269,22 @@ module.exports.addUser = async (req, res, next) => {
 
     req.body.userId = user._id;
     const buyerData = {
-      countryCode: mobile.countryCode,
-      mobile: mobile.mobile,
-      isPhoneVerified: true,
+      countryCode: Boolean(mobile.mobile) ? mobile.countryCode : null,
+      mobile: Boolean(mobile.mobile) ? mobile.mobile : null,
+      isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
+      email
     };
     const sellerData = {
-      mobile,
-      isPhoneVerified: true,
+      email,
+      mobile: Boolean(mobile.mobile) ? mobile : [],
+      isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
     };
-    const _buyer = await getBuyer(null, { mobile: mobile.mobile || mobile })
+    let query = {}
+    if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
+    else query = { email }
+    const _buyer = await getBuyer(null, query)
     const buyer = await addBuyer(buyerData);
 
     const seller = await addSeller(sellerData);
@@ -424,7 +420,7 @@ module.exports.getUserProfile = async (req, res) => {
       //   ...user
       // },
     };
-    console.log("🚀 ~ file: userController 3.js ~ line 418 ~ module.exports.getUserProfile= ~ userData", userData)
+    // console.log("🚀 ~ file: userController 3.js ~ line 418 ~ module.exports.getUserProfile= ~ userData", userData)
     respSuccess(res, userData);
   } catch (error) {
     respError(res, error.message);
@@ -442,31 +438,35 @@ module.exports.updateUser = async (req, res) => {
       business,
       location,
       mobile,
+      countryCode,
       type,
       sellerType,
       userType,
     } = req.body;
-    
+    console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body)
+
     console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
+    const __usr = await getUserProfile(userID)
     let userData = {
       name: (_buyer && _buyer.name) || name,
       city:
         (_buyer && _buyer.location && _buyer.location.city && _buyer.location.city) ||
-        location && location.city ||
+        (location && location.city) ||
         null,
-      email: (_buyer && _buyer.email) || email || null,
+      email: (_buyer && _buyer.email) || email || __usr.email,
+      mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (mobile && parseInt(mobile)) || __usr.mobile,
+      countryCode: (mobile && mobile.countryCode) || countryCode || __usr.countryCode
     };
 
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
-    const __usr = await getUserProfile(userID)
     if (!_seller) {
       const sellerData = {
         name: name || __usr.name || null,
         email: email || __usr.email || null,
         mobile: [{
-          mobile: mobile && mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
-          countryCode: __usr.countryCode
+          mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || mobile || (__usr.mobile && __usr.mobile.toString()),
+          countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || countryCode || __usr.countryCode
         }],
         userId: userID,
         sellerProductId: []
@@ -474,8 +474,8 @@ module.exports.updateUser = async (req, res) => {
       const buyerData = {
         name: name || __usr.name || null,
         email: email || __usr.email || null,
-        mobile: mobile && mobile.mobile || mobile || __usr.mobile && __usr.mobile.toString(),
-        countryCode: __usr.countryCode,
+        mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || mobile || (__usr.mobile && __usr.mobile.toString()),
+        countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || countryCode || __usr.countryCode,
         userId: userID
       }
       buyer = await updateBuyer({ userId: userID }, buyerData)
@@ -487,7 +487,8 @@ module.exports.updateUser = async (req, res) => {
       email,
       location,
       userId: userID,
-      // mobile: _buyer.mobile || _seller.mobile,
+      mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || mobile || (__usr.mobile && __usr.mobile.toString()),
+      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || countryCode || __usr.countryCode,
       ..._buyer,
     };
     let sellerData;
@@ -497,6 +498,10 @@ module.exports.updateUser = async (req, res) => {
       location,
       sellerType: sellerType ? [sellerType] : _seller.sellerType,
       userId: userID,
+      mobile: [{
+        mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || mobile || (__usr.mobile && __usr.mobile.toString()),
+        countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || countryCode || __usr.countryCode
+      }],
       ..._buyer,
     };
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
@@ -674,7 +679,6 @@ module.exports.updateUser = async (req, res) => {
           }
           // keywords
         }
-        // const masterResult = await 
         updateMasterSellerDetails({ 'userId._id': seller.userId }, masterData)
       }
 
@@ -683,15 +687,6 @@ module.exports.updateUser = async (req, res) => {
         {
           seller,
           buyer,
-          // seller: {
-          //   ...seller,
-          //   ...user,
-          //   mobile: seller.mobile && seller.mobile.length ? seller.mobile : [{mobile: user.mobile, countryCode: user.countryCode}]
-          // },
-          // buyer: {
-          //   ...buyer,
-          //   ...user
-          // },
           activeChat,
         },
         user.email && user.isEmailVerified === 1
@@ -724,15 +719,19 @@ exports.updateUserLanguage = async (req, res) => {
 exports.verifiedEmail = async (req, res) => {
   try {
     const { encryptedData } = req.body;
+    console.log(req.body, ' --------- bofff')
     const user = await getUserFromUserHash(encryptedData);
     let hash;
     if (user.length) {
       hash = user[0].userHash;
     }
+    console.log('--___eamesh email verifies -----------')
     const userEmail = decrypt(hash);
     const data = await updateEmailVerification(encryptedData, {
       userEmail: userEmail,
+      isEmailVerified: 2
     });
+    console.log("🚀 ~ file: userController.js ~ line 732 ~ exports.verifiedEmail= ~ data", data)
     if (data.ok === 1) {
       let mobileVal = user[0].mobile.toString();
       await updateBuyer({ mobile: mobileVal }, { isEmailVerified: true });
@@ -792,7 +791,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url+'/signin' });
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url + '/signin' });
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
@@ -877,6 +876,103 @@ module.exports.deleteRecords = async (req, res) =>
       reject(error);
     }
   });
+
+exports.verificationEmail = async (req, res) => {
+
+  try {
+    const { email, mobile, token, userId } = req.body
+    console.log("🚀 ~ file: userController.js ~ line 884 ~ exports.verificationEmail= ~ email", email)
+    const { userID } = req
+    const url = req.get("origin");
+    if (email) {
+      req.body.userHash = encrypt(email)
+      const updateUserData = {
+        userHash: req.body.userHash,
+        email,
+        isEmailVerified: 1
+      }
+      let { token } = req.headers.authorization.split("|")[1];
+      token = token || req.token;
+      const alteredToken = token.split(".").join("!");
+
+      const link = `${url}/user/${req.body.userHash.encryptedData}&${alteredToken}`;
+      console.log("🚀 ~ file: userController.js ~ line 891 ~ exports.verificationEmail= ~ link", link)
+      const template = await activateAccount(link);
+      let message = {
+        from: MailgunKeys.senderMail,
+        to: email,
+        subject: "Ekbazaar email verification",
+        html: template,
+      };
+      sendSingleMail(message);
+      const updateData = {
+        isEmailSent: true,
+        email,
+        isEmailVerified: false
+      }
+      await updateBuyer({ userId: userID }, updateData);
+      await updateSeller({ userId: userID }, updateData);
+      const ccc = await updateUser({ _id: userID }, updateUserData)
+    }
+
+    // const { email, mobile, token } = req.body
+    // const { userID } = req
+    // // const alteredToken = token.split('.').join('!')
+    // // console.log(alteredToken)
+    // req.body.userHash = encrypt(email)
+    // // console.log(typeof req.body.userHash.iv, '555', typeof req.body.userHash.encryptedData)
+    // const _email = decrypt(req.body.userHash)
+    // console.log(_email, '_email.................')
+    // const updateData = {
+    //   userHash: req.body.userHash
+    // }
+    // req.body.isEmailVerified = 1
+    // const data = await updateUser(userID, updateData)
+    // if (data) {
+
+    //   const auth = {
+    //     auth: {
+    //       api_key: mailgunAPIKey,
+    //       domain: mailgunDomain
+    //     }
+    //   }
+
+    //   const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+
+    //   const htmlMessage = `<section><p>Click <a href="https://ekbazaar.tech-active.com/user/${req.body.userHash.encryptedData}&${alteredToken}">here</a> to verify your email or on the link below</p><br/><a href="https://ekbazaar.tech-active.com/user/${req.body.userHash.encryptedData}&${alteredToken}">https://ekbazaar.tech-active.com/user/${req.body.userHash.encryptedData}&${alteredToken}</a></section>`;
+
+    //   const link = `${siteURL}/user/${req.body.userHash.encryptedData}&${alteredToken}`
+
+    //   const template = await activateAccount(link)
+    //   const message = {
+    //     from: senderMail,
+    //     to: email,
+    //     subject: "Ekbazaar email verification",
+    //     "h:Reply-To": replyMail,
+    //     html: template,
+    //     text: "Mailgun rocks, pow pow!"
+    //   };
+    //   console.log(message, ' message -------')
+
+    //   nodemailerMailgun.sendMail(message, (err, info) => {
+    //     if (err) {
+    //       console.log(`Error: ${err}`);
+    //     } else {
+    //       console.log(`Response: ${info}`);
+    //     }
+    //   });
+
+    return respSuccess(res, { email, message: 'verification link has been sent to your email' })
+
+    // }
+
+  } catch (error) {
+    console.log(error, ' eeeeeeeeeeeeeeee')
+    return respError(res, error)
+
+  }
+
+}
 
 
 module.exports.deleteCurrentAccount = async (req, res) => {

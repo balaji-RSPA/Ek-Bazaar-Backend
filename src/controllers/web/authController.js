@@ -40,7 +40,7 @@ const getUserAgent = (userAgent) => {
 exports.login = async (req, res, next) => {
   try {
 
-    const { password, ipAddress, mobile, userType } = req.body;
+    const { password, ipAddress, mobile, userType, email, countryCode } = req.body;
 
     let _user = req.body.user
     console.log("🚀 ~ file: authController.js ~ line 46 ~ exports.login= ~ _user", _user)
@@ -57,6 +57,9 @@ exports.login = async (req, res, next) => {
     const _response = await ssoRedirect(req, res, next)
 
     const { user, token } = _response
+    let query = {}
+    if (email) query = { email }
+    else query = { mobile, countryCode }
     if (!_user) {
 
       return respAuthFailed(res, undefined, "User not found");
@@ -96,6 +99,7 @@ exports.login = async (req, res, next) => {
     //   buyer = await buyers.updateBuyer({ userId: user._id }, buyerData)
     // }
     let seller = await sellers.getSeller(_user._id);
+    console.log("🚀 ~ file: authController.js ~ line 102 ~ exports.login= ~ seller -------------", seller, userType, buyer)
 
 
     if (userType === 'buyer' && !buyer) {
@@ -154,15 +158,15 @@ exports.login = async (req, res, next) => {
       // const result1 = await sellers.handleUserSession(_user._id, finalData);
       sellers.handleUserSession(_user._id, finalData);
       const productCount = seller && seller.sellerProductId && seller.sellerProductId.length ? true : false
-      console.log("🚀 ~ file: authController.js ~ line 119 ~ exports.login= ~ ProductCount", productCount)
+      console.log("🚀 ~ file: authController.js ~ line 119 ~ exports.login= ~ ProductCount------------", productCount, seller, _user)
       // const chatLogin = await getChat({ userId: _user._id })
       let activeChat = {
         username: mobile,
         userId: _user._id,
-        sellerId: seller._id,
-        buyerId: buyer._id,
-        email: seller.email,
-        name: seller.name
+        sellerId: seller && seller._id,
+        buyerId: buyer && buyer._id,
+        email: seller && seller.email || buyer && buyer.email || null,
+        name: seller && seller.name || buyer && buyer.name || null
       }
       // if (chatLogin) {
       //   if (chatLogin.details) {
@@ -188,7 +192,7 @@ exports.login = async (req, res, next) => {
       //   activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
       //   console.log(activeChat, '------ New Chat activated-----------')
       // }
-
+      console.log('1111111111111111111 --------------')
       return respSuccess(res, { user, token, activeChat, productCount }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");
