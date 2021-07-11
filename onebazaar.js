@@ -38,19 +38,10 @@ app.use(
   cors({
     origin: [
       "http://localhost:8086",
+      "http://localhost:8085",
       "http://localhost:3000",
       "https://www.onebazaar.com",
-      "https://trade.onebazaar.com",
-      "https://tradeapi.ekbazaar.com",
-      "https://tradebazaarapi.tech-active.com",
-      "http://localhost:8070",
-      "http://localhost:8085",
-      "http://localhost:8050",
-      "https://tradebazaar.tech-active.com",
-      "https://trade.ekbazaar.com",
-      "http://localhost:8080",
-      "https://ekbazaar.tech-active.com",
-      "https://tenders.ekbazaar.com",
+      "https://trade.onebazaar.com"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,

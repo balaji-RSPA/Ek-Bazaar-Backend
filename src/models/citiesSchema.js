@@ -27,6 +27,14 @@ const citiesSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    iso2: {
+      type: String,
+      default: null,
+    },
+    iso3: {
+      type: String,
+      default: null,
+    },
     alias: {
       type: Array,
       default: null

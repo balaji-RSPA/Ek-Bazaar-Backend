@@ -197,12 +197,13 @@ module.exports.sendOtp = async (req, res) => {
       otpMessage = otpVerification({ otp });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
+        console.log(otpMessage, templateId, "lllllllllllllllllllllllllllllllllllllll")
         let response = await sendSMS(`${countryCode || "+91"}${mobile}`, otpMessage, templateId);
         console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
       } else if (checkUser || (email && !reset)) {
         const message = {
           from: MailgunKeys.senderMail,
-          to: seller[0].email,
+          to: (Array.isArray(seller) && seller.length && seller[0].email) || email,
           subject: "OTP Verification",
           html: commonTemplate(otpMessage),
         };
@@ -727,15 +728,19 @@ exports.updateUserLanguage = async (req, res) => {
 exports.verifiedEmail = async (req, res) => {
   try {
     const { encryptedData } = req.body;
+    console.log(req.body, ' --------- bofff')
     const user = await getUserFromUserHash(encryptedData);
     let hash;
     if (user.length) {
       hash = user[0].userHash;
     }
+    console.log('--___eamesh email verifies -----------')
     const userEmail = decrypt(hash);
     const data = await updateEmailVerification(encryptedData, {
       userEmail: userEmail,
+      isEmailVerified: 2
     });
+    console.log("🚀 ~ file: userController.js ~ line 732 ~ exports.verifiedEmail= ~ data", data)
     if (data.ok === 1) {
       let mobileVal = user[0].mobile.toString();
       await updateBuyer({ mobile: mobileVal }, { isEmailVerified: true });
@@ -880,6 +885,103 @@ module.exports.deleteRecords = async (req, res) =>
       reject(error);
     }
   });
+
+exports.verificationEmail = async (req, res) => {
+
+  try {
+    const { email, mobile, token, userId } = req.body
+    console.log("🚀 ~ file: userController.js ~ line 884 ~ exports.verificationEmail= ~ email", email)
+    const { userID } = req
+    const url = req.get("origin");
+    if (email) {
+      req.body.userHash = encrypt(email)
+      const updateUserData = {
+        userHash: req.body.userHash,
+        email,
+        isEmailVerified: 1
+      }
+      let { token } = req.headers.authorization.split("|")[1];
+      token = token || req.token;
+      const alteredToken = token.split(".").join("!");
+
+      const link = `${url}/user/${req.body.userHash.encryptedData}&${alteredToken}`;
+      console.log("🚀 ~ file: userController.js ~ line 891 ~ exports.verificationEmail= ~ link", link)
+      const template = await activateAccount(link);
+      let message = {
+        from: MailgunKeys.senderMail,
+        to: email,
+        subject: "Ekbazaar email verification",
+        html: template,
+      };
+      sendSingleMail(message);
+      const updateData = {
+        isEmailSent: true,
+        email,
+        isEmailVerified: false
+      }
+      await updateBuyer({ userId: userID }, updateData);
+      await updateSeller({ userId: userID }, updateData);
+      const ccc = await updateUser({ _id: userID }, updateUserData)
+    }
+
+    // const { email, mobile, token } = req.body
+    // const { userID } = req
+    // // const alteredToken = token.split('.').join('!')
+    // // console.log(alteredToken)
+    // req.body.userHash = encrypt(email)
+    // // console.log(typeof req.body.userHash.iv, '555', typeof req.body.userHash.encryptedData)
+    // const _email = decrypt(req.body.userHash)
+    // console.log(_email, '_email.................')
+    // const updateData = {
+    //   userHash: req.body.userHash
+    // }
+    // req.body.isEmailVerified = 1
+    // const data = await updateUser(userID, updateData)
+    // if (data) {
+
+    //   const auth = {
+    //     auth: {
+    //       api_key: mailgunAPIKey,
+    //       domain: mailgunDomain
+    //     }
+    //   }
+
+    //   const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+
+    //   const htmlMessage = `<section><p>Click <a href="https://ekbazaar.tech-active.com/user/${req.body.userHash.encryptedData}&${alteredToken}">here</a> to verify your email or on the link below</p><br/><a href="https://ekbazaar.tech-active.com/user/${req.body.userHash.encryptedData}&${alteredToken}">https://ekbazaar.tech-active.com/user/${req.body.userHash.encryptedData}&${alteredToken}</a></section>`;
+
+    //   const link = `${siteURL}/user/${req.body.userHash.encryptedData}&${alteredToken}`
+
+    //   const template = await activateAccount(link)
+    //   const message = {
+    //     from: senderMail,
+    //     to: email,
+    //     subject: "Ekbazaar email verification",
+    //     "h:Reply-To": replyMail,
+    //     html: template,
+    //     text: "Mailgun rocks, pow pow!"
+    //   };
+    //   console.log(message, ' message -------')
+
+    //   nodemailerMailgun.sendMail(message, (err, info) => {
+    //     if (err) {
+    //       console.log(`Error: ${err}`);
+    //     } else {
+    //       console.log(`Response: ${info}`);
+    //     }
+    //   });
+
+    return respSuccess(res, { email, message: 'verification link has been sent to your email' })
+
+    // }
+
+  } catch (error) {
+    console.log(error, ' eeeeeeeeeeeeeeee')
+    return respError(res, error)
+
+  }
+
+}
 
 
 module.exports.deleteCurrentAccount = async (req, res) => {

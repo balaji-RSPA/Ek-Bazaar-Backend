@@ -135,9 +135,10 @@ exports.getAllCities = (reqQuery) =>
     const limit = parseInt(reqQuery.limit) || 2000 //parseInt(reqQuery.limit) || 2000;
     const search = reqQuery.search || "";
 
-    let { state } = reqQuery;
+    let { state, countryId } = reqQuery;
     let match;
 
+    console.log("🚀 ~ file: locationsModule.js ~ line 139 ~ newPromise ~ countryId", countryId)
     if (state) {
       state = Array.isArray(state) ? state : [state];
       match = {
@@ -148,6 +149,19 @@ exports.getAllCities = (reqQuery) =>
           },
           state: {
             $in: state.map((id) => ObjectId(id)),
+          },
+        },
+      };
+    } else if (countryId) {
+      countryId = Array.isArray(countryId) ? countryId : [countryId];
+      match = {
+        $match: {
+          name: {
+            $regex: `^${search}`,
+            $options: "i",
+          },
+          country: {
+            $in: countryId.map((id) => ObjectId(id)),
           },
         },
       };
@@ -163,7 +177,7 @@ exports.getAllCities = (reqQuery) =>
       };
       if (reqQuery.stateId) match["$match"]["state"] = ObjectId(reqQuery.stateId)
     }
-    // console.log("<<<---------------- match -------------->>>", match)
+    console.log("<<<---------------- match -------------->>>", match)
 
     const execQuery = Cities.aggregate([
       match,
@@ -186,7 +200,12 @@ exports.getAllCities = (reqQuery) =>
           as: "state",
         },
       },
-      { $unwind: "$state" },
+      {
+        $unwind: {
+          path: "$state",
+          preserveNullAndEmptyArrays: true
+        }
+      },
       {
         $project: {
           "_id": 1,

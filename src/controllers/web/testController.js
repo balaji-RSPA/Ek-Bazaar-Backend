@@ -1,5 +1,6 @@
 const moment = require('moment')
-const { getAllPrimaryCategory,
+const {
+    getAllPrimaryCategory,
     updatePrimaryCategory,
     getSecondaryCategoryByName,
     updateSecondaryCategory
@@ -14,7 +15,7 @@ const { getMasterRecords, updateMasterBulkProducts, updateMaster, getMaster, bul
 const { getSellerPlan, deleteSellerPlans } = require('../../modules/sellerPlanModule')
 const { getUserList, deleteBuyer, deleteUser } = require('../../modules/buyersModule')
 const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
-const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule')
+const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule');
 const { getCountryData, addCity, getCity } = require('../../modules/locationsModule')
 
 module.exports.updateLevel2l1Data = async (req, res) => {
@@ -132,7 +133,7 @@ module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, 
     try {
 
         console.log('tyest data delete-----------------')
-        const result = await getUserList({ /* _id: "60696bce36878670aa4863eb"  *//* name: "test" */  $where: "/^1.*/.test(this.mobile)"}, 1000)
+        const result = await getUserList({ /* _id: "60696bce36878670aa4863eb"  *//* name: "test" */  $where: "/^1.*/.test(this.mobile)" }, 1000)
         console.log("🚀 ~ file: testController.js ~ line 135 ~ module.exports.deleteTestData ~ result", result)
         const userIds = []
         const sellerIds = []
@@ -153,7 +154,7 @@ module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, 
         //                 console.log('-------- delete master---------')
         //                 const p_dele = await deleteSellerProducts({_id: {$in: productids }})
         //                 console.log('-------- delete  Seller Products---------')
-                        
+
         //                 const delMaster1 = await deleteSellerPlans({ sellerId: sellerId });
         //                 console.log('-------- delete  Seller Plan---------')
         //                 const _sellerDel = await deleteSellerRecord(sellerId);
@@ -167,7 +168,7 @@ module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, 
         //     const del = await deleteUser({_id: {$in : userIds}})
         //     console.log('------- User Ids Deleted -----------')
         //     console.log(sellerIds, userIds, ' -------- deletion comnpletes-------')
-            respSuccess(res, result)
+        respSuccess(res, result)
         // }else{
         //     respError(res, "No user list")
         // }

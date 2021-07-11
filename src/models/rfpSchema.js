@@ -24,13 +24,13 @@ const productDetails = new Schema({
     type: String,
     trim: true
   },
-  price:{
+  price: {
     type: Number
   },
-  location:{
+  location: {
     type: Object
   },
-  validity:{
+  validity: {
     type: Date
   }
 });
@@ -47,6 +47,7 @@ const location = new Schema({
   country: {
     type: ObjectId,
     ref: Country,
+    default: null
   },
 });
 

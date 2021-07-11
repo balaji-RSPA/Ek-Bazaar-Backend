@@ -65,7 +65,7 @@ if (env) {
 
     // host = 'searchtrade.ekbazaar.com:5085'
     // host = 'searchtradetemp.tech-active.com:5085'
-    host = '139.59.19.170:5085'
+    host = '167.71.233.251:5085'
     // host = '139.59.95.19:5085'
 
   }

@@ -311,6 +311,7 @@ exports.sellerSearch = async (reqQuery) => {
 
         // query.bool.must.unshift({ bool: { should: [] } });
         let prod = [product[0]]
+        console.log("🚀 ~ file: elasticSearchModule.js ~ line 314 ~ exports.sellerSearch= ~ prod", prod)
         prod.forEach(p => {
 
           const searchKey = {
@@ -1560,7 +1561,8 @@ exports.sellerSearch = async (reqQuery) => {
 
   if (cityId) {
     if (Array.isArray(cityId)) {
-      query.bool.must.unshift({ bool: { should: [] } });
+      // query.bool.must.unshift({ bool: { should: [] } });
+      // uery.bool.must_not.unshift({ bool: { should: [] } });
       cityId.forEach((c) => {
         const locationMatch = {
           term: {
@@ -1568,7 +1570,9 @@ exports.sellerSearch = async (reqQuery) => {
             "serviceCity.city._id": c
           },
         };
-        query.bool.must[0].bool.should.push(locationMatch);
+        query.bool.should.push(locationMatch)
+        // query.bool.must[0].bool.should.push(locationMatch);
+        // query.bool.must_not[0].bool.should.push(locationMatch);
       });
       aggs = {
         "collapse": {
@@ -1602,7 +1606,7 @@ exports.sellerSearch = async (reqQuery) => {
           "serviceCity.city._id": cityId
         },
       };
-      query.bool.must.push(locationMatch);
+      query.bool.should.push(locationMatch);
 
       aggs = {
         "collapse": {

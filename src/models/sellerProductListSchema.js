@@ -116,6 +116,14 @@ const offerSchema = new Schema({
       value: {
         type: ObjectId
       }
+    },
+    country: {
+      label: {
+        type: String
+      },
+      value: {
+        type: ObjectId
+      }
     }
   },
   validity: {
