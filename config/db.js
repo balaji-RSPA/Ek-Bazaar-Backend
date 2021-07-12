@@ -56,16 +56,17 @@ let host = ''
 if (env) {
   /* if (env.NODE_ENV === 'development') {
     host = 'localhost:9200'
-  } else  */if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
+  } else  *//* if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
     host = 'tradebazaarapi.tech-active.com:5085'
     // host = 'searchtradetemp.tech-active.com:5085'
 
-  } else if (env.NODE_ENV === 'production') {
+  } else */ if (env.NODE_ENV !== 'production') {
 
     // host = 'searchtrade.ekbazaar.com:5085'
     // host = 'searchtradetemp.tech-active.com:5085'
-    host = '139.59.19.170:5085'
+    host = '167.71.233.251:5085'
+    // host = "192.168.1.238:5085"
     // host = '139.59.95.19:5085'
 
   }

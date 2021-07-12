@@ -1,7 +1,7 @@
 let config;
 
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV !== "production") {
   config = {
     tradeDb: {
       // replicaset

@@ -1,11 +1,78 @@
 var client = require('../config/db').esClient;
-const index = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections"
+const index = process.env.NODE_ENV !== "production" ? "tradedb.mastercollections" : "trade-live.mastercollections"
 const type = "_doc"
-const {config} = require("./mapping")
+const { config } = require("./mapping")
 
 client.cluster.health({}, function (err, resp, status) {
     console.log("-- Client Health --", resp);
 });
+
+const settings = {
+    "number_of_shards": 6,
+    "number_of_replicas": 2,
+    "analysis": {
+        "filter": {
+            "name_ngrams": {
+                "side": "front",
+                "max_gram": 50,
+                "min_gram": 2,
+                "type": "edgeNGram"
+            }/* ,
+            "name_ngrams_back": {
+                "side": "back",
+                "max_gram": 50,
+                "min_gram": 2,
+                "type": "edgeNGram"
+            },
+            "name_middle_ngrams": {
+                "type": "nGram",
+                "max_gram": 50,
+                "min_gram": 2
+            } */
+        },
+        "analyzer": {
+            "full_name": {
+                "filter": [
+                    // "standard",
+                    "lowercase",
+                    "asciifolding"
+                ],
+                "type": "custom",
+                "tokenizer": "standard"
+            },
+            "partial_name": {
+                "filter": [
+                    // "standard",
+                    "lowercase",
+                    "asciifolding",
+                    "name_ngrams"
+                ],
+                "type": "custom",
+                "tokenizer": "standard"
+            }/* ,
+            "partial_name_back": {
+                "filter": [
+                    "standard",
+                    "lowercase",
+                    "asciifolding",
+                    "name_ngrams_back"
+                ],
+                "type": "custom",
+                "tokenizer": "standard"
+            },
+            "partial_middle_name": {
+                "filter": [
+                    "standard",
+                    "lowercase",
+                    "asciifolding",
+                    "name_middle_ngrams"
+                ],
+                "type": "custom",
+                "tokenizer": "standard"
+            } */
+        }
+    }
+}
 
 module.exports.checkIndicesMaster = function () {
     return new Promise((resolve, reject) => {
@@ -14,7 +81,7 @@ module.exports.checkIndicesMaster = function () {
                 console.log('index already exists')
                 resolve();
             } else {
-                client.indices.create({ index, includeTypeName: true }, (err, res, status) => {
+                client.indices.create({ index, includeTypeName: true, body: { settings } }, (err, res, status) => {
                     if (err) {
                         console.log(err)
                         reject(err);
