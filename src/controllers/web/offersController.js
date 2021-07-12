@@ -118,9 +118,11 @@ module.exports.getAllOffers = async (req, res) => {
             let cat = await getSuggestions(query, { skip: 0, limit: 1 }, false, {})
             if (cat && cat.length) {
                 cat = cat[0] && cat[0].length ? cat[0][0]["_source"] : {}
-                if (cat.id) obj._id = cat.id
+                console.log("🚀 ~ file: offersController.js ~ line 119 ~ module.exports.getAllOffers= ~ cat", cat)
+                if (cat.id) {obj._id = cat.id; obj.vendorId = cat.vendorId}
             }
 
+            // console.log("🚀 ~ file: offersController.js ~ line 128 ~ module.exports.getAllOffers= ~ requestIds", requestIds, item.key)
             const catExist = requestIds && requestIds.length && requestIds.filter((val) => (val === item.key)).length
             if (catExist) {
                 documentCount += catExist
@@ -160,42 +162,79 @@ module.exports.getAllOffers = async (req, res) => {
             arrayObj.push(obj)
 
         }
-        // let test = []
-        // let ids = []
-        // arrayObj && arrayObj.length && arrayObj.map((v) => {
-        //     ids.push(v._id)
-        //     v.products && v.products.length && ids.push(v.products[0]._id)
-        // })
-        // const deff = _.intersection(requestIds, ids)
-        // let newArray = []
-        // buyerRequest.map((val) => {
-        //     if ((val.productDetails && val.productDetails.name && val.productDetails.name.level2 && !val.productDetails.name.level2.id.toString()) || val.productDetails && val.productDetails.name && val.productDetails.name.level1 && !val.productDetails.name.level1.id.toString() || !ids.includes(val.productDetails.name.id.toString())) {
-        //         // console.log(val, ' &&&&&&&&&&&&&&77')
-        //         newArray.push(val)
-        //     }
-        // })
-        // console.log(newArray, ' gggggggggggggggggggg')
 
-        // const www = buyerRequest && buyerRequest.length && buyerRequest.map((val, index) => {
-        //     if (val.productDetails.name.search === 'level1') {
-        //         const dd = arrayObj && arrayObj.length && arrayObj.some((el) => {
-        //             return el._id !== val.productDetails.name.id;
-        //         });
-        //         const newCell = {
-        //             "_id": val.productDetails.name.search === 'level1' ? val.productDetails.name.id : val.productDetails.name.level1.id,
-        //             "title": val.productDetails.name.search === 'level1' ? `${val.productDetails.name.name}(${1})` : val.productDetails.name.level1.name,
-        //             "products": val.productDetails.name.level2 ? [
-        //                 {
-        //                     "count": 2,
-        //                     "_id": val.productDetails.name.level2 && val.productDetails.name.level2.id || null,
-        //                     "key": val.productDetails.name.level2 && val.productDetails.name.level2.name || null
-        //                 }
-        //             ] : null
-        //         }
-        //         !dd && !dd.length && test.push(newCell)
-        //     }
-        // })
-        // console.log(JSON.stringify(test), www, ' kkkkkkkkkkkkkkk')
+        buyerRequest && buyerRequest.length && /* await Promise.all */(buyerRequest.forEach(req => {
+            if (req.productDetails.name.level1 && req.productDetails.name.level1.id) {
+                let index = arrayObj.findIndex(elem => elem._id === req.productDetails.name.level1.id)
+                if (index === -1) {
+                console.log("🚀 ~ file: offersController.js ~ line 170 ~ module.exports.getAllOffers= ~ eq.productDetails.name.level1", req.productDetails.name.level1)
+                    let _products = []
+                    let productsCount = buyerRequest.filter(_req => _req.productDetails.name.level1.id === req.productDetails.name.level1.id).reduce((acc, curr) => {
+                        if (curr.productDetails.name.level2) {
+                            if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
+                                acc[curr.productDetails.name.level2.name] = 1
+                            } else {
+                                acc[curr.productDetails.name.level2.name] = acc[curr.productDetails.name.level2.name] + 1
+                            }
+                        } else if (!curr.productDetails.name.level2) {
+                            if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
+                                acc[curr.productDetails.name.name] = 1
+                            } else {
+                                acc[curr.productDetails.name.name] = acc[curr.productDetails.name.name] + 1
+                            }
+                        }
+                        return acc
+                    }, {})
+                    _products = Object.keys(productsCount).map(count => {
+                        let _obj = {
+                            key: count,
+                            count: productsCount[count],
+                            _id: buyerRequest.find(item => item.productDetails.name.level2.name === count)["id"]
+                        }
+
+                        return _obj
+                    })
+                    let obj = {
+                        _id: req.productDetails.name.level1.id,
+                        title: `${req.productDetails.name.level1.name} (${buyerRequest.filter(item => item.productDetails.name.level1.id === req.productDetails.name.level1.id).length})`,
+                        products: _products,
+                        vendorId: req.productDetails.name.level1.vendorId
+                    }
+                    arrayObj.push(obj)
+                }
+
+            } /* else if (!req.productDetails.name.level1) {
+                let index = arrayObj.findIndex(elem => elem._id === req.productDetails.name.id)
+                console.log("🚀 ~ file: offersController.js ~ line 170 ~ module.exports.getAllOffers= ~ index", index)
+                if (index === -1) {
+                    let _products = []
+                    let productsCount = buyerRequest.filter(_req => _req.productDetails.name.id === req.productDetails.name.id).reduce((acc, curr) => {
+                        if (curr.productDetails.name.level2) {
+                            if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
+                                acc[curr.productDetails.name.level2.name] = 1
+                            } else {
+                                acc[curr.productDetails.name.level2.name] = acc[curr.productDetails.name.level2.name] + 1
+                            }
+                        } else if (!curr.productDetails.name.level2) {
+                            if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
+                                acc[curr.productDetails.name.name] = 1
+                            } else {
+                                acc[curr.productDetails.name.name] = acc[curr.productDetails.name.name] + 1
+                            }
+                        }
+                        return acc
+                    }, {})
+                    console.log("🚀 ~ file: offersController.js ~ line 189 ~ productsCount ~ productsCount", productsCount)
+                    let obj = {
+                        _id: req.productDetails.name.id,
+                        title: `${req.productDetails.name.name} (${buyerRequest.filter(item => item.productDetails.name.id === req.productDetails.name.id).length})`,
+                        products: _products
+                    }
+                    arrayObj.push(obj)
+                }
+            } */
+        }))
+
         respSuccess(res, { offersCount: arrayObj })
 
     } catch (error) {

@@ -16,6 +16,7 @@ const { Chat } = require('../../modules')
 const { updateChatSession, getChat, createChat, createChatSession } = Chat
 const { verifyJwtToken } = require("../../../sso-tools/jwt_verify");
 const { response } = require('express')
+const { sendSingleMail } = require('../../utils/mailgunService')
 // let session = {
 //     userId: "2aDCcJzHwaXfPvobs",
 //     authToken: "NMRk-oqZz0x4Lf0houOkMsR8VmXUu3uTJBgpXGwObbc",
@@ -770,6 +771,23 @@ exports.chatLogout = async (req, res) => { // Logout API
     } catch (error) {
         console.log("🚀 ~ file: rocketChatController.js ~ line 769 ~ exports.chatLogout= ~ error", error)
         respError(res, error)
+    }
+}
+
+exports.contactSupport = async (req, res) => {
+    try {
+        const { name, mobile, email, msg } = req.body
+        const message = {
+            from: email,
+            to: 'support@ekbazaar.com',
+            subject: "OTP Verification",
+            html: `<h1>Request By ${name}</h1><br><div><p><b>Contact No.:</b> <span>${mobile}</span></p><p><b>Message:</b> <span>${msg}</span></p></div>`,
+        };
+        await sendSingleMail(message);
+        respSuccess(res, "Request Submitted Successfully")
+    } catch (error) {
+        console.log(error.message)
+        respError(res, error.message)
     }
 }
 
