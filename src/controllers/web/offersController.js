@@ -30,7 +30,9 @@ module.exports.getAllOffers = async (req, res) => {
                 }]
         }
         const buyerRequest = await getRFP(q1)
+        // console.log("🚀 ~ file: offersController.js ~ line 33 ~ module.exports.getAllOffers= ~ buyerRequest", buyerRequest)
         const requestIds1 = buyerRequest && buyerRequest.length && buyerRequest.map((val) => {
+            // console.log("🚀 ~ file: offersController.js ~ line 35 ~ requestIds1 ~ val", val.productDetails.name)
             if (val.productDetails.name.search !== 'level1') {
                 requestIds.push(val.productDetails.name.level1 && val.productDetails.name.level1.id)
                 requestIds.push(val.productDetails.name.level2 && val.productDetails.name.level2.id)
@@ -97,8 +99,11 @@ module.exports.getAllOffers = async (req, res) => {
             }
         }
         const data = await searchFromElastic(query, { skip: 0, limit: 2000 }, aggs);
+        data[0].forEach(elem => console.log("________source", elem._source))
+        // console.log("🚀 ~ file: offersController.js ~ line 102 ~ module.exports.getAllOffers= ~ data", data)
         let aggsCount = data[2];
         let arrayObj = []
+        let level2Array = []
         let level1 = aggsCount.level1 && aggsCount.level1.buckets
 
         for (let i = 0; i < level1.length; i++) {
@@ -118,8 +123,8 @@ module.exports.getAllOffers = async (req, res) => {
             let cat = await getSuggestions(query, { skip: 0, limit: 1 }, false, {})
             if (cat && cat.length) {
                 cat = cat[0] && cat[0].length ? cat[0][0]["_source"] : {}
-                console.log("🚀 ~ file: offersController.js ~ line 119 ~ module.exports.getAllOffers= ~ cat", cat)
-                if (cat.id) {obj._id = cat.id; obj.vendorId = cat.vendorId}
+                // console.log("🚀 ~ file: offersController.js ~ line 119 ~ module.exports.getAllOffers= ~ cat", cat)
+                if (cat.id) { obj._id = cat.id; obj.vendorId = cat.vendorId }
             }
 
             // console.log("🚀 ~ file: offersController.js ~ line 128 ~ module.exports.getAllOffers= ~ requestIds", requestIds, item.key)
@@ -129,6 +134,7 @@ module.exports.getAllOffers = async (req, res) => {
             } else {
 
             }
+
 
             let products = item.level2.buckets && item.level2.buckets.length && await Promise.all(item.level2.buckets.map(async elem => {
 
@@ -150,9 +156,15 @@ module.exports.getAllOffers = async (req, res) => {
                     if (_cat.id) { _obj._id = _cat.id; _obj.key = _cat.name }
                 }
 
+
                 return _obj
 
             }))
+
+            let _prdcts = buyerRequest.filter(req => products.findIndex(item => item._id === req.productDetails.name.level2.id) === -1)
+            // console.log("🚀 ~ file: offersController.js ~ line 161 ~ module.exports.getAllOffers= ~ _prdcts", _prdcts)
+            _prdcts && _prdcts.length ? products.push(..._prdcts.filter(item => item.productDetails.name.level1.id === obj._id).map(item => ({ _id: item.productDetails.name.level2.id, key: item.productDetails.name.level2.name, count: buyerRequest.filter(elem => elem.productDetails.name.level2.name == item.productDetails.name.level2.name).length }))) : ""
+            // console.log("🚀 ~ file: offersController.js ~ line 163 ~ module.exports.getAllOffers= ~ products", products)
 
             obj = {
                 ...obj,
@@ -166,8 +178,8 @@ module.exports.getAllOffers = async (req, res) => {
         buyerRequest && buyerRequest.length && /* await Promise.all */(buyerRequest.forEach(req => {
             if (req.productDetails.name.level1 && req.productDetails.name.level1.id) {
                 let index = arrayObj.findIndex(elem => elem._id === req.productDetails.name.level1.id)
-                if (index === -1) {
-                console.log("🚀 ~ file: offersController.js ~ line 170 ~ module.exports.getAllOffers= ~ eq.productDetails.name.level1", req.productDetails.name.level1)
+                // console.log("dateeeeeeeeeeeeeeeeeeeeeeee", req.productDetails.level1, req.productDetails.validity, new Date(req.productDetails.validity).toLocaleString())
+                if (index === -1 && new Date(req.productDetails.validity).toLocaleString() > new Date().toLocaleString()) {
                     let _products = []
                     let productsCount = buyerRequest.filter(_req => _req.productDetails.name.level1.id === req.productDetails.name.level1.id).reduce((acc, curr) => {
                         if (curr.productDetails.name.level2) {
@@ -186,10 +198,12 @@ module.exports.getAllOffers = async (req, res) => {
                         return acc
                     }, {})
                     _products = Object.keys(productsCount).map(count => {
+                        let __products = buyerRequest.find(item => item.productDetails.name.level2.name === count)
+
                         let _obj = {
                             key: count,
                             count: productsCount[count],
-                            _id: buyerRequest.find(item => item.productDetails.name.level2.name === count)["id"]
+                            _id: __products && __products["productDetails"] && __products["productDetails"]["name"] && __products["productDetails"]["name"]["level2"] && __products["productDetails"]["name"]["level2"]["id"]
                         }
 
                         return _obj
@@ -249,17 +263,19 @@ module.exports.getAllSellerOffers = async (req, res) => {
 
     try {
         const { skip, limit, search, level1, level2 } = req.query
+        console.log("🚀 ~ file: offersController.js ~ line 252 ~ module.exports.getAllSellerOffers= ~ req.query", req.query)
         let _query = {
-            requestType: 11, $or: [{
+            requestType: 11, $or: [/* {
                 "productDetails.validity": {
                     $gte: new Date().toISOString(),
                 }
-            }, {
-                "productDetails.validity": {
-                    $gte: new Date(moment().startOf('day')),
-                }
-            }], $and: []
+            }, */ {
+                    "productDetails.validity": {
+                        $gte: new Date(moment().startOf('day')),
+                    }
+                }], $and: []
         }
+        console.log("🚀 ~ file: offersController.js ~ line 269 ~ module.exports.getAllSellerOffers= ~ new Date(moment().startOf('day')).toISOString()", new Date(moment().startOf('day')).toISOString(), new Date().toISOString())
         const query = {
             "bool": {
                 "must": [
@@ -305,8 +321,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 ..._query["$and"],
                 {
                     $or: [
-                        { "productDetails.name.id": level2 },
-                        { "productDetails.name.level2.id": level2 }
+                        { "productDetails.name.level2.id": level2 },
+                        { "productDetails.name.id": level2 }
                     ]
                 }
             ]
@@ -368,6 +384,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
             return obj
         })
         buyerRequests = await getRFPData(_query, { skip: 0, limit: 1000 })
+        console.log("🚀 ~ file: offersController.js ~ line 371 ~ module.exports.getAllSellerOffers= ~ buyerRequests", buyerRequests)
+        console.log("🚀 ~ file: offersController.js ~ line 371 ~ module.exports.getAllSellerOffers= ~ _query", _query)
         buyerRequests = buyerRequests.length && buyerRequests.map(buyer => {
 
             let obj = {

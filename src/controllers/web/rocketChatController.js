@@ -780,8 +780,8 @@ exports.contactSupport = async (req, res) => {
         const message = {
             from: email,
             to: 'support@ekbazaar.com',
-            subject: "OTP Verification",
-            html: `<h1>Request By ${name}</h1><br><div><p><b>Contact No.:</b> <span>${mobile}</span></p><p><b>Message:</b> <span>${msg}</span></p></div>`,
+            subject: "Chat Support",
+            html: `<h4>Request By ${name}</h4<br><div><p><h5>Contact No.:</h5> <span>${mobile}</span></p><p><h5>Message:</h5> <span><b>${msg}</b.</span></p></div>`,
         };
         await sendSingleMail(message);
         respSuccess(res, "Request Submitted Successfully")
