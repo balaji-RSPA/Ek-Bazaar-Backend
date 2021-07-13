@@ -654,8 +654,36 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
                 $in: idsArray
             }
         }
-        const secondaryCategories = await getAllSecondaryCategories(query)
-        respSuccess(res, secondaryCategories)
+        let secondaryCategories = await getAllSecondaryCategories(query)
+        
+        let _query = {
+            vendorId: {
+                $in: [
+                    "L3PM129",
+                    "L3PM130",
+                    "L3PM131",
+                    "L3PM132",
+                    "L3PM133",
+                    "L3PM134",
+                    "L3PM135",
+                    "L3PM136",
+                    "L3PM137",
+                    "L3PM138",
+                    "L3PM139"
+                ]
+            }
+        }
+        let primaryCategory = await getPrimaryCategories({vendorId: "PM10"})
+        console.log("🚀 ~ file: categoryController.js ~ line 677 ~ module.exports.getAllSecondaryCategories= ~ primaryCategory", primaryCategory.vendorId)
+        let _secondaryCategories = await getAllSecondaryCategories(_query)
+        secondaryCategories[3] = primaryCategory
+        // primaryCategory.productId = _secondaryCategories
+        // console.log("🚀 ~ file: categoryController.js ~ line 677 ~ module.exports.getAllSecondaryCategories= ~ _secondaryCategories", _secondaryCategories)
+        // console.log("🚀 ~ file: categoryController.js ~ line 670 ~ module.exports.getAllSecondaryCategories= ~ getAllSecondaryCategories", secondaryCategories)
+        // console.log("🚀 ~ file: categoryController.js ~ line 658 ~ module.exports.getAllSecondaryCategories= ~ secondaryCategories", secondaryCategories[3]["productId"])
+        // console.log("🚀 ~ file: categoryController.js ~ line 683 ~ module.exports.getAllSecondaryCategories= ~ secondaryCategories", secondaryCategories)
+        // secondaryCategories[3]["productId"] = _secondaryCategories
+        respSuccess(res, {secondaryCategories, _secondaryCategories})
     } catch (error) {
         respError(error)
     }
