@@ -21,7 +21,7 @@ module.exports.addContact = async (req, res) => {
   let result
   let url 
   if (process.env.NODE_ENV === 'development'){
-    url = `http://localhost:8060/api/v1/`
+    url = `https://api.ekbazaar.com/api/v1/`
    }
    else if(process.env.NODE_ENV === 'production'){
      url = `https://api.ekbazaar.com/api/v1/`

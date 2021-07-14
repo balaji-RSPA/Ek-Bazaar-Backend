@@ -591,6 +591,8 @@ module.exports.updateUser = async (req, res) => {
       if (userType === "seller" && !sellerPlans) {
         const code = ['GCC0721', 'SMEC0721', 'DVRN0721']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
+        console.log("🚀 ~ file: userController.js ~ line 597 ~ module.exports.updateUser= ~ hearingSource.referralCode", hearingSource.referralCode)
+        console.log("🚀 ~ file: userController.js ~ line 594 ~ module.exports.updateUser= ~ promoCode", promoCode)
         const dateNow = new Date();
         const trialPlan = await getSubscriptionPlanDetail({
           planType: "trail",
@@ -613,7 +615,7 @@ module.exports.updateUser = async (req, res) => {
             name: trialPlan.type,
             description: trialPlan.description,
             features: trialPlan.features,
-            days: trialPlan.days,
+            days: promoCode ? "90" : trialPlan.days,
             extendTimes: trialPlan.numberOfExtends,
             exprireDate: dateNow.setDate(
               dateNow.getDate() + parseInt(promoCode ? "90" : trialPlan.days)
@@ -622,7 +624,7 @@ module.exports.updateUser = async (req, res) => {
             sellerId: seller._id,
             isTrial: true,
             planType: trialPlan.type,
-            extendDays: trialPlan.days,
+            extendDays: promoCode ? "90" : trialPlan.days,
             subscriptionId: trialPlan._id,
             createdOn: new Date(),
           };
