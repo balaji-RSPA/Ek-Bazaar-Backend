@@ -22,9 +22,10 @@ const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
-const { deleteTestData } = require('./src/controllers/web/testController')
 const _request = require("request")
 const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
+const { deleteTestData, uploadInternationalCity } = require('./src/controllers/web/testController')
+
 // const { suggestions} = require("./elasticsearch-mapping");
 
 // const { suggestionsMapping } = suggestions
@@ -171,6 +172,14 @@ server.on("error", (e) => {
 //       res.send(error)
 //   }
 // })
+
+app.post("/uploadInternationalCity", async function (req, res) {
+  try {
+    const result = await uploadInternationalCity(req, res);
+    console.log('city---')
+  } catch (error) { }
+  res.send('Its delete records  live')
+});
 
 
 server.on("listening", () => {

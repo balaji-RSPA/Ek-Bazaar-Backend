@@ -1,5 +1,6 @@
 const moment = require('moment')
-const { getAllPrimaryCategory,
+const {
+    getAllPrimaryCategory,
     updatePrimaryCategory,
     getSecondaryCategoryByName,
     updateSecondaryCategory
@@ -14,7 +15,8 @@ const { getMasterRecords, updateMasterBulkProducts, updateMaster, getMaster, bul
 const { getSellerPlan, deleteSellerPlans } = require('../../modules/sellerPlanModule')
 const { getUserList, deleteBuyer, deleteUser } = require('../../modules/buyersModule')
 const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
-const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule')
+const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule');
+const { getCountryData, addCity, getCity } = require('../../modules/locationsModule')
 
 module.exports.updateLevel2l1Data = async (req, res) => {
 
@@ -131,7 +133,7 @@ module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, 
     try {
 
         console.log('tyest data delete-----------------')
-        const result = await getUserList({ /* _id: "60696bce36878670aa4863eb"  *//* name: "test" */  $where: "/^1.*/.test(this.mobile)"}, 1000)
+        const result = await getUserList({ /* _id: "60696bce36878670aa4863eb"  *//* name: "test" */  $where: "/^1.*/.test(this.mobile)" }, 1000)
         console.log("🚀 ~ file: testController.js ~ line 135 ~ module.exports.deleteTestData ~ result", result)
         const userIds = []
         const sellerIds = []
@@ -152,7 +154,7 @@ module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, 
         //                 console.log('-------- delete master---------')
         //                 const p_dele = await deleteSellerProducts({_id: {$in: productids }})
         //                 console.log('-------- delete  Seller Products---------')
-                        
+
         //                 const delMaster1 = await deleteSellerPlans({ sellerId: sellerId });
         //                 console.log('-------- delete  Seller Plan---------')
         //                 const _sellerDel = await deleteSellerRecord(sellerId);
@@ -166,11 +168,54 @@ module.exports.deleteTestData = async (req, res) => new Promise(async (resolve, 
         //     const del = await deleteUser({_id: {$in : userIds}})
         //     console.log('------- User Ids Deleted -----------')
         //     console.log(sellerIds, userIds, ' -------- deletion comnpletes-------')
-            respSuccess(res, result)
+        respSuccess(res, result)
         // }else{
         //     respError(res, "No user list")
         // }
     } catch (error) {
         console.log(error, ' jjjjjjjjjjjjjjjjjjjjj')
+    }
+})
+
+module.exports.uploadInternationalCity = async (req, res) => new Promise(async (resolve, reject) => {
+
+    try {
+        const data = req.body
+
+        if (data && data.length) {
+
+            for (let index = 0; index < data.length; index++) {
+                const element = data[index];
+                const country = await getCountryData({ serialNo: element.countryCode.toString() })
+                const name = element.city.toLowerCase()
+                // console.log(name, element, ' --------------')
+                const cData = {
+                    name,
+                    state: null,
+                    country: country && country._id,
+                    iso2: element && element.iso2 || null,
+                    iso3: element && element.iso3 || null,
+                    alias: [name]
+                }
+                const city = await getCity({
+                    name: {
+                        $regex: name, $options: 'i'
+                    }
+                })
+                if (!city) {
+                    const _city = await addCity(cData)
+                } else {
+                    console.log(name, ' ---- Exist city ----')
+                }
+                console.log(index, name, '--------------- Index')
+            }
+
+        }
+        respSuccess(res, 'uploaded---')
+
+    } catch (error) {
+
+        respError(res, error)
+
     }
 })

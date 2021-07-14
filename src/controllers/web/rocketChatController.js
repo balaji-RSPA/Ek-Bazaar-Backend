@@ -14,6 +14,8 @@ const rocketChatClient = new RocketChatApi("https", rocketChatDomain, 443)
 // const rocketChatClient = new RocketChatApi("http", "192.168.1.52", 3000)
 const { Chat } = require('../../modules')
 const { updateChatSession, getChat, createChat, createChatSession } = Chat
+const { verifyJwtToken } = require("../../../sso-tools/jwt_verify");
+const { response } = require('express')
 // let session = {
 //     userId: "2aDCcJzHwaXfPvobs",
 //     authToken: "NMRk-oqZz0x4Lf0houOkMsR8VmXUu3uTJBgpXGwObbc",
@@ -310,7 +312,7 @@ exports.getHistory = async (req, res) => {
 
 
         }
-        
+
         return respSuccess(res, { messages: _temp })
         // });
 
@@ -371,13 +373,12 @@ exports.sendMessage = async (req, res) => {
                     'X-User-Id': chatUserId
                 }
             })
-            if(language && language !== 'en')
-            {
+        if (language && language !== 'en') {
 
-                const resultTranslate = await axios.post(urlTransalte, {
-                    messageId: result.data.message._id,
-                    targetLanguage: language
-                },
+            const resultTranslate = await axios.post(urlTransalte, {
+                messageId: result.data.message._id,
+                targetLanguage: language
+            },
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -385,8 +386,8 @@ exports.sendMessage = async (req, res) => {
                         'X-User-Id': chatUserId
                     }
                 })
-                // console.log("🚀 ~ file: rocketChatController.js ~ line 366 ~ exports.sendMessage= ~ resultTranslate", resultTranslate)
-            }
+            // console.log("🚀 ~ file: rocketChatController.js ~ line 366 ~ exports.sendMessage= ~ resultTranslate", resultTranslate)
+        }
         // console.log(result.data.message._id, ' send meeeee1111111111111 ----------------')
         // rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
         //     if (err)
@@ -726,5 +727,49 @@ exports.userLogout = async (req, res) => {
     //     console.log(error)
     //     return false
     // }
+}
+
+
+exports.chatLogout = async (req, res) => { // Logout API
+    try {
+        // const token = req.headers.authorization.split('|')[1];
+        // console.log(token, ' logout chat status updated-----')
+        // if (token !== 'undefined') {
+        const {
+            chatUserId,
+            chatAuthToken,
+            chatUsername
+        } = req.body
+        // const decoded = await verifyJwtToken(token);
+        // const { deviceId, userId } = decoded;
+        // const chatDetails = await getChat({ userId })
+        // if (chatDetails) {
+
+
+
+        const url = `${chatDomain}/api/v1/users.setStatus`
+        const data = {
+            message: "My status update",
+            status: "offline"
+        }
+        console.log(url, 'Chat logged ut successfuly------------------')
+
+        const result = await axios.post(url, data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAuthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        respSuccess(res, ' Chat logged out Successfully')
+
+        // }
+        // }
+
+    } catch (error) {
+        console.log("🚀 ~ file: rocketChatController.js ~ line 769 ~ exports.chatLogout= ~ error", error)
+        respError(res, error)
+    }
 }
 

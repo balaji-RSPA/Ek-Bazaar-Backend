@@ -52,6 +52,7 @@ module.exports.getAllCities = async (req, res) => {
     const reqQuery = camelcaseKeys(req.query)
     // console.log("module.exports.getAllCities -> req.query", reqQuery)
     const cities = await getAllCities(req.query);
+    // console.log("🚀 ~ file: locationsController.js ~ line 55 ~ module.exports.getAllCities= ~ cities", cities)
     respSuccess(res, cities);
   } catch (error) {
     respError(res, error.message);
