@@ -22,4 +22,6 @@ router.get('/chat/openChatRoom', chat.openRoom);
 router.get('/chat/searchMessage', chat.searchMessage);
 router.get('/chat/getNotofication', chat.getNotification);
 
+router.post("/chat/support", chat.contactSupport)
+
 module.exports = router;

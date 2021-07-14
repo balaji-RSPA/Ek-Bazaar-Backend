@@ -1,13 +1,15 @@
 let config;
 
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV !== "production") {
   config = {
     tradeDb: {
       // replicaset
-      host1: "159.65.145.186",
+      // host1: "159.65.145.186",
+      host1: "157.245.98.215",
       host2: "128.199.29.212",
       host3: "143.110.177.149",
+      host4: "142.93.208.201",
       port: "5006",
       user: "dev",
       password: "active.123",
