@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const elasticsearch = require('elasticsearch');
 const { env } = process;
-const config = require('./config')
+const config = require('./config');
 const { tradeDb } = config
 console.log(env.NODE_ENV, ' elastic search')
 function dbConnection() {
@@ -17,21 +17,21 @@ function dbConnection() {
     serverSelectionTimeoutMS: 10000,
     // reconnectTries: 30,
   };
-  // if (env.NODE_ENV === 'production') {
+  if (env.NODE_ENV !== 'development') {
 
-  // url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
-  url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
-  options = {
-    ...options,
-    keepAlive: true,
-    replicaSet: `${tradeDb.replicaName}`,
-    // useMongoClient: true,
+    url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+    options = {
+      ...options,
+      keepAlive: true,
+      replicaSet: `${tradeDb.replicaName}`,
+      // useMongoClient: true,
+    }
+  } else {
+
+    console.log(tradeDb)
+    options.sslCA =  tradeDb.certFileBuf
+    url = `mongodb+srv://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}?authSource=admin&replicaSet=${tradeDb.replicaName}`
   }
-  // } else {
-
-  // url = `mongodb://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}:${tradeDb.port}/${tradeDb.database}`;
-
-  // }
   if (env) {
 
     // url = `mongodb://${tradedb.user}:${tradedb.password}@${tradedb.host}:${tradedb.port}/${tradedb.database}`

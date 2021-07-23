@@ -1,7 +1,10 @@
+const fs = require('fs');
+const path = require('path');
+var certFileBuf = fs.readFileSync(path.join(__dirname, 'ca-certificate.crt'), {encoding:'utf8'});
 let config;
 
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV === "production") {
   config = {
     tradeDb: {
       // replicaset
@@ -48,6 +51,28 @@ if (process.env.NODE_ENV !== "production") {
       database: "tender",
     }
   };
+} else if(process.env.NODE_ENV === 'development') {
+  config = {
+    tradeDb: {
+      // stating server db 
+      host: "trade-test-230ce624.mongo.ondigitalocean.com",
+      port: "27017",
+      user: "tradeuser",
+      password: "a7L6q193z80FIw2x",
+      database: "trade-live",
+      certFileBuf,
+      replicaName: "trade-test",
+      protocol: 'mongodb+srv',
+      server_port: "8070",
+    },
+    tenderdb: {
+      host: "139.59.46.227",
+      port: "5006",
+      user: "beta",
+      password: "active.123",
+      database: "ekbazarsample-beta",
+    }
+  }
 } else {
   config = {
     tradeDb: {
