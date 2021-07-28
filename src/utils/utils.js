@@ -83,12 +83,18 @@ exports.sendBulkSMS = async (mobile, message, templateId) => new Promise((resolv
 })
 
 const sendSmsTwilio = async(mobile,message) => {
- const msg = await client.messages
-    .create({
-      body: message,
-      from: '+18089990674',
-      to: mobile//should be dynamic number
+  try{
+  const msg = await client.messages
+      .create({
+        body: message,
+        from: '+18089990674',
+        to: '+919845833443'//should be dynamic number
     }) 
+  return msg
+  }catch(err){
+    return err;
+  }
+
 }
 
 exports.sendSMS = async (mobile, message, templateId) => new Promise(async(resolve, reject) => {
@@ -101,7 +107,7 @@ exports.sendSMS = async (mobile, message, templateId) => new Promise(async(resol
       console.log("🚀 ~ file: utils.js ~ line 87 ~ exports.sendSMS= ~ response", response.data)
         resolve(response)
       })
-      .catch(error => {
+      .catch(async(error) => {
         let checkServerError = /^5\d{2}$/.test(error.message.code);
         if(checkServerError){
           return await sendSmsTwilio(mobile,message) 
@@ -110,7 +116,7 @@ exports.sendSMS = async (mobile, message, templateId) => new Promise(async(resol
         }
       })
   }else{
-     return await sendSmsTwilio(mobile,message)  
+    return await sendSmsTwilio(mobile,message);
   } 
  })
 
