@@ -8,6 +8,7 @@ const SecondaryCategory = require('./secondaryCategorySchema')
 const Products = require('./productsSchema');
 const ProductsSubCategories = require("./productsSubCategoriesSchema");
 const City = require('./citiesSchema')
+const State = require('./statesSchema')
 const SellerTypes = require('./sellertTypesSchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
@@ -77,6 +78,63 @@ const documentSchema = new Schema({
 //     },
 //   }
 // })
+
+const offerSchema = new Schema({
+  price: {
+    price: {
+      type: String,
+      trim: true
+    },
+    unit: {
+      type: String,
+      trim: true
+    }
+  },
+  qty: {
+    qty: {
+      type: String,
+      trim: true
+    },
+    unit: {
+      type: String,
+      trim: true
+    }
+  },
+  location: {
+    city: {
+      label: {
+        type: String
+      },
+      value: {
+        type: ObjectId
+      }
+    },
+    state: {
+      label: {
+        type: String
+      },
+      value: {
+        type: ObjectId
+      }
+    },
+    country: {
+      label: {
+        type: String
+      },
+      value: {
+        type: ObjectId
+      }
+    }
+  },
+  validity: {
+    fromDate: {
+      type: Date
+    },
+    toDate: {
+      type: Date
+    }
+  }
+})
 
 const productDetailsSchema = new Schema({
   name: {
@@ -148,6 +206,9 @@ const productDetailsSchema = new Schema({
     type: ObjectId,
     ref: City,
     default: null,
+  },
+  others: {
+    type: String
   },
   sellingCountries: [{
     type: ObjectId,
@@ -315,7 +376,9 @@ const sellerProductSchema = new Schema(
       type: productDetailsSchema,
       default: null
     },
-
+    offers: {
+      type: offerSchema
+    },
     serviceCity: [serviceCitiesSchema],
     status: {
       type: Boolean,

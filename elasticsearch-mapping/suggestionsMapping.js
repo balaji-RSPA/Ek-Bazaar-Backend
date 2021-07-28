@@ -1,5 +1,5 @@
 var client = require('../config/db').esClient;
-const index =  process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "suggestions" //"trade-live.suggestions"
+const index = process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "suggestions" //"trade-live.suggestions"
 const type = "_doc"
 
 const { ParentCategory, PrimaryCategory, SecondaryCategory, Products, ProductsSubCategories, Suggestions } = require("../src/models")
@@ -236,8 +236,8 @@ function structureLevel4Categories() {
         const documentCount = await Products.countDocuments()
         let skip = 0, limit = 1000
         console.log("functionstructureLevel4Categories -> documentCount", documentCount)
-        for(skip; skip<=documentCount; skip+=limit) {
-            const level4 = await getLevel4Categories({skip, limit});
+        for (skip; skip <= documentCount; skip += limit) {
+            const level4 = await getLevel4Categories({ skip, limit });
             level4.forEach(element => {
                 bulkBody.push({
                     index: {
@@ -252,7 +252,7 @@ function structureLevel4Categories() {
                     vendorId: element.vendorId,
                     search: "level4"
                 });
-    
+
             });
         }
         resolve(bulkBody);
@@ -286,7 +286,7 @@ function structureLevel5Categories() {
     })
 }
 
-module.exports.suggestionsMapping = () => new Promise( async (resolve, reject) => {
+module.exports.suggestionsMapping = () => new Promise(async (resolve, reject) => {
 
     try {
         console.log('suggestions maaping')
@@ -294,7 +294,7 @@ module.exports.suggestionsMapping = () => new Promise( async (resolve, reject) =
         console.log(' Level 1 Start ----')
         const level1 = await this.mapLevel1Suggestions()
         console.log(' Level 1 Completed ----')
-        
+
         console.log(' Level 2 Start ----')
         const level2 = await this.mapLevel2Suggestions()
         console.log(' Level 2 Completed ----')
@@ -313,7 +313,7 @@ module.exports.suggestionsMapping = () => new Promise( async (resolve, reject) =
 
         console.log('------- COmpleted all level category suggestions ----')
         resolve();
-        
+
     } catch (error) {
         console.log(error)
         reject(error)
@@ -333,9 +333,9 @@ module.exports.mapLevel1Suggestions = function () {
                 name: element.name.toLowerCase(),
                 _id: element._id,
                 id: element._id,
-                l1:element.vendorId,
+                l1: element.vendorId,
                 vendorId: element.vendorId,
-                search: "level1"
+                search: "level1",
             });
 
         });
@@ -354,9 +354,9 @@ module.exports.mapLevel2Suggestions = function () {
         let skip = 0, limit = 1000
         for (skip; skip <= documentCount; skip += limit) {
             const level2 = await _getLevel2Categories({ skip, limit });
-            console.log("module.exports.mapLevel2Suggestions -> level2", level2.length)
+            // console.log("module.exports.mapLevel2Suggestions -> level2", level2.length)
             const bulkBody = [];
-            
+
             level2.forEach(element => {
                 bulkBody.push({
                     name: element.name.toLowerCase(),
@@ -364,10 +364,16 @@ module.exports.mapLevel2Suggestions = function () {
                     id: element._id,
                     l1: element.l1,
                     vendorId: element.vendorId,
-                    search: "level2"
+                    search: "level2",
+                    level1: {
+                        id: element.parentCatId && element.parentCatId._id || element.parentCatId,
+                        name: element.parentCatId && element.parentCatId.name.toLowerCase() || null,
+                        vendorId: element.parentCatId && element.parentCatId.vendorId || ""
+                    }
                 });
 
             });
+            // console.log(bulkBody, 'fffffffffffffffff')
             await bulkInsertSuggestions(bulkBody)
             console.log('Level 2 indexing limit --', limit)
         }
@@ -384,6 +390,7 @@ module.exports.mapLevel3Suggestions = function () {
         let skip = 0, limit = 1000
         for (skip; skip <= documentCount; skip += limit) {
             const level3 = await _getLevel3Categories({ skip, limit });
+            // console.log("🚀 ~ file: suggestionsMapping.js ~ line 392 ~ returnnewPromise ~ level3", JSON.stringify(level3[0]))
             const bulkBody = [];
             level3.forEach(element => {
                 bulkBody.push({
@@ -392,10 +399,21 @@ module.exports.mapLevel3Suggestions = function () {
                     id: element._id,
                     vendorId: element.vendorId,
                     l1: element.l1,
-                    search: "level3"
+                    search: "level3",
+                    level1: {
+                        id: element.primaryCatId && element.primaryCatId && element.primaryCatId.parentCatId && element.primaryCatId.parentCatId._id || "",
+                        name: element.primaryCatId && element.primaryCatId && element.primaryCatId.parentCatId && element.primaryCatId.parentCatId.name.toLowerCase() || "",
+                        vendorId: element.primaryCatId && element.primaryCatId && element.primaryCatId.parentCatId && element.primaryCatId.parentCatId.vendorId || null
+                    },
+                    level2: {
+                        id: element.primaryCatId && element.primaryCatId._id || "",
+                        name: element.primaryCatId && element.primaryCatId.name.toLowerCase() || '',
+                        vendorId: element.primaryCatId && element.primaryCatId.vendorId || ""
+                    }
                 });
 
             });
+            // console.log(bulkBody, ' ggggggggggggggggggggggggggggggggg')
             await bulkInsertSuggestions(bulkBody)
             console.log('Level 3 indexing limit --', limit)
         }
@@ -411,6 +429,7 @@ module.exports.mapLevel4Suggestions = function () {
         let skip = 0, limit = 1000
         for (skip; skip <= documentCount; skip += limit) {
             const level4 = await _getLevel4Categories({ skip, limit });
+            // console.log("🚀 ~ file: suggestionsMapping.js ~ line 432 ~ returnnewPromise ~ level4", JSON.stringify(level4[0]))
             const bulkBody = [];
             level4.forEach(element => {
                 bulkBody.push({
@@ -419,7 +438,22 @@ module.exports.mapLevel4Suggestions = function () {
                     id: element._id,
                     vendorId: element.vendorId,
                     l1: element.l1,
-                    search: "level4"
+                    search: "level4",
+                    level3: {
+                        id: element.secondaryId && element.secondaryId._id || "",
+                        name: element.secondaryId && element.secondaryId.name.toLowerCase() || '',
+                        vendorId: element.secondaryId && element.secondaryId.vendorId || ""
+                    },
+                    level2: {
+                        id: element.secondaryId && element.secondaryId.primaryCatId && element.secondaryId.primaryCatId._id || "",
+                        name: element.secondaryId && element.secondaryId.primaryCatId && element.secondaryId.primaryCatId.name.toLowerCase() || '',
+                        vendorId: element.secondaryId && element.secondaryId.primaryCatId && element.secondaryId.primaryCatId.vendorId || ""
+                    },
+                    level1: {
+                        id: element.secondaryId && element.secondaryId.primaryCatId && element.secondaryId.primaryCatId.parentCatId && element.secondaryId.primaryCatId.parentCatId._id || "",
+                        name: element.secondaryId && element.secondaryId.primaryCatId && element.secondaryId.primaryCatId.parentCatId && element.secondaryId.primaryCatId.parentCatId.name.toLowerCase() || "",
+                        vendorId: element.secondaryId && element.secondaryId.primaryCatId && element.secondaryId.primaryCatId.parentCatId && element.secondaryId.primaryCatId.parentCatId.vendorId || null
+                    },
                 });
 
             });
@@ -447,7 +481,27 @@ module.exports.mapLevel5Suggestions = function () {
                     id: element._id,
                     vendorId: element.vendorId,
                     l1: element.l1,
-                    search: "level5"
+                    search: "level5",
+                    level4: {
+                        id: element.productId && element.productId && element.productId._id || "",
+                        name: element.productId && element.productId.name.toLowerCase() || '',
+                        vendorId: element.productId && element.productId.vendorId || ""
+                    },
+                    level3: {
+                        id: element.productId && element.productId.secondaryId && element.productId.secondaryId._id || "",
+                        name: element.productId && element.productId.secondaryId && element.productId.secondaryId.name.toLowerCase() || '',
+                        vendorId: element.productId && element.productId.secondaryId && element.productId.secondaryId.vendorId || ""
+                    },
+                    level2: {
+                        id: element.productId && element.productId.secondaryId && element.productId.secondaryId.primaryCatId && element.productId.secondaryId.primaryCatId._id || "",
+                        name: element.productId && element.productId.secondaryId && element.productId.secondaryId.primaryCatId && element.productId.secondaryId.primaryCatId.name.toLowerCase() || '',
+                        vendorId: element.productId && element.productId.secondaryId && element.productId.secondaryId.primaryCatId && element.productId.secondaryId.primaryCatId.vendorId || ""
+                    },
+                    level1: {
+                        id: element.productId && element.productId.secondaryId && element.productId.secondaryId.primaryCatId && element.productId.secondaryId.primaryCatId.parentCatId && element.productId.secondaryId.primaryCatId.parentCatId._id || "",
+                        name: element.productId && element.productId.secondaryId && element.productId.secondaryId.primaryCatId && element.productId.secondaryId.primaryCatId.parentCatId && element.productId.secondaryId.primaryCatId.parentCatId.name.toLowerCase() || "",
+                        vendorId: element.productId && element.productId.secondaryId && element.productId.secondaryId.primaryCatId && element.productId.secondaryId.primaryCatId.parentCatId && element.productId.secondaryId.primaryCatId.parentCatId.vendorId || null
+                    },
                 });
 
             });
@@ -519,6 +573,7 @@ function _getLevel2Categories(range) {
     return new Promise((resolve, reject) => {
         PrimaryCategory.find({})
             .select("name vendorId l1")
+            .populate('parentCatId')
             .skip(range.skip)
             .limit(range.limit)
             .then(doc => resolve(doc))
@@ -530,6 +585,13 @@ function _getLevel3Categories(range) {
     return new Promise((resolve, reject) => {
         SecondaryCategory.find({})
             .select("name vendorId l1")
+            .populate({
+                path: "primaryCatId",
+                populate: {
+                    path: "parentCatId",
+                    model: ParentCategory,
+                }
+            })
             .skip(range.skip)
             .limit(range.limit)
             .then(doc => resolve(doc))
@@ -540,6 +602,17 @@ function _getLevel3Categories(range) {
 function _getLevel4Categories(range) {
     return new Promise((resolve, reject) => {
         Products.find({})
+            .populate({
+                path: "secondaryId",
+                populate: {
+                    path: "primaryCatId",
+                    model: PrimaryCategory,
+                    populate: {
+                        path: "parentCatId",
+                        model: ParentCategory,
+                    }
+                }
+            })
             .skip(range.skip)
             .limit(range.limit)
             .select("name vendorId l1")
@@ -552,6 +625,23 @@ function _getLevel5Categories(range) {
     return new Promise((resolve, reject) => {
         ProductsSubCategories.find({})
             .select("name vendorId l1")
+            .populate({
+                path: "productId",
+                populate: {
+                    path: "secondaryId",
+                    model: SecondaryCategory,
+                    populate: {
+                        path: "primaryCatId",
+                        model: PrimaryCategory,
+                        populate: {
+                            path: "parentCatId",
+                            model: ParentCategory,
+                        }
+                    }
+                }
+
+
+            })
             .skip(range.skip)
             .limit(range.limit)
             .then(doc => resolve(doc))

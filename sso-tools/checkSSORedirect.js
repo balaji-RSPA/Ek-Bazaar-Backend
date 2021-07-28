@@ -18,10 +18,9 @@ async function ssoRedirect(req, res, next) {
       // now that we have the decoded jwt, use the,
       // global-session-id as the session id so that
       // the logout can be implemented with the global session.
-      req.session.user = decoded;
-      // console.log("🚀 ~ file: checkSSORedirect.js ~ line 28 ~ ssoRedirect ~ decoded", decoded)
-      return { user: req.session.user, token, response }
+      return { user: decoded, token, response }
     } catch (err) {
+      console.log(err, ' eeeeeeeeeeeeeeeeeeeeee')
       return { error: err.message }
     }
   }

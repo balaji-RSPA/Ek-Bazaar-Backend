@@ -3,6 +3,7 @@ const {
 } = require('../../globalConstants')
 const {
     logo,
+    registerationFlow,
     facebook,
     twitter,
     linkedIn
@@ -220,13 +221,13 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                         <tbody>
                         <tr>
                             <td style="padding: 40px 40px 20px 40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:20px; font-weight:600; letter-spacing:0.07em; line-height:2em;">
-                                Email Verification
+                            Ekbazaar Trade- Email verification
                             </td>
                         </tr>
                         <tr>
                             <td style="padding: 0px 16.66% 10px 16.66%; text-align: center; display: block;">
                                 <img style="width: 100%"
-                                     src="http://cdn.htmlemailtemplates.net/images/vol2/registration-flow.png"
+                                     src=${registerationFlow}
                                      alt="Activate Your Account">
                             </td>
                         </tr>

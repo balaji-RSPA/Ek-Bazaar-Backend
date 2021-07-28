@@ -84,14 +84,18 @@ const productDetailsSchema = new Schema({
     },
     countryOfOrigin: {
         type: nameSchema,
-        // default: null
+        default: null
     },
     regionOfOrigin: {
         type: nameSchema,
-        // default: null
+        default: null
     },
     cityOfOrigin: {
         type: nameSchema,
+        default: null
+    },
+    others: {
+        type: String
     },
     sellingCountries: {
         type: [nameSchema]
@@ -221,6 +225,55 @@ const telephoneSchema = new Schema({
     }
 })
 
+const offerSchema = new Schema({
+    price: {
+        price: {
+            type: String,
+            trim: true
+        },
+        unit: {
+            type: String,
+            trim: true
+        }
+    },
+    qty: {
+        qty: {
+            type: String,
+            trim: true
+        },
+        unit: {
+            type: String,
+            trim: true
+        }
+    },
+    location: {
+        city: {
+            label: {
+                type: String
+            },
+            value: {
+                type: ObjectId
+            }
+        },
+        state: {
+            label: {
+                type: String
+            },
+            value: {
+                type: ObjectId
+            }
+        }
+    },
+    validity: {
+        fromDate: {
+            type: Date
+        },
+        toDate: {
+            type: Date
+        }
+    }
+})
+
 
 const masterCollectionSchema = new Schema(
     {
@@ -259,6 +312,43 @@ const masterCollectionSchema = new Schema(
                     type: String,
                     default: null
                 }
+            },
+            contactDetails: {
+                location: {
+                    city: {
+                        type: nameSchema,
+                        default: null
+                    },
+                    state: {
+                        type: nameSchema,
+                        default: null
+                    },
+                    country: {
+                        type: nameSchema,
+                        default: null
+                    },
+                    address: {
+                        type: String,
+                        default: null
+                    },
+                    pincode: {
+                        type: String,
+                        default: null
+                    }
+                },
+                alternativNumber: {
+                    type: Number,
+                    default: null
+                },
+                email: {
+                    type: String,
+                    default: null
+                },
+                website: {
+                    type: String,
+                    default: null
+                },
+
             },
             sellerType: {
                 type: Array,
@@ -361,6 +451,9 @@ const masterCollectionSchema = new Schema(
         productDetails: {
             type: productDetailsSchema,
             default: null
+        },
+        offers: {
+            type: offerSchema
         },
 
         serviceCity: {

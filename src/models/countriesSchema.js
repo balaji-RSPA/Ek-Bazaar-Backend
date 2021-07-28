@@ -20,7 +20,11 @@ const countrySchema = new Schema({
   serialNo: {
     type: Number,
     default: null
-  }
+  },
+  country_calling_code: {
+    type: String,
+    default: null
+  },
 }, {
   timestamps: true,
   versionKey: false

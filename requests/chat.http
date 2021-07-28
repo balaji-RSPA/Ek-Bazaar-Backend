@@ -14,7 +14,7 @@ content-type: application/json
 
 
 ###
-GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobstACzKwnsLK68noQvB&offset=25&limit=25 HTTP/1.1
+GET  http://localhost:8070/api/chat/getHistory?roomId=2aDCcJzHwaXfPvobstACzKwnsLK68noQvB&offset=0&limit=25 HTTP/1.1
 content-type: application/json
 
 
@@ -53,9 +53,9 @@ POST  http://localhost:8070/api/chat/register HTTP/1.1
 content-type: application/json
 
 {
-    "name": "ram",
-    "email": "ram@active.agency",
-    "username": "9876543210"
+    "name": "ram1",
+    "email": "ram1@active.agency",
+    "username": "9876543211"
 }
 
 ###
@@ -137,3 +137,14 @@ content-type: application/json
 #     "success": true
 #   }
 # }
+
+
+###
+
+GET https://chatbot.active.agency/api/v1/im.history?roomId=Ebe9DXsF8dPxMT74qEbe9DXsF8dPxMT74q&offset=0&count=25 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+X-Auth-Token: wF8_gNgx_l5FYnWDxri4gBwCyPr78MVSKGOxrhvbvE0
+X-User-Id: 6HzY2yoSjavdWHPRx
+
+

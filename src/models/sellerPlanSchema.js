@@ -58,6 +58,14 @@ const sellerPlanSchema = new Schema({
         type: Number,
         default: null
     },
+    usdPrice: {
+        type: Number,
+        default: null
+    },
+    currency: {
+        type: String,
+        default: null
+    },
     extendDays: {
         type: Array,
         default: null

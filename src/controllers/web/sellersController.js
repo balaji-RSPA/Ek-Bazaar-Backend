@@ -45,7 +45,8 @@ const {
   getSellerProduct,
   getSellerProductDetails,
   // getUpdatedSellerDetails,
-  updateMany
+  updateMany,
+  getProduct
 } = sellers
 const {
   getParentCat,
@@ -56,7 +57,7 @@ const {
 } = category
 
 const { getFilteredCities, getSellerSelectedCities } = location;
-const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct } = mastercollections
+const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct, insertManyEslint, updateESDoc } = mastercollections
 const { updateSellerProducts } = sellerProducts
 
 // module.exports.razorPay = async (req, res) => {
@@ -127,7 +128,6 @@ module.exports.updateSeller = async (req, res) => {
       GstNumber,
       IeCode,
     } = req.body
-    // console.log("🚀 ~ file: sellersController.js ~ line 84 ~ module.exports.updateSeller= ~ req.body", req.body)
     const {
       userID
     } = req
@@ -274,6 +274,7 @@ module.exports.updateSeller = async (req, res) => {
     }
     respSuccess(res, seller, 'Profile updated successfully')
   } catch (error) {
+    console.log(error, ' ggggggg ---------------')
     respError(res, error.message)
   }
 }
@@ -354,7 +355,7 @@ module.exports.deleteSellerProduct = async (req, res) => {
 }
 
 // function masterMapData(val, keywords) {
-const masterMapData = (val, type) => new Promise((resolve, reject) => {
+const masterMapData = (val, type, contactDetails = null) => new Promise((resolve, reject) => {
   const _Scity = [];
   let serviceProductData;
   if (val.serviceCity && val.serviceCity.length) {
@@ -388,11 +389,12 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
   let data;
   if (type === "update") {
     data = {
-      productDetails: val.productDetails && val.productDetails || null,
+      productDetails: val.productDetails && val.productDetails && { ...val.productDetails } || null,
       status: val.status !== null && val.status !== undefined ? val.status : true,
       batch: 1,
       keywords,
-      serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null
+      serviceCity: val.serviceCity && val.serviceCity.length && serviceProductData || null,
+      offers: val.offers && val.offers || null
     }
   } else {
     data = {
@@ -415,7 +417,8 @@ const masterMapData = (val, type) => new Promise((resolve, reject) => {
         paidSeller: val.sellerId.paidSeller || false,
         international: val.sellerId.international || false,
         deactivateAccount: val.sellerId.deactivateAccount && val.sellerId.deactivateAccount.status || false,
-        businessName: val.sellerId.busenessId && val.sellerId.busenessId.name || null
+        businessName: val.sellerId.busenessId && val.sellerId.busenessId.name || null,
+        contactDetails: contactDetails,
       } || null,
       userId: val.sellerId && val.sellerId.userId && {
         name: val.sellerId.name || null,
@@ -473,10 +476,37 @@ module.exports.addSellerProduct = async (req, res) => {
   try {
     let result
     let sellerId = req.body && req.body[0] && req.body[0].sellerId
+    let productContact = null;
     // console.log("🚀 ~ file: sellersController.js ~ line 390 ~ module.exports.addSellerProduct= ~ sellerId", req.body)
     if (sellerId) {
       const findSeller = await getSellerProfile(sellerId);
-      // console.log("🚀 ~ file: sellersController.js ~ line 497 ~ module.exports.addSellerProduct= ~ findSeller", findSeller)
+      const contactDetails = findSeller && findSeller.length && findSeller[0].sellerContactId || null
+      console.log("🚀 ~ file: sellersController.js ~ line 497 ~ module.exports.addSellerProduct= ~ findSeller", contactDetails)
+      if (contactDetails) {
+        const { email, alternativNumber, location, website } = contactDetails
+        productContact = {
+          email: email || null,
+          alternativNumber: alternativNumber || null,
+          website: website || null,
+          location: {
+            address: location && location.address || null,
+            pincode: location && location.pincode || null,
+            country: location && location.country && {
+              _id: location.country._id || null,
+              name: location.country.name || null,
+              iso: location.country.iso || null
+            } || null,
+            state: location && location.state && {
+              _id: location.state._id || null,
+              name: location.state.name || null
+            } || null,
+            city: location && location.city && {
+              _id: location.city._id || null,
+              name: location.city.name || null
+            } || null
+          }
+        }
+      }
       const userId = findSeller && findSeller.length && findSeller[0].userId || null
       const serviceType = findSeller && findSeller.length && findSeller[0].sellerType.length && findSeller[0].sellerType[0]._id || null
       let resultVal = []
@@ -509,6 +539,8 @@ module.exports.addSellerProduct = async (req, res) => {
         }
       }
       // const findSeller = await getSellerProfile(sellerId);
+      console.log(resultVal, ' 2222222222222222222222')
+
       result = await addSellerProduct(resultVal)
       const que = {
         _id: { $in: result }
@@ -524,7 +556,8 @@ module.exports.addSellerProduct = async (req, res) => {
           const val = proDetails[index];
 
           const priority = await mapPriority(findSeller && findSeller.length && findSeller[0].planId || "")
-          const formateData = await masterMapData(val, 'insert')
+          console.log(' 55555555555555555 ')
+          const formateData = await masterMapData(val, 'insert', productContact)
           const updatePro = await updateSellerProducts({ _id: val._id }, { keywords: formateData.keywords })
           masterData.push({ ...formateData, priority })
           // return ({
@@ -571,6 +604,7 @@ module.exports.addSellerProduct = async (req, res) => {
         }
         // )
         const mosterResult = await insertManyMaster(masterData)
+        // const elData = insertManyEslint(mosterResult)
 
       }
 
@@ -578,9 +612,10 @@ module.exports.addSellerProduct = async (req, res) => {
         findSeller[0].sellerProductId = findSeller[0].sellerProductId && findSeller[0].sellerProductId.length !== 0 ? [...result, ...findSeller[0].sellerProductId] : result;
         // findSeller[0].sellerProductId.concat(result)
       }
+      console.log(findSeller, findSeller[0].sellerProductId, '33333333333333333333')
       seller = await updateSeller({
         _id: sellerId
-      }, findSeller[0])
+      }, { sellerProductId: findSeller[0].sellerProductId })
 
       respSuccess(res, seller, "Successfully added product")
     }
@@ -598,8 +633,34 @@ module.exports.updateSellerProduct = async (req, res) => {
       files,
       prodDtl
     } = req
-    // console.log('update poroduct---', JSON.parse(body.productDetails))
+    let { offers, productId, deleteOffer } = body
+    offers = offers ? JSON.parse(offers) : null
+    console.log('update poroduct---', body, productId, deleteOffer)
+
     let updateDetail
+
+    if (offers) {
+      var d1 = new Date(offers.validity.toDate);
+      var d2 = new Date(offers.validity.fromDate);
+      const offerData = {
+        // offers: offers,
+        offers: {
+          ...offers,
+          validity: {
+            fromDate: new Date(`${offers.validity.fromDate}`),
+            toDate: new Date(`${offers.validity.toDate}`)
+          }
+        }
+      }
+      // [new Date(), subDays(new Date(), 1)]
+      updateDetail = await addProductDetails(productId, offerData)
+    }
+    if (deleteOffer) {
+      var updatedProduct = await getProduct({ _id: productId })
+      delete updatedProduct.offers
+      updatedProduct.offers = null
+      updateDetail = await addProductDetails(productId, updatedProduct)
+    }
     if (body && body.productDetails || files && (files.document || files.image1 || files.image2 || files.image3 || files.image4)) {
       productDetails = JSON.parse(body.productDetails)
       let findCities = await getSellerSelectedCities(productDetails.serviceCity);
@@ -683,7 +744,7 @@ module.exports.updateSellerProduct = async (req, res) => {
       /*this is for updating the seller document field*/
       updateDetail = await addProductDetails(prodDtl._id, {
         "productDetails.document": null,
-        "productDetails.documentName":null
+        "productDetails.documentName": null
       });
     }
     if (body && body.id && body.imageType) {
@@ -715,11 +776,11 @@ module.exports.updateSellerProduct = async (req, res) => {
       const priority = await mapPriority(seller && seller.length && seller[0].planId || "")
       const masterData = await masterMapData(updatedProduct[0], 'update')
       const updatePro = await updateSellerProducts({ _id: updateDetail._id }, { keywords: masterData.keywords })
-      const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: 8 })
+      const masResult = await updateMaster({ _id: updateDetail._id }, { ...masterData, priority: priority })
+      // const esData = JSON.parse(JSON.stringify(masResult));
+      // esData && esData._id && delete esData._id;
+      // const masElsLint =  updateESDoc(masResult._id, esData)
     }
-    // if(body.id && body.inStock){
-    //   
-    // }else
     respSuccess(res, seller, "Successfully updated")
   } catch (error) {
     console.log(error, ' ipdate data----------------')

@@ -10,7 +10,9 @@ getAllCountries
 /**Get all cities*/
 module.exports.getCities = async (req, res) => {
   try {
-    const cities = await getAllCities(req.body);
+    const {skip,limit, search} = req.query
+    const cities = await getAllCities({skip:parseInt(skip),limit:parseInt(limit), search});
+    // console.log("🚀 ~ file: locationController.js ~ line 16 ~ module.exports.getCities= ~ cities", cities)
     respSuccess(res, cities);
   } catch (error) {
     respError(res, error.message);
@@ -20,7 +22,7 @@ module.exports.getCities = async (req, res) => {
 /**Get all states*/
 module.exports.getStates = async (req, res) => {
   try {
-    const {skip,limit} = req.body
+    const {skip,limit} = req.query
     const states = await getAllStates(skip,limit);
     respSuccess(res, states);
   } catch (error) {
@@ -31,8 +33,8 @@ module.exports.getStates = async (req, res) => {
 /**Get all countries*/
 module.exports.getCountries = async (req, res) => {
   try {
-    const {skip,limit} = req.body
-    const countries = await getAllCountries(skip,limit);
+    const {skip,limit} = req.query
+    const countries = await getAllCountries(parseInt(skip),parseInt(500));
     respSuccess(res, countries);
   } catch (error) {
     respError(res, error.message);

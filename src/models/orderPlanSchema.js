@@ -43,6 +43,14 @@ const orderPlanSchema = new Schema({
         type: Number,
         required: true
     },
+    usdPrice: {
+        type: Number,
+        required: true
+    },
+    currency: {
+        type: String,
+        default: null
+    },
     priceUnit: { //month,year
         type: String,
         required: true

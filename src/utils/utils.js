@@ -32,6 +32,10 @@ const s3 = new AWS.S3({
   secretAccessKey
 });
 
+const accountSid = 'AC3f0106962d1e3ffe0c401d57fa67ee9f';
+const authToken = 'b22ec354d52026926f01a0829552bf38';
+const client = require('twilio')(accountSid, authToken);
+
 exports.globalVaraibles = {
   _IS_PROD_: process.env.NODE_ENV === "production",
   _IS_DEV_: process.env.NODE_ENV === "staging",
@@ -43,21 +47,27 @@ exports.globalVaraibles = {
     if (this._IS_PROD_) {
       return {
         serviceURL: "https://tradeapi.ekbazaar.com",
+        pricing: "https://www.trade.ekbazaar.com/pricing",
+        signIn: "https://www.trade.ekbazaar.com/signin"
       }
     } else if (this._IS_DEV_) {
       return {
-        serviceURL: "https://tradebazaarapi.tech-active.com"
+        serviceURL: "https://tradebazaarapi.tech-active.com",
+        pricing: "https://tradebazaar.tech-active.com/pricing",
+        signIn: "https://tradebazaar.tech-active.com/signin"
       }
     } else {
       return {
-        serviceURL: "http://localhost:8070"
+        serviceURL: "http://localhost:8070",
+        pricing: "http://localhost:8085/pricing",
+        signIn: "http://localhost:8085/signin"
       }
     }
   }
 }
 
 
-exports.sendBulkSMS = async (mobile, message) => new Promise((resolve, reject) => {
+exports.sendBulkSMS = async (mobile, message, templateId) => new Promise((resolve, reject) => {
   console.log('bulk sms', mobile, message)
   const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&category=bulk`
   // const sendsmsuri = smsURL + "?username=" + username + "&password=" + password + "&to=" + mobile + "&from=" + senderID + "&text=" + message.replace("&", "and") + "&category=bulk"
@@ -72,24 +82,38 @@ exports.sendBulkSMS = async (mobile, message) => new Promise((resolve, reject) =
     })
 })
 
-exports.sendSMS = async (mobile, message) => new Promise((resolve, reject) => {
-  // const url = "https://api.ekbazaar.com/api/v1/sendOTP"
-  // const resp = await axios.post(url, {
-  //   mobile,
-  //   message
-  // })
-  // return resp
-  const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&dlr-mask=19&dlr-url`
-  // const result = await axios.get(sendsmsuri)
-  // return result
-  axios.get(sendsmsuri)
-    .then(response => {
-      resolve(response)
-    })
-    .catch(error => {
-      resolve({ error: error.message })
-    })
-})
+const sendSmsTwilio = async(mobile,message) => {
+ const msg = await client.messages
+    .create({
+      body: message,
+      from: '+18089990674',
+      to: mobile//should be dynamic number
+    }) 
+}
+
+exports.sendSMS = async (mobile, message, templateId) => new Promise(async(resolve, reject) => {
+  let checkCountryCode = mobile.substring(0,3)
+  if(checkCountryCode === '+91'){
+    // const sendsmsuri = `${smsURL}?username=${username}&password=${password}&to=${mobile}&from=${senderID}&text=${message.replace("&", "and")}&dlr-mask=19&dlr-url`
+    const sendsmsuri = `${smsURL}mobileno=${mobile}&msgtext=${message.replace("&", "and")}&CountryCode=All&smstype=0&pe_id=1701159237759798464&template_id=${templateId}`
+    axios.get(sendsmsuri)
+      .then(response => {
+      console.log("🚀 ~ file: utils.js ~ line 87 ~ exports.sendSMS= ~ response", response.data)
+        resolve(response)
+      })
+      .catch(error => {
+        let checkServerError = /^5\d{2}$/.test(error.message.code);
+        if(checkServerError){
+          return await sendSmsTwilio(mobile,message) 
+        }else{
+           resolve({ error: error.message })
+        }
+      })
+  }else{
+     return await sendSmsTwilio(mobile,message)  
+  } 
+ })
+
 
 exports.messageContent = (productDetails, _loc, name) => {
   const message = `You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(productDetails.name.name)},${productDetails.quantity} ${capitalizeFirstLetter(productDetails.weight)} from ${_loc}.\nDetails below: ${capitalizeFirstLetter(name)} -\nTo view buyer contact details please register or login to ${siteUrl}/signup\nEkbazaar-Trade ${siteUrl}`;
@@ -159,7 +183,7 @@ module.exports.uploadToDOSpace = (req) => {
 /**
  * List all images from Digital Ocean Space
  */
-module.exports.listAllDigitalOceanDocs = async() => {
+module.exports.listAllDigitalOceanDocs = async () => {
   const params = {
     Bucket
   }

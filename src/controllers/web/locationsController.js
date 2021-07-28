@@ -17,14 +17,42 @@ const {
   statesBulkInsert,
   citiesBulkInsert,
   countiesBulkInsert,
-  getAllCitiesUpdate
+  getAllCitiesUpdate,
+  getCountryData,
+  updateCountry
 } = location;
+
+module.exports.uploadPhoneCountryCode = async (req, res) => {
+
+  try {
+    const data = req.body
+    if (data.length) {
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        console.log(index, element.CountryCode, ' index -----------')
+        if (element && element.InternationalDialing) {
+          const checkData = await getCountryData({ "iso": element.CountryCode.toLowerCase() })
+          if (checkData) {
+            const rec = await updateCountry({ "iso": element.CountryCode.toLowerCase() }, { country_calling_code: element.InternationalDialing })
+          }
+        }
+
+      }
+      console.log('===== Country Upload Data Completed =====')
+      respSuccess(res, "Data yoload completed")
+    }
+
+  } catch (error) {
+    respError(res, error)
+  }
+}
 
 module.exports.getAllCities = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
     // console.log("module.exports.getAllCities -> req.query", reqQuery)
     const cities = await getAllCities(req.query);
+    // console.log("🚀 ~ file: locationsController.js ~ line 55 ~ module.exports.getAllCities= ~ cities", cities)
     respSuccess(res, cities);
   } catch (error) {
     respError(res, error.message);
@@ -34,13 +62,11 @@ module.exports.getAllCities = async (req, res) => {
 module.exports.getAllStates = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
-    const {sellingStates} = reqQuery
-    let states = await getAllStates(reqQuery);
-    if(sellingStates) {
+    const { sellingStates } = reqQuery
+    let states = await getAllStates(reqQuery.sellingStates ? {} : reqQuery);
+    if (sellingStates) {
       const index = states.findIndex(item => item.name === "pan india")
-      console.log("module.exports.getAllStates -> index", index)
       const state = states[index]
-      console.log("module.exports.getAllStates -> state", state)
       state.name = "PAN India"
       states.splice(index, 1)
       states.unshift(state)

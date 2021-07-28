@@ -148,6 +148,16 @@ const sellersSchema = new Schema(
       default: false,
       // required: true
     },
+    hearingSource: {
+      source: {
+        type: String,
+        default: null
+      },
+      referralCode: {
+        type: String,
+        default: null
+      }
+    },
     isPhoneVerified: {
       type: Boolean,
       default: false,

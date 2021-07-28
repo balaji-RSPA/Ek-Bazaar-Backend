@@ -1,3 +1,4 @@
+const async = require("async")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
@@ -39,34 +40,35 @@ const getUserAgent = (userAgent) => {
 exports.login = async (req, res, next) => {
   try {
 
-    const { password, ipAddress, mobile, userType } = req.body;
-    const response = await request({ url: ssoLoginUrl, method: "POST", data: { mobile, password, ipAddress, serviceURL, userType }, params: { serviceURL } })
-    // const response = await axios.post(ssoLoginUrl, { mobile, password, ipAddress, serviceURL, userType }, { params: { serviceURL } })
-    const { data } = response
-    let _user = data.user
-    console.log("🚀 ~ file: authController.js ~ line 47 ~ exports.login= ~ _user", _user)
+    const { password, ipAddress, mobile, userType, email, countryCode } = req.body;
+
+    let _user = req.body.user
+    console.log("🚀 ~ file: authController.js ~ line 46 ~ exports.login= ~ _user", _user)
+    const data = {
+      url: req.body.url
+    }
 
     if (data.url) {
       const ssoToken = data.url.substring(data.url.indexOf("=") + 1)
-      req.session.ssoToken = ssoToken
       req.query = {
         ssoToken: ssoToken
       }
     }
-
     const _response = await ssoRedirect(req, res, next)
-    console.log("🚀 ~ file: authController.js ~ line 63 ~ exports.login= ~ _response", _response)
+
     const { user, token } = _response
-    if (token) req.session.token = token
+    let query = {}
+    if (email) query = { email }
+    else query = { mobile, countryCode }
     if (!_user) {
 
       return respAuthFailed(res, undefined, "User not found");
 
     } else if (_user && !_user.password && userType === 'buyer') {
 
-      const _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
-      _user = await sellers.checkUserExistOrNot({ mobile });
-      _user = _user[0]
+      _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
+      // _user = await sellers.checkUserExistOrNot({ mobile });
+      _user = _user
 
     } else if (_user && !_user.password && userType === 'seller') {
 
@@ -74,30 +76,75 @@ exports.login = async (req, res, next) => {
 
     }
 
-    const buyer = await buyers.getBuyer(_user._id);
-    const seller = await sellers.getSeller(_user._id);
-    if (userType === 'seller') {
+    let buyer = await buyers.getBuyer(_user._id);
+    console.log("🚀 ~ file: authController.js ~ line 77 ~ exports.login= ~ buyer", buyer)
+    // if (!buyer) {
+    //   const sellerData = {
+    //     name: _user.name,
+    //     email: _user.email,
+    //     mobile: [{
+    //       countryCode: _user.countryCode,
+    //       mobile: mobile
+    //     }],
+    //     userId: _user._id
+    //   }
+    //   const buyerData = {
+    //     name: _user.name,
+    //     email: _user.email,
+    //     countryCode: _user.countryCode,
+    //     mobile: mobile,
+    //     userId: _user._id
+    //   }
+    //   await sellers.updateSeller({ userId: user._id }, sellerData)
+    //   buyer = await buyers.updateBuyer({ userId: user._id }, buyerData)
+    // }
+    let seller = await sellers.getSeller(_user._id);
+    console.log("🚀 ~ file: authController.js ~ line 102 ~ exports.login= ~ seller -------------", seller, userType, buyer)
 
-      if (seller && seller.deactivateAccount && (seller.deactivateAccount.status === true))
-        return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
 
-      else if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
-        const data = {
-          mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
-        }
-        await sellers.updateSeller({ userId: _user._id }, data)
+    if (userType === 'buyer' && !buyer) {
+
+      const buyerData = {
+        name: _user.name,
+        email: _user.email,
+        countryCode: _user.countryCode,
+        mobile: mobile,
+        userId: _user._id
       }
-
-    } else if (userType === 'buyer') {
-
-      if (buyer && buyer.deactivateAccount.status === true)
-        return respAuthFailed(res, undefined, "Account Deactivated, contact Support team");
+      buyer = await buyers.updateBuyer({ userId: user._id }, buyerData)
 
     }
 
+    if (userType === 'seller' && !seller) {
+      if (!seller) {
+        const sellerData = {
+          name: _user.name,
+          email: _user.email,
+          mobile: [{
+            countryCode: _user.countryCode,
+            mobile: mobile
+          }],
+          userId: _user._id
+        }
+        seller = await sellers.updateSeller({ userId: user._id }, sellerData)
+      }
+    }
+
+    if (seller && (!seller.mobile || (seller.mobile && !seller.mobile.length))) {
+      const data = {
+        mobile: [{ mobile: _user.mobile, countryCode: _user.countryCode }]
+      }
+      seller = await sellers.updateSeller({ userId: _user._id }, data)
+    }
+    if (buyer && !buyer.mobile) {
+      buyer = await buyers.updateBuyer({ userId: user._id }, { mobile: _user.mobile, countryCode: _user.countryCode })
+    }
+
+
     const result = await bcrypt.compare(password, _user.password);
     if (result) {
-      const sessionCount = await sellers.getSessionCount(_user._id);
+      // const sessionCount = await sellers.getSessionCount(_user._id);
+      sellers.getSessionCount(_user._id);
 
       const userAgent = getUserAgent(req.useragent);
 
@@ -108,25 +155,45 @@ exports.login = async (req, res, next) => {
         deviceId: user.deviceId,
         ipAddress
       }
-      const result1 = await sellers.handleUserSession(_user._id, finalData);
-      const chatLogin = await getChat({ userId: _user._id })
-      console.log("🚀 ~ file: authController.js ~ line 85 ~ exports.login= ~ chatLogin", chatLogin)
-      // const sellerDetails = await sellers.getSeller(_user._id);
-      let activeChat = {}
-      if (chatLogin) {
-        activeChat = await userChatLogin({ username: chatLogin.details.user.username, password: "active123", customerUserId: _user._id })
-        // activeChat = await userChatLogin({ username: "sreeraj@active.agency", password: "IamSree@2302", customerUserId: _user._id })
-        // await createChatSession({ userId: user._id }, { session: { userId: activeChat.userId, token: activeChat.authToken } })
-        console.log(activeChat, '------ Old Chat activated-----------')
-      } else {
-        console.log(' chat crfeate initiated-------------')
-        const chatUser = await createChatUser({ name: user.name, email: user.email, username: user.mobile.toString() })
-        const chatDetails = await createChat({ details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
-        activeChat = await userChatLogin({ username: chatUser.user.username, password: "active123", customerUserId: _user._id })
-        console.log(activeChat, '------ New Chat activated-----------')
+      // const result1 = await sellers.handleUserSession(_user._id, finalData);
+      sellers.handleUserSession(_user._id, finalData);
+      const productCount = seller && seller.sellerProductId && seller.sellerProductId.length ? true : false
+      console.log("🚀 ~ file: authController.js ~ line 119 ~ exports.login= ~ ProductCount------------", productCount, seller, _user)
+      // const chatLogin = await getChat({ userId: _user._id })
+      let activeChat = {
+        username: mobile,
+        userId: _user._id,
+        sellerId: seller && seller._id,
+        buyerId: buyer && buyer._id,
+        email: seller && seller.email || buyer && buyer.email || null,
+        name: seller && seller.name || buyer && buyer.name || null
       }
-
-      return respSuccess(res, { user, token, activeChat }, "successfully logged in!");
+      // if (chatLogin) {
+      //   if (chatLogin.details) {
+      //     activeChat = await userChatLogin({ username: chatLogin.details && chatLogin.details.user.username, password: "active123", customerUserId: _user._id })
+      //   }
+      //   else {
+      //     const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile && _user.mobile.toString() })
+      //     if (chatUser) {
+      //       const chatDetails = await createChat({ userId: _user._id }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
+      //       activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
+      //     }
+      //     else {
+      //       console.error("catch-block");
+      //       activeChat = await userChatLogin({ username: _user.mobile && _user.mobile.toString(), password: "active123", customerUserId: _user._id })
+      //     }
+      //   }
+      //   console.log(activeChat, '------ Old Chat activated-----------')
+      // } else {
+      //   console.log(' chat crfeate initiated-------------')
+      //   const chatUser = await createChatUser({ name: _user.name, email: _user.email, username: _user.mobile && _user.mobile.toString() })
+      //   console.log("🚀 ~ file: authController.js ~ line 129 ~ exports.login= ~ chatUser", chatUser)
+      //   const chatDetails = await createChat({ userId: _user._id }, { details: chatUser, sellerId: seller._id, buyerId: buyer._id, userId: _user._id })
+      //   activeChat = await userChatLogin({ username: chatUser.user && chatUser.user.username || "", password: "active123", customerUserId: _user._id })
+      //   console.log(activeChat, '------ New Chat activated-----------')
+      // }
+      console.log('1111111111111111111 --------------')
+      return respSuccess(res, { user, token, activeChat, productCount }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");
 
@@ -159,10 +226,6 @@ exports.logout = async (req, res) => {
       console.log("🚀 ~ file: authController.js ~ line 139 ~ exports.logout= ~ response", response)
       if (response.data && response.data.success) {
 
-        req.session = null //.distroy(function (err) {
-        // if (err) return respError(res, error.message)
-        // else return respSuccess(res, 'successfully logged out!');
-        // })
         return respSuccess(res, 'successfully logged out!');
 
       }
