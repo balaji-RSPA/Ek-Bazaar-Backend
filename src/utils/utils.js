@@ -88,7 +88,7 @@ const sendSmsTwilio = async(mobile,message) => {
       .create({
         body: message,
         from: '+18089990674',
-        to: '+919845833443'//should be dynamic number
+        to: mobile//'+447800975274','+919845833443'//should be dynamic number
     }) 
   return msg
   }catch(err){
