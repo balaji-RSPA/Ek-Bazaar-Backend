@@ -2687,3 +2687,12 @@
 >>>>>>> staging
 {"message":"Listening:8070","level":"info","timestamp":"2021-07-14T04:01:29.222Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-07-14T06:09:41.156Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-07-15T04:35:40.946Z"}
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2021-07-15T07:08:12.051Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-07-29T06:54:19.892Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-07-29T06:54:57.597Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-07-29T06:56:26.873Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-07-29T06:56:59.044Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-07-29T06:59:10.821Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-07-29T07:04:12.856Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-07-29T09:24:53.211Z"}
