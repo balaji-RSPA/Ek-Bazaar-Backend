@@ -263,6 +263,7 @@ exports.sellerSearch = async (reqQuery) => {
   }
 
   if (stateFromKeyWord) {
+    console.log("🚀 ~ file: elasticSearchModule.js ~ line 267 ~ exports.sellerSearch= ~ stateFromKeyWord", stateFromKeyWord)
     if (Array.isArray(stateFromKeyWord)) {
       stateFromKeyWord.forEach(state => {
 
@@ -310,7 +311,21 @@ exports.sellerSearch = async (reqQuery) => {
       if (Array.isArray(product)) {
 
         // query.bool.must.unshift({ bool: { should: [] } });
+        // let searchKey = {
+          //   "wildcard": {
+          //     "keywords.keyword": `${p}`
+          //   }
+          // }
+
+          // query.bool.must[0].bool.should.push(searchKey)
+          // let searchKey = {
+          //   "wildcard": {
+          //     "keywords.keyword": `*${p}*`
+          //   }
+          // }
+          // query.bool.must[0].bool.should.push(searchKey)
         let prod = [product[0]]
+        console.log("🚀 ~ file: elasticSearchModule.js ~ line 314 ~ exports.sellerSearch= ~ prod", prod)
         prod.forEach(p => {
 
           const searchKey = {
@@ -325,23 +340,23 @@ exports.sellerSearch = async (reqQuery) => {
 
         aggs = {
           "collapse": {
-            "field": "sellerId.name.keyword"
+            "field": "sellerId._id.keyword"
           },
           "aggs": {
             "products": {
               "cardinality": {
-                "field": "sellerId.name.keyword"
+                "field": "sellerId._id.keyword"
               }
             },
             "result": {
               "terms": {
                 "field": "sellerId.location.country.name.keyword",
-                "size": 200
+                "size": 20
               },
               "aggs": {
                 "countryCount": {
                   "cardinality": {
-                    "field": "sellerId.name.keyword"
+                    "field": "sellerId._id.keyword"
                   }
                 }
               }
@@ -929,7 +944,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -942,7 +957,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
   }
@@ -980,7 +995,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -993,7 +1008,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
   }
@@ -1019,7 +1034,7 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
-          },
+          }/* ,
           "result": {
             "terms": {
               "field": "sellerId.location.country.name.keyword",
@@ -1032,7 +1047,7 @@ exports.sellerSearch = async (reqQuery) => {
                 }
               }
             }           
-          }
+          } */
         }
       }
       
@@ -1052,7 +1067,7 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
-          },
+          }/* ,
           "result": {
             "terms": {
               "field": "sellerId.location.country.name.keyword",
@@ -1065,7 +1080,7 @@ exports.sellerSearch = async (reqQuery) => {
                 }
               }
             }           
-          }
+          } */
         }
       }
     }
@@ -1114,7 +1129,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -1127,7 +1142,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
 
@@ -1163,7 +1178,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -1176,7 +1191,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
   }
@@ -1213,7 +1228,7 @@ exports.sellerSearch = async (reqQuery) => {
           "cardinality": {
             "field": reqQuery.findByEmail ? "sellerId.email.keyword" : "sellerId._id.keyword"
           }
-        },
+        }/* ,
         "result": {
           "terms": {
             "field": "sellerId.location.country.name.keyword",
@@ -1226,7 +1241,7 @@ exports.sellerSearch = async (reqQuery) => {
               }
             }
           }
-        }
+        } */
       }
     }
   }
@@ -1560,7 +1575,8 @@ exports.sellerSearch = async (reqQuery) => {
 
   if (cityId) {
     if (Array.isArray(cityId)) {
-      query.bool.must.unshift({ bool: { should: [] } });
+      // query.bool.must.unshift({ bool: { should: [] } });
+      // uery.bool.must_not.unshift({ bool: { should: [] } });
       cityId.forEach((c) => {
         const locationMatch = {
           term: {
@@ -1568,7 +1584,9 @@ exports.sellerSearch = async (reqQuery) => {
             "serviceCity.city._id": c
           },
         };
-        query.bool.must[0].bool.should.push(locationMatch);
+        query.bool.should.push(locationMatch)
+        // query.bool.must[0].bool.should.push(locationMatch);
+        // query.bool.must_not[0].bool.should.push(locationMatch);
       });
       aggs = {
         "collapse": {
@@ -1579,7 +1597,7 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
-          },
+          }/* ,
           "result": {
             "terms": {
               "field": "sellerId.location.country.name.keyword",
@@ -1592,7 +1610,7 @@ exports.sellerSearch = async (reqQuery) => {
                 }
               }
             }
-          }
+          } */
         }
       }
     } else {
@@ -1602,7 +1620,7 @@ exports.sellerSearch = async (reqQuery) => {
           "serviceCity.city._id": cityId
         },
       };
-      query.bool.must.push(locationMatch);
+      query.bool.should.push(locationMatch);
 
       aggs = {
         "collapse": {
@@ -1613,7 +1631,7 @@ exports.sellerSearch = async (reqQuery) => {
             "cardinality": {
               "field": "sellerId.name.keyword"
             }
-          },
+          }/* ,
           "result": {
             "terms": {
               "field": "sellerId.location.country.name.keyword",
@@ -1626,7 +1644,7 @@ exports.sellerSearch = async (reqQuery) => {
                 }
               }
             }
-          }
+          } */
         }
       }
     }
@@ -2063,34 +2081,37 @@ exports.getCounts = (query) =>
 exports.getCountByCountry = (query) => new Promise((resolve, reject) => {
   // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query)
 
-  // let filtered1 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => {
-  //   return item["match"]["sellerId.location.country.name"] || item["match"]["serviceCity.country.name"]
-  // })
+  //let filtered1 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => {
+    //return item["match"]["sellerId.location.country.name"] || item["match"]["serviceCity.country.name"]
+  //})
 
-  // let filtered2 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.state.name"] || item["match"]["serviceCity.state.name"])
+  //let filtered2 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.state.name"] || item["match"]["serviceCity.state.name"])
 
-  // let filtered3 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.city.name"] || item["match"]["serviceCity.city.name"])
+  //let filtered3 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.city.name"] || item["match"]["serviceCity.city.name"])
 
-  // if (filtered1.length) {
+  //if (filtered1.length) {
 
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.country.name"]), 1)
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.country.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.country.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.country.name"]), 1)
 
-  // } else if (filtered2.length) {
+  //} else if (filtered2.length) {
 
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.state.name"]), 1)
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.state.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.state.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.state.name"]), 1)
 
-  // } else if (filtered3.length) {
+  //} else if (filtered3.length) {
 
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
-  //   query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+    //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
 
-  // }
+  //}
 
-  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.should)
-  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.must)
-  // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2041 ~ exports.getCountByCountry= ~ filtered", filtered1, filtered2, filtered3)
+  //console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query/* .bool.should */)
+  // if(!query.function_score.query.bool.should.length) delete  query.function_score.query.bool.should
+  //console.log(query.function_score.query.bool)
+  //console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query.function_score.query.bool.must)
+  //console.log("🚀 ~ file: elasticSearchModule.js ~ line 2041 ~ exports.getCountByCountry= ~ filtered", filtered1, filtered2, filtered3)
+  //query = query.function_score.query
   let aggs = {
     "collapse": {
       "field": "sellerId.name.keyword"
@@ -2231,6 +2252,7 @@ exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
     from: 0,
     size: 500
   };
+  console.log("🚀 ~ file: elasticSearchModule.js ~ line 2255 ~ exports.getAllStatesElastic= ~ searchQuery", searchQuery.body.query.function_score.query.bool.should)
   esClient
     .search(searchQuery)
     .then(async (results) => {

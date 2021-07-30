@@ -17,8 +17,9 @@ function dbConnection() {
     serverSelectionTimeoutMS: 10000,
     // reconnectTries: 30,
   };
-  if (env.NODE_ENV !== 'development') {
+  if (env.NODE_ENV === 'production') {
 
+    // console.log("🚀 ~ file: db.js ~ line 23 ~ dbConnection ~ tradeDb", tradeDb)
     url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
     options = {
       ...options,
@@ -28,13 +29,13 @@ function dbConnection() {
     }
   } else {
 
-    console.log(tradeDb)
-    options.sslCA =  tradeDb.certFileBuf
-    url = `mongodb+srv://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}?authSource=admin&replicaSet=${tradeDb.replicaName}`
+    // options.sslCA = tradeDb.certFileBuf
+    // url = `mongodb+srv://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}?authSource=admin&replicaSet=${tradeDb.replicaName}`
+    // url = `mongodb+srv://tradedb:9Hp5aTDMVac3LTWg@tradebazaar.v46kj.mongodb.net" target="_blank" rel="noopener noreferrer">=!=bvtySeZ5pw9EqyoyQ=!=Hp5aTDMVac3LTWg@tradebazaar.v46kj.mongodb.net/test?authSource=admin&replicaSet=atlas-10w371-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true`
+    url = `${tradeDb.protocol}://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}`
   }
   if (env) {
 
-    // url = `mongodb://${tradedb.user}:${tradedb.password}@${tradedb.host}:${tradedb.port}/${tradedb.database}`
     mongoose.connect(url, options).catch(console.log);
 
   }
@@ -52,29 +53,35 @@ function dbConnection() {
 };
 
 // function elasticSearchConnect() {
-let host = ''
+let host = '', conf = {
+  host,
+  log: 'error',
+  sniffOnStart: true,
+}
 if (env) {
-  /* if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'development') {
 
-    host = 'tradebazaarapi.tech-active.com:5085'
+    conf = {
+      host: 'https://elastic:KYM6BwR6Am9a7gcnnn2My9ZL@ekbazaar-tradesearch.es.ap-south-1.aws.elastic-cloud.com:9243',
+      log: 'error',
+      // sniffOnStart: true,
+    }
 
-  } else */ if (env.NODE_ENV !== 'production') {
+  } else if (env.NODE_ENV === 'staging') {
 
-    // host = 'searchtrade.ekbazaar.com:5085'
-    // host = 'searchtradetemp.tech-active.com:5085'
-    // host = '139.59.19.170:5085'
-    // host = '139.59.95.19:5085'
-    // host = "167.71.233.251:5085"
-    host = "157.245.109.173:5086"
+    conf.host = 'tradebazaarapi.tech-active.com:5085'
+
+  } else if (env.NODE_ENV === 'production') {
+
+    conf.host = "157.245.109.173:5086"
 
   }
 
 }
 
+console.log("🚀 ~ file: db.js ~ line 85 ~ elasticSearchConnect ~ conf", conf)
 const es = () => new elasticsearch.Client({
-  host,
-  log: 'error',
-  sniffOnStart: true,
+  ...conf
 });
 
 const esClient = es();

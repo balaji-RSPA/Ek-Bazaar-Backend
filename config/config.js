@@ -55,14 +55,18 @@ if (process.env.NODE_ENV === "production") {
   config = {
     tradeDb: {
       // stating server db 
-      host: "trade-test-230ce624.mongo.ondigitalocean.com",
-      port: "27017",
-      user: "tradeuser",
-      password: "a7L6q193z80FIw2x",
-      database: "trade-live",
-      certFileBuf,
-      replicaName: "trade-test",
+      // host: "trade-test-230ce624.mongo.ondigitalocean.com",
+      // port: "27017",
+      // user: "tradeuser",
+      // password: "a7L6q193z80FIw2x",
+      // database: "trade-live",
+      // certFileBuf,
+      // replicaName: "trade-test",
       protocol: 'mongodb+srv',
+      database: 'tradedb',
+      user: 'tradedb',
+      password: '9Hp5aTDMVac3LTWg',
+      host: 'tradebazaar.v46kj.mongodb.net',
       server_port: "8070",
     },
     tenderdb: {
