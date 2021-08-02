@@ -21,7 +21,8 @@ module.exports.createRemoveListing = async (req, res) => {
     const removeListing = await create(req.body);
     if(removeListing && removeListing.mobile && removeListing.mobile.mobile){
       const {message, templateId} = removeListingMsg()
-      const response = await sendSMS(`+91${removeListing.mobile.mobile}`, message, templateId);
+      let countryCode = removeListing.mobile && removeListing.mobile.countryCode ? removeListing.mobile.countryCode : '+91'
+      const response = sendSMS(`${countryCode}${removeListing.mobile.mobile}`, message, templateId);
       console.log("remove my listing ---------- response",response.data);
     }else{
       console.log("=============Invalid mobile================");
