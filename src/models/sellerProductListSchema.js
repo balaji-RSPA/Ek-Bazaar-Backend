@@ -247,6 +247,7 @@ const productDetailsSchema = new Schema({
   },
   isOrganic: {
     type: Boolean,
+    default:false,
     trim: true,
   },
   document: documentSchema,

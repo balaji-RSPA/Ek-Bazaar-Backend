@@ -110,14 +110,16 @@ exports.sendSMS = async (mobile, message, templateId) => new Promise(async(resol
       .catch(async(error) => {
         let checkServerError = /^5\d{2}$/.test(error.message.code);
         if(checkServerError){
-          return await sendSmsTwilio(mobile,message) 
+          let response =  await sendSmsTwilio(mobile,message) 
+          resolve(response)
         }else{
            resolve({ error: error.message })
         }
       })
   }else{
-    return await sendSmsTwilio(mobile,message);
-  } 
+      let response = await sendSmsTwilio(mobile,message);
+      resolve({response})
+    } 
  })
 
 
