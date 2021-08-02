@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { DocumentList } = require("twilio/lib/rest/preview/sync/service/document");
 const { ObjectId } = mongoose.Types
 const { States, Countries, Cities } = require("../models");
 
@@ -138,7 +139,7 @@ exports.getAllCities = (reqQuery) =>
     let { state, countryId } = reqQuery;
     let match;
 
-    console.log("🚀 ~ file: locationsModule.js ~ line 139 ~ newPromise ~ countryId", countryId)
+    console.log("🚀 ~ file: locationsModule.js ~ line 139 ~ newPromise ~ countryId", reqQuery)
     if (state) {
       state = Array.isArray(state) ? state : [state];
       match = {
@@ -375,6 +376,22 @@ module.exports.getSellerSelectedCities = (data) =>
       }
     })
       .populate('state')
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+
+module.exports.getCityList = (query) =>
+  new Promise((resolve, reject) => {
+    Cities.find()
+      // .select('name state country')
+      .skip(query.skip)
+      .limit(query.limit)
+      .populate('state')
+      .populate('country')
       .then((doc) => {
         resolve(doc);
       })
