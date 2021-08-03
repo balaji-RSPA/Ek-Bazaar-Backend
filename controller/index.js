@@ -314,7 +314,7 @@ const doLogin = async (req, res, next) => {
   const { password, ipAddress, mobile, userType, origin, location, countryCode, email } = req.body;
   let query = {}
   if (req.body.email) query = { email: req.body.email }
-  else query = { mobile, countryCode }
+  else query = { mobile, countryCode: countryCode || "+91" }
   const user = await UserModel.findOne(query)
     .select({
       name: 1,
