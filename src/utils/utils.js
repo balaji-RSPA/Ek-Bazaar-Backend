@@ -97,6 +97,20 @@ const sendSmsTwilio = async(mobile,message) => {
 
 }
 
+exports.sendWhatsAppTwilio = async() => {
+  try{
+  const msg = await client.messages
+        .create({
+          from: 'whatsapp:+18089990674',
+          body: 'Hello, there!',
+          to: 'whatsapp:+919845833443'
+        })
+     return msg;
+    }catch(error){
+      console.log(error)
+  }
+} 
+
 exports.sendSMS = async (mobile, message, templateId) => new Promise(async(resolve, reject) => {
   let checkCountryCode = mobile.substring(0,3)
   if(checkCountryCode === '+91'){
@@ -110,14 +124,16 @@ exports.sendSMS = async (mobile, message, templateId) => new Promise(async(resol
       .catch(async(error) => {
         let checkServerError = /^5\d{2}$/.test(error.message.code);
         if(checkServerError){
-          return await sendSmsTwilio(mobile,message) 
+          let response =  await sendSmsTwilio(mobile,message) 
+          resolve(response)
         }else{
            resolve({ error: error.message })
         }
       })
   }else{
-    return await sendSmsTwilio(mobile,message);
-  } 
+      let response = await sendSmsTwilio(mobile,message);
+      resolve({response})
+    } 
  })
 
 
