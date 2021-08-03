@@ -39,7 +39,6 @@ const getUserAgent = (userAgent) => {
 
 exports.login = async (req, res, next) => {
   try {
-
     const { password, ipAddress, mobile, userType, email, countryCode } = req.body;
 
     let _user = req.body.user
@@ -65,7 +64,6 @@ exports.login = async (req, res, next) => {
       return respAuthFailed(res, undefined, "User not found");
 
     } else if (_user && !_user.password && userType === 'buyer') {
-
       _user = await sellers.updateUser({ mobile }, { password: encodePassword(password) })
       // _user = await sellers.checkUserExistOrNot({ mobile });
       _user = _user
