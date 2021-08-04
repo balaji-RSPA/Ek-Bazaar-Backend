@@ -306,9 +306,8 @@ exports.getAllPrimaryCategory = (searchQuery, skip, limit) =>
   });
 
 module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) => {
-  PrimaryCategory.findOne({
-    _id: query._id
-  })
+  if(query._id) query = {_id: query._id}
+  PrimaryCategory.findOne(query)
     .limit(query.limit)
     .skip(query.skip)
     .sort({ name: 1 })
@@ -325,6 +324,8 @@ module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) =
     .then(doc => resolve(doc))
     .catch(error => reject(error))
 })
+
+// module.exports.getPrimaryCategoriesByQuery = (query)
 
 // Secondary Category
 

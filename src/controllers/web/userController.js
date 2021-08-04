@@ -193,7 +193,7 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].isEmailVerified === 2;
 
     if (isProd) {
-      // otp = Math.floor(1000 + Math.random() * 9000);
+      otp = Math.floor(1000 + Math.random() * 9000);
       otpMessage = otpVerification({ otp });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
@@ -449,8 +449,10 @@ module.exports.updateUser = async (req, res) => {
       type,
       sellerType,
       userType,
+      hearingSource
     } = req.body;
     console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body)
+    // return false
 
     console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
     const __usr = await getUserProfile(userID)
@@ -535,10 +537,10 @@ module.exports.updateUser = async (req, res) => {
       buyerData.countryCode = _buyer.mobile[0].countryCode;
     }
     delete buyerData && buyerData._id;
-    if (_seller && sellerType && (!_seller.sellerType || (_seller.sellerType && !_seller.sellerType.length)) && isProd) {
-      const { successfulMessage, templateId } = successfulRegistration({ userType, name });
-      let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
-    }
+    // if (_seller && sellerType && (!_seller.sellerType || (_seller.sellerType && !_seller.sellerType.length)) && isProd) {
+    //   const { successfulMessage, templateId } = successfulRegistration({ userType, name });
+    //   let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
+    // }
     if (business) {
       const bsnsDtls = await addbusinessDetails(_seller._id, {
         name: business,
@@ -569,12 +571,12 @@ module.exports.updateUser = async (req, res) => {
         buyer = await updateBuyer({ userId: userID }, buyerData);
         seller = await updateSeller({ userId: userID }, sellerData);
 
-        if (isProd) {
+        // if (isProd) {
 
-          const { successfulMessage, templateId } = successfulRegistration({ userType, name });
-          let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
+        //   const { successfulMessage, templateId } = successfulRegistration({ userType, name });
+        //   let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
 
-        }
+        // }
 
         let emailMessage = emailSuccessfulRegistration({
           name: user.name,
@@ -596,11 +598,15 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans) {
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721']
+        const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
+        console.log("🚀 ~ file: userController.js ~ line 603 ~ module.exports.updateUser= ~ promoCode", promoCode)
         const dateNow = new Date();
         const trialPlan = await getSubscriptionPlanDetail({
           planType: "trail",
           status: true,
         });
+
         if (trialPlan) {
           const sellerDetails = {
             sellerId: seller._id,
@@ -617,16 +623,16 @@ module.exports.updateUser = async (req, res) => {
             name: trialPlan.type,
             description: trialPlan.description,
             features: trialPlan.features,
-            days: trialPlan.days,
+            days: promoCode ? "90" : trialPlan.days,
             extendTimes: trialPlan.numberOfExtends,
             exprireDate: dateNow.setDate(
-              dateNow.getDate() + parseInt(trialPlan.days)
+              dateNow.getDate() + parseInt(promoCode ? "90" : trialPlan.days)
             ),
             userId: seller.userId,
             sellerId: seller._id,
             isTrial: true,
             planType: trialPlan.type,
-            extendDays: trialPlan.days,
+            extendDays: promoCode ? "90" : trialPlan.days,
             subscriptionId: trialPlan._id,
             createdOn: new Date(),
           };
@@ -635,6 +641,7 @@ module.exports.updateUser = async (req, res) => {
           const planDatra = {
             planId: planResult._id,
             trialExtends: trialPlan.numberOfExtends,
+            hearingSource
           };
           const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
 
@@ -650,6 +657,12 @@ module.exports.updateUser = async (req, res) => {
             },
           };
           const log = await addSellerPlanLog(planLog);
+          if (isProd) {
+
+            const { successfulMessage, templateId } = successfulRegistration({ userType, name, promoCode });
+            let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
+
+          }
         }
       }
 

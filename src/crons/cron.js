@@ -1,6 +1,7 @@
 const { reject } = require('lodash');
 const _ = require('lodash');
 const moment = require("moment");
+const { Sellers } = require('../models')
 const { sellers, mastercollections, sellerProducts, SMSQue, buyers, SellerPlans, QueEmails } = require('../modules')
 const { getAllSellers, getUpdatedSellerDetails, getSellerProductDetails, addProductDetails } = sellers
 const { updateMaster } = mastercollections
@@ -8,18 +9,18 @@ const { getSellerProducts, updateSellerProducts } = sellerProducts
 const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue
 const { getRFPData, updateRFP } = buyers
 const { bulkInserQemails, getQueEmail, updateQueEmails } = QueEmails
-const { getExpirePlans, updateSellerPlans,getAboutToexpirePlan } = SellerPlans
+const { getExpirePlans, updateSellerPlans, getAboutToexpirePlan } = SellerPlans
 const { sendSMS, sendBulkSMS } = require('../utils/utils')
 const { planExpiry } = require('../utils/templates/smsTemplate/smsTemplate');
 const { commonTemplate } = require('../utils/templates/emailTemplate/emailTemplate');
-const { planExpired,planExpiring } = require('../utils/templates/emailTemplate/emailTemplateContent');
+const { planExpired, planExpiring } = require('../utils/templates/emailTemplate/emailTemplateContent');
 const {
     MailgunKeys
 } = require("../utils/globalConstants");
 const { sendSingleMail } = require('../utils/mailgunService')
-const {globalVaraibles} = require('../utils/utils')
+const { globalVaraibles } = require('../utils/utils')
 const isProd = globalVaraibles._IS_PROD_
-const {pricing} = globalVaraibles.authServiceURL()
+const { pricing } = globalVaraibles.authServiceURL()
 
 
 exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) => {
@@ -50,16 +51,16 @@ exports.sendQueEmails = async (req, res) => new Promise(async (resolve, reject) 
                 //         to: element.toEmail
                 //     }
                 // }else{
-                    message = {
-                        subject: element.subject,
-                        html: commonTemplate(element.body),
-                        from: element.fromEmail,
-                        to: element.toEmail
-                    }
+                message = {
+                    subject: element.subject,
+                    html: commonTemplate(element.body),
+                    from: element.fromEmail,
+                    to: element.toEmail
+                }
                 // }
                 if (element.toEmail && element.fromEmail)
-                  await sendSingleMail(message)
-                }
+                    await sendSingleMail(message)
+            }
             if (updateIds && updateIds.length)
                 await updateQueEmails({ _id: { $in: updateIds } }, { isSent: true })
             console.log(updateIds, ' ------------------ Que Emails sent ----------- ')
@@ -121,9 +122,9 @@ exports.getExpirePlansCron = async (req, res) =>
                             toEmail: element.sellerId.email,
                             name: element.sellerId.name,
                             subject: "Plan Expired",
-                            body: planExpired({date : element.exprireDate,isTrial : element.isTrial,url:pricing})
+                            body: planExpired({ date: element.exprireDate, isTrial: element.isTrial, url: pricing })
                         };
-                       
+
                         emailData.push(data)
                         console.log(emailData, ' email')
                         console.log(sellerPlanIds, ' ids')
@@ -323,9 +324,9 @@ exports.updateSelleProfileChangesToProducts = async (req, res) => new Promise(as
 
 })
 
-exports.getAboutToExpirePlan = async (req,res) =>{
+exports.getAboutToExpirePlan = async (req, res) => {
 
-    try{
+    try {
         const emailData = []
         const smsData = []
         // let url = '';
@@ -354,7 +355,7 @@ exports.getAboutToExpirePlan = async (req,res) =>{
             }
             if (element && element.sellerId && element.sellerId.email) {
                 const date1 = moment(new Date(), 'DD/MM/YYYY');
-                const date2 = moment(new Date(element.exprireDate),'DD/MM/YYYY');
+                const date2 = moment(new Date(element.exprireDate), 'DD/MM/YYYY');
                 const dayDiff = date2.diff(date1, 'days');
                 const data = {
                     messageType: "plan_abt_expire",
@@ -364,19 +365,19 @@ exports.getAboutToExpirePlan = async (req,res) =>{
                     toEmail: element.sellerId.email,
                     name: element.sellerId.name,
                     subject: "Plan About To Expire",
-                    body: planExpiring({date:element.exprireDate, isTrial : element.isTrial, url: pricing,dayDiff}),
+                    body: planExpiring({ date: element.exprireDate, isTrial: element.isTrial, url: pricing, dayDiff }),
                 };
                 emailData.push(data)
             }
         }
-        if (emailData.length){
+        if (emailData.length) {
             await bulkInserQemails(emailData)
         }
-        if (smsData.length){
+        if (smsData.length) {
             await queSMSBulkInsert(smsData)
-        }   
-    }catch(error){
-     console.log("About to expire plan error:",error)
+        }
+    } catch (error) {
+        console.log("About to expire plan error:", error)
     }
 }
 
@@ -438,4 +439,344 @@ exports.updateKeywords = async (req, res) => new Promise(async (resolve, reject)
     //     console.log(error)
     // }
 
+})
+
+exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject) => {
+    try {
+        const registerdate = new Date(moment('2021-07-16').startOf('day')).toISOString()
+        const date = new Date(moment().startOf('day')).toISOString()
+        const dateyesterday = new Date(moment.utc().subtract(1, 'day').startOf('day')).toISOString()
+        const _dateyesterday = dateyesterday.substring(0, dateyesterday.indexOf('T'))
+        // return true
+        const yesterdayTotalSellerCount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }], createdAt: { $gte: registerdate, $lt: date } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 452 ~ exports.sendDailyCount= ~ yesterdayTotalSellerCount", yesterdayTotalSellerCount.length)
+        // const yesterdayTotalBuyerCount = await Sellers.find({$or: [{$and: [{sellerProductId: {$exists: true}}, {$where: "this.sellerProductId.length < 1"}]},{sellerProductId: {$exists: false}}, { sellerProductId : null }], name: {$exists: true}, createdAt: {$gte: registerdate, $lt: date}}).exec()
+        // console.log("🚀 ~ file: cron.js ~ line 453 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount.length)
+        const yesterdayTotalCount = await Sellers.find({ createdAt: { $gte: registerdate, $lt: date }, name: { $exists: true } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 456 ~ exports.sendDailyCount= ~ yesterdayTotalCount", yesterdayTotalCount.length)
+
+        const yesterdayTotalBuyerCount = yesterdayTotalCount.length - yesterdayTotalSellerCount.length
+        console.log("🚀 ~ file: cron.js ~ line 459 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount)
+        // return true
+
+        let source = ["GCC", "SMEC", "Paper Ads", "Online Ads", "Social Media", "From a Friend", "Desh Aur Vyapar"]
+        const gcc_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Gujarat Chamber of Commerce" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        const smec_ount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "SME Chamber of India (Maharashtra)" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        const paper_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Paper Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        const online_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Online Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        const social_media_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Social media" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        const from_a_friend_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        const desh_or_vyapar_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Desh aur Vyapar Rajasthan Newspaper" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+
+        const sum = gcc_count.length + smec_ount.length + paper_ads_count.length + online_ads_count.length + social_media_count.length + from_a_friend_count.length + desh_or_vyapar_count.length
+        source = source.map((src, i) => ({ key: src, value: i == 0 ? gcc_count.length : i == 1 ? smec_ount.length : i == 2 ? paper_ads_count.length : i == 3 ? online_ads_count.length : i == 4 ? social_media_count.length : i == 5 ? from_a_friend_count.length : desh_or_vyapar_count.length }))
+        let elem = source.map(src =>
+            `<tr>
+                <td>${src.key}</td>
+                <td>${src.value}</td>
+            </tr>`
+        )
+        const recipients = [{email: 'ashutosh@active.agency', name: 'Ashutosh'}, {email: 'shrey@active.agency', name: 'Shrey Kankaria'}, {email: 'akshay@active.agency', name: 'Akshay Agarwal'}, {email: 'ameen@active.agency', name: Ameen}, {email: 'nagesh@ekbazaar.com', name: 'Nagesh'}, {email: 'sandeep@ekbazaar.com', name: 'Sandeep'}, {email: 'nk@ekbazaar.com', name: 'Nandakumar'},{email: 'ramesh@active.agency', name: 'Ramesh Shettanoor'}, {email: 'darshan@active.agency', name: 'Darshan'}]
+        let recipientVars = {};
+        recipients.forEach((recipient, index) => {
+            recipientVars = {
+                ...recipientVars,
+                [recipient.email]: {
+                    id: index+1,
+                    name: recipient.name
+                }
+            }
+        })
+        // for (let i = 0; i < emails.length; i++) {
+        const message = {
+            from: MailgunKeys.senderMail,
+            to: recipients.map(recipient => recipient.email),
+            subject: `${_dateyesterday} Seller Subscriber count`,
+            'recipient-variables': recipientVars,
+            html: `<!doctype html>
+                <html lang="en">
+                    <head>
+                        <title>Table 01</title>
+                        <meta charset="utf-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                        <meta name="x-apple-disable-message-reformatting">
+                        <title></title>
+                        <!-- Web Font / @font-face : BEGIN -->
+
+                        <!--[if mso]>
+                        <style>
+                            * {
+                                font-family: sans-serif !important;
+                            }
+                        </style>
+                        <![endif]-->
+                        
+                        <!--[if !mso]><!-->
+                        <link href='https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700' rel='stylesheet' type='text/css'>
+                        <!--<![endif]-->
+                        
+                        <!-- Web Font / @font-face : END -->
+                    
+                        <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+                    
+                        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+                        
+                        <link rel="stylesheet" href="/table/css/style.css">
+
+                        <!-- Web Font / @font-face : BEGIN -->
+        
+                        <!--[if mso]>
+                        <style>
+                            * {
+                                font-family: sans-serif !important;
+                            }
+                        </style>
+                        <![endif]-->
+                    
+                        <!--[if !mso]><!-->
+                        <link href='https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700' rel='stylesheet' type='text/css'>
+                        <!--<![endif]-->
+                    
+                        <!-- Web Font / @font-face : END -->
+                    
+                        <!-- CSS Reset -->
+                        <style>
+                    
+                    
+                            html,
+                            body {
+                                margin: 0 auto !important;
+                                padding: 0 !important;
+                                height: 100% !important;
+                                width: 100% !important;
+                            }
+                    
+                            * {
+                                -ms-text-size-adjust: 100%;
+                                -webkit-text-size-adjust: 100%;
+                            }
+                    
+                            div[style*="margin: 16px 0"] {
+                                margin: 0 !important;
+                            }
+                    
+                            
+                    
+                            img {
+                                -ms-interpolation-mode: bicubic;
+                            }
+                    
+                            *[x-apple-data-detectors] {
+                                color: inherit !important;
+                                text-decoration: none !important;
+                            }
+                    
+                            .x-gmail-data-detectors,
+                            .x-gmail-data-detectors *,
+                            .aBn {
+                                border-bottom: 0 !important;
+                                cursor: default !important;
+                            }
+                    
+                            .a6S {
+                                display: none !important;
+                                opacity: 0.01 !important;
+                            }
+                    
+                    
+                            img.g-img + div {
+                                display: none !important;
+                            }
+                    
+                            .button-link {
+                                text-decoration: none !important;
+                            }
+                    
+                            @media  only screen and (min-device-width: 375px) and (max-device-width: 413px) {
+                                /* iPhone 6 and 6+ */
+                                .email-container {
+                                    min-width: 375px !important;
+                                }
+                            }
+                    
+                            #table1 {
+                                font-family: Arial, Helvetica, sans-serif;
+                                border-collapse: collapse;
+                                width: 300px;
+                                margin-left: 20px; 
+                                margin-right: auto;
+                              }
+                              
+                              #table1 td, #table1 th {
+                                border: 1px solid #ddd;
+                                padding: 8px;
+                              }
+                              
+                              #table1 tr:nth-child(even){background-color: #f2f2f2;}
+                              
+                              #table1 tr:hover {background-color: #ddd;}
+                              
+                              #table1 th {
+                                padding-top: 12px;
+                                padding-bottom: 12px;
+                                text-align: left;
+                                background-color: #0000CD;
+                                color: white;
+                              }
+
+                              #table2 {
+                                font-family: Arial, Helvetica, sans-serif;
+                                border-collapse: collapse;
+                                width: 300px;
+                                margin-left: 20px; 
+                                margin-right: auto;
+                              }
+                              
+                              #table2 td, #table2 th {
+                                border: 1px solid #ddd;
+                                padding: 8px;
+                              }
+                              
+                              #table2 tr:nth-child(even){background-color: #f2f2f2;}
+                              
+                              #table2 tr:hover {background-color: #ddd;}
+                              
+                              #table2 th {
+                                padding-top: 12px;
+                                padding-bottom: 12px;
+                                text-align: left;
+                                background-color: #0000CD;
+                                color: white;
+                              }
+
+                        </style>
+
+                        <!--[if gte mso 9]>
+                        <xml>
+                            <o:OfficeDocumentSettings>
+                                <o:AllowPNG/>
+                                <o:PixelsPerInch>96</o:PixelsPerInch>
+                            </o:OfficeDocumentSettings>
+                        </xml>
+                        <![endif]-->
+                        <style>        
+                            body, h1, h2, h3, h4, h5, h6, p, a {
+                                font-family: 'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;;
+                            }
+                    
+                            .button-td,
+                            .button-a {
+                                transition: all 100ms ease-in;
+                            }
+                    
+                            .button-td:hover,
+                            .button-a:hover {
+                                background: #45C8FF !important;
+                                border-color: #45C8FF !important;
+                            }
+                    
+                            @media  screen and (max-width: 480px) {
+                    
+                                .fluid {
+                                    width: 100% !important;
+                                    max-width: 100% !important;
+                                    height: auto !important;
+                                    margin-left: auto !important;
+                                    margin-right: auto !important;
+                                }
+                    
+                                .stack-column,
+                                .stack-column-center {
+                                    display: block !important;
+                                    width: 100% !important;
+                                    max-width: 100% !important;
+                                    direction: ltr !important;
+                                }
+                    
+                                .stack-column-center {
+                                    text-align: center !important;
+                                }
+                    
+                                .center-on-narrow {
+                                    text-align: center !important;
+                                    display: block !important;
+                                    margin-left: auto !important;
+                                    margin-right: auto !important;
+                                    float: none !important;
+                                }
+                    
+                                table.center-on-narrow {
+                                    display: inline-block !important;
+                                }
+                            }
+        
+                        </style>
+                    </head>
+                    <body>
+                        <section class="ftco-section">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-6 text-center mb-5">
+                                        <h4 class="heading-section">Hi,</h5>
+                                        <h4>Please find the subscriber count below:</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-wrap">
+                                            <table class="table" id="table1">
+                                                <thead class="thead-primary">
+                                                    <tr>
+                                                    <th>Date</th>
+                                                    <th>Total Count</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                    <td>${_dateyesterday}</td>
+                                                    <td>${sum}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="table-wrap" style="margin-top:15px">
+                                            <table class="table" id="table2">
+                                                <thead class="thead-primary">
+                                                    <tr>
+                                                    <th>Source</th>
+                                                    <th>Total Count</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                ${elem.toString().split(',').join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 15px;">
+                                    <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${yesterdayTotalCount.length}</h4>
+                                    <h4>Only Buyers: <span>${yesterdayTotalCount.length}</span></h4>
+                                    <h4>Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
+                                    <h4>Thank you. </h4>
+                                </div>
+                            </div>
+                        </section>
+                        <script src="/js/jquery.min.js"></script>
+                        <script src="/js/popper.js"></script>
+                        <script src="/js/bootstrap.min.js"></script>
+                        <script src="/js/main.js"></script>
+                
+                    </body>
+                </html>`,
+        };
+        let mail = await sendSingleMail(message);
+        console.log("🚀 ~ file: cron.js ~ line 453 ~ exports.sendDailyCount=async ~ mail", mail)
+        // }
+        resolve(true)
+    } catch (error) {
+        console.error(error.message);
+        reject(error.message)
+    }
 })

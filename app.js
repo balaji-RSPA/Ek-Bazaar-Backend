@@ -16,7 +16,7 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
 const { updatePriority } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
@@ -153,6 +153,10 @@ server.on("error", (e) => {
 //   }
 // })
 
+console.log("lokiiiiiiiiiii")
+// sendDailyCount()
+console.log("thorrrrrrrrrrrrrrrr")
+
 app.post("/uploadInternationalCity", async function (req, res) {
   try {
     const result = await uploadInternationalCity(req, res);
@@ -166,6 +170,23 @@ server.on("listening", () => {
   console.log(`Listening:${server.address().port}`);
   Logger.info(`Listening:${server.address().port}`);
 });
+
+if(env.NODE_ENV === 'production') {
+  const dailyCount = cron.schedule("30 2 * * *", async () => {
+    dailyCount.stop();
+    console.log(
+      "-------------------- dailyCount cron start --------------------",
+      new Date()
+    );
+    await sendDailyCount();
+    console.log(
+      "-------------------- dailyCount cron completed --------------------",
+      new Date()
+    );
+    dailyCount.start();
+  });
+  dailyCount.start();
+}
 
 if (env.NODE_ENV === "production1") {
   const queSms = cron.schedule("* * * * *", async () => {

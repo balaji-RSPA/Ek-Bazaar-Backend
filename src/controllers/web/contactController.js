@@ -42,7 +42,7 @@ module.exports.addContact = async (req, res) => {
       subject: 'Contact Us Enquiry',
       html: commonTemplate(contactUsEmailMsg)
     }
-    await sendSingleMail(message)
+    sendSingleMail(message)
    } 
   }
    respSuccess(res, result, "Your request has been successfully submitted")

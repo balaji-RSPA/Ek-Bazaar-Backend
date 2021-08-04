@@ -310,6 +310,19 @@ exports.sellerSearch = async (reqQuery) => {
       if (Array.isArray(product)) {
 
         // query.bool.must.unshift({ bool: { should: [] } });
+        // let searchKey = {
+          //   "wildcard": {
+          //     "keywords.keyword": `${p}`
+          //   }
+          // }
+
+          // query.bool.must[0].bool.should.push(searchKey)
+          // let searchKey = {
+          //   "wildcard": {
+          //     "keywords.keyword": `*${p}*`
+          //   }
+          // }
+          // query.bool.must[0].bool.should.push(searchKey)
         let prod = [product[0]]
         console.log("🚀 ~ file: elasticSearchModule.js ~ line 314 ~ exports.sellerSearch= ~ prod", prod)
         prod.forEach(p => {
@@ -326,27 +339,27 @@ exports.sellerSearch = async (reqQuery) => {
 
         aggs = {
           "collapse": {
-            "field": "sellerId.name.keyword"
+            "field": "sellerId._id.keyword"
           },
           "aggs": {
             "products": {
               "cardinality": {
-                "field": "sellerId.name.keyword"
+                "field": "sellerId._id.keyword"
               }
-            }/* ,
+            },
             "result": {
               "terms": {
                 "field": "sellerId.location.country.name.keyword",
-                "size": 200
+                "size": 20
               },
               "aggs": {
                 "countryCount": {
                   "cardinality": {
-                    "field": "sellerId.name.keyword"
+                    "field": "sellerId._id.keyword"
                   }
                 }
               }
-            } */
+            }
           }
         }
       } else {
