@@ -250,8 +250,8 @@ if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
 
 // const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
 //     emailSmsToPartiallyRegistered.stop();
-//     const threeMinutesAgo = moment().subtract(3, 'minutes');
-//     const currentTime = moment()
+//     // const threeMinutesAgo = moment().subtract(3, 'minutes');
+//     // const currentTime = moment()
 //     await fetchPartiallyRegistredSeller();
 //     emailSmsToPartiallyRegistered.start();
 //   },
