@@ -13,7 +13,7 @@ const SessionsLogs = require('../../config/tenderdb').sessionLogModel
 const Cities = require('../models/citiesSchema')
 const States = require('../models/statesSchema')
 const Countries = require('../models/countriesSchema')
-const {sendSMS,sendWhatsAppTwilio} = require('../utils/utils')
+const {sendSMS,sendwati} = require('../utils/utils')
 const { sendSingleMail } = require("../utils/mailgunService");
 const { MailgunKeys, fromEmail } = require("../utils/globalConstants");
 const moment = require('moment');
@@ -242,6 +242,7 @@ module.exports.checkUserExistOrNot = (query) =>
         isMobileVerified: 1,
         password: 1,
         isEmailVerified: 1,
+        deleteTrade:1
         // _id: -1,
       })
       .then((doc) => {
@@ -1614,19 +1615,28 @@ exports.sellersOverAllCount = (search) => new Promise((resolve, reject) => {
 })
 
 exports.fetchPartiallyRegistredSeller = () => new Promise((resolve,reject) => {
-  Sellers.find({$and: [{createdAt : { $gte:moment().subtract(3, 'minutes'),$lt:moment()}},{ busenessId : {$eq:null} }] })
+  Sellers.find({$and: [{updatedAt : { $gte:moment().subtract(3, 'minutes'),$lt:moment()}},{ busenessId : {$eq:null} }] })
   .then((doc) =>{
     doc && doc.length && doc.forEach(async(el) => {
-       let message = {
-        from: MailgunKeys.senderMail,
-        to: el.email,
-        subject: "Complete your business detail",
-        html: `<h1>Complete your business detail</h1>`,
-      };
-      await sendSMS(`${el.mobile[0].countryCode}${el.mobile[0].mobile}`, 'Hi your otp is 1234', '1707160102358853974');
-      await sendWhatsAppTwilio();
-      await sendSingleMail(message);
+      if(el.sellerType.length){
+        let message = {
+          from: MailgunKeys.senderMail,
+          to: el.email,
+          subject: "Complete your business detail",
+          html: `<h1>Complete your business detail</h1>`,
+        };
+        let countryCodeVal = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode.replace("+", "") : '91';
+        let smscountryCode = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode : '+91'
+        let watiData = {
+          mobile: `${countryCodeVal}${el.mobile[0].mobile}`,
+          name : el.name
+        }
+        await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, 'Hi, please complete your registration', '1707160102358853974');
+        await sendwati(watiData);
+        await sendSingleMail(message);
+      }
     })
   })
   .catch((err) => console.log(err))
 })
+

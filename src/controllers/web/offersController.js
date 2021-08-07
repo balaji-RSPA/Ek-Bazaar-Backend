@@ -160,7 +160,7 @@ module.exports.getAllOffers = async (req, res) => {
                 return _obj
 
             }))
-            let _prdcts = buyerRequest.filter(req => products.findIndex(item => item._id === (req.productDetails && req.productDetails.name && req.productDetails.name.level2 && req.productDetails.name.level2.id)) === -1)
+            let _prdcts = buyerRequest.filter(req => products && products.length && products.findIndex(item => item._id === (req.productDetails && req.productDetails.name && req.productDetails.name.level2 && req.productDetails.name.level2.id)) === -1)
             _prdcts && _prdcts.length ? products
             .push(..._prdcts.filter(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level1 && item.productDetails.name.level1.id) === obj._id)
             .map(item => ({ _id: item.productDetails && item.productDetails.name && item.productDetails.name.level2 && item.productDetails.name.level2.id,
