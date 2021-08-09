@@ -48,8 +48,8 @@ exports.globalVaraibles = {
     if (this._IS_PROD_) {
       return {
         serviceURL: "https://tradeapi.ekbazaar.com",
-        pricing: "https://www.trade.ekbazaar.com/pricing",
-        signIn: "https://www.trade.ekbazaar.com/signin"
+        pricing: "https://trade.ekbazaar.com/pricing",
+        signIn: "https://trade.ekbazaar.com/signin"
       }
     } else if (this._IS_DEV_) {
       return {
