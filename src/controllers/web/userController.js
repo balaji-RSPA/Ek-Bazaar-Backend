@@ -3,7 +3,7 @@ const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendSMS } = require("../../utils/utils");
+const { createToken, encodePassword, sendSMS, sendWhatsAppTwilio } = require("../../utils/utils");
 const {
   sendOtp,
   successfulRegistration,
@@ -1082,5 +1082,16 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 
   }
 
+}
+
+//whatsApp twilio
+
+module.exports.whatAppUsingTwilio = async (req, res) => {
+  try{
+    let result = await sendWhatsAppTwilio()
+     respSuccess(res, result)
+  }catch(err){
+    console.log(err)
+  }
 }
 

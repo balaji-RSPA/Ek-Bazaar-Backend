@@ -17,6 +17,7 @@ require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
 const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
+const { fetchPartiallyRegistredSeller } = require('./src/modules/sellersModule')
 const { updatePriority } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
@@ -30,6 +31,7 @@ const { deleteTestData, uploadInternationalCity } = require('./src/controllers/w
 
 const { serviceURL } = authServiceURL()
 const { tradeDb } = config
+const moment = require('moment');
 
 const app = express();
 // app.use(bodyParser.json({ limit: '200mb' }));
@@ -133,7 +135,8 @@ async function indexing() {
   // await tradeMasterPutMapping()
 }
 // indexing()
-
+// const threeMinutesAgo = moment().subtract(3, 'minutes')
+// console.log(threeMinutesAgo,"=========kjhgkfhdsgkhsdkhgf")
 app.use(router);
 
 server.listen(tradeDb.server_port);
@@ -170,7 +173,7 @@ server.on("listening", () => {
   console.log(`Listening:${server.address().port}`);
   Logger.info(`Listening:${server.address().port}`);
 });
-
+// sendDailyCount();
 if(env.NODE_ENV === 'production') {
   const dailyCount = cron.schedule("30 2 * * *", async () => {
     dailyCount.stop();
@@ -260,3 +263,17 @@ if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
   });
   priority.start();
 }
+
+// const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
+//     emailSmsToPartiallyRegistered.stop();
+//     const threeMinutesAgo = moment().subtract(3, 'minutes');
+//     const currentTime = moment()
+//     await fetchPartiallyRegistredSeller();
+//     emailSmsToPartiallyRegistered.start();
+//   },
+//    {
+//       scheduled: true,
+//       timezone: "Asia/Kolkata",
+//     }
+//   );
+// emailSmsToPartiallyRegistered.start();

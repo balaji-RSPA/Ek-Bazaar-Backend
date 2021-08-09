@@ -160,13 +160,22 @@ module.exports.getAllOffers = async (req, res) => {
                 return _obj
 
             }))
-            // console.log("🚀 ~ file: offersController.js ~ line 163 ~ module.exports.getAllOffers= ~ products", products)
-            
-            // buyerRequest.forEach(req => console.log("🚀 ~ file: offersController.js ~ line 166 ~ module.exports.getAllOffers= ~ buyerRequest", req.productDetails))
 
-            let _prdcts = buyerRequest.filter(req => products.findIndex(item => ((req.productDetails.name.level2 && item._id === req.productDetails.name.level2.id) || (item._id === req.productDetails.name.id))) === -1)
-            // console.log("🚀 ~ file: offersController.js ~ line 161 ~ module.exports.getAllOffers= ~ _prdcts", _prdcts)
-            _prdcts && _prdcts.length ? products.push(..._prdcts.filter(item => (item.productDetails.name.level1 && item.productDetails.name.level1.id === obj._id) || (item.productDetails.name.id === obj._id)).map(item => ({ _id: ((item.productDetails.name.level2 && item.productDetails.name.level2.id) || item.productDetails.name.id), key: ((item.productDetails.name.level2 && item.productDetails.name.level2.name) || item.productDetails.name.name), count: buyerRequest.filter(elem => ((elem.productDetails.name.level2 && item.productDetails.name.level2 && elem.productDetails.name.level2.name == item.productDetails.name.level2.name) || (!elem.productDetails.name.level2 && !item.productDetails.name.level2 && elem.productDetails.name.name == item.productDetails.name.name))).length }))) : ""
+            // // console.log("🚀 ~ file: offersController.js ~ line 163 ~ module.exports.getAllOffers= ~ products", products)
+            
+            // // buyerRequest.forEach(req => console.log("🚀 ~ file: offersController.js ~ line 166 ~ module.exports.getAllOffers= ~ buyerRequest", req.productDetails))
+
+            // let _prdcts = buyerRequest.filter(req => products.findIndex(item => ((req.productDetails.name.level2 && item._id === req.productDetails.name.level2.id) || (item._id === req.productDetails.name.id))) === -1)
+            // // console.log("🚀 ~ file: offersController.js ~ line 161 ~ module.exports.getAllOffers= ~ _prdcts", _prdcts)
+            // _prdcts && _prdcts.length ? products.push(..._prdcts.filter(item => (item.productDetails.name.level1 && item.productDetails.name.level1.id === obj._id) || (item.productDetails.name.id === obj._id)).map(item => ({ _id: ((item.productDetails.name.level2 && item.productDetails.name.level2.id) || item.productDetails.name.id), key: ((item.productDetails.name.level2 && item.productDetails.name.level2.name) || item.productDetails.name.name), count: buyerRequest.filter(elem => ((elem.productDetails.name.level2 && item.productDetails.name.level2 && elem.productDetails.name.level2.name == item.productDetails.name.level2.name) || (!elem.productDetails.name.level2 && !item.productDetails.name.level2 && elem.productDetails.name.name == item.productDetails.name.name))).length }))) : ""
+
+
+            let _prdcts = buyerRequest.filter(req => products && products.length && products.findIndex(item => item._id === (req.productDetails && req.productDetails.name && req.productDetails.name.level2 && req.productDetails.name.level2.id)) === -1)
+            _prdcts && _prdcts.length ? products
+            .push(..._prdcts.filter(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level1 && item.productDetails.name.level1.id) === obj._id)
+            .map(item => ({ _id: item.productDetails && item.productDetails.name && item.productDetails.name.level2 && item.productDetails.name.level2.id,
+                 key: item.productDetails && item.productDetails.name && item.productDetails.name.level2 && item.productDetails.name.level2.name, 
+                 count: buyerRequest.filter(elem => elem.productDetails && elem.productDetails.name && elem.productDetails.name.level2 && elem.productDetails.name.level2.name == item.productDetails && item.productDetails.name && item.productDetails.name.level2 && item.productDetails.name.level2.name).length }))) : ""
             // console.log("🚀 ~ file: offersController.js ~ line 163 ~ module.exports.getAllOffers= ~ products", products)
 
             obj = {
@@ -352,11 +361,11 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 ..._query["$and"],
                 {
                     $or: [
-                        { "productDetails.name.name": { $regex: `^${search}`, $options: "i" } },
-                        { "productDetails.name.level1.name": { $regex: `^${search}`, $options: "i" } },
-                        { "productDetails.name.level2.name": { $regex: `^${search}`, $options: "i" } },
-                        { "productDetails.name.level3.name": { $regex: `^${search}`, $options: "i" } },
-                        { "productDetails.name.level4.name": { $regex: `^${search}`, $options: "i" } },
+                        { "productDetails.name.name": { $regex: `${search}`, $options: "i" } },
+                        { "productDetails.name.level1.name": { $regex: `${search}`, $options: "i" } },
+                        { "productDetails.name.level2.name": { $regex: `${search}`, $options: "i" } },
+                        { "productDetails.name.level3.name": { $regex: `${search}`, $options: "i" } },
+                        { "productDetails.name.level4.name": { $regex: `${search}`, $options: "i" } },
                     ]
                 }
             ]

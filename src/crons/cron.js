@@ -457,16 +457,22 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
 
         const yesterdayTotalBuyerCount = yesterdayTotalCount.length - yesterdayTotalSellerCount.length
         console.log("🚀 ~ file: cron.js ~ line 459 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount)
-        // return true
 
         let source = ["GCC", "SMEC", "Paper Ads", "Online Ads", "Social Media", "From a Friend", "Desh Aur Vyapar"]
         const gcc_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Gujarat Chamber of Commerce" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 463 ~ exports.sendDailyCount= ~ gcc_count", gcc_count.length)
         const smec_ount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "SME Chamber of India (Maharashtra)" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 465 ~ exports.sendDailyCount= ~ smec_ount", smec_ount.length)
         const paper_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Paper Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 467 ~ exports.sendDailyCount= ~ paper_ads_count", paper_ads_count.length)
         const online_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Online Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 469 ~ exports.sendDailyCount= ~ online_ads_count", online_ads_count.length)
         const social_media_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Social media" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 471 ~ exports.sendDailyCount= ~ social_media_count", social_media_count.length)
         const from_a_friend_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 473 ~ exports.sendDailyCount= ~ from_a_friend_count", from_a_friend_count.length)
         const desh_or_vyapar_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Desh aur Vyapar Rajasthan Newspaper" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        console.log("🚀 ~ file: cron.js ~ line 475 ~ exports.sendDailyCount= ~ desh_or_vyapar_count", desh_or_vyapar_count.length)
 
         const sum = gcc_count.length + smec_ount.length + paper_ads_count.length + online_ads_count.length + social_media_count.length + from_a_friend_count.length + desh_or_vyapar_count.length
         source = source.map((src, i) => ({ key: src, value: i == 0 ? gcc_count.length : i == 1 ? smec_ount.length : i == 2 ? paper_ads_count.length : i == 3 ? online_ads_count.length : i == 4 ? social_media_count.length : i == 5 ? from_a_friend_count.length : desh_or_vyapar_count.length }))
@@ -476,7 +482,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
-        const recipients = [{email: 'ashutosh@active.agency', name: 'Ashutosh'}, {email: 'shrey@active.agency', name: 'Shrey Kankaria'}, {email: 'akshay@active.agency', name: 'Akshay Agarwal'}, {email: 'ameen@active.agency', name: Ameen}, {email: 'nagesh@ekbazaar.com', name: 'Nagesh'}, {email: 'sandeep@ekbazaar.com', name: 'Sandeep'}, {email: 'nk@ekbazaar.com', name: 'Nandakumar'},{email: 'ramesh@active.agency', name: 'Ramesh Shettanoor'}, {email: 'darshan@active.agency', name: 'Darshan'}]
+        const recipients = [{email: 'ashutosh@active.agency', name: 'Ashutosh'}, {email: 'shrey@active.agency', name: 'Shrey Kankaria'}, {email: 'akshay@active.agency', name: 'Akshay Agarwal'}, {email: 'ameen@active.agency', name: 'Ameen'}, {email: 'nagesh@ekbazaar.com', name: 'Nagesh'}, {email: 'sandeep@ekbazaar.com', name: 'Sandeep'}, {email: 'nk@ekbazaar.com', name: 'Nandakumar'},{email: 'ramesh@active.agency', name: 'Ramesh Shettanoor'}, {email: 'darshan@active.agency', name: 'Darshan'}]
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
             recipientVars = {
@@ -757,8 +763,8 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                 </div>
                                 <div style="margin-top: 15px;">
                                     <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${yesterdayTotalCount.length}</h4>
-                                    <h4>Only Buyers: <span>${yesterdayTotalCount.length}</span></h4>
-                                    <h4>Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
+                                    <h4>Buyers: <span>${yesterdayTotalCount.length}</span></h4>
+                                    <h4>Only Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
                                     <h4>Thank you. </h4>
                                 </div>
                             </div>

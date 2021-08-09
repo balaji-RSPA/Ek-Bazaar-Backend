@@ -140,9 +140,9 @@ module.exports.serachSeller = async (req, res) => {
       const _cities = await getAllCitiesElastic(query)
       let __cities = [], __states = []
 
+      newKeyword = newKeyword.join(" ")
       if (_cities[0].length) {
 
-        newKeyword = newKeyword.join(" ")
         __cities = _cities[0].length && _cities[0].filter(city => {
           let arr = city._source && city._source.alias && city._source.alias.filter(name => {
             let flag = new RegExp(`\\b${name}\\b`, "mg").test(newKeyword) && ((newKeyword.split(" ").lastIndexOf(name) !== 0 && newKeyword.split(" ").length > 1) || newKeyword.split(" ").length == 1) && new RegExp(`\\b${city._source.name}\\b`, "mg").test(newKeyword)

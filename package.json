@@ -49,6 +49,7 @@
         "rocketchat-api": "^1.0.5",
         "socket.io": "^3.1.2",
         "to-words": "^2.3.1",
+        "twilio": "^3.66.0",
         "winston": "^3.3.3"
     }
 }
