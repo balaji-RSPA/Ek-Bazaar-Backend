@@ -17,6 +17,7 @@ const { planExpired, planExpiring } = require('../utils/templates/emailTemplate/
 const {
     MailgunKeys
 } = require("../utils/globalConstants");
+const Logger = require('../utils/logger');
 const { sendSingleMail } = require('../utils/mailgunService')
 const { globalVaraibles } = require('../utils/utils')
 const isProd = globalVaraibles._IS_PROD_
@@ -776,6 +777,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         // }
         resolve(true)
     } catch (error) {
+        Logger.error(error.message)
         console.error(error.message);
         reject(error.message)
     }
