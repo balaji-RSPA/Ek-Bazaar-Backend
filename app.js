@@ -215,7 +215,7 @@ if(env.NODE_ENV === 'production') {
   dailyCount.start();
 }
 
-if (env.NODE_ENV === "production1") {
+if (env.NODE_ENV === "production") {
   const queSms = cron.schedule("* * * * *", async () => {
     queSms.stop();
     console.log(
@@ -232,7 +232,7 @@ if (env.NODE_ENV === "production1") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   const planExpire = cron.schedule(
     "50 23 * * *",
     async () => {
