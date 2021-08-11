@@ -22,35 +22,50 @@ const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
+const _request = require("request")
+const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 const { deleteTestData, uploadInternationalCity } = require('./src/controllers/web/testController')
 
 // const { suggestions} = require("./elasticsearch-mapping");
 
 // const { suggestionsMapping } = suggestions
+// checkIndicesMaster()
 
 const { serviceURL } = authServiceURL()
 const { tradeDb } = config
 
 const app = express();
+
+app.post('/translate', (req, res) => {
+  // var q = req.body.q;
+  // console.log(q);
+  var options = {
+    method: 'POST',
+    url: 'https://translation.googleapis.com/language/translate/v2',
+    form:
+    {
+      key: "AIzaSyCMEeaGu_3wcJtwPbCDxwiyQV0wtChR0Uw",
+      q: "My name is Ashutosh",
+      target: 'hi'
+    }
+  };
+  _request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    console.log(body);
+    res.send(body);
+  });
+})
+
 // app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.json());
+
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",
-      "https://tradeapi.ekbazaar.com",
-      "https://tradebazaarapi.tech-active.com",
-      "https://tradeonebazaar.tech-active.com",
-      "http://localhost:8070",
       "http://localhost:8085",
-      "http://localhost:8050",
+      "http://localhost:8086",
       "https://tradebazaar.tech-active.com",
       "https://www.trade.ekbazaar.com",
-      "http://localhost:8080",
-      "https://ekbazaar.tech-active.com",
-      "https://www.tenders.ekbazaar.com",
-      "http://admin.ekbazaar.tech-active.com",
-      "https://admin.ekbazaar.tech-active.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,

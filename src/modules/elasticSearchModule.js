@@ -263,7 +263,6 @@ exports.sellerSearch = async (reqQuery) => {
   }
 
   if (stateFromKeyWord) {
-    console.log("🚀 ~ file: elasticSearchModule.js ~ line 267 ~ exports.sellerSearch= ~ stateFromKeyWord", stateFromKeyWord)
     if (Array.isArray(stateFromKeyWord)) {
       stateFromKeyWord.forEach(state => {
 
@@ -2252,7 +2251,6 @@ exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
     from: 0,
     size: 500
   };
-  console.log("🚀 ~ file: elasticSearchModule.js ~ line 2255 ~ exports.getAllStatesElastic= ~ searchQuery", searchQuery.body.query.function_score.query.bool.should)
   esClient
     .search(searchQuery)
     .then(async (results) => {

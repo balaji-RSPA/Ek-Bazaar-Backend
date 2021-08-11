@@ -17,7 +17,7 @@ function dbConnection() {
     serverSelectionTimeoutMS: 10000,
     // reconnectTries: 30,
   };
-  if (env.NODE_ENV === 'production') {
+  if (env.NODE_ENV !== 'production') {
 
     // console.log("🚀 ~ file: db.js ~ line 23 ~ dbConnection ~ tradeDb", tradeDb)
     url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
