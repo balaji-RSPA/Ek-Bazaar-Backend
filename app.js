@@ -24,7 +24,7 @@ const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const _request = require("request")
-const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
+// const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 const { deleteTestData, uploadInternationalCity } = require('./src/controllers/web/testController')
 
 // const { suggestions} = require("./elasticsearch-mapping");
@@ -37,27 +37,6 @@ const { tradeDb } = config
 const moment = require('moment');
 
 const app = express();
-
-app.post('/translate', (req, res) => {
-  // var q = req.body.q;
-  // console.log(q);
-  var options = {
-    method: 'POST',
-    url: 'https://translation.googleapis.com/language/translate/v2',
-    form:
-    {
-      key: "AIzaSyCMEeaGu_3wcJtwPbCDxwiyQV0wtChR0Uw",
-      q: "My name is Ashutosh",
-      target: 'hi'
-    }
-  };
-  _request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    console.log(body);
-    res.send(body);
-  });
-})
-
 // app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.json());
 
