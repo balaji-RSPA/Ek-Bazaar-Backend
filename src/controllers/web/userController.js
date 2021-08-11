@@ -3,7 +3,7 @@ const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendSMS } = require("../../utils/utils");
+const { createToken, encodePassword, sendSMS, sendwati } = require("../../utils/utils");
 const {
   sendOtp,
   successfulRegistration,
@@ -166,13 +166,11 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile, reset, email, countryCode } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 166 ~ module.exports.sendOtp= ~ req.body", req.body)
     let otp = 1234;
     let otpMessage = otpVerification({ otp });
     let query = {}
     if (mobile) query = { mobile, 'countryCode': countryCode || '+91' }
     else query = { email }
-    console.log("🚀 ~ file: userController.js ~ line 172 ~ module.exports.sendOtp= ~ query", query)
     const seller = await checkUserExistOrNot(query);
     const user = await checkBuyerExistOrNot(query)
     console.log("🚀 ~ file: userController.js ~ line 174 ~ module.exports.sendOtp= ~ seller", seller, user)
@@ -1073,5 +1071,16 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 
   }
 
+}
+
+//whatsApp twilio
+
+module.exports.sendWhatappWati = async (req, res) => {
+  try{
+    let result = await sendwati()
+     respSuccess(res, result)
+  }catch(err){
+    console.log(err)
+  }
 }
 

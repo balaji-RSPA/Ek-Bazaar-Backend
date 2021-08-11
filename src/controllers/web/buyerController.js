@@ -163,9 +163,9 @@ module.exports.createRFP = async (req, res, next) => {
     if (currency === 'GBP') {
       console.log('one bazaar --------')
       oneBazaar = true
-      siteURL = NODE_ENV === "production" ? "https://www.trade.onebazaar.com" : "https://tradeonebazaar.tech-active.com"
+      siteURL = NODE_ENV === "production" ? "https://trade.onebazaar.com" : "https://tradeonebazaar.tech-active.com"
     } else {
-      siteURL = NODE_ENV === "production" ? "https://www.trade.ekbazaar.com" : "https://tradebazaar.tech-active.com"
+      siteURL = NODE_ENV === "production" ? "https://trade.ekbazaar.com" : "https://tradebazaar.tech-active.com"
     }
     const url = siteURL
     console.log(url, "oooooooooooooooooooo")

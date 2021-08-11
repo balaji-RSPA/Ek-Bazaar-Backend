@@ -17,9 +17,8 @@ function dbConnection() {
     serverSelectionTimeoutMS: 10000,
     // reconnectTries: 30,
   };
-  if (env.NODE_ENV !== 'production') {
+  if (env.NODE_ENV === 'production') {
 
-    // console.log("🚀 ~ file: db.js ~ line 23 ~ dbConnection ~ tradeDb", tradeDb)
     url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
     options = {
       ...options,
@@ -30,9 +29,8 @@ function dbConnection() {
   } else {
 
     // options.sslCA = tradeDb.certFileBuf
-    // url = `mongodb+srv://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}?authSource=admin&replicaSet=${tradeDb.replicaName}`
-    // url = `mongodb+srv://tradedb:9Hp5aTDMVac3LTWg@tradebazaar.v46kj.mongodb.net" target="_blank" rel="noopener noreferrer">=!=bvtySeZ5pw9EqyoyQ=!=Hp5aTDMVac3LTWg@tradebazaar.v46kj.mongodb.net/test?authSource=admin&replicaSet=atlas-10w371-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true`
-    url = `${tradeDb.protocol}://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}`
+    // url = `${tradeDb.protocol}://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}`
+    url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
   }
   if (env) {
 
@@ -52,14 +50,13 @@ function dbConnection() {
 
 };
 
-// function elasticSearchConnect() {
 let host = '', conf = {
   host,
   log: 'error',
   sniffOnStart: true,
 }
 if (env) {
-  if (env.NODE_ENV !== 'development') {
+  /* if (env.NODE_ENV === 'development') {
 
     conf = {
       host: 'https://elastic:KYM6BwR6Am9a7gcnnn2My9ZL@ekbazaar-tradesearch.es.ap-south-1.aws.elastic-cloud.com:9243',
@@ -67,11 +64,11 @@ if (env) {
       // sniffOnStart: true,
     }
 
-  } else if (env.NODE_ENV === 'staging') {
+  } else */ if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
     conf.host = 'tradebazaarapi.tech-active.com:5085'
 
-  } else if (env.NODE_ENV !== 'production') {
+  } else if (env.NODE_ENV === 'production') {
 
     conf.host = "157.245.109.173:5086"
 
@@ -79,7 +76,6 @@ if (env) {
 
 }
 
-console.log("🚀 ~ file: db.js ~ line 85 ~ elasticSearchConnect ~ conf", conf)
 const es = () => new elasticsearch.Client({
   ...conf
 });
@@ -102,14 +98,9 @@ esClient.ping({
   }
 
 })
-// return esClient
-// }
-
-// module.exports = esClient
 
 module.exports = {
   mongoose,
   dbConnection,
   esClient
-  // elasticSearchConnect
 }

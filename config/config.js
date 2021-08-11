@@ -4,7 +4,7 @@ var certFileBuf = fs.readFileSync(path.join(__dirname, 'ca-certificate.crt'), {e
 let config;
 
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV === "production") {
   config = {
     tradeDb: {
       // replicaset
@@ -51,7 +51,7 @@ if (process.env.NODE_ENV !== "production") {
       database: "tender",
     }
   };
-} else if(process.env.NODE_ENV === 'development') {
+} /* else if(process.env.NODE_ENV === 'development') {
   config = {
     tradeDb: {
       // stating server db 
@@ -77,10 +77,11 @@ if (process.env.NODE_ENV !== "production") {
       database: "ekbazarsample-beta",
     }
   }
-} else {
+} */ else {
   config = {
     tradeDb: {
       // stating server db 
+      protocol: 'mongodb',
       host1: "159.89.166.142",
       host2: "143.110.249.95",
       host3: "143.110.254.145",

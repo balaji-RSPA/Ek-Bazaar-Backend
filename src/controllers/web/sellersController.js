@@ -425,7 +425,7 @@ const masterMapData = (val, type, contactDetails = null) => new Promise((resolve
         _id: val.sellerId.userId
       } || null,
       productDetails: val.productDetails && val.productDetails || null,
-      status: val.status || true,
+      status: val.status !== null && val.status !== undefined ? val.status : true,
       batch: 1,
       keywords,
       serviceType: val.serviceType && {
@@ -441,7 +441,6 @@ const masterMapData = (val, type, contactDetails = null) => new Promise((resolve
     }
 
   }
-
   if (type === 'insert') {
     data = {
       ...data,
