@@ -271,18 +271,18 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   });
   priority.start();
 
-  // const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
-  //     emailSmsToPartiallyRegistered.stop();
-  //     // const threeMinutesAgo = moment().subtract(3, 'minutes');
-  //     // const currentTime = moment()
-  //     await fetchPartiallyRegistredSeller();
-  //     emailSmsToPartiallyRegistered.start();
-  //   },
-  //    {
-  //       scheduled: true,
-  //       timezone: "Asia/Kolkata",
-  //     }
-  //   );
-  // emailSmsToPartiallyRegistered.start();
+  const emailSmsToPartiallyRegistered = cron.schedule("*/2 * * * *", async () => {
+      emailSmsToPartiallyRegistered.stop();
+      // const threeMinutesAgo = moment().subtract(3, 'minutes');
+      // const currentTime = moment()
+      await fetchPartiallyRegistredSeller();
+      emailSmsToPartiallyRegistered.start();
+    },
+    //  {
+    //     scheduled: true,
+    //     timezone: "Asia/Kolkata",
+    //   }
+    );
+  emailSmsToPartiallyRegistered.start();
   
 }

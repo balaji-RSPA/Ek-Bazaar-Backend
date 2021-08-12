@@ -1005,25 +1005,30 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       if (!sellerId) query.userId = userId
       else query._id = sellerId
       const sellerData = await getSellerVal(query)
-
       if (!buyerId) query.userId = userId
       else query._id = buyerId
-      const _buyer = await deleteBuyer({ _id: buyerId })
-      console.log("🚀 ~ file: userController.js ~ line 997 ~ module.exports.deleteCurrentAccount ~ _buyer", _buyer)
+      let buyerQuery = {
+       $or:[ 
+          {userId:userID}, {_id:buyerId} 
+       ]
+      }
+      const _buyer = await deleteBuyer(buyerQuery)
 
       delete query._id
       delete query.userId
       query.sellerId = sellerData._id
-      console.log("🚀 ~ file: userController.js ~ line 1002 ~ module.exports.deleteCurrentAccount ~ query", query)
-
-      const _seller = await deleteSellerRecord(query);
-      console.log("🚀 ~ file: userController.js ~ line 1004 ~ module.exports.deleteCurrentAccount ~ _seller", _seller)
+      let sellerQuery = {
+       $or:[ 
+          {userId:userID}, {_id:sellerId} 
+       ]
+      }
+      const _seller = await deleteSellerRecord(sellerQuery);
 
       if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
         const pQuery = {
           _id: {
             $in: sellerData.sellerProductId,
-          },
+          }
         };
         console.log("🚀 ~ file: userController.js ~ line 1012 ~ module.exports.deleteCurrentAccount ~ pQuery", pQuery)
         const delRec = deleteSellerProducts(pQuery);
@@ -1068,7 +1073,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     respSuccess(res, "Deleted Succesfully")
 
   } catch (error) {
-
+   console.log(error,"==============eeeeeeeeeeeeeeeeee===============")
   }
 
 }
