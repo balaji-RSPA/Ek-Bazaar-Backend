@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(cors({
   origin: [
     /** development **/
-    "http://localhost:8085", "http://localhost:8080", "http://localhost:8071",
+    "http://localhost:8085", "http://localhost:8080", "http://localhost:8071","http://localhost:8081",
     /** ekbazaar beta + live **/
     "https://www.trade.ekbazaar.com", "https://tradebazaar.tech-active.com",
     "https://www.tenders.ekbazaar.com", "https://ekbazaar.tech-active.com",

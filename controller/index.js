@@ -212,34 +212,80 @@ const register = async (req, res, next) => {
   };
 
   let url = "";
+  const findUser = await UserModel.findOne({mobile:tenderUser.mobile});
   if (origin === "trade") {
     baseURL = trade;
     url = baseURL + "user";
     req.query.serviceURL = _trade;
-    tenderUser.deleteTrade = {
+    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+      tenderUser.deleteTrade = {
       status: false,
       reason: ""
     }
-  } else if (origin === "tender") {
-    baseURL = tender;
-    url = baseURL + "v1/user";
-    req.query.serviceURL = _tender;
     tenderUser.deleteTendor = {
       status: false,
       reason: ""
+    }  
+    tenderUser.deleteInvestement = {
+      status: false,
+      reason: ""
+    }    
+    }else{
+      tenderUser.deleteTrade = {
+      status: false,
+      reason: ""
+    }
+    }
+   } else if (origin === "tender") {
+    baseURL = tender;
+    url = baseURL + "v1/user";
+    req.query.serviceURL = _tender;
+    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+      tenderUser.deleteTrade = {
+      status: false,
+      reason: ""
+    }
+    tenderUser.deleteTendor = {
+      status: false,
+      reason: ""
+    }  
+    tenderUser.deleteInvestement = {
+      status: false,
+      reason: ""
+    }    
+    }else{
+    tenderUser.deleteTendor = {
+      status: false,
+      reason: ""
+    }
     }
   } else {
     baseURL = investment;
     url = baseURL + "user";
     req.query.serviceURL = _investment;
+    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+      tenderUser.deleteTrade = {
+      status: false,
+      reason: ""
+    }
+    tenderUser.deleteTendor = {
+      status: false,
+      reason: ""
+    }  
+    tenderUser.deleteInvestement = {
+      status: false,
+      reason: ""
+    }    
+    }else{
     tenderUser.deleteInvestement = {
       status: false,
       reason: ""
     }
+    }
   }
 
   if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage;
-  const findUser = await UserModel.findOne({mobile:tenderUser.mobile});
+  
   let user;
   if(findUser){
      user = await UserModel.findOneAndUpdate({mobile:findUser.mobile},tenderUser); //.exec()
@@ -306,12 +352,11 @@ const register = async (req, res, next) => {
 };
 
 const doLogin = async (req, res, next) => {
-  console.log("🚀 ~ file: index.js ~ line 204 ~ doLogin ~ req", req.body);
   // do the validation with email and password
   // but the goal is not to do the same in this right now,
   // like checking with Datebase and all, we are skiping these section
   // const { email, password } = req.body;
-  const { password, ipAddress, mobile, userType, origin, location, countryCode, email } = req.body;
+  let { password, ipAddress, mobile, userType, origin, location, countryCode, email } = req.body;
   let query = {}
   if (req.body.email) query = { email: req.body.email }
   else query = { mobile, countryCode: countryCode || "+91" }
@@ -331,7 +376,6 @@ const doLogin = async (req, res, next) => {
       // _id: -1,
     })
     .exec();
-
   if (!user) {
     return respError(res, "User not found");
   }
@@ -369,9 +413,8 @@ const doLogin = async (req, res, next) => {
     // isMobileVerified,
     _id,
   } = user;
-  console.log("🚀 ~ file: index.js ~ line 357 ~ doLogin ~ user", user)
+  console.log(user,"========sdilsfohkldhfklshfkshfuuuuuuuuuuuuuuu")
   const registered = user.password ? await bcrypt.compare(password, user.password) : true;
-  console.log("🚀 ~ file: index.js ~ line 359 ~ doLogin ~ registered", registered)
   userDB = {
     [user.mobile]: {
       password,
