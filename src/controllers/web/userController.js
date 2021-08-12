@@ -998,22 +998,30 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       if (!sellerId) query.userId = userId
       else query._id = sellerId
       const sellerData = await getSellerVal(query)
-
       if (!buyerId) query.userId = userId
       else query._id = buyerId
-      const _buyer = await deleteBuyer({ _id: buyerId })
+      let buyerQuery = {
+       $or:[ 
+          {userId:userID}, {_id:buyerId} 
+       ]
+      }
+      const _buyer = await deleteBuyer(buyerQuery)
 
       delete query._id
       delete query.userId
       query.sellerId = sellerData._id
-
-      const _seller = await deleteSellerRecord(query);
+      let sellerQuery = {
+       $or:[ 
+          {userId:userID}, {_id:sellerId} 
+       ]
+      }
+      const _seller = await deleteSellerRecord(sellerQuery);
 
       if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
         const pQuery = {
           _id: {
             $in: sellerData.sellerProductId,
-          },
+          }
         };
         const delRec = deleteSellerProducts(pQuery);
         const delMaster = bulkDeleteMasterProducts(pQuery);
@@ -1054,7 +1062,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     respSuccess(res, "Deleted Succesfully")
 
   } catch (error) {
-
+   console.log(error,"==============eeeeeeeeeeeeeeeeee===============")
   }
 
 }
