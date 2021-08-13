@@ -265,3 +265,14 @@ module.exports.getCityList = async (req, res) => new Promise(async (resolve, rej
 })
 
 
+module.exports.gujaratSellerData = async (req, res) => new Promise(async (resolve, reject) => {
+
+    try {
+
+        console.log('gujarat seller date -----')
+        const data = await getAllSellerData({"location.city": ObjectId("6058831286dcf826a46bf4ad")})
+        console.log("🚀 ~ file: testController.js ~ line 229 ~ module.exports.gujaratSellerData= ~ data", data)
+    } catch (error) {
+
+    }
+})

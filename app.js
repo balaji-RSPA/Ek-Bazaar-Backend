@@ -16,41 +16,42 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan } = require('./src/crons/cron')
-const { updatePriority } = require('./src/controllers/web/testController')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
+const { fetchPartiallyRegistredSeller } = require('./src/modules/sellersModule')
+const { updatePriority, gujaratSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const { deleteTestData, uploadInternationalCity, getCityList } = require('./src/controllers/web/testController')
+const _request = require("request")
+// const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 
 // const { suggestions} = require("./elasticsearch-mapping");
 
 // const { suggestionsMapping } = suggestions
+// checkIndicesMaster()
 
 const { serviceURL } = authServiceURL()
 const { tradeDb } = config
+const moment = require('moment');
 
 const app = express();
-// app.use(bodyParser.json({ limit: '200mb' }));
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.json());
+
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",
-      "https://tradeapi.ekbazaar.com",
-      "https://tradebazaarapi.tech-active.com",
-      "https://tradeonebazaar.tech-active.com",
-      "http://localhost:8070",
+      "http://localhost:8086",
       "http://localhost:8085",
-      "http://localhost:8050",
+      "http://localhost:3000",
       "https://tradebazaar.tech-active.com",
-      "https://www.trade.ekbazaar.com",
-      "http://localhost:8080",
-      "https://ekbazaar.tech-active.com",
-      "https://www.tenders.ekbazaar.com",
+      "https://tradeonebazaar.tech-active.com",
+      "https://trade.ekbazaar.com",
+      "https://trade.onebazaar.com",
       "http://admin.ekbazaar.tech-active.com",
-      "https://admin.ekbazaar.tech-active.com",
+      "https://admin.ekbazaar.tech-active.com",      
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -58,6 +59,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({
+  limit: '50mb',
   extended: true
 }));
 
@@ -112,6 +114,14 @@ app.get("/deleteTestData", async function (req, res) {
   } catch (error) { }
   // res.send('Its delete records  live')
 });
+app.get("/gujaratSellerData", async function (req, res) {
+  try {
+    const result = await gujaratSellerData(req, res)
+  } catch (error) { }
+  // res.send('Its delete records  live')
+});
+
+
 
 async function indexing() {
   await checkIndices();
@@ -138,7 +148,8 @@ async function indexing() {
   // await tradeMasterPutMapping()
 }
 // indexing()
-
+// const threeMinutesAgo = moment().subtract(3, 'minutes')
+// console.log(threeMinutesAgo,"=========kjhgkfhdsgkhsdkhgf")
 app.use(router);
 
 server.listen(tradeDb.server_port);
@@ -178,7 +189,24 @@ server.on("listening", () => {
   Logger.info(`Listening:${server.address().port}`);
 });
 
-if (env.NODE_ENV === "production1") {
+if(env.NODE_ENV === 'production') {
+  const dailyCount = cron.schedule("30 2 * * *", async () => {
+    dailyCount.stop();
+    console.log(
+      "-------------------- dailyCount cron start --------------------",
+      new Date()
+    );
+    await sendDailyCount();
+    console.log(
+      "-------------------- dailyCount cron completed --------------------",
+      new Date()
+    );
+    dailyCount.start();
+  });
+  dailyCount.start();
+}
+
+if (env.NODE_ENV === "production") {
   const queSms = cron.schedule("* * * * *", async () => {
     queSms.stop();
     console.log(
@@ -195,7 +223,7 @@ if (env.NODE_ENV === "production1") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   const planExpire = cron.schedule(
     "50 23 * * *",
     async () => {
@@ -249,4 +277,19 @@ if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
     priority.start();
   });
   priority.start();
+
+  // const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
+  //     emailSmsToPartiallyRegistered.stop();
+  //     // const threeMinutesAgo = moment().subtract(3, 'minutes');
+  //     // const currentTime = moment()
+  //     await fetchPartiallyRegistredSeller();
+  //     emailSmsToPartiallyRegistered.start();
+  //   },
+  //    {
+  //       scheduled: true,
+  //       timezone: "Asia/Kolkata",
+  //     }
+  //   );
+  // emailSmsToPartiallyRegistered.start();
+  
 }
