@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-var certFileBuf = fs.readFileSync(path.join(__dirname, 'ca-certificate.crt'), {encoding:'utf8'});
+var certFileBuf = fs.readFileSync(path.join(__dirname, 'ca-certificate.crt'), { encoding: 'utf8' });
 let config;
 
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
@@ -80,15 +80,30 @@ if (process.env.NODE_ENV === "production") {
 } */ else {
   config = {
     tradeDb: {
-      // stating server db 
+      // // stating server db 
+      // protocol: 'mongodb',
+      // host1: "159.89.166.142",
+      // host2: "143.110.249.95",
+      // host3: "143.110.254.145",
+      // port: "5006",
+      // user: "tradelive",
+      // password: "jiarkerc9Om",
+      // database: "trade-live",
+      // replicaName: "rs2",
+      // // user: "tradeapi",
+      // // password: "Oyljeabr6Orc",
+      // // database: "tradeapi",
+      // server_port: "8070",
+
+      // stating test server db 
       protocol: 'mongodb',
       host1: "159.89.166.142",
       host2: "143.110.249.95",
       host3: "143.110.254.145",
       port: "5006",
-      user: "tradelive",
-      password: "jiarkerc9Om",
-      database: "trade-live",
+      user: "newtradedb",
+      password: "clid9Quim",
+      database: "newtradedb",
       replicaName: "rs2",
       // user: "tradeapi",
       // password: "Oyljeabr6Orc",
