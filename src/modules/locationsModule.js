@@ -30,6 +30,13 @@ module.exports.getAllCountries = (skip, limit) =>
       });
   });
 
+module.exports._getAllCountries = (query) => new Promise((resolve, reject) => {
+  Countries.find(query.query)
+    .limit(query.limit)
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
 module.exports.getCountry = (id) =>
   new Promise((resolve, reject) => {
     Countries.findById(id)

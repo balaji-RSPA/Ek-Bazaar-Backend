@@ -1,7 +1,8 @@
 const camelcaseKeys = require("camelcase-keys");
 const { location } = require("../../modules");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const _ = require('lodash')
+const _ = require('lodash');
+const { _getAllCountries } = require("../../modules/locationsModule");
 const {
   getAllCities,
   getAllStates,
@@ -136,8 +137,20 @@ module.exports.createState = async (req, res) => {
 
 module.exports.getAllCountries = async (req, res) => {
   try {
-    const countries = await getAllCountries();
-    respSuccess(res, countries);
+    if (req.query.country) {
+      const regex = new RegExp(`${req.query.country}`)
+      const query = {
+        name: {
+          $regex: regex,
+          $options: 'i'
+        }
+      }
+      const countries = await _getAllCountries({ query, limit: 50 })
+      respSuccess(res, countries)
+    } else {
+      const countries = await getAllCountries();
+      respSuccess(res, countries);
+    }
   } catch (error) {
     res.send(error.message);
   }

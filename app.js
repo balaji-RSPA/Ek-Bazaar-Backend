@@ -24,7 +24,7 @@ const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const _request = require("request")
-const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
+// const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 const { deleteTestData, uploadInternationalCity } = require('./src/controllers/web/testController')
 
 // const { suggestions} = require("./elasticsearch-mapping");
