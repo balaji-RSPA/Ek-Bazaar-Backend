@@ -18,7 +18,7 @@ const Logger = require('./src/utils/logger');
 const config = require('./config/config')
 const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller } = require('./src/modules/sellersModule')
-const { updatePriority } = require('./src/controllers/web/testController')
+const { updatePriority, gujaratSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
@@ -109,6 +109,14 @@ app.get("/deleteTestData", async function (req, res) {
   } catch (error) { }
   // res.send('Its delete records  live')
 });
+app.get("/gujaratSellerData", async function (req, res) {
+  try {
+    const result = await gujaratSellerData(req, res)
+  } catch (error) { }
+  // res.send('Its delete records  live')
+});
+
+
 
 async function indexing() {
   await checkIndices();
@@ -262,18 +270,19 @@ if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
     priority.start();
   });
   priority.start();
-}
 
-// const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
-//     emailSmsToPartiallyRegistered.stop();
-//     const threeMinutesAgo = moment().subtract(3, 'minutes');
-//     const currentTime = moment()
-//     await fetchPartiallyRegistredSeller();
-//     emailSmsToPartiallyRegistered.start();
-//   },
-//    {
-//       scheduled: true,
-//       timezone: "Asia/Kolkata",
-//     }
-//   );
-// emailSmsToPartiallyRegistered.start();
+  // const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
+  //     emailSmsToPartiallyRegistered.stop();
+  //     // const threeMinutesAgo = moment().subtract(3, 'minutes');
+  //     // const currentTime = moment()
+  //     await fetchPartiallyRegistredSeller();
+  //     emailSmsToPartiallyRegistered.start();
+  //   },
+  //    {
+  //       scheduled: true,
+  //       timezone: "Asia/Kolkata",
+  //     }
+  //   );
+  // emailSmsToPartiallyRegistered.start();
+  
+}

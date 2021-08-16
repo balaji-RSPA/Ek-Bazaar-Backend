@@ -344,7 +344,6 @@ module.exports.serachSeller = async (req, res) => {
     let result, seller
     // const { productId, primaryId, level5Id, skip, limit } = reqQuery
     if (level5Id) {
-
       result = await sellerSearch({ level5Id, skip, limit });
       let countryCount = {}
       if (reqQuery._country) {
@@ -447,7 +446,6 @@ module.exports.serachSeller = async (req, res) => {
       return respSuccess(res, resp);
 
     }
-
     result = await sellerSearch(reqQuery);
     console.log("🚀 ~ file: elasticSearchController.js ~ line 405 ~ module.exports.serachSeller= ~ reqQuery", reqQuery)
     let countryCount = {}

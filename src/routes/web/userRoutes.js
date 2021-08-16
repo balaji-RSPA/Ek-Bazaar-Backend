@@ -21,7 +21,7 @@ router.post("/user/logout", /* authenticate, */ auth.logout)
 router.post("/user/forget-password", user.forgetPassword)
 router.post("/user/update-password", authenticate, user.updateNewPassword)
 router.post("/user/deleteCurrentAccount", authenticate, user.deleteCurrentAccount)
-router.get('/user/whatsapp-sms',user.whatAppUsingTwilio)
+router.get('/user/whatsapp-sms',user.sendWhatappWati)
 // router.post("/user/new-password")
 
 module.exports = router;
