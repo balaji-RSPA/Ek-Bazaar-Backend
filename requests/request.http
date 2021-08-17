@@ -57,6 +57,7 @@ content-type: application/json
 #   {
 #     "City": "Gorakhpur",
 #     "State": "Uttar Pradesh"
+#     "Aliases": ""
 #   }
 # ]
 

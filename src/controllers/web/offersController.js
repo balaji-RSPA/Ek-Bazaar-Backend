@@ -159,17 +159,7 @@ module.exports.getAllOffers = async (req, res) => {
 
                 return _obj
 
-            }))
-
-            // // console.log("🚀 ~ file: offersController.js ~ line 163 ~ module.exports.getAllOffers= ~ products", products)
-            
-            // // buyerRequest.forEach(req => console.log("🚀 ~ file: offersController.js ~ line 166 ~ module.exports.getAllOffers= ~ buyerRequest", req.productDetails))
-
-            // let _prdcts = buyerRequest.filter(req => products.findIndex(item => ((req.productDetails.name.level2 && item._id === req.productDetails.name.level2.id) || (item._id === req.productDetails.name.id))) === -1)
-            // // console.log("🚀 ~ file: offersController.js ~ line 161 ~ module.exports.getAllOffers= ~ _prdcts", _prdcts)
-            // _prdcts && _prdcts.length ? products.push(..._prdcts.filter(item => (item.productDetails.name.level1 && item.productDetails.name.level1.id === obj._id) || (item.productDetails.name.id === obj._id)).map(item => ({ _id: ((item.productDetails.name.level2 && item.productDetails.name.level2.id) || item.productDetails.name.id), key: ((item.productDetails.name.level2 && item.productDetails.name.level2.name) || item.productDetails.name.name), count: buyerRequest.filter(elem => ((elem.productDetails.name.level2 && item.productDetails.name.level2 && elem.productDetails.name.level2.name == item.productDetails.name.level2.name) || (!elem.productDetails.name.level2 && !item.productDetails.name.level2 && elem.productDetails.name.name == item.productDetails.name.name))).length }))) : ""
-
-
+            }))  
             let _prdcts = buyerRequest.filter(req => products && products.length && products.findIndex(item => item._id === (req.productDetails && req.productDetails.name && req.productDetails.name.level2 && req.productDetails.name.level2.id)) === -1)
             _prdcts && _prdcts.length ? products
             .push(..._prdcts.filter(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level1 && item.productDetails.name.level1.id) === obj._id)
@@ -193,7 +183,8 @@ module.exports.getAllOffers = async (req, res) => {
                 // console.log("dateeeeeeeeeeeeeeeeeeeeeeee", req.productDetails.level1, req.productDetails.validity, new Date(req.productDetails.validity).toLocaleString())
                 if (index === -1 && new Date(req.productDetails.validity).toLocaleString() > new Date().toLocaleString()) {
                     let _products = []
-                    let productsCount = buyerRequest.filter(_req => _req.productDetails.name.level1.id === req.productDetails.name.level1.id).reduce((acc, curr) => {
+                    console.log(JSON.stringify(buyerRequest), ' ramesh -------------')
+                    let productsCount = buyerRequest.filter(_req => (_req.productDetails && _req.productDetails.name && _req.productDetails.name.level1 && _req.productDetails.name.level1.id) && _req.productDetails.name.level1.id ===  (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id) && req.productDetails.name.level1.id).reduce((acc, curr) => {
                         if (curr.productDetails.name.level2) {
                             if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
                                 acc[curr.productDetails.name.level2.name] = 1
@@ -209,8 +200,8 @@ module.exports.getAllOffers = async (req, res) => {
                         }
                         return acc
                     }, {})
-                    _products = Object.keys(productsCount).map(count => {
-                        let __products = buyerRequest.find(item => item.productDetails.name.level2.name === count)
+                    _products = productsCount && productsCount.length && Object.keys(productsCount).map(count => {
+                        let __products = buyerRequest.find(item => (item.productDetails && productDetails.name && item.productDetails.name.level2 && productDetails.name.level2.name) && item.productDetails.name.level2.name === count)
 
                         let _obj = {
                             key: count,
@@ -222,9 +213,9 @@ module.exports.getAllOffers = async (req, res) => {
                     })
                     let obj = {
                         _id: req.productDetails.name.level1.id,
-                        title: `${req.productDetails.name.level1.name} (${buyerRequest.filter(item => item.productDetails.name.level1.id === req.productDetails.name.level1.id).length})`,
+                        title: `${req.productDetails.name.level1.name} (${buyerRequest.filter(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level1 && item.productDetails.name.level1.id )&& item.productDetails.name.level1.id === (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id)&&req.productDetails.name.level1.id).length})`,
                         products: _products,
-                        vendorId: (req.productDetails.name.level1 && req.productDetails.name.level1.vendorId) || req.productDetails.name.vendorId
+                        vendorId: (req.productDetails && req.productDetails.name && req.productDetails.name  && req.productDetails.name.level1 && req.productDetails.name.level1.vendorId) || req.productDetails.name.vendorId
                     }
                     arrayObj.push(obj)
                 }
