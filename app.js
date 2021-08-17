@@ -37,37 +37,21 @@ const { tradeDb } = config
 const moment = require('moment');
 
 const app = express();
-
-app.post('/translate', (req, res) => {
-  // var q = req.body.q;
-  // console.log(q);
-  var options = {
-    method: 'POST',
-    url: 'https://translation.googleapis.com/language/translate/v2',
-    form:
-    {
-      key: "AIzaSyCMEeaGu_3wcJtwPbCDxwiyQV0wtChR0Uw",
-      q: "My name is Ashutosh",
-      target: 'hi'
-    }
-  };
-  _request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-    console.log(body);
-    res.send(body);
-  });
-})
-
 // app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.json());
 
 app.use(
   cors({
     origin: [
-      "http://localhost:8085",
       "http://localhost:8086",
+      "http://localhost:8085",
+      "http://localhost:3000",
       "https://tradebazaar.tech-active.com",
-      "https://www.trade.ekbazaar.com",
+      "https://tradeonebazaar.tech-active.com",
+      "https://trade.ekbazaar.com",
+      "https://trade.onebazaar.com",
+      "http://admin.ekbazaar.tech-active.com",
+      "https://admin.ekbazaar.tech-active.com",      
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -287,18 +271,18 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   });
   priority.start();
 
-  // const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
-  //     emailSmsToPartiallyRegistered.stop();
-  //     // const threeMinutesAgo = moment().subtract(3, 'minutes');
-  //     // const currentTime = moment()
-  //     await fetchPartiallyRegistredSeller();
-  //     emailSmsToPartiallyRegistered.start();
-  //   },
-  //    {
-  //       scheduled: true,
-  //       timezone: "Asia/Kolkata",
-  //     }
-  //   );
-  // emailSmsToPartiallyRegistered.start();
+  const emailSmsToPartiallyRegistered = cron.schedule("*/2 * * * *", async () => {
+      emailSmsToPartiallyRegistered.stop();
+      // const threeMinutesAgo = moment().subtract(3, 'minutes');
+      // const currentTime = moment()
+      await fetchPartiallyRegistredSeller();
+      emailSmsToPartiallyRegistered.start();
+    },
+    //  {
+    //     scheduled: true,
+    //     timezone: "Asia/Kolkata",
+    //   }
+    );
+  emailSmsToPartiallyRegistered.start();
   
 }

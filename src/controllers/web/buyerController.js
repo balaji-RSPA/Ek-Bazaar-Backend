@@ -285,7 +285,7 @@ module.exports.createRFP = async (req, res, next) => {
         console.log(' Single contact beta user exist------------')
 
       }
-      respSuccess(res, "Your requirement has successfully submitted")
+      respSuccess(res, "Your requirement has been successfully submitted")
     } else {
 
       console.log(' not register buyer-----------------')
@@ -418,7 +418,7 @@ module.exports.createRFP = async (req, res, next) => {
           console.log(' Single contact beta------------')
         }
 
-        respSuccess(res, { token, buyer, seller }, "Your requirement has successfully submitted.")
+        respSuccess(res, { token, buyer, seller }, "Your requirement has been successfully submitted.")
       }
     }
 
