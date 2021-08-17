@@ -3,6 +3,7 @@ const mg = require("nodemailer-mailgun-transport");
 const {
   MailgunKeys
 } = require("./globalConstants");
+const Logger = require('./logger');
 
 module.exports.sendSingleMail = (message) => new Promise((resolve, reject) => {
   try {
@@ -27,6 +28,7 @@ module.exports.sendSingleMail = (message) => new Promise((resolve, reject) => {
       }
     });
   } catch (error) {
+    Logger.error(error.message)
     resolve("error")
   }
 });

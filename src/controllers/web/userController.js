@@ -144,16 +144,11 @@ module.exports.getAccessToken = async (req, res) => {
 module.exports.checkUserExistOrNot = async (req, res) => {
   try {
     const { mobile, countryCode, email } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 147 ~ module.exports.checkUserExistOrNot= ~ req.body", req.body)
     let query = {}
     if (mobile) query = { mobile, 'countryCode': countryCode || "+91" }
     else query = { email }
-    console.log("🚀 ~ file: userController.js ~ line 151 ~ module.exports.checkUserExistOrNot= ~ query", query)
     const seller = await checkUserExistOrNot(query);
-    console.log(
-      "🚀 ~ file: userController.js ~ line 113 ~ module.exports.checkUserExistOrNot= ~ seller",
-      seller
-    );
+
     if (seller && seller.length && !seller[0]["deleteTrade"]["status"]) {
       if (seller[0]["password"]) seller[0]["password"] = true;
       else seller[0]["password"] = false;
@@ -1011,37 +1006,36 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       if (!sellerId) query.userId = userId
       else query._id = sellerId
       const sellerData = await getSellerVal(query)
-      console.log("🚀 ~ file: userController.js ~ line 898 ~ module.exports.deleteCurrentAccount ~ sellerData", sellerData)
-
       if (!buyerId) query.userId = userId
       else query._id = buyerId
-      const _buyer = await deleteBuyer({ _id: buyerId })
-      console.log("🚀 ~ file: userController.js ~ line 902 ~ module.exports.deleteCurrentAccount ~ _buyer", _buyer)
+      let buyerQuery = {
+       $or:[ 
+          {userId:userID}, {_id:buyerId} 
+       ]
+      }
+      const _buyer = await deleteBuyer(buyerQuery)
 
       delete query._id
       delete query.userId
-      if(!sellerId) query.userId = userId
-      else query._id = sellerData._id
-      // query._id = sellerData._id
-      console.log("🚀 ~ file: userController.js ~ line 906 ~ module.exports.deleteCurrentAccount ~ query", query)
-
-      const _seller = await deleteSellerRecord(query);
-      console.log("🚀 ~ file: userController.js ~ line 908 ~ module.exports.deleteCurrentAccount ~ _seller", _seller)
+      query.sellerId = sellerData._id
+      let sellerQuery = {
+       $or:[ 
+          {userId:userID}, {_id:sellerId} 
+       ]
+      }
+      const _seller = await deleteSellerRecord(sellerQuery);
 
       if (sellerData && sellerData.sellerProductId && sellerData.sellerProductId.length) {
         const pQuery = {
           _id: {
             $in: sellerData.sellerProductId,
-          },
+          }
         };
-        console.log("🚀 ~ file: userController.js ~ line 915 ~ module.exports.deleteCurrentAccount ~ pQuery", pQuery)
         const delRec = deleteSellerProducts(pQuery);
-        console.log("🚀 ~ file: userController.js ~ line 916 ~ module.exports.deleteCurrentAccount ~ delRec", delRec)
         const delMaster = bulkDeleteMasterProducts(pQuery);
         console.log('master collectiona nd seller product delete')
       }
       const delMaster1 = deleteSellerPlans({ sellerId: sellerData._id });
-      console.log("🚀 ~ file: userController.js ~ line 920 ~ module.exports.deleteCurrentAccount ~ delMaster1", delMaster1)
       if (permanentDelete) {
 
         const update = {
@@ -1060,7 +1054,6 @@ module.exports.deleteCurrentAccount = async (req, res) => {
             deleteInvestement: deleteTrade
           }
         });
-        console.log("🚀 ~ file: userController.js ~ line 938 ~ module.exports.deleteCurrentAccount ~ res", res)
 
         // Delete From Tender
         const resTender = axios.delete(tenderUrl, {
@@ -1072,13 +1065,12 @@ module.exports.deleteCurrentAccount = async (req, res) => {
             deleteTendor: deleteTrade
           }
         });
-        console.log("🚀 ~ file: userController.js ~ line 950 ~ module.exports.deleteCurrentAccount ~ resTender", resTender)
       }
     }
     respSuccess(res, "Deleted Succesfully")
 
   } catch (error) {
-
+   console.log(error,"==============eeeeeeeeeeeeeeeeee===============")
   }
 
 }

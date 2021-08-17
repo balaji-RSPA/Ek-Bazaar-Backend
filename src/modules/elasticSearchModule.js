@@ -150,7 +150,7 @@ exports.bulkStoreInElastic = (foundDoc) =>
 
 exports.sellerSearch = async (reqQuery) => {
 
-  const { offerSearch, cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId, country } = reqQuery
+  const { paidSeller, planExpired, offerSearch, cityId, productId, secondaryId, primaryId, parentId, keyword, serviceType, level5Id, search, searchProductsBy, elastic, cityFromKeyWord, stateFromKeyWord, countryFromKeyword, userId, country } = reqQuery
   console.log("🚀 ~ file: elasticSearchModule.js ~ line 154 ~ exports.sellerSearch= ~ reqQuery", reqQuery)
   let catId = ''
   let query = {
@@ -225,6 +225,45 @@ exports.sellerSearch = async (reqQuery) => {
         }
       ]
     }
+  }
+
+  query.bool.filter.push(sellerActiveAccount)
+  if (paidSeller) {
+    query.bool.filter.push({
+      "bool": {
+        "must": [
+          {
+            "exists": {
+              "field": "sellerId.paidSeller"
+            }
+          },
+          {
+            "term": {
+              "sellerId.paidSeller": true
+            }
+          }
+        ]
+      }
+    })
+  }
+
+  if (planExpired) {
+    query.bool.filter.push({
+      "bool": {
+        "must": [
+          {
+            "exists": {
+              "field": "sellerId.planExpired"
+            }
+          },
+          {
+            "term": {
+              "sellerId.planExpired": false
+            }
+          }
+        ]
+      }
+    })
   }
 
   if (userId) {
@@ -311,18 +350,18 @@ exports.sellerSearch = async (reqQuery) => {
 
         // query.bool.must.unshift({ bool: { should: [] } });
         // let searchKey = {
-          //   "wildcard": {
-          //     "keywords.keyword": `${p}`
-          //   }
-          // }
+        //   "wildcard": {
+        //     "keywords.keyword": `${p}`
+        //   }
+        // }
 
-          // query.bool.must[0].bool.should.push(searchKey)
-          // let searchKey = {
-          //   "wildcard": {
-          //     "keywords.keyword": `*${p}*`
-          //   }
-          // }
-          // query.bool.must[0].bool.should.push(searchKey)
+        // query.bool.must[0].bool.should.push(searchKey)
+        // let searchKey = {
+        //   "wildcard": {
+        //     "keywords.keyword": `*${p}*`
+        //   }
+        // }
+        // query.bool.must[0].bool.should.push(searchKey)
         let prod = [product[0]]
         console.log("🚀 ~ file: elasticSearchModule.js ~ line 314 ~ exports.sellerSearch= ~ prod", prod)
         prod.forEach(p => {
@@ -389,7 +428,7 @@ exports.sellerSearch = async (reqQuery) => {
           "status": true
         }
       })
-      query.bool.filter.push(sellerActiveAccount)
+      // query.bool.filter.push(sellerActiveAccount)
     }
     if (city && city.name) {
 
@@ -921,7 +960,7 @@ exports.sellerSearch = async (reqQuery) => {
       },
     }
     query.bool.must.push(level5Search);
-    query.bool.filter.push(sellerActiveAccount)
+    // query.bool.filter.push(sellerActiveAccount)
     if (reqQuery.findByEmail) {
       query.bool.must.push({
         "exists": {
@@ -977,7 +1016,7 @@ exports.sellerSearch = async (reqQuery) => {
         "status": true
       }
     })
-    query.bool.filter.push(sellerActiveAccount)
+    // query.bool.filter.push(sellerActiveAccount)
     if (reqQuery.findByEmail) {
       query.bool.must.push({
         "exists": {
@@ -1049,7 +1088,7 @@ exports.sellerSearch = async (reqQuery) => {
           } */
         }
       }
-      
+
     } else {
       const categoryMatch = {
         "match": {
@@ -1083,8 +1122,8 @@ exports.sellerSearch = async (reqQuery) => {
         }
       }
     }
-    query.bool.filter.push(sellerActiveAccount)
-    if(!keyword) {
+    // query.bool.filter.push(sellerActiveAccount)
+    if (!keyword) {
       aggs.aggs.result = {
         ...aggs.aggs.result,
         "aggs": {
@@ -1106,7 +1145,7 @@ exports.sellerSearch = async (reqQuery) => {
       },
     };
     query.bool.must.push(categoryMatch);
-    query.bool.filter.push(sellerActiveAccount)
+    // query.bool.filter.push(sellerActiveAccount)
     if (reqQuery.findByEmail) {
       query.bool.must.push({
         "exists": {
@@ -1155,7 +1194,7 @@ exports.sellerSearch = async (reqQuery) => {
       },
     };
     query.bool.must.push(categoryMatch);
-    query.bool.filter.push(sellerActiveAccount)
+    // query.bool.filter.push(sellerActiveAccount)
     if (reqQuery.findByEmail) {
       query.bool.must.push({
         "exists": {
@@ -1210,7 +1249,7 @@ exports.sellerSearch = async (reqQuery) => {
       }
     })
     query.bool.must.push(categoryMatch);
-    query.bool.filter.push(sellerActiveAccount)
+    // query.bool.filter.push(sellerActiveAccount)
     if (reqQuery.findByEmail) {
       query.bool.must.push({
         "exists": {
@@ -1647,7 +1686,7 @@ exports.sellerSearch = async (reqQuery) => {
         }
       }
     }
-    query.bool.filter.push(sellerActiveAccount)
+    // query.bool.filter.push(sellerActiveAccount)
   }
 
   if (offerSearch) {
@@ -2081,7 +2120,7 @@ exports.getCountByCountry = (query) => new Promise((resolve, reject) => {
   // console.log("🚀 ~ file: elasticSearchModule.js ~ line 2038 ~ exports.getCountByCountry= ~ query", query)
 
   //let filtered1 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => {
-    //return item["match"]["sellerId.location.country.name"] || item["match"]["serviceCity.country.name"]
+  //return item["match"]["sellerId.location.country.name"] || item["match"]["serviceCity.country.name"]
   //})
 
   //let filtered2 = query.function_score.query.bool.should.length && query.function_score.query.bool.should.filter(item => item["match"]["sellerId.location.state.name"] || item["match"]["serviceCity.state.name"])
@@ -2102,6 +2141,18 @@ exports.getCountByCountry = (query) => new Promise((resolve, reject) => {
 
     //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
     //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+  //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.country.name"]), 1)
+  //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.country.name"]), 1)
+
+  //} else if (filtered2.length) {
+
+  //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["sellerId.location.state.name"]), 1)
+  //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.state.name"]), 1)
+
+  //} else if (filtered3.length) {
+
+  //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
+  //query.function_score.query.bool.should.splice(query.function_score.query.bool.should.findIndex(item => item["match"]["serviceCity.city.name"]), 1)
 
   //}
 

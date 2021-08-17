@@ -23,11 +23,14 @@ const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
+const _request = require("request")
+// const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 const { deleteTestData, uploadInternationalCity } = require('./src/controllers/web/testController')
 
 // const { suggestions} = require("./elasticsearch-mapping");
 
 // const { suggestionsMapping } = suggestions
+// checkIndicesMaster()
 
 const { serviceURL } = authServiceURL()
 const { tradeDb } = config
@@ -36,6 +39,7 @@ const moment = require('moment');
 const app = express();
 // app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.json());
+
 app.use(
   cors({
     origin: [
@@ -47,7 +51,7 @@ app.use(
       "https://trade.ekbazaar.com",
       "https://trade.onebazaar.com",
       "http://admin.ekbazaar.tech-active.com",
-      "https://admin.ekbazaar.tech-active.com",
+      "https://admin.ekbazaar.tech-active.com",      
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -199,7 +203,8 @@ if(env.NODE_ENV === 'production') {
   dailyCount.start();
 }
 
-if (env.NODE_ENV === "production1") {
+
+if (env.NODE_ENV === "production") {
   const queSms = cron.schedule("* * * * *", async () => {
     queSms.stop();
     console.log(
@@ -216,7 +221,7 @@ if (env.NODE_ENV === "production1") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   const planExpire = cron.schedule(
     "50 23 * * *",
     async () => {
@@ -271,18 +276,18 @@ if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
   });
   priority.start();
 
-  // const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
-  //     emailSmsToPartiallyRegistered.stop();
-  //     // const threeMinutesAgo = moment().subtract(3, 'minutes');
-  //     // const currentTime = moment()
-  //     await fetchPartiallyRegistredSeller();
-  //     emailSmsToPartiallyRegistered.start();
-  //   },
-  //    {
-  //       scheduled: true,
-  //       timezone: "Asia/Kolkata",
-  //     }
-  //   );
-  // emailSmsToPartiallyRegistered.start();
+  const emailSmsToPartiallyRegistered = cron.schedule("*/2 * * * *", async () => {
+      emailSmsToPartiallyRegistered.stop();
+      // const threeMinutesAgo = moment().subtract(3, 'minutes');
+      // const currentTime = moment()
+      await fetchPartiallyRegistredSeller();
+      emailSmsToPartiallyRegistered.start();
+    },
+    //  {
+    //     scheduled: true,
+    //     timezone: "Asia/Kolkata",
+    //   }
+    );
+  emailSmsToPartiallyRegistered.start();
   
 }

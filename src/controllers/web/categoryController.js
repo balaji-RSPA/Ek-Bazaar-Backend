@@ -91,7 +91,7 @@ module.exports.getAllSellerTypes = async (req, res) => {
             respSuccess(res, result)
         }
     } catch (error) {
-        respError(error)
+        respError(res, error)
     }
 }
 
@@ -685,7 +685,7 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
         // secondaryCategories[3]["productId"] = _secondaryCategories
         respSuccess(res, {secondaryCategories, _secondaryCategories})
     } catch (error) {
-        respError(error)
+        respError(res, error)
     }
 }
 

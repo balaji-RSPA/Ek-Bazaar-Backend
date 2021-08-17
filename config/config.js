@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+var certFileBuf = fs.readFileSync(path.join(__dirname, 'ca-certificate.crt'), {encoding:'utf8'});
 let config;
 
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
@@ -48,10 +51,37 @@ if (process.env.NODE_ENV === "production") {
       database: "tender",
     }
   };
-} else {
+} /* else if(process.env.NODE_ENV === 'development') {
   config = {
     tradeDb: {
       // stating server db 
+      // host: "trade-test-230ce624.mongo.ondigitalocean.com",
+      // port: "27017",
+      // user: "tradeuser",
+      // password: "a7L6q193z80FIw2x",
+      // database: "trade-live",
+      // certFileBuf,
+      // replicaName: "trade-test",
+      protocol: 'mongodb+srv',
+      database: 'tradedb',
+      user: 'tradedb',
+      password: '9Hp5aTDMVac3LTWg',
+      host: 'tradebazaar.v46kj.mongodb.net',
+      server_port: "8070",
+    },
+    tenderdb: {
+      host: "139.59.46.227",
+      port: "5006",
+      user: "beta",
+      password: "active.123",
+      database: "ekbazarsample-beta",
+    }
+  }
+} */ else {
+  config = {
+    tradeDb: {
+      // stating server db 
+      protocol: 'mongodb',
       host1: "159.89.166.142",
       host2: "143.110.249.95",
       host3: "143.110.254.145",
