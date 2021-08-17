@@ -56,23 +56,20 @@ let host = '', conf = {
   sniffOnStart: true,
 }
 if (env) {
-  /* if (env.NODE_ENV === 'development') {
+if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
-    conf = {
-      host: 'https://elastic:KYM6BwR6Am9a7gcnnn2My9ZL@ekbazaar-tradesearch.es.ap-south-1.aws.elastic-cloud.com:9243',
-      log: 'error',
-      // sniffOnStart: true,
-    }
+host = 'tradebazaarapi.tech-active.com:5085'
 
-  } else */ if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
+} else if (env.NODE_ENV === 'production') {
 
-    conf.host = 'tradebazaarapi.tech-active.com:5085'
+// host = 'searchtrade.ekbazaar.com:5085'
+// host = 'searchtradetemp.tech-active.com:5085'
+// host = '139.59.19.170:5085'
+// host = '139.59.95.19:5085'
+// host = "167.71.233.251:5085"
+host = "157.245.109.173:5086"
 
-  } else if (env.NODE_ENV === 'production') {
-
-    conf.host = "157.245.109.173:5086"
-
-  }
+}
 
 }
 
