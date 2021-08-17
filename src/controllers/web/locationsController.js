@@ -149,6 +149,7 @@ module.exports.getAllCountries = async (req, res) => {
       respSuccess(res, countries)
     } else {
       const countries = await getAllCountries();
+      console.log()
       let newArray = [
         { name: 'india', priority: 1 },
         { name: 'united states', priority: 2 },
