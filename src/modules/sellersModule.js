@@ -1621,31 +1621,32 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve,reject) => {
         $and: [{updatedAt : { $gte:new Date(moment().subtract(3, 'minutes').utc().format()),$lt:new Date(moment(new Date()).utc().format())},incompleteRegistration : 1},{$or : [{ statutoryId : {$eq:null} },{sellerContactId : {$eq:null}}]}] 
       }
     },
-  {
-    $lookup: {
-      from: "sellertypes",
-      localField: "sellerType",
-      foreignField: "_id",
-      as: "sellerType"
-    }
-  },
-    {
-   $unwind:{
-    path:'$sellerType',
-    preserveNullAndEmptyArrays:true
-  }
-  }
+  // {
+  //   $lookup: {
+  //     from: "sellertypes",
+  //     localField: "sellerType",
+  //     foreignField: "_id",
+  //     as: "sellerType"
+  //   }
+  // },
+  //   {
+  //  $unwind:{
+  //   path:'$sellerType',
+  //   preserveNullAndEmptyArrays:true
+  // }
+  // }
 ])
   .then((doc) =>{
     console.log(moment().subtract(3, 'minutes').utc().format(),moment(new Date()).utc().format())
       doc && doc.length && doc.forEach(async(el) => {
-      if((el.sellerType && el.sellerType.name === 'farmer')){
         await SendNotifc(el)
-      }else if((el.sellerType && el.sellerType.name !== 'farmer')){ 
-          await SendNotifc(el)
-      }else if((!el.sellerType.length)){
-        await SendNotifc(el)
-      }
+      // if((el.sellerType && el.sellerType.name === 'farmer')){
+      //   await SendNotifc(el)
+      // }else if((el.sellerType && el.sellerType.name !== 'farmer')){ 
+      //     await SendNotifc(el)
+      // }else if((!el.sellerType.length)){
+      //   await SendNotifc(el)
+      // }
     })
   })
   .catch((err) => console.log(err))
