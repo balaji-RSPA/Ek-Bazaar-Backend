@@ -1667,9 +1667,9 @@ const SendNotifc = async(el) => {
           name : el.name
         }
           await Sellers.updateOne({_id:el._id}, {$set: {incompleteRegistration:2}})
-          await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, 'Hi, please complete your registration', '1707160102358853974');
-          await sendSingleMail(message);
-          await sendwati(watiData);
+          el.email && await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, 'Hi, please complete your registration', '1707160102358853974');
+          el.mobile && smscountryCode && await sendSingleMail(message);
+          el.mobile && countryCodeVal && await sendwati(watiData);
         return true;
   }catch(error){
     console.log(error,"=============")
