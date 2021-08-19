@@ -17,6 +17,7 @@ const {sendSMS,sendwati} = require('../utils/utils')
 const { sendSingleMail } = require("../utils/mailgunService");
 const { MailgunKeys, fromEmail } = require("../utils/globalConstants");
 const moment = require('moment');
+const { partialRegistred } = require('../utils/templates/smsTemplate/smsTemplate')
 const {
   checkAndAddCity,
   getState,
@@ -1667,8 +1668,9 @@ const SendNotifc = async(el) => {
           name : el.name
         }
           await Sellers.updateOne({_id:el._id}, {$set: {incompleteRegistration:2}})
-          el.email && await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, 'Hi, please complete your registration', '1707160102358853974');
-          el.mobile && smscountryCode && await sendSingleMail(message);
+          const { messagePartial, templateId } =  partialRegistred({ name : (el.name || '') });
+          el.mobile && smscountryCode && await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, messagePartial, templateId);
+          el.email && await sendSingleMail(message);
           el.mobile && countryCodeVal && await sendwati(watiData);
         return true;
   }catch(error){
