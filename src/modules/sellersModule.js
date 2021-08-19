@@ -242,7 +242,10 @@ module.exports.checkUserExistOrNot = (query) =>
         isMobileVerified: 1,
         password: 1,
         isEmailVerified: 1,
-        deleteTrade:1
+        countryCode: 1,
+        deleteTrade: 1,
+        deleteInvestement: 1,
+        deleteTendor: 1
         // _id: -1,
       })
       .then((doc) => {
@@ -273,7 +276,11 @@ module.exports.getUserProfile = (id) =>
         password: 1,
         isPhoneVerified: 1,
         isMobileVerified: 1,
-        isEmailVerified: 1
+        isEmailVerified: 1,
+        countryCode: 1,
+        deleteTrade: 1,
+        deleteInvestement: 1,
+        deleteTendor: 1
         // _id: -1,
       })
       .then((doc) => {

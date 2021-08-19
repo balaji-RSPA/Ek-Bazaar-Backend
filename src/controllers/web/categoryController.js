@@ -91,7 +91,7 @@ module.exports.getAllSellerTypes = async (req, res) => {
             respSuccess(res, result)
         }
     } catch (error) {
-        respError(error)
+        respError(res, error)
     }
 }
 
@@ -150,15 +150,27 @@ module.exports.addParentCategories = async (req, res) => {
 
         const reqData = req.body
         const result = await addParentCategories(reqData)
-        const suggestion = {
-            _id: result[0]._id,
-            id: result[0]._id,
-            name: result[0].name,
-            search: "level1",
-            l1: result[0].vendorId,
-            vendorId: result[0].vendorId
+        for (let index = 0; index < result.length; index++) {
+            const element = result[index];
+
+            // const suggestion = {
+            //     _id: result[0]._id,
+            //     id: result[0]._id,
+            //     name: result[0].name,
+            //     search: "level1",
+            //     l1: result[0].vendorId,
+            //     vendorId: result[0].vendorId
+            // }
+            const suggestion = {
+                _id: element._id,
+                id: element._id,
+                name: element.name,
+                search: "level1",
+                l1: element.vendorId,
+                vendorId: element.vendorId
+            }
+            const sugge = await createSuggestions(suggestion)
         }
-        const sugge = await createSuggestions(suggestion)
         respSuccess(res, result)
 
     } catch (error) {
@@ -337,14 +349,16 @@ module.exports.addSecondaryCategories = async (req, res) => {
             } else {
                 console.log("duplicate level2 record")
             }
+            console.log(element.name, '-------- inserted')
 
         }
-        // console.log('COmpleted +++++++++++++')
+        console.log('COmpleted +++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
 
     } catch (error) {
+        console.log(error, ' sfsfdsfds')
 
-        respError(error)
+        respError(res,error)
 
     }
 
@@ -426,7 +440,7 @@ module.exports.addBulkProducts = async (req, res) => {
                     const updateData = {
                         productId: parentCat.productId.concat(result._id)
                     }
-                    // console.log(index, "COunt----", element.l1, element.vendorId)
+                    console.log(index, "COunt----", element.name, element.l1, element.vendorId)
                     await updateSecondaryCategory(parentCat._id, updateData)
                 }
             } else {
@@ -434,7 +448,7 @@ module.exports.addBulkProducts = async (req, res) => {
             }
 
         }
-        // console.log('Completed +++++++++++++++')
+        console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
 
     } catch (error) {
@@ -646,7 +660,7 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
             '5fdf6cc9be4f6810f10102d0',
             '5fdf6cc9be4f6810f10102d4',
             '5fdf6cdcbe4f6810f10104e2',
-            
+
             "5fdf6cc8be4f6810f10102ca"
         ]
         const query = {
@@ -655,7 +669,7 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
             }
         }
         let secondaryCategories = await getAllSecondaryCategories(query)
-        
+
         let _query = {
             vendorId: {
                 $in: [
@@ -673,7 +687,7 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
                 ]
             }
         }
-        let primaryCategory = await getPrimaryCategories({vendorId: "PM10"})
+        let primaryCategory = await getPrimaryCategories({ vendorId: "PM10" })
         console.log("🚀 ~ file: categoryController.js ~ line 677 ~ module.exports.getAllSecondaryCategories= ~ primaryCategory", primaryCategory.vendorId)
         let _secondaryCategories = await getAllSecondaryCategories(_query)
         secondaryCategories[3] = primaryCategory
@@ -683,9 +697,9 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
         // console.log("🚀 ~ file: categoryController.js ~ line 658 ~ module.exports.getAllSecondaryCategories= ~ secondaryCategories", secondaryCategories[3]["productId"])
         // console.log("🚀 ~ file: categoryController.js ~ line 683 ~ module.exports.getAllSecondaryCategories= ~ secondaryCategories", secondaryCategories)
         // secondaryCategories[3]["productId"] = _secondaryCategories
-        respSuccess(res, {secondaryCategories, _secondaryCategories})
+        respSuccess(res, { secondaryCategories, _secondaryCategories })
     } catch (error) {
-        respError(error)
+        respError(res, error)
     }
 }
 

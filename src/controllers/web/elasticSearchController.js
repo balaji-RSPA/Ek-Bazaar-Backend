@@ -43,6 +43,8 @@ module.exports.serachSeller = async (req, res) => {
 
 
     let { productId, primaryId, level5Id, secondaryId, parentId, skip, limit, country } = reqQuery
+    country = country && country.toLowerCase() || country
+    if(reqQuery.country) reqQuery.country = reqQuery.country.toLowerCase()
     if (country) {
       reqQuery._country = reqQuery.country
       reqQuery.country = undefined
@@ -92,7 +94,7 @@ module.exports.serachSeller = async (req, res) => {
 
       reg1 = new RegExp(`\\bin\\b`, "mg")
       let condition = reg1.test(newKeyword)
-      if(condition) newKeyword = newKeyword.replace(reg1, "")
+      if (condition) newKeyword = newKeyword.replace(reg1, "")
 
       newKeyword = newKeyword.replace(",", "")
       newKeyword = newKeyword.split(" ").filter(item => item);
@@ -107,6 +109,7 @@ module.exports.serachSeller = async (req, res) => {
         state = "", country = "", cities = {}, states = {}, countries = {}
 
       /************** COUNTRY FROM ELASTICSEARCH **************/
+      if (reqQuery._country) newKeyword.push(reqQuery._country)
       const countriesQuery = await sellerSearch({ countryFromKeyword: newKeyword })
       let { query } = countriesQuery
       const _countries = await getAllCountriesElastic(query)
@@ -129,60 +132,101 @@ module.exports.serachSeller = async (req, res) => {
         newKeyword = newKeyword.split(" ")
       }
 
-      /************ STATES FROM ELASTICSEARCH *************/
-      const statesQuery = await sellerSearch({ stateFromKeyWord: newKeyword })
-      query = statesQuery.query
-      const _states = await getAllStatesElastic(query)
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 120 ~ module.exports.serachSeller= ~ _states", _states)
-      if (_states[0].length) {
-        newKeyword = newKeyword.join(" ")
-        let __states = _states[0].filter(state => newKeyword.includes(state._source.name))
-        console.log("🚀 ~ file: elasticSearchController.js ~ line 114 ~ module.exports.serachSeller= ~ __states", __states)
-        if (__states.length) {
-          states = __states[0]["_source"]
-          states.id = __states[0]["_id"]
-          states._id = __states[0]["_id"]
-          const replace = states.name
-          console.log("🚀 ~ file: elasticSearchController.js ~ line 130 ~ module.exports.serachSeller= ~ replace", replace)
-          if (replace && newKeyword.split(" ").lastIndexOf(replace) !== 0 && newKeyword.split(" ").length > 1 && !newKeyword.includes("/")) {
-            newKeyword = newKeyword.split(" ")
-            newKeyword.splice(newKeyword.lastIndexOf(replace.split(" ")[0]), replace.split(" ").length)
-            newKeyword = newKeyword.join(" ")
-          } else states = {}
-          // newKeyword = newKeyword.replace(`${states.name}`, '') 
-        } else states = {}
-        newKeyword = newKeyword.split(" ")
-      }
+      
 
       /****** CITIES FROM ELASTICSEARCH **************/
       const citiesQuery = await sellerSearch({ cityFromKeyWord: newKeyword })
       query = citiesQuery.query
       const _cities = await getAllCitiesElastic(query)
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 93 ~ module.exports.serachSeller= ~ _cities", _cities)
+      let __cities = [], __states = []
+
+      newKeyword = newKeyword.join(" ")
       if (_cities[0].length) {
 
-        newKeyword = newKeyword.join(" ")
-        let __cities = _cities[0].length && _cities[0].filter(city => city._source && city._source.alias && city._source.alias.filter(name => newKeyword.includes(name) && newKeyword.split(" ").lastIndexOf(name) !== 0)[0]) || []
-
-        if (__cities.length) {
-          cities = __cities[0]["_source"]
-          cities.id = __cities[0]["_id"]
-          cities._id = __cities[0]["_id"]
-          let replace = cities.alias.filter(name => newKeyword.includes(name))[0]
-          console.log("🚀 ~ file: elasticSearchController.js ~ line 94 ~ module.exports.serachSeller= ~ replace", replace)
-          if (replace && newKeyword.split(" ").lastIndexOf(replace) !== 0 && newKeyword.split(" ").length > 1 && !newKeyword.includes("/")) {
-            reqQuery.cityId = cities._id
-            newKeyword = newKeyword.split(" ")
-            newKeyword.splice(newKeyword.lastIndexOf(replace.split(" ")[0]), replace.split(" ").length)
-            newKeyword = newKeyword.join(" ")
-          }
-          else cities = {}
-        } else cities = {}
-        newKeyword = newKeyword.split(" ");
-
+        __cities = _cities[0].length && _cities[0].filter(city => {
+          let arr = city._source && city._source.alias && city._source.alias.filter(name => {
+            let flag = new RegExp(`\\b${name}\\b`, "mg").test(newKeyword) && ((newKeyword.split(" ").lastIndexOf(name) !== 0 && newKeyword.split(" ").length > 1) || newKeyword.split(" ").length == 1) && new RegExp(`\\b${city._source.name}\\b`, "mg").test(newKeyword)
+            return flag
+          })
+          return arr.length
+        }) || []
+        __cities = __cities && __cities.length ? __cities.filter(city => Boolean(new RegExp(`\\b${city._source.name}\\b`, "mg").test(newKeyword))) : _cities[0].length && _cities[0].filter(city => {
+          let arr = city._source && city._source.alias && city._source.alias.filter(name => {
+            let flag = new RegExp(`\\b${name}\\b`, "mg").test(newKeyword) && ((newKeyword.split(" ").lastIndexOf(name) !== 0 && newKeyword.split(" ").length > 1) || newKeyword.split(" ").length == 1)
+            return flag
+          })
+          return arr.length
+        }) || []
+        __cities = __cities && __cities.length && __cities || []
+      }
+      
+      /****** STATES FROM ELASTICSEARCH **************/
+      
+      const statesQuery = await sellerSearch({ stateFromKeyWord: newKeyword.split(" ") })
+      query = statesQuery.query
+      const _states = await getAllStatesElastic(query)
+      
+      if (_states[0].length) {
+        __states = _states[0].filter(state => newKeyword.includes(state._source.name))
       }
 
+      /****** REPLACE STATES?CITIES FROM 'keyword' **************/
+      if (__cities.length && !__states.length) {
+        cities = __cities[0]["_source"]
+        cities.id = __cities[0]["_id"]
+        cities._id = __cities[0]["_id"]
+        let replace = cities.alias.filter(name => newKeyword.includes(name))[0]
+        if (replace && newKeyword.split(" ").lastIndexOf(replace) !== 0 && newKeyword.split(" ").length > 1 && !newKeyword.includes("/")) {
+          reqQuery.cityId = cities._id
+          newKeyword = newKeyword.split(" ")
+          newKeyword.splice(newKeyword.lastIndexOf(replace.split(" ")[0]), replace.split(" ").length)
+          newKeyword = newKeyword.join(" ")
+        }
+        else cities = {}
+      } else cities = {}
+
+      if (__states.length) {
+        states = __states[0]["_source"]
+        states.id = __states[0]["_id"]
+        states._id = __states[0]["_id"]
+        const replace = states.name
+        if (replace && ((newKeyword.split(" ").lastIndexOf(replace) !== 0 && newKeyword.split(" ").length > 1) || newKeyword.split(" ").length === 1) && !newKeyword.includes("/")) {
+          newKeyword = newKeyword.split(" ")
+          newKeyword.splice(newKeyword.lastIndexOf(replace.split(" ")[0]), replace.split(" ").length)
+          newKeyword = newKeyword.join(" ")
+        } else states = {}
+      } else states = {}
+      newKeyword = newKeyword.split(" ")
+
       newKeyword = [newKeyword.filter(item => item).join(" ")]
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 191 ~ module.exports.serachSeller= ~ searchKeywords", newKeyword)
+
+      /************ STATES FROM ELASTICSEARCH *************/
+      // const statesQuery = await sellerSearch({ stateFromKeyWord: newKeyword })
+      // query = statesQuery.query
+      // const _states = await getAllStatesElastic(query)
+      // console.log("🚀 ~ file: elasticSearchController.js ~ line 120 ~ module.exports.serachSeller= ~ _states", _states)
+      // if (_states[0].length) {
+      //   newKeyword = newKeyword.join(" ")
+      //   let __states = _states[0].filter(state => newKeyword.includes(state._source.name))
+      //   console.log("🚀 ~ file: elasticSearchController.js ~ line 114 ~ module.exports.serachSeller= ~ __states", __states)
+      //   if (__states.length) {
+      //     states = __states[0]["_source"]
+      //     states.id = __states[0]["_id"]
+      //     states._id = __states[0]["_id"]
+      //     const replace = states.name
+      //     console.log("🚀 ~ file: elasticSearchController.js ~ line 130 ~ module.exports.serachSeller= ~ replace", replace)
+      //     if (replace && newKeyword.split(" ").lastIndexOf(replace) !== 0 && newKeyword.split(" ").length > 1 && !newKeyword.includes("/")) {
+      //       newKeyword = newKeyword.split(" ")
+      //       newKeyword.splice(newKeyword.lastIndexOf(replace.split(" ")[0]), replace.split(" ").length)
+      //       newKeyword = newKeyword.join(" ")
+      //     } else states = {}
+      //     // newKeyword = newKeyword.replace(`${states.name}`, '') 
+      //   } else states = {}
+      //   newKeyword = newKeyword.split(" ")
+      // }
+
+      // newKeyword = [newKeyword.filter(item => item).join(" ")]
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 191 ~ module.exports.serachSeller= ~ searchKeywords", searchKeywords, newKeyword)
       // let word = newKeyword.join(" ").split(" ")
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 189 ~ module.exports.serachSeller= ~ word", word)
@@ -213,23 +257,30 @@ module.exports.serachSeller = async (req, res) => {
 
       /************** SELLERS SEARCH RESULTS ************/
       let result = await sellerSearch(reqQuery);
+      // console.log("🚀 ~ file: elasticSearchController.js ~ line 217 ~ module.exports.serachSeller= ~ result", query.function_score.query.bool.should)
       let countryCount = {}
-      if (reqQuery._country) {
-        console.log("🚀 ~ file: elasticSearchController.js ~ line 229 ~ module.exports.serachSeller= ~ reqQuery._country", reqQuery._country, reqQuery.country)
-        countryCount = await getCountByCountry(result.query)
-        countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
-        reqQuery.country = reqQuery._country
-        result = await sellerSearch(reqQuery);
-      } else if(cities.name || states.name || countries.name) {
-        countryCount = await getCountByCountry(result.query)
-        countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
-        reqQuery.country = reqQuery._country
-      }
+      // reqQuery._searchProductsBy = reqQuery.searchProductsBy
+      // reqQuery.searchProductsBy = undefined
+      // if (reqQuery._country) {
+      //   console.log("🚀 ~ file: elasticSearchController.js ~ line 229 ~ module.exports.serachSeller= ~ reqQuery._country", reqQuery._country, result.query)
+      //   countryCount = await getCountByCountry(result.query)
+      //   console.log("🚀 ~ file: elasticSearchController.js ~ line 224 ~ module.exports.serachSeller= ~ countryCount", countryCount)
+      //   countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+      //   reqQuery.country = reqQuery._country
+      //   result = await sellerSearch(reqQuery);
+      // } else if (cities.name || states.name || countries.name) {
+      //   countryCount = await getCountByCountry(result.query)
+      //   countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+      //   reqQuery.country = reqQuery._country
+      // } else {
+      //   countryCount = await getCountByCountry(result.query)
+      //   countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
+      // }
       console.log("🚀 ~ file: elasticSearchController.js ~ line 231 ~ module.exports.serachSeller= ~ countryCount", countryCount)
       console.log("🚀 ~ file: elasticSearchController.js ~ line 228 ~ module.exports.serachSeller= ~ countryCount", countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"])
 
       query = result.query
-      console.log("🚀 ~ file: elasticSearchController.js ~ line 192 ~ module.exports.serachSeller= ~ query", query)
+      console.log("🚀 ~ file: elasticSearchController.js ~ line 192 ~ module.exports.serachSeller= ~ query", query.function_score.query.bool.should)
       let { aggs, catId } = result;
       const seller = await searchFromElastic(query, range, aggs);
 
@@ -266,7 +317,7 @@ module.exports.serachSeller = async (req, res) => {
         state: states,
         country: countries,
         productSearchKeyword: newKeyword,
-        countryCount: !countryCount.length ? seller[2]["result"]["buckets"] : countryCount
+        countryCount: !countryCount.length ? seller[2] && seller[2]["result"] && seller[2]["result"]["buckets"] : countryCount
       };
 
       return respSuccess(res, resp);
@@ -336,7 +387,7 @@ module.exports.serachSeller = async (req, res) => {
         total: seller[2]["products"]["value"], //seller[1],
         data: seller[0],
         city,
-        countryCount: !countryCount.length ? seller[2]["result"]["buckets"] : countryCount
+        countryCount: !countryCount.length ? seller[2] && seller[2]["result"] && seller[2]["result"]["buckets"] : countryCount
         // relatedCat,
       };
       return respSuccess(res, resp);
@@ -389,19 +440,24 @@ module.exports.serachSeller = async (req, res) => {
         total: seller[2]["products"]["value"], //seller[1],
         data: seller[0],
         city,
-        countryCount: !countryCount.length ? seller[2]["result"]["buckets"] : countryCount
+        countryCount: !countryCount.length ? seller[2] && seller[2]["result"] && seller[2]["result"]["buckets"] : countryCount
         // relatedCat,
       };
       return respSuccess(res, resp);
 
     }
     result = await sellerSearch(reqQuery);
+    console.log("🚀 ~ file: elasticSearchController.js ~ line 405 ~ module.exports.serachSeller= ~ reqQuery", reqQuery)
     let countryCount = {}
+
     if (reqQuery._country) {
       countryCount = await getCountByCountry(result.query)
       countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
       reqQuery.country = reqQuery._country
       result = await sellerSearch(reqQuery);
+    } else {
+      countryCount = await getCountByCountry(result.query)
+      countryCount = countryCount && countryCount.length && countryCount[0]["result"] && countryCount[0]["result"]["buckets"] || []
     }
     const { query, catId, aggs } = result;
 
@@ -413,7 +469,7 @@ module.exports.serachSeller = async (req, res) => {
       total: seller[2]["products"]["value"], //seller[1],
       data: seller[0],
       city,
-      countryCount: !countryCount.length ? seller[2]["result"]["buckets"] : countryCount
+      countryCount: !countryCount.length ? seller[2] && seller[2]["result"] && seller[2]["result"]["buckets"] : countryCount
       // relatedCat,
     };
     return respSuccess(res, resp);
