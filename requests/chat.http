@@ -3,8 +3,8 @@ POST  http://localhost:8070/api/chat/login HTTP/1.1
 content-type: application/json
 
 {
-    "username": "3453657585",
-    "password": "active123",
+    "username": "0000000888",
+    "password": "ramesh123",
     "customerUserId": "6040b56f216d8f1731c2d8a7"
 }
 
@@ -146,5 +146,21 @@ Accept: application/json
 Content-Type: application/json
 X-Auth-Token: wF8_gNgx_l5FYnWDxri4gBwCyPr78MVSKGOxrhvbvE0
 X-User-Id: 6HzY2yoSjavdWHPRx
+
+
+"userId": "AB7iXR5kjXMmwpxwK",
+"authToken": "zp0H0yxMB6z-egsaeZFM7R2zQ10smomz5Cu_mqgbXxY"
+
+
+"userId": "ZSJWkkRYgnwvYoCYs",
+"authToken": "i7qhEbljHMM0731i1FN6lCUEi1yj37L438qCOAcYXnC",
+
+###
+POST  http://localhost:8070/api/chat/delete HTTP/1.1
+content-type: application/json
+
+{
+    "userId": "ZSJWkkAB7iXR5kjXMmwpxwKRYgnwvYoCYs"
+}
 
 

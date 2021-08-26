@@ -791,3 +791,12 @@ exports.contactSupport = async (req, res) => {
     }
 }
 
+exports.deleteChatAccount = async (req, res) => {
+    try {
+        respSuccess(res, "Request Submitted Successfully")
+    } catch (error) {
+        console.log(error.message)
+        respError(res, error.message)
+    }
+}
+

@@ -184,7 +184,7 @@ module.exports.getAllCountries = async (req, res) => {
         return acc
       }, []));
 
-      console.log("🚀 ~ file: locationsController.js ~ line 171 ~ _countries=_countries.concat ~ _countries", _countries)
+      // console.log("🚀 ~ file: locationsController.js ~ line 171 ~ _countries=_countries.concat ~ _countries", _countries)
       respSuccess(res, /* countries */ _countries);
     }
   } catch (error) {
