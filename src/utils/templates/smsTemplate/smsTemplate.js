@@ -58,7 +58,7 @@ module.exports.RFQOneToOneBuyer = (params) => ({message: `Dear ${params.buyerNam
 Seller Name: ${params.sellerName} 
 Phone: ${params.sellerPhone} 
 
-EKBAZAAR.COM`, templateId: "1707161760951401187"});
+EKBAZAAR.COM`, templateId: "1707162874515721885"});
 
 module.exports.removeListingMsg = () => ({message: `Dear ${'customer'},
 
