@@ -50,6 +50,9 @@ const {
 const {
   updateESDoc
 } = require('./elasticSearchModule')
+
+const { partialSellerRegistration } = require('../utils/templates/emailTemplate/emailTemplateContent')
+const { commonTemplate } = require('../utils/templates/emailTemplate/emailTemplate');
 // const { reject } = require('lodash')
 // const Seller = require('../models/sellersSchema')
 
@@ -1660,16 +1663,17 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
       })
       resolve()
     })
-    .catch((err) => console.log(err))
+    .catch((err) => resolve())
 })
 
 const SendNotifc = async (el) => {
   try {
-    let message = {
+    const template = await partialSellerRegistration();
+    const message = {
       from: MailgunKeys.senderMail,
       to: el.email,
-      subject: "Complete your business detail",
-      html: `<h1>Complete your business detail</h1>`,
+      subject: "Ekbazaar Incomplete Registration",
+      html: commonTemplate(template),
     };
     let countryCodeVal = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode.replace("+", "") : '91';
     let smscountryCode = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode : '+91'
