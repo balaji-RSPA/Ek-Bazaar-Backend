@@ -8,6 +8,7 @@ module.exports.emailBody = (params) =>
     let ext = '';
     let exc1 = '';
     let exc2 = '';
+    let img = '';
     if(params.greeting){
        grt = `<td bgcolor="#ffffff">
                   <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"
@@ -27,6 +28,9 @@ module.exports.emailBody = (params) =>
           </tbody>
       </table>
     </td>`
+    }
+    if(params.image){
+      img = `<img src=${params.image} alt= ${params.title}></img>`
     }
     if (params.extraTitle) {
         ext = `<tr>
@@ -65,8 +69,7 @@ module.exports.emailBody = (params) =>
                             </tr>
                             <tr>
                                 <td style="padding: 0px 16.66% 10px 16.66%; text-align: center; display: block;">
-                                    <img src=${params.image}
-                                        alt= ${params.title}>
+                                    ${img}
                                 </td>
                             </tr>
                             <tr>

@@ -123,6 +123,7 @@ app.get("/gujaratSellerData", async function (req, res) {
 
 
 
+
 async function indexing() {
   await checkIndices();
   await putMapping();
@@ -272,11 +273,11 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   // });
   // priority.start();
   const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
-    console.log(' Ramesh -------------- Start------------')
+    console.log(' Incomplete registration cron started ------ ')
     emailSmsToPartiallyRegistered.stop();
     await fetchPartiallyRegistredSeller();
     emailSmsToPartiallyRegistered.start();
-    console.log(' ramesh  ------------------ End --------------')
+    console.log('Incomplete registration cron end ------------------')
   });
   emailSmsToPartiallyRegistered.start();
 
