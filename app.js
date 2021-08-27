@@ -51,7 +51,7 @@ app.use(
       "https://trade.ekbazaar.com",
       "https://trade.onebazaar.com",
       "http://admin.ekbazaar.tech-active.com",
-      "https://admin.ekbazaar.tech-active.com",      
+      "https://admin.ekbazaar.tech-active.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -183,7 +183,7 @@ server.on("listening", () => {
   Logger.info(`Listening:${server.address().port}`);
 });
 
-if(env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
   const dailyCount = cron.schedule("30 2 * * *", async () => {
     dailyCount.stop();
     console.log(
@@ -218,72 +218,66 @@ if (env.NODE_ENV === "production") {
 }
 
 if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
-  const planExpire = cron.schedule(
-    "50 23 * * *",
-    async () => {
-      //every day 10 am cron will start
-      planExpire.stop();
-      console.log(
-        "-------------------- planExpire file cron start --------------------",
-        new Date()
-      );
-      await getExpirePlansCron();
-      await getAboutToExpirePlan();
-      console.log(
-        "-------------------- planExpire file cron completed --------------------",
-        new Date()
-      );
-      planExpire.start();
-    },
-    {
-      scheduled: true,
-      timezone: "Asia/Kolkata",
-    }
-  );
-  planExpire.start();
+  // const planExpire = cron.schedule(
+  //   "50 23 * * *",
+  //   async () => {
+  //     //every day 10 am cron will start
+  //     planExpire.stop();
+  //     console.log(
+  //       "-------------------- planExpire file cron start --------------------",
+  //       new Date()
+  //     );
+  //     await getExpirePlansCron();
+  //     await getAboutToExpirePlan();
+  //     console.log(
+  //       "-------------------- planExpire file cron completed --------------------",
+  //       new Date()
+  //     );
+  //     planExpire.start();
+  //   },
+  //   {
+  //     scheduled: true,
+  //     timezone: "Asia/Kolkata",
+  //   }
+  // );
+  // planExpire.start();
 
-  const queEmail = cron.schedule("* * * * *", async () => {
-    queEmail.stop();
-    console.log(
-      "-------------------- queEmail file cron start --------------------",
-      new Date()
-    );
-    await sendQueEmails();
-    console.log(
-      "-------------------- queEmail file cron completed --------------------",
-      new Date()
-    );
-    queEmail.start();
+  // const queEmail = cron.schedule("* * * * *", async () => {
+  //   queEmail.stop();
+  //   console.log(
+  //     "-------------------- queEmail file cron start --------------------",
+  //     new Date()
+  //   );
+  //   await sendQueEmails();
+  //   console.log(
+  //     "-------------------- queEmail file cron completed --------------------",
+  //     new Date()
+  //   );
+  //   queEmail.start();
+  // });
+  // queEmail.start();
+
+  // const priority = cron.schedule("* * * * *", async () => {
+  //   priority.stop();
+  //   console.log(
+  //     "-------------------- priority file cron start --------------------",
+  //     new Date()
+  //   );
+  //   await updatePriority();
+  //   console.log(
+  //     "-------------------- priority file cron completed --------------------",
+  //     new Date()
+  //   );
+  //   priority.start();
+  // });
+  // priority.start();
+  const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
+    console.log(' Ramesh -------------- Start------------')
+    emailSmsToPartiallyRegistered.stop();
+    await fetchPartiallyRegistredSeller();
+    emailSmsToPartiallyRegistered.start();
+    console.log(' ramesh  ------------------ End --------------')
   });
-  queEmail.start();
-
-  const priority = cron.schedule("* * * * *", async () => {
-    priority.stop();
-    console.log(
-      "-------------------- priority file cron start --------------------",
-      new Date()
-    );
-    await updatePriority();
-    console.log(
-      "-------------------- priority file cron completed --------------------",
-      new Date()
-    );
-    priority.start();
-  });
-  priority.start();
-
-  const emailSmsToPartiallyRegistered = cron.schedule("*/2 * * * *", async () => {
-      emailSmsToPartiallyRegistered.stop();
-      // const threeMinutesAgo = moment().subtract(3, 'minutes');
-      // const currentTime = moment()
-      await fetchPartiallyRegistredSeller();
-      emailSmsToPartiallyRegistered.start();
-    },
-    //  {
-    //     scheduled: true,
-    //     timezone: "Asia/Kolkata",
-    //   }
-    );
   emailSmsToPartiallyRegistered.start();
-  
+
 }

@@ -305,6 +305,50 @@ const productDetailsSchema = new Schema({
         default: null
       },
     }
+  },
+  type:{
+      type: String,
+      trim: true,
+   },
+  brand:{
+    type: String,
+    trim: true,
+  },
+  model_name_number:{
+    type: String,
+    trim: true,
+    default: null
+  },
+  payment_terms:{
+    type: String,
+    trim: true,
+  },
+  color:{
+    type: String,
+    trim: true,
+    default: null
+  },
+  supply_service_ability: { 
+    supply_service_ability:{
+      type: String,
+      trim: true,
+      default: null
+    }, 
+    unit: {
+      type: String,
+      trim: true,
+      default: null
+    } 
+  },
+  usage_application:{
+      type: String,
+      trim: true,
+      default: null
+  },
+  dimension:{
+      type: String,
+      trim: true,
+      default: null
   }
 });
 
