@@ -476,6 +476,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         console.log("🚀 ~ file: cron.js ~ line 475 ~ exports.sendDailyCount= ~ desh_or_vyapar_count", desh_or_vyapar_count.length)
 
         const sum = gcc_count.length + smec_ount.length + paper_ads_count.length + online_ads_count.length + social_media_count.length + from_a_friend_count.length + desh_or_vyapar_count.length
+        console.log("🚀 ~ file: cron 3.js ~ line 479 ~ exports.sendDailyCount= ~ sum", sum)
         source = source.map((src, i) => ({ key: src, value: i == 0 ? gcc_count.length : i == 1 ? smec_ount.length : i == 2 ? paper_ads_count.length : i == 3 ? online_ads_count.length : i == 4 ? social_media_count.length : i == 5 ? from_a_friend_count.length : desh_or_vyapar_count.length }))
         let elem = source.map(src =>
             `<tr>
@@ -483,23 +484,26 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
-        const recipients = [{email: 'ashutosh@active.agency', name: 'Ashutosh'}, {email: 'shrey@active.agency', name: 'Shrey Kankaria'}, {email: 'akshay@active.agency', name: 'Akshay Agarwal'}, {email: 'ameen@active.agency', name: 'Ameen'}, {email: 'nagesh@ekbazaar.com', name: 'Nagesh'}, {email: 'sandeep@ekbazaar.com', name: 'Sandeep'}, {email: 'nk@ekbazaar.com', name: 'Nandakumar'},{email: 'ramesh@active.agency', name: 'Ramesh Shettanoor'}, {email: 'darshan@active.agency', name: 'Darshan'}]
+        const recipients = [{ email: 'ashutosh@active.agency', name: 'Ashutosh' }, { email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }]
+        console.log("🚀 ~ file: cron 3.js ~ line 488 ~ exports.sendDailyCount= ~ recipients", recipients)
+        console.log("🚀 ~ file: cron 3.js ~ line 490 ~ exports.sendDailyCount= ~ source", source)
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
             recipientVars = {
                 ...recipientVars,
                 [recipient.email]: {
-                    id: index+1,
+                    id: index + 1,
                     name: recipient.name
                 }
             }
         })
+        console.log("🚀 ~ file: cron 3.js ~ line 493 ~ recipients.forEach ~ recipientVars", recipientVars)
         // for (let i = 0; i < emails.length; i++) {
         const message = {
             from: MailgunKeys.senderMail,
             to: recipients.map(recipient => recipient.email),
             subject: `${_dateyesterday} Seller Subscriber count`,
-            'recipient-variables': recipientVars,
+            'recipient-variables': JSON.stringify(recipientVars),
             html: `<!doctype html>
                 <html lang="en">
                     <head>
@@ -778,6 +782,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                     </body>
                 </html>`,
         };
+        console.log("🚀 ~ file: cron 3.js ~ line 785 ~ exports.sendDailyCount= ~ MailgunKeys", MailgunKeys)
         let mail = await sendSingleMail(message);
         console.log("🚀 ~ file: cron.js ~ line 453 ~ exports.sendDailyCount=async ~ mail", mail)
         // }

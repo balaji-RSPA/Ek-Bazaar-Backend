@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 {"message":"Listening:8070","level":"info","timestamp":"2021-07-22T11:46:40.850Z"}
 {"error":{"errno":-2,"syscall":"open","code":"ENOENT","path":"<-----BEGIN CERTIFICATE-----"},"level":"error","message":"uncaughtException: ENOENT: no such file or directory, open '<-----BEGIN CERTIFICATE-----'\nError: ENOENT: no such file or directory, open '<-----BEGIN CERTIFICATE-----'\n    at Object.openSync (fs.js:462:3)\n    at Object.readFileSync (fs.js:364:35)\n    at /home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js:255:32\n    at Array.forEach (<anonymous>)\n    at resolveTLSOptions (/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js:253:34)\n    at /home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js:303:5\n    at /home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js:126:9\n    at parseConnectionString (/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js:728:3)\n    at QueryReqWrap.callback (/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js:120:7)\n    at QueryReqWrap.onresolve [as oncomplete] (dns.js:205:10)","stack":"Error: ENOENT: no such file or directory, open '<-----BEGIN CERTIFICATE-----'\n    at Object.openSync (fs.js:462:3)\n    at Object.readFileSync (fs.js:364:35)\n    at /home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js:255:32\n    at Array.forEach (<anonymous>)\n    at resolveTLSOptions (/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js:253:34)\n    at /home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js:303:5\n    at /home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js:126:9\n    at parseConnectionString (/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js:728:3)\n    at QueryReqWrap.callback (/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js:120:7)\n    at QueryReqWrap.onresolve [as oncomplete] (dns.js:205:10)","exception":true,"date":"Thu Jul 22 2021 17:16:41 GMT+0530 (India Standard Time)","process":{"pid":166444,"uid":1000,"gid":1000,"cwd":"/home/ashu/Documents/ekbazaar-all/backend/trade","execPath":"/usr/bin/node","version":"v12.22.2","argv":["/usr/bin/node","/home/ashu/Documents/ekbazaar-all/backend/trade/app.js"],"memoryUsage":{"rss":130478080,"heapTotal":97652736,"heapUsed":54663952,"external":19894524,"arrayBuffers":18372494}},"os":{"loadavg":[1.05,0.75,0.51],"uptime":425881},"trace":[{"column":3,"file":"fs.js","function":"Object.openSync","line":462,"method":"openSync","native":false},{"column":35,"file":"fs.js","function":"Object.readFileSync","line":364,"method":"readFileSync","native":false},{"column":32,"file":"/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js","function":null,"line":255,"method":null,"native":false},{"column":null,"file":null,"function":"Array.forEach","line":null,"method":"forEach","native":false},{"column":34,"file":"/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js","function":"resolveTLSOptions","line":253,"method":null,"native":false},{"column":5,"file":"/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/operations/connect.js","function":null,"line":303,"method":null,"native":false},{"column":9,"file":"/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js","function":null,"line":126,"method":null,"native":false},{"column":3,"file":"/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js","function":"parseConnectionString","line":728,"method":null,"native":false},{"column":7,"file":"/home/ashu/Documents/ekbazaar-all/backend/trade/node_modules/mongodb/lib/core/uri_parser.js","function":"QueryReqWrap.callback","line":120,"method":"callback","native":false},{"column":10,"file":"dns.js","function":"QueryReqWrap.onresolve [as oncomplete]","line":205,"method":"onresolve [as oncomplete]","native":false}],"timestamp":"2021-07-22T11:46:41.364Z"}
@@ -3558,3 +3559,42 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-08-17T07:13:08.065Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-08-17T07:19:42.477Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-08-17T14:16:02.945Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-16T16:18:52.918Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-16T20:32:05.798Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T10:30:16.852Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T10:34:38.644Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T10:38:21.178Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T10:40:09.290Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T10:43:39.168Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T11:03:01.662Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T11:03:25.671Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T11:05:21.050Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T11:07:48.044Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T11:09:14.623Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T11:10:41.992Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T11:10:50.730Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T11:11:38.270Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T13:29:28.405Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T14:13:04.994Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T14:15:29.528Z"}
+>>>>>>> ashutosh
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-17T14:17:41.507Z"}
+{"message":"connection 4622 to 128.199.29.212:5006 timed out","level":"error","timestamp":"2021-08-20T02:30:45.011Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:22:35.968Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:30:33.605Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:32:10.179Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:36:21.312Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:40:45.348Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:43:30.194Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:43:38.493Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:45:09.651Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:59:06.019Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T12:59:10.566Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T13:01:42.261Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T13:06:02.818Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T13:08:06.990Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T13:08:38.619Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T13:08:52.168Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T13:12:52.326Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-08-23T13:15:40.886Z"}

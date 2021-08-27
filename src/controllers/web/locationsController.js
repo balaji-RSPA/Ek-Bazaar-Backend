@@ -2,7 +2,8 @@ const {ObjectId} = require("mongoose").Types
 const camelcaseKeys = require("camelcase-keys");
 const { location } = require("../../modules");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const _ = require('lodash')
+const _ = require('lodash');
+const { _getAllCountries } = require("../../modules/locationsModule");
 const {
   getAllCities,
   getAllStates,
@@ -141,8 +142,57 @@ module.exports.createState = async (req, res) => {
 
 module.exports.getAllCountries = async (req, res) => {
   try {
-    const countries = await getAllCountries();
-    respSuccess(res, countries);
+    if (req.query.country) {
+      const regex = new RegExp(`${req.query.country}`)
+      const query = {
+        name: {
+          $regex: regex,
+          $options: 'i'
+        }
+      }
+      const countries = await _getAllCountries({ query, limit: 50 })
+      respSuccess(res, countries)
+    } else {
+      const countries = await getAllCountries();
+      console.log()
+      let newArray = [
+        { name: 'india', priority: 1 },
+        { name: 'united states', priority: 2 },
+        { name: 'united kingdom', priority: 3 },
+        { name: 'united arab emirates', priority: 4 },
+        { name: 'canada', priority: 5 },
+        { name: 'japan', priority: 6 },
+        { name: 'germany', priority: 7 },
+        { name: 'switzerland', priority: 8 },
+        { name: 'vietnam', priority: 9 },
+        { name: 'thailand', priority: 10 }
+      ]
+      let _countries = countries.filter(cnty => newArray.findIndex(country => country.name && country.name === cnty.name) !== -1).map(cntry => ({
+        iso: cntry.iso,
+        status: cntry.status,
+        serialNo: cntry.serialNo,
+        country_calling_code: cntry.country_calling_code,
+        _id: cntry._id,
+        name: cntry.name,
+        createdAt: cntry.createdAt,
+        updatedAt: cntry.updatedAt,
+        priority: newArray[newArray.findIndex(country => country.name === cntry.name)]['priority'],
+        index: countries.findIndex(country => country.name === cntry.name)
+      })).sort((a, b) => {
+        if (a.priority < b.priority) return -1
+        else if (a.priority > b.priority) return 1
+        else return 0
+      })
+      console.log("🚀 ~ file: locationsController.js ~ line 169 ~ let_countries=countries.filter ~ _countries", _countries)
+
+      _countries = _countries.concat(countries.reduce((acc, curr) => {
+        if (newArray.findIndex(country => country.name === curr.name) === -1) acc.push(curr)
+        return acc
+      }, []));
+
+      console.log("🚀 ~ file: locationsController.js ~ line 171 ~ _countries=_countries.concat ~ _countries", _countries)
+      respSuccess(res, /* countries */ _countries);
+    }
   } catch (error) {
     res.send(error.message);
   }

@@ -58,7 +58,7 @@ let host = '', conf = {
 if (env) {
   if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
-    host = 'tradebazaarapi.tech-active.com:5085'
+    conf.host = 'tradebazaarapi.tech-active.com:5085'
 
   } else if (env.NODE_ENV === 'production') {
 
