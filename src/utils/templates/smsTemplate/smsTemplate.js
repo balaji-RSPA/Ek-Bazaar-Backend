@@ -1,7 +1,7 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
 const _IS_PROD_ = global.environment === "production"
-const signInLink = _IS_PROD_ ? 'https://trade.ekbazaar.com/signin' : 'https://tradebazaar.tech-active.com/signin'
+// const signInLink = _IS_PROD_ ? 'https://trade.ekbazaar.com/signin' : 'https://tradebazaar.tech-active.com/signin'
 
 module.exports.successfulRegistration = (params) => {
   const successfulMessage = params.userType === 'buyer' ?
@@ -87,4 +87,4 @@ module.exports.planSubscription = (params) => `Dear Customer,\n\n Thank you for 
 
 module.exports.planChanged = (params) => `Dear Customer,\n\nYour plan has been changed from ${moment(params.from).format("DD/MM/YYYY")} to ${moment(params.to).format("DD/MM/YYYY")}. \nValid From:${moment().format("DD/MM/YYYY")} \nValid Till:${moment(params.till).format("DD/MM/YYYY")} \nAmount Paid:${params.currency}-${params.amount} Click <a href = ${params.url}>${params.name}</a> to download your invoice.Thank you for choosing Ekbazaar.com.`
 
-module.exports.partialRegistred = (params) => ({messagePartial:`Dear ${params.name} , Please complete your registration in-order to receive business enquiries from buyers. ${signInLink} Ekbazaar.com`,templateId:'1707162919188812931'})
+module.exports.partialRegistred = (params) => ({messagePartial:`Dear ${params.name} , Please complete your registration in-order to receive business enquiries from buyers. https://trade.ekbazaar.com/signin Ekbazaar.com`,templateId:'1707162919188812931'})
