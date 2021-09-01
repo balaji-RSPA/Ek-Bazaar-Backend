@@ -758,8 +758,8 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                 </div>
                                 <div style="margin-top: 15px;">
                                     <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${yesterdayTotalCount.length}</h4>
-                                    <h4>Only Buyers: <span>${yesterdayTotalCount.length}</span></h4>
-                                    <h4>Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
+                                    <h4>Incomplete Buyers: <span>${yesterdayTotalCount.length}</span></h4>
+                                    <h4>Registered Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
                                     <h4>Thank you. </h4>
                                 </div>
                             </div>
