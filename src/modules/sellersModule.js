@@ -953,6 +953,9 @@ module.exports.addContactDetails = (sellerId, data) =>
       new: true,
       upsert: true
     })
+      .populate("location.city")
+      .populate("location.state")
+      .populate("location.country")
       .then((doc) => {
         // console.log(doc)
         resolve(doc)
