@@ -17,6 +17,7 @@ const Payments = require('./paymentModule')
 const InvoiceNumber = require('./invoiceNumberModule')
 const Chat = require('./chatModule')
 const Pincode = require('./pincodeModule')
+const News = require('./newsModule');
 
 module.exports = {
     location,
@@ -37,5 +38,6 @@ module.exports = {
     Payments,
     InvoiceNumber,
     Chat,
-    Pincode
+    Pincode,
+    News
 }
