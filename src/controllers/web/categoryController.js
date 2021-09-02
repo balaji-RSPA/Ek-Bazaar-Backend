@@ -105,14 +105,23 @@ module.exports.getSpecificCategories = async (req, res) => {
         //     "5fddf6051a15802b9764521a"
         // ]
 
-        // live atlas parent cat ids 
+        // old existing live
         const idsArray = [
-            "6114cc830a3c0d4159143515",
-            "6114cc830a3c0d415914351c",
-            "6114cc830a3c0d4159143516",
-            "6114cc830a3c0d4159143517",
-            "6114cc830a3c0d4159143522"
+            "5fddf6051a15802b9764520d",
+            "5fddf6051a15802b97645214",
+            "5fddf6051a15802b9764520e",
+            "5fddf6051a15802b9764520f",
+            "5fddf6051a15802b9764521a"
         ]
+
+        // live atlas parent cat ids 
+        // const idsArray = [
+        //     "6114cc830a3c0d4159143515",
+        //     "6114cc830a3c0d415914351c",
+        //     "6114cc830a3c0d4159143516",
+        //     "6114cc830a3c0d4159143517",
+        //     "6114cc830a3c0d4159143522"
+        // ]
 
         const query = {
             _id: {
@@ -674,17 +683,29 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
         //     "5fdf6cc8be4f6810f10102ca"
         // ]
 
-        // live atlas secondary cat Ids
+        // old existing live
         const idsArray = [
             // "5fdf6cd9be4f6810f1010491",
             // "5fdf6cdcbe4f6810f10104e2",
             // "5fdf6cedbe4f6810f10106bc",
-            '6114cf750a3c0d4159143c8c',
-            '6114cf750a3c0d4159143c94',
-            '6114cf980a3c0d41591440b0',
+            '5fdf6cc9be4f6810f10102d0',
+            '5fdf6cc9be4f6810f10102d4',
+            '5fdf6cdcbe4f6810f10104e2',
 
-            "6114cf750a3c0d4159143c80"
+            "5fdf6cc8be4f6810f10102ca"
         ]
+
+        // live atlas secondary cat Ids
+        // const idsArray = [
+        //     // "5fdf6cd9be4f6810f1010491",
+        //     // "5fdf6cdcbe4f6810f10104e2",
+        //     // "5fdf6cedbe4f6810f10106bc",
+        //     '6114cf750a3c0d4159143c8c',
+        //     '6114cf750a3c0d4159143c94',
+        //     '6114cf980a3c0d41591440b0',
+
+        //     "6114cf750a3c0d4159143c80"
+        // ]
 
         const query = {
             _id: {
