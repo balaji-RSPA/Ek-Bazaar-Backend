@@ -2255,8 +2255,14 @@ exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, 
     ...aggs
   };
   // console.log("exports.getSuggestions -> body", JSON.stringify(body))
+
+  // const index = process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions"
+
+  // new elasticsearch single node multi index
+  const index = "tradedb.suggestions"
+
   const searchQuery = {
-    index: process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions",
+    index,
     body,
   };
   esClient
@@ -2276,8 +2282,14 @@ exports.getAllCitiesElastic = (query) => new Promise((resolve, reject) => {
   const body = {
     query
   };
+
+  // const index =  process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities"
+  
+  // new elasticsearch single node multi index
+  const index = "tradedb.cities"
+
   const searchQuery = {
-    index: process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities",
+    index,
     body,
     from: 0,
     size: 500
@@ -2296,8 +2308,14 @@ exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
   const body = {
     query
   };
+
+  // const index = process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states"
+  
+  // new elasticsearch single node multi index
+  const index ="tradedb.states"
+
   const searchQuery = {
-    index: process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states",
+    index,
     body,
     from: 0,
     size: 500
@@ -2317,8 +2335,14 @@ exports.getAllCountriesElastic = query => new Promise((resolve, reject) => {
     query
   }
   console.log("🚀 ~ file: elasticSearchModule.js ~ line 1794 ~ exports.getAllCountriesElastic=query=>newPromise ~ query", query)
+
+  // const index = process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries"
+  
+  // new elasticsearch single node multi index
+  const index = "tradedb.countries"
+
   const searchQuery = {
-    index: process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries",
+    index,
     body,
     from: 0,
     size: 500

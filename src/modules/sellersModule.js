@@ -953,6 +953,9 @@ module.exports.addContactDetails = (sellerId, data) =>
       new: true,
       upsert: true
     })
+      .populate("location.city")
+      .populate("location.state")
+      .populate("location.country")
       .then((doc) => {
         // console.log(doc)
         resolve(doc)
@@ -1626,10 +1629,12 @@ exports.sellersOverAllCount = (search) => new Promise((resolve, reject) => {
 })
 
 exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
+  //{ $gte: new Date(moment().subtract(3, 'minutes').utc().format()), $lt: new Date(moment(new Date()).utc().format()) }
+  let now = new Date()
   Sellers.aggregate([
     {
       $match: {
-        $and: [{ updatedAt: { $gte: new Date(moment().subtract(3, 'minutes').utc().format()), $lt: new Date(moment(new Date()).utc().format()) }, incompleteRegistration: 1 }, { $or: [{ statutoryId: { $eq: null } }, { sellerContactId: { $eq: null } }] }]
+        $and: [{ incompleteRegistration: 1 }, { $or: [{ statutoryId: { $eq: null } }, { sellerContactId: { $eq: null } }] }]
       }
     },
     // {
@@ -1648,9 +1653,10 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
     // }
   ])
     .then((doc) => {
-      console.log(moment().subtract(3, 'minutes').utc().format(), moment(new Date()).utc().format())
-      doc && doc.length && doc.forEach(async (el) => {
-        await SendNotifc(el)
+      // console.log(moment(now).subtract(5, "minutes").toDate())
+      let now =  moment()
+        doc && doc.length && doc.filter(record => now.diff(record.updatedAt, 'minutes') >= 3).forEach(async (el) => {
+         await SendNotifc(el)
         // if((el.sellerType && el.sellerType.name === 'farmer')){
         //   await SendNotifc(el)
         // }else if((el.sellerType && el.sellerType.name !== 'farmer')){ 

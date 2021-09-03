@@ -23,6 +23,7 @@ const {
 } = require('../../modules')
 const { sellerSearch, searchFromElastic } = elastic;
 const _ = require('lodash')
+const { getMasterRecords,updateMasterSellerDetails } = require("../../modules/masterModule");
 
 const {
   updateSeller,
@@ -142,6 +143,17 @@ module.exports.updateSeller = async (req, res) => {
       seller = await updateSeller({
         _id: sellerID
       }, newData)
+      let masterRecords = await getMasterRecords({ 'userId._id': userID }, {})
+              masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
+        let sellerId = masterRecords.sellerId || {}
+        const masterData = {
+          sellerId: {
+            ...sellerId,
+            businessName: bsnsDtls && bsnsDtls.name,
+          }
+          // keywords
+        }
+        updateMasterSellerDetails({ 'userId._id': userID }, masterData)
     }
     //statutoryDetails
     if (company || CinNumber || GstNumber || IeCode || (req.files && (req.files.multidoc || req.files.gst))) {
@@ -190,6 +202,37 @@ module.exports.updateSeller = async (req, res) => {
         sellerContactId: cntctDtls._id
       })
       // newData.busenessId = cntctDtls._id;
+      let masterRecords = await getMasterRecords({ 'userId._id': userID }, {})
+      masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
+      let sellerId = masterRecords.sellerId || {}
+        const masterData = {
+          sellerId: {
+            ...sellerId,
+            contactDetails : {
+                location:{
+                  city:{
+                     name:cntctDtls.location && cntctDtls.location.city && cntctDtls.location.city.name,
+                     _id: cntctDtls.location && cntctDtls.location.city && cntctDtls.location.city._id,
+                  },
+                  state:{
+                      name:cntctDtls.location && cntctDtls.location.state && cntctDtls.location.state.name,
+                      _id:cntctDtls.location && cntctDtls.location.state && cntctDtls.location.state._id
+                  },
+                  country:{
+                     name:cntctDtls.location && cntctDtls.location.country && cntctDtls.location.country.name,
+                     _id:cntctDtls.location && cntctDtls.location.country && cntctDtls.location.country._id
+                  },
+                  address:cntctDtls.location && cntctDtls.location.address,
+                  pincode:cntctDtls.location && cntctDtls.location.pincode
+                },
+                alternativNumber : cntctDtls.alternativNumber,
+                email : cntctDtls.email,
+                website : cntctDtls.website
+            }
+          }
+          // keywords
+        }
+        updateMasterSellerDetails({ 'userId._id': userID }, masterData)
     }
     if (!productDetails && req.files && (req.files.image1 || req.files.image2 || req.files.image3 || req.files.image4 || req.files.image5 || req.files.image6)) {
       let photos = [];
