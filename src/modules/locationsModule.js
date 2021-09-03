@@ -142,7 +142,7 @@ exports.getAllCities = (reqQuery) =>
     const limit = parseInt(reqQuery.limit) || 2000 //parseInt(reqQuery.limit) || 2000;
     const search = reqQuery.search || "";
 
-    let { state, countryId } = reqQuery;
+    let { state, countryId, indiaCity } = reqQuery;
     let match;
 
     console.log("🚀 ~ file: locationsModule.js ~ line 139 ~ newPromise ~ countryId", countryId)
@@ -169,6 +169,18 @@ exports.getAllCities = (reqQuery) =>
           },
           country: {
             $in: countryId.map((id) => ObjectId(id)),
+          },
+        },
+      };
+    } else if (indiaCity) {
+      match = {
+        $match: {
+          name: {
+            $regex: `^${search}`,
+            $options: "i",
+          },
+          state: {
+            $ne: null,
           },
         },
       };
