@@ -4,7 +4,7 @@ var certFileBuf = fs.readFileSync(path.join(__dirname, 'ca-certificate.crt'), { 
 let config;
 
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
-if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
+if (process.env.NODE_ENV === "production" /* || process.env.NODE_ENV === "staging" */) {
   config = {
     tradeDb: {
       // replicaset

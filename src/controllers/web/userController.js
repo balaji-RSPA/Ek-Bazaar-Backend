@@ -445,10 +445,10 @@ module.exports.updateUser = async (req, res) => {
       userType,
       hearingSource
     } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body)
+    // console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body)
     // return false
 
-    console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
+    // console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
     const __usr = await getUserProfile(userID)
     let userData = {
       name: (Boolean(_buyer && _buyer.name) && _buyer.name) || (Boolean(name) && name) || __usr.name,
@@ -666,12 +666,12 @@ module.exports.updateUser = async (req, res) => {
       // keywords.push(...seller.sellerType.map((v) => v.name.toLowerCase()))
       // keywords = _.without(_.uniq(keywords), '', null, undefined)
       let masterRecords = await getMasterRecords({ 'userId._id': seller.userId }, {})
-
       if (masterRecords && masterRecords.length) {
-
+        
         console.log("🚀 ~ file: userController.js ~ line 669 ~ module.exports.updateUser= ~ masterRecords", masterRecords)
         masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
         let sellerId = masterRecords.sellerId || {}
+        let { sellerContactId } = seller;
         const masterData = {
           sellerId: {
             ...sellerId,
@@ -691,6 +691,27 @@ module.exports.updateUser = async (req, res) => {
               name: seller.name,
               _id: seller.userId
             },
+            contactDetails : {
+                location:{
+                  city:{
+                     name:sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
+                     _id: sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
+                  },
+                  state:{
+                      name:sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
+                      _id:sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
+                  },
+                  country:{
+                     name:sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
+                     _id:sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
+                  },
+                  address:sellerContactId.location && sellerContactId.location.address,
+                  pincode:sellerContactId.location && sellerContactId.location.pincode
+                },
+                alternativNumber : sellerContactId.alternativNumber,
+                email : sellerContactId.email,
+                website : sellerContactId.website
+            }
           }
           // keywords
         }
@@ -712,7 +733,7 @@ module.exports.updateUser = async (req, res) => {
       respError(res, "Failed to update");
     }
   } catch (error) {
-    console.log(error, ' gggggggg -------------')
+    // console.log(error, ' gggggggg -------------')
     respError(res, error.message);
   }
 };

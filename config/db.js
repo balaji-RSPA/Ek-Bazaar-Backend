@@ -17,7 +17,7 @@ function dbConnection() {
     serverSelectionTimeoutMS: 10000,
     // reconnectTries: 30,
   };
-  if (env.NODE_ENV === 'production' || env.NODE_ENV === 'staging') {
+  if (env.NODE_ENV === 'production' /* || env.NODE_ENV === 'staging' */) {
 
     url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
     options = {
@@ -30,11 +30,11 @@ function dbConnection() {
 
     // options.sslCA = tradeDb.certFileBuf
     // url = `${tradeDb.protocol}://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}`
-    // url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
-    
-    // new live atlas mongodb connection
-    url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
 
+    url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+
+    // new live atlas mongodb connection
+    // url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
   }
   if (env) {
 
@@ -62,17 +62,17 @@ let host = '', conf = {
 if (env) {
   if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
-    // conf.host = 'tradebazaarapi.tech-active.com:5085'
+    conf.host = 'tradebazaarapi.tech-active.com:5085'
 
     // new single node multi shard elasticsearch
     // conf.host = '165.22.209.173:9200'
 
     // new multi node(3) multi shards(12) elasticsearch
-    conf.host = [
-      'http://142.93.215.209:9200',
-      'http://143.244.139.247:9200',
-      'http://143.244.139.250:9200'
-    ]
+    // conf.host = [
+    //   'http://142.93.215.209:9200',
+    //   'http://143.244.139.247:9200',
+    //   'http://143.244.139.250:9200'
+    // ]
 
   } else if (env.NODE_ENV === 'production') {
 
