@@ -1,4 +1,8 @@
-exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "newtradedb.mastercollections" //tradebazaar
+// exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections" //tradebazaar
+
+// new elasticsearch single node multi index
+exports.INDEXNAME = "tradedb.mastercollections"
+
 // exports.INDEXNAME = 'opend_contacts.mastercollections'
 
 exports.bcryptSalt = {
@@ -50,7 +54,7 @@ exports.sms = {
   // "smsURL": "http://180.179.218.150/sendurlcomma.aspx?",
   "userName": 20060709,
   "password": "NAG@087",
-  "smsURL": "http://180.179.218.150/sendurl.aspx?user=20060709&pwd=NAG@087&senderid=EKBZAR&"
+  "smsURL": "http://180.179.215.100/sendurl.aspx?user=20060709&pwd=NAG@087&senderid=EKBZAR&"
 }
 const { NODE_ENV } = process.env
 exports.siteUrl = NODE_ENV === "production" ? "https://www.trade.ebazaar.com" : "http://tradebazaar.tech-active.com"

@@ -51,7 +51,7 @@ app.use(
       "https://trade.ekbazaar.com",
       "https://trade.onebazaar.com",
       "http://admin.ekbazaar.tech-active.com",
-      "https://admin.ekbazaar.tech-active.com",      
+      "https://admin.ekbazaar.tech-active.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -123,6 +123,7 @@ app.get("/gujaratSellerData", async function (req, res) {
 
 
 
+
 async function indexing() {
   await checkIndices();
   await putMapping();
@@ -189,7 +190,7 @@ server.on("listening", () => {
   Logger.info(`Listening:${server.address().port}`);
 });
 
-if(env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
   const dailyCount = cron.schedule("30 2 * * *", async () => {
     dailyCount.stop();
     console.log(
@@ -278,18 +279,13 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   });
   priority.start();
 
-  // const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
-  //     emailSmsToPartiallyRegistered.stop();
-  //     // const threeMinutesAgo = moment().subtract(3, 'minutes');
-  //     // const currentTime = moment()
-  //     await fetchPartiallyRegistredSeller();
-  //     emailSmsToPartiallyRegistered.start();
-  //   },
-  //    {
-  //       scheduled: true,
-  //       timezone: "Asia/Kolkata",
-  //     }
-  //   );
-  // emailSmsToPartiallyRegistered.start();
-  
+  const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
+    console.log(' Incomplete registration cron started ------ ')
+    emailSmsToPartiallyRegistered.stop();
+    await fetchPartiallyRegistredSeller();
+    emailSmsToPartiallyRegistered.start();
+    console.log('Incomplete registration cron end ------------------')
+  });
+  emailSmsToPartiallyRegistered.start();
+
 }

@@ -480,7 +480,7 @@ module.exports.searchSuggestion = async (req, res) => {
         } else if (elem.poductId && elem.poductId.length) {
           suggestions.push(...elem.poductId.map(item => ({
             _source: { ...item, search: "level4" },
-            _index: 'newtradedb.mastercollections',
+            _index: 'trade-live.mastercollections',  
             _type: '_doc',
             _id: item.id,
           })))

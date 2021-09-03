@@ -31,6 +31,13 @@ module.exports.getAllCountries = (skip, limit) =>
       });
   });
 
+module.exports._getAllCountries = (query) => new Promise((resolve, reject) => {
+  Countries.find(query.query)
+    .limit(query.limit)
+    .then(doc => resolve(doc))
+    .catch(error => reject(error))
+})
+
 module.exports.getCountry = (id) =>
   new Promise((resolve, reject) => {
     Countries.findById(id)
@@ -136,7 +143,7 @@ exports.getAllCities = (reqQuery) =>
     const limit = parseInt(reqQuery.limit) || 2000 //parseInt(reqQuery.limit) || 2000;
     const search = reqQuery.search || "";
 
-    let { state, countryId } = reqQuery;
+    let { state, countryId, indiaCity } = reqQuery;
     let match;
 
     console.log("🚀 ~ file: locationsModule.js ~ line 139 ~ newPromise ~ countryId", reqQuery)
@@ -163,6 +170,18 @@ exports.getAllCities = (reqQuery) =>
           },
           country: {
             $in: countryId.map((id) => ObjectId(id)),
+          },
+        },
+      };
+    } else if (indiaCity) {
+      match = {
+        $match: {
+          name: {
+            $regex: `^${search}`,
+            $options: "i",
+          },
+          state: {
+            $ne: null,
           },
         },
       };

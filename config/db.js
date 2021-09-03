@@ -30,7 +30,11 @@ function dbConnection() {
 
     // options.sslCA = tradeDb.certFileBuf
     // url = `${tradeDb.protocol}://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}`
+   
     url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+    
+    // // new live atlas mongodb connection
+    // url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
   }
   if (env) {
 
@@ -56,20 +60,20 @@ let host = '', conf = {
   sniffOnStart: true,
 }
 if (env) {
-  /* if (env.NODE_ENV === 'development') {
-
-    conf = {
-      host: 'https://elastic:KYM6BwR6Am9a7gcnnn2My9ZL@ekbazaar-tradesearch.es.ap-south-1.aws.elastic-cloud.com:9243',
-      log: 'error',
-      // sniffOnStart: true,
-    }
-
-  } else */ if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
     conf.host = 'tradebazaarapi.tech-active.com:5085'
 
+    // new single node multi shard elasticsearch
+    // conf.host = '165.22.209.173:9200'
+
   } else if (env.NODE_ENV === 'production') {
 
+    // host = 'searchtrade.ekbazaar.com:5085'
+    // host = 'searchtradetemp.tech-active.com:5085'
+    // host = '139.59.19.170:5085'
+    // host = '139.59.95.19:5085'
+    // host = "167.71.233.251:5085"
     conf.host = "157.245.109.173:5086"
 
   }

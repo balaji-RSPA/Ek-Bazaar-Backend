@@ -17,23 +17,11 @@ const settings = {
                 "max_gram": 50,
                 "min_gram": 2,
                 "type": "edgeNGram"
-            }/* ,
-            "name_ngrams_back": {
-                "side": "back",
-                "max_gram": 50,
-                "min_gram": 2,
-                "type": "edgeNGram"
-            },
-            "name_middle_ngrams": {
-                "type": "nGram",
-                "max_gram": 50,
-                "min_gram": 2
-            } */
+            }
         },
         "analyzer": {
             "full_name": {
                 "filter": [
-                    // "standard",
                     "lowercase",
                     "asciifolding"
                 ],
@@ -42,34 +30,13 @@ const settings = {
             },
             "partial_name": {
                 "filter": [
-                    // "standard",
                     "lowercase",
                     "asciifolding",
                     "name_ngrams"
                 ],
                 "type": "custom",
                 "tokenizer": "standard"
-            }/* ,
-            "partial_name_back": {
-                "filter": [
-                    "standard",
-                    "lowercase",
-                    "asciifolding",
-                    "name_ngrams_back"
-                ],
-                "type": "custom",
-                "tokenizer": "standard"
-            },
-            "partial_middle_name": {
-                "filter": [
-                    "standard",
-                    "lowercase",
-                    "asciifolding",
-                    "name_middle_ngrams"
-                ],
-                "type": "custom",
-                "tokenizer": "standard"
-            } */
+            }
         }
     }
 }

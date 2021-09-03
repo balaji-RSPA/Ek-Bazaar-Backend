@@ -303,6 +303,10 @@ const sellersSchema = new Schema(
     },
     trialExtends: {
       type: Number
+    },
+    incompleteRegistration:{
+      type: Number,
+      default: 1,
     }
   },
   {

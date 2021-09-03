@@ -188,8 +188,9 @@ module.exports.uploadInternationalCity = async (req, res) => new Promise(async (
             for (let index = 0; index < data.length; index++) {
                 const element = data[index];
                 const country = await getCountryData({ serialNo: element.countryCode.toString() })
+                console.log("🚀 country------ ", country && country.name)
                 const name = element.city.toLowerCase()
-                // console.log(name, element, ' --------------')
+                console.log(name, element, ' --------------')
                 const cData = {
                     name,
                     state: null,
@@ -203,6 +204,7 @@ module.exports.uploadInternationalCity = async (req, res) => new Promise(async (
                         $regex: name, $options: 'i'
                     }
                 })
+                console.log(city, ' ---------------')
                 if (!city) {
                     const _city = await addCity(cData)
                 } else {

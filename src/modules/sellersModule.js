@@ -13,10 +13,11 @@ const SessionsLogs = require('../../config/tenderdb').sessionLogModel
 const Cities = require('../models/citiesSchema')
 const States = require('../models/statesSchema')
 const Countries = require('../models/countriesSchema')
-const {sendSMS,sendwati} = require('../utils/utils')
+const { sendSMS, sendwati } = require('../utils/utils')
 const { sendSingleMail } = require("../utils/mailgunService");
 const { MailgunKeys, fromEmail } = require("../utils/globalConstants");
 const moment = require('moment');
+const { partialRegistred } = require('../utils/templates/smsTemplate/smsTemplate')
 const {
   checkAndAddCity,
   getState,
@@ -49,6 +50,9 @@ const {
 const {
   updateESDoc
 } = require('./elasticSearchModule')
+
+const { partialSellerRegistration } = require('../utils/templates/emailTemplate/emailTemplateContent')
+const { commonTemplate } = require('../utils/templates/emailTemplate/emailTemplate');
 // const { reject } = require('lodash')
 // const Seller = require('../models/sellersSchema')
 
@@ -949,6 +953,9 @@ module.exports.addContactDetails = (sellerId, data) =>
       new: true,
       upsert: true
     })
+      .populate("location.city")
+      .populate("location.state")
+      .populate("location.country")
       .then((doc) => {
         // console.log(doc)
         resolve(doc)
@@ -1621,29 +1628,74 @@ exports.sellersOverAllCount = (search) => new Promise((resolve, reject) => {
 
 })
 
-exports.fetchPartiallyRegistredSeller = () => new Promise((resolve,reject) => {
-  Sellers.find({$and: [{updatedAt : { $gte:moment().subtract(3, 'minutes'),$lt:moment()}},{ busenessId : {$eq:null} }] })
-  .then((doc) =>{
-    doc && doc.length && doc.forEach(async(el) => {
-      if(el.sellerType.length){
-        let message = {
-          from: MailgunKeys.senderMail,
-          to: el.email,
-          subject: "Complete your business detail",
-          html: `<h1>Complete your business detail</h1>`,
-        };
-        let countryCodeVal = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode.replace("+", "") : '91';
-        let smscountryCode = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode : '+91'
-        let watiData = {
-          mobile: `${countryCodeVal}${el.mobile[0].mobile}`,
-          name : el.name
-        }
-        await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, 'Hi, please complete your registration', '1707160102358853974');
-        await sendwati(watiData);
-        await sendSingleMail(message);
+exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
+  //{ $gte: new Date(moment().subtract(3, 'minutes').utc().format()), $lt: new Date(moment(new Date()).utc().format()) }
+  let now = new Date()
+  Sellers.aggregate([
+    {
+      $match: {
+        $and: [{ incompleteRegistration: 1 }, { $or: [{ statutoryId: { $eq: null } }, { sellerContactId: { $eq: null } }] }]
       }
+    },
+    // {
+    //   $lookup: {
+    //     from: "sellertypes",
+    //     localField: "sellerType",
+    //     foreignField: "_id",
+    //     as: "sellerType"
+    //   }
+    // },
+    //   {
+    //  $unwind:{
+    //   path:'$sellerType',
+    //   preserveNullAndEmptyArrays:true
+    // }
+    // }
+  ])
+    .then((doc) => {
+      // console.log(moment(now).subtract(5, "minutes").toDate())
+      let now =  moment()
+        doc && doc.length && doc.filter(record => now.diff(record.updatedAt, 'minutes') >= 3).forEach(async (el) => {
+         await SendNotifc(el)
+        // if((el.sellerType && el.sellerType.name === 'farmer')){
+        //   await SendNotifc(el)
+        // }else if((el.sellerType && el.sellerType.name !== 'farmer')){ 
+        //     await SendNotifc(el)
+        // }else if((!el.sellerType.length)){
+        //   await SendNotifc(el)
+        // }
+        resolve()
+
+      })
+      resolve()
     })
-  })
-  .catch((err) => console.log(err))
+    .catch((err) => resolve())
 })
+
+const SendNotifc = async (el) => {
+  try {
+    const template = await partialSellerRegistration();
+    const message = {
+      from: MailgunKeys.senderMail,
+      to: el.email,
+      subject: "Ekbazaar Incomplete Registration",
+      html: commonTemplate(template),
+    };
+    let countryCodeVal = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode.replace("+", "") : '91';
+    let smscountryCode = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode : '+91'
+    let watiData = {
+      mobile: `${countryCodeVal}${el.mobile[0].mobile}`,
+      name: el.name
+    }
+    await Sellers.updateOne({ _id: el._id }, { $set: { incompleteRegistration: 2 } })
+    const { messagePartial, templateId } = partialRegistred({ name: (el.name || '') });
+    el.mobile && smscountryCode && await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, messagePartial, templateId);
+    el.email && await sendSingleMail(message);
+    // el.mobile && countryCodeVal && await sendwati(watiData);
+    return true;
+  } catch (error) {
+    console.log(error, "=============")
+  }
+
+}
 
