@@ -7,4 +7,6 @@ router.post("/news", news.createNews);
 
 router.get("/news", news.getAllNews);
 
+router.put("/news/:id", news.updateNews);
+
 module.exports = router;

@@ -54,7 +54,7 @@ const getUserAgent = (userAgent) => {
 module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp, url) => {
 
   try {
-    //productDetails.name !== 'undefined' 
+    //productDetails.name !== 'undefined'
     if (productDetails && productDetails.name && productDetails.name.name) {
       // const query = {
       //   "term": {
@@ -249,7 +249,7 @@ module.exports.createRFP = async (req, res, next) => {
           let { message, templateId } = RFQOneToOne({ productDetails, _loc, name })
           let sellerSMSResp = await sendSMS(`${constsellerContactNo.countryCode || '+91'}${constsellerContactNo.mobile}`, message, templateId)
           console.log("🚀 ~ file: buyerController.js ~ line 244 ~ module.exports.createRFP= ~ sellerSMSResp", sellerSMSResp.data)
-         
+
           let buyerSMS = RFQOneToOneBuyer({buyerName:buyerData.name,sellerName:sellerData && sellerData.length && sellerData[0].name,sellerPhone :`${constsellerContactNo.countryCode || '+91'}${constsellerContactNo.mobile}`})
           message = buyerSMS.message, templateId = buyerSMS.templateId
           let buyerSMSResp = await sendSMS(`${mobile.countryCode || '+91'}${mobile.mobile}`, message, templateId)
@@ -582,5 +582,5 @@ async function sendEmailSeller(params) {
 
 //   }catch(err){
 //      console.log(error)
-//   }     
+//   }
 // }
