@@ -1,6 +1,7 @@
 const moment = require('moment');
 const { capitalizeFirstLetter } = require('../../helpers')
 const _IS_PROD_ = global.environment === "production"
+const signInLink = _IS_PROD_ ? 'https://trade.ekbazaar.com/signin' : 'https://tradebazaar.tech-active.com/signin'
 
 module.exports.successfulRegistration = (params) => {
   const successfulMessage = params.userType === 'buyer' ?
@@ -52,12 +53,12 @@ module.exports.RFQOneToOne = (params) => ({message: `You have an enquiry from Ek
 //   Ekbazaar-Trade ${_IS_PROD_ ? "https://www.trade.ekbazaar.com" : "https://tradebazaar.com"}`;
 
 
-module.exports.RFQOneToOneBuyer = () => ({message: `Thank you for submitting your requirement.  
- 
-  Your enquiry has been forwarded to ${'sellers'}.  
-   
-  
-  Ekbazaar.com`, templateId: "1707161760951401187"});
+module.exports.RFQOneToOneBuyer = (params) => ({message: `Dear ${params.buyerName}, Your enquiry has been submitted to the seller. Please find the seller contact details 
+
+Seller Name: ${params.sellerName} 
+Phone: ${params.sellerPhone} 
+
+EKBAZAAR.COM`, templateId: "1707162874515721885"});
 
 module.exports.removeListingMsg = () => ({message: `Dear ${'customer'},
 
@@ -85,3 +86,5 @@ module.exports.planExpiry = (date) => `Dear Customer,\n\n Your free trial is com
 module.exports.planSubscription = (params) => `Dear Customer,\n\n Thank you for subscribing to Ekbazaar.com.\nPlan:${params.plan} \nValid From:${moment().format("DD/MM/YYYY")} \nValid Till:${moment(params.till).format("DD/MM/YYYY")} \nAmount Paid:${params.currency}-${params.amount} Click <a href = ${params.url}>${params.name}</a> to download your invoice.`
 
 module.exports.planChanged = (params) => `Dear Customer,\n\nYour plan has been changed from ${moment(params.from).format("DD/MM/YYYY")} to ${moment(params.to).format("DD/MM/YYYY")}. \nValid From:${moment().format("DD/MM/YYYY")} \nValid Till:${moment(params.till).format("DD/MM/YYYY")} \nAmount Paid:${params.currency}-${params.amount} Click <a href = ${params.url}>${params.name}</a> to download your invoice.Thank you for choosing Ekbazaar.com.`
+
+module.exports.partialRegistred = (params) => ({messagePartial:`Dear ${params.name} , Please complete your registration in-order to receive business enquiries from buyers. ${signInLink} Ekbazaar.com`,templateId:'1707162919188812931'})

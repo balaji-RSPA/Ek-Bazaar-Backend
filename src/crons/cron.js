@@ -484,7 +484,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
-        const recipients = [{ email: 'ashutosh@active.agency', name: 'Ashutosh' }, { email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }]
+        const recipients = [{ email: 'ashutosh@active.agency', name: 'Ashutosh' }, { email: 'shrey@active.agency', name: 'Shrey Kankaria' },/*  { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' },  */{ email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }]
         console.log("🚀 ~ file: cron 3.js ~ line 488 ~ exports.sendDailyCount= ~ recipients", recipients)
         console.log("🚀 ~ file: cron 3.js ~ line 490 ~ exports.sendDailyCount= ~ source", source)
         let recipientVars = {};
@@ -768,8 +768,8 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                 </div>
                                 <div style="margin-top: 15px;">
                                     <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${yesterdayTotalCount.length}</h4>
-                                    <h4>Only Buyers: <span>${yesterdayTotalCount.length}</span></h4>
-                                    <h4>Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
+                                    <h4>Incomplete Buyers: <span>${yesterdayTotalCount.length}</span></h4>
+                                    <h4>Registered Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
                                     <h4>Thank you. </h4>
                                 </div>
                             </div>

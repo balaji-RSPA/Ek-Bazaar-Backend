@@ -152,3 +152,10 @@ module.exports.listingRemovalReq = () => {
   }
   return message;
 }
+module.exports.partialSellerRegistration = () => {
+    let message = {
+    title: 'Ekbazaar Trade - Incomplete Registration',
+    body: `<p>Please complete your registration in-order to receive business enquiries from buyers.</p>`,
+  }
+  return message;
+}
