@@ -15,8 +15,8 @@ module.exports.createNews = async (req, res) => {
 /**get all News*/
 module.exports.getAllNews = async (req, res) => {
   try {
-    const { search, skip, limit } = req.body;
-    const allNews = await getAllNews(search, skip, limit);
+    const { search, skip, limit } = req.query;
+    const allNews = await getAllNews(search, parseInt(skip), parseInt(limit));
     respSuccess(res, allNews);
   } catch (error) {
     respError(res, error.message);
@@ -60,9 +60,6 @@ module.exports.deleteNews = async (req, res) => {
   try {
     const id = req.params.id;
     const deleteStatus = await deleteNews({ _id: id });
-    console.log("controlller");
-    console.log(deleteStatus);
-
     respSuccess(res, deleteStatus, "Record deleted successfully");
   } catch (error) {
     respError(res, error.message);
