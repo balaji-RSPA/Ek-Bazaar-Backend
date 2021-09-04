@@ -1,5 +1,6 @@
 const { News } = require("../models");
 
+/**create news*/
 module.exports.createNews = newsData =>
   new Promise((resolve, reject) => {
     News.create(newsData)
@@ -9,13 +10,14 @@ module.exports.createNews = newsData =>
       .catch(error => reject(error));
   });
 
+/**get all News*/
 module.exports.getAllNews = (searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
-    let searchQry = searchQuery ? {
-      $or: [
-        { news: { $regex: searchQuery, $options: 'i' } },
-      ]
-    } : {};
+    let searchQry = searchQuery
+      ? {
+          $or: [{ news: { $regex: searchQuery, $options: "i" } }]
+        }
+      : {};
     News.find(searchQry)
       .skip(skip)
       .limit(limit)
@@ -25,6 +27,7 @@ module.exports.getAllNews = (searchQuery, skip, limit) =>
       .catch(error => reject(error));
   });
 
+/**get specific news*/
 module.exports.getNews = query =>
   new Promise((resolve, reject) => {
     News.findOne(query)
@@ -34,6 +37,7 @@ module.exports.getNews = query =>
       .catch(error => reject(error));
   });
 
+/**update news*/
 module.exports.updateNews = (query, data) =>
   new Promise((resolve, reject) => {
     News.findOneAndUpdate(query, data, {
@@ -46,6 +50,7 @@ module.exports.updateNews = (query, data) =>
       .catch(error => reject(error));
   });
 
+/**delete news*/
 module.exports.deleteNews = query =>
   new Promise((resolve, reject) => {
     News.deleteOne(query)

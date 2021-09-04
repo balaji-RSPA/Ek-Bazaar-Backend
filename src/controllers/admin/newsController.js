@@ -2,6 +2,7 @@ const { respSuccess, respError } = require("../../utils/respHadler");
 const { News } = require("../../modules");
 const { createNews, getAllNews, getNews, updateNews, deleteNews } = News;
 
+/**create news*/
 module.exports.createNews = async (req, res) => {
   try {
     const newsCreated = await createNews(req.body);
@@ -11,16 +12,18 @@ module.exports.createNews = async (req, res) => {
   }
 };
 
+/**get all News*/
 module.exports.getAllNews = async (req, res) => {
   try {
-    const {search,skip,limit} = req.body
-    const allNews = await getAllNews(search,skip,limit);
+    const { search, skip, limit } = req.body;
+    const allNews = await getAllNews(search, skip, limit);
     respSuccess(res, allNews);
   } catch (error) {
     respError(res, error.message);
   }
 };
 
+/**get specific news*/
 module.exports.getNews = async (req, res) => {
   try {
     const id = req.params.id;
@@ -36,6 +39,7 @@ module.exports.getNews = async (req, res) => {
   }
 };
 
+/**update news*/
 module.exports.updateNews = async (req, res) => {
   try {
     const id = req.params.id;
@@ -51,16 +55,16 @@ module.exports.updateNews = async (req, res) => {
   }
 };
 
-
+/**delete news*/
 module.exports.deleteNews = async (req, res) => {
-  try{
+  try {
     const id = req.params.id;
-    const deleteStatus = await deleteNews({_id: id});
+    const deleteStatus = await deleteNews({ _id: id });
     console.log("controlller");
     console.log(deleteStatus);
 
     respSuccess(res, deleteStatus, "Record deleted successfully");
-  }catch(error){
+  } catch (error) {
     respError(res, error.message);
   }
-}
+};
