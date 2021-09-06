@@ -44,7 +44,6 @@ module.exports.updateNews = (query, data) =>
       new: true
     })
       .then(updatedNews => {
-        console.log(updatedNews);
         resolve(updatedNews);
       })
       .catch(error => reject(error));
@@ -55,7 +54,6 @@ module.exports.deleteNews = query =>
   new Promise((resolve, reject) => {
     News.deleteOne(query)
       .then(deleteNews => {
-        console.log({ deleteNews });
         resolve(deleteNews);
       })
       .catch(error => reject(error));
