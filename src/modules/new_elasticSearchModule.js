@@ -2188,7 +2188,7 @@ exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, 
   };
   // console.log("exports.getSuggestions -> body", JSON.stringify(body))
   const searchQuery = {
-    index: process.env.NODE_ENV !== "production" ? "tradedb.suggestions" : "trade-live.suggestions",
+    index: process.env.NODE_ENV !== "production" ? "tradedb.suggestions" : "newtradedb.suggestions",
     body,
   };
   esClient
@@ -2209,7 +2209,7 @@ exports.getAllCitiesElastic = (query) => new Promise((resolve, reject) => {
     query
   };
   const searchQuery = {
-    index: process.env.NODE_ENV !== "production" ? "tradedb.cities" : "trade-live.cities",
+    index: process.env.NODE_ENV !== "production" ? "tradedb.cities" : "newtradedb.cities",
     body,
     from: 0,
     size: 500
@@ -2229,7 +2229,7 @@ exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
     query
   };
   const searchQuery = {
-    index: process.env.NODE_ENV !== "production" ? "tradedb.states" : "trade-live.states",
+    index: process.env.NODE_ENV !== "production" ? "tradedb.states" : "newtradedb.states",
     body,
     from: 0,
     size: 500
@@ -2250,7 +2250,7 @@ exports.getAllCountriesElastic = query => new Promise((resolve, reject) => {
   }
   console.log("🚀 ~ file: elasticSearchModule.js ~ line 1794 ~ exports.getAllCountriesElastic=query=>newPromise ~ query", query)
   const searchQuery = {
-    index: process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries",
+    index: process.env.NODE_ENV === "production" ? "tradedb.countries" : "newtradedb.countries",
     body,
     from: 0,
     size: 500

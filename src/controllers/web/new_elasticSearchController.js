@@ -487,21 +487,21 @@ module.exports.searchSuggestion = async (req, res) => {
         } else if (elem.secondaryCategoryId && elem.secondaryCategoryId.length) {
           suggestions.push(...elem.secondaryCategoryId.map(item => ({
             _source: { ...item, search: "level3" },
-            _index: 'trade-live.mastercollections',
+            _index: 'newtradedb.mastercollections',
             _type: '_doc',
             _id: item.id,
           })))
         } else if (elem.primaryCategoryId && elem.primaryCategoryId.length) {
           suggestions.push(...elem.primaryCategoryId.map(item => ({
             _source: { ...item, search: "level2" },
-            _index: 'trade-live.mastercollections',
+            _index: 'newtradedb.mastercollections',
             _type: '_doc',
             _id: item.id,
           })))
         } else if (elem.parentCategoryId && elem.parentCategoryId.length) {
           suggestions.push(...elem.parentCategoryId.map(item => ({
             _source: { ...item, search: "level1" },
-            _index: 'trade-live.mastercollections',
+            _index: 'newtradedb.mastercollections',
             _type: '_doc',
             _id: item.id,
           })))

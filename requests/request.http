@@ -324,3 +324,7 @@ content-type: application/json
 #     "iso3": "FRA"
 #   }
 # ]
+
+###
+GET  http://localhost:8070/getCityList HTTP/1.1
+content-type: application/json
