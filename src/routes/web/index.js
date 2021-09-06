@@ -13,6 +13,8 @@ const chat = require('./rocketChatRoutes')
 const Pincode = require('./pincodeRoutes')
 const DigitalSpace = require('./digitalSpaceRoutes')
 const Offers = require('./offerRouter')
+const News = require('./newsRoutes');
+const Commodity = require('./commodityRoutes');
 
 router.use(location)
 router.use(buyer)
@@ -28,5 +30,7 @@ router.use(chat)
 router.use(Pincode)
 router.use(DigitalSpace)
 router.use(Offers)
+router.use(News)
+router.use(Commodity)
 
 module.exports = router
