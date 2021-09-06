@@ -20,10 +20,10 @@ const commoditySchema = new Schema(
       {
         city: {
           type: ObjectId,
-          // ref: ""
+          ref: City
         },
         price: {
-          type: String
+          type: Number
         }
       }
     ]

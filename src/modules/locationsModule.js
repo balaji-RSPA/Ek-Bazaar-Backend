@@ -102,7 +102,6 @@ module.exports.getCountryData = (query) =>
   });
 module.exports.updateCountry = (query, data) =>
   new Promise((resolve, reject) => {
-    console.log(query, data, ' -------------- Req --------------')
     Countries.findOneAndUpdate(query, data, { new: true, upsert: true })
       .then((doc) => {
         resolve(doc);
@@ -146,7 +145,6 @@ exports.getAllCities = (reqQuery) =>
     let { state, countryId, indiaCity } = reqQuery;
     let match;
 
-    console.log("🚀 ~ file: locationsModule.js ~ line 139 ~ newPromise ~ countryId", reqQuery)
     if (state) {
       state = Array.isArray(state) ? state : [state];
       match = {
