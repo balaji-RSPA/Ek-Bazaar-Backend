@@ -10,8 +10,8 @@ getAllCountries
 /**Get all cities*/
 module.exports.getCities = async (req, res) => {
   try {
-    const {skip,limit, search} = req.query
-    const cities = await getAllCities({skip:parseInt(skip),limit:parseInt(limit), search});
+    const {skip,limit, search, indiaCity} = req.query
+    const cities = await getAllCities({skip:parseInt(skip),limit:parseInt(limit), search, indiaCity});
     // console.log("🚀 ~ file: locationController.js ~ line 16 ~ module.exports.getCities= ~ cities", cities)
     respSuccess(res, cities);
   } catch (error) {
