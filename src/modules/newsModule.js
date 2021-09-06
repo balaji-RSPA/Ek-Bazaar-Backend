@@ -18,9 +18,9 @@ module.exports.getAllNews = (searchQuery, skip, limit) =>
           $or: [{ news: { $regex: searchQuery, $options: "i" } }]
         }
       : {};
-    News.find(searchQry)
-      .skip(skip)
-      .limit(limit)
+    News.find(/* searchQry */)
+      // .skip(skip)
+      // .limit(limit)
       .then(newsData => {
         resolve(newsData);
       })

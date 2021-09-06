@@ -16,6 +16,7 @@ module.exports.createNews = async (req, res) => {
 module.exports.getAllNews = async (req, res) => {
   try {
     const { search, skip, limit } = req.query;
+    console.log("🚀 ~ file: newsController.js ~ line 19 ~ module.exports.getAllNews= ~ req.query", req.query)
     const allNews = await getAllNews(search, parseInt(skip), parseInt(limit));
     respSuccess(res, allNews);
   } catch (error) {
