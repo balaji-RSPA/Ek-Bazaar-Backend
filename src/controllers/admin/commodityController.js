@@ -8,6 +8,7 @@ const {
   deleteCommodity
 } = Commodity;
 
+/**create Commodity*/
 module.exports.createCommodity = async (req, res) => {
   try {
     const commodity = await createCommodity(req.body);
@@ -17,15 +18,22 @@ module.exports.createCommodity = async (req, res) => {
   }
 };
 
+/**get all commodity*/
 module.exports.getAllCommodity = async (req, res) => {
   try {
-    const commodityData = await getAllCommodity();
+    const { search, skip, limit } = req.query;
+    const commodityData = await getAllCommodity(
+      search,
+      parseInt(skip),
+      parseInt(limit)
+    );
     respSuccess(res, commodityData);
   } catch (error) {
     respError(res, error.message);
   }
 };
 
+/**get specific Commodity*/
 module.exports.getCommodity = async (req, res) => {
   try {
     const id = req.params.id;
@@ -36,17 +44,22 @@ module.exports.getCommodity = async (req, res) => {
   }
 };
 
+/**update Commodity*/
 module.exports.updateCommodity = async (req, res) => {
   try {
     const id = req.params.id;
     const updatedCommodityData = {};
-    const { commodityName, priceUnit } = req.body;
+    const { commodityName, priceUnit, cities } = req.body;
 
     if (commodityName) {
       updatedCommodityData.commodityName = commodityName;
     }
     if (priceUnit) {
       updatedCommodityData.priceUnit = priceUnit;
+    }
+
+    if (cities) {
+      updatedCommodityData.cities = cities;
     }
 
     const updatedCommodity = await updateCommodity(
@@ -59,6 +72,7 @@ module.exports.updateCommodity = async (req, res) => {
   }
 };
 
+/**delete Commodity*/
 module.exports.deleteCommodity = async (req, res) => {
   try {
     const _id = req.params.id;
