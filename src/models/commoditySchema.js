@@ -16,17 +16,17 @@ const commoditySchema = new Schema(
       required: true,
       trim: true
     },
-    // cities: [
-    //   {
-    //     city: {
-    //       type: ObjectId,
-    //       ref: ""
-    //     },
-    //     price: {
-    //       type: Number
-    //     }
-    //   }
-    // ]
+    cities: [
+      {
+        city: {
+          type: ObjectId,
+          ref: City
+        },
+        price: {
+          type: Number
+        }
+      }
+    ]
   },
   {
     timestamps: true,

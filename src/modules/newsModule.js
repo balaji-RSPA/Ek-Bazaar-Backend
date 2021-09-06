@@ -21,6 +21,7 @@ module.exports.getAllNews = (searchQuery, skip, limit) =>
     News.find(searchQry)
       .skip(skip)
       .limit(limit)
+      .sort({ updatedAt: -1 })
       .then(newsData => {
         resolve(newsData);
       })
