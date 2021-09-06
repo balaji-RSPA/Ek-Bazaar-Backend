@@ -33,6 +33,7 @@ const Pincodes = require('./pincode')
 const SellerOffferContacts = require('./sellerOfferContactSchema')
 // const Users = require('./user')
 const News = require("./newsSchema");
+const Commodity = require("./commoditySchema");
 
 module.exports = {
     Cities,
@@ -68,5 +69,6 @@ module.exports = {
     Chat,
     Pincodes,
     SellerOffferContacts,
-    News
+    News,
+    Commodity
 }
