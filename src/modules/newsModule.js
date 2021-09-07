@@ -15,12 +15,12 @@ module.exports.getAllNews = (searchQuery, skip, limit) =>
   new Promise((resolve, reject) => {
     let searchQry = searchQuery
       ? {
-          $or: [{ news: { $regex: searchQuery, $options: "i" } }]
-        }
+        $or: [{ news: { $regex: searchQuery, $options: "i" } }]
+      }
       : {};
     News.find(searchQry)
-      .skip(skip)
-      .limit(limit)
+      // .skip(skip)
+      // .limit(limit)
       .sort({ updatedAt: -1 })
       .then(newsData => {
         resolve(newsData);

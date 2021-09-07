@@ -25,7 +25,7 @@ module.exports.getAllCommodity = (searchQuery, skip, limit) =>
       .skip(skip)
       .limit(limit)
       .sort({ updatedAt: -1 })
-      .populate("cities.city")
+      .populate("city.city")
       .then(commodityData => {
         resolve(commodityData);
       })
@@ -36,7 +36,7 @@ module.exports.getAllCommodity = (searchQuery, skip, limit) =>
 module.exports.getCommodity = query =>
   new Promise((resolve, reject) => {
     Commodity.findOne(query)
-      .populate("cities.city")
+      .populate("city.city")
       .then(commodityData => {
         resolve(commodityData);
       })

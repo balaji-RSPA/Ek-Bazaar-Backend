@@ -49,7 +49,7 @@ module.exports.updateCommodity = async (req, res) => {
   try {
     const id = req.params.id;
     const updatedCommodityData = {};
-    const { commodityName, priceUnit, cities } = req.body;
+    const { commodityName, priceUnit, city } = req.body;
 
     if (commodityName) {
       updatedCommodityData.commodityName = commodityName;
@@ -58,8 +58,8 @@ module.exports.updateCommodity = async (req, res) => {
       updatedCommodityData.priceUnit = priceUnit;
     }
 
-    if (cities) {
-      updatedCommodityData.cities = cities;
+    if (city) {
+      updatedCommodityData.city = city;
     }
 
     const updatedCommodity = await updateCommodity(
