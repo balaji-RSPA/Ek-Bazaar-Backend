@@ -1,5 +1,5 @@
 var client = require('../config/db').esClient;
-const index = process.env.NODE_ENV !== "production" ? "tradedb.mastercollections" : "trade-live.mastercollections"
+const index = process.env.NODE_ENV !== "production" ? "tradedb.mastercollections" : "newtradedb.mastercollections"
 const type = "_doc"
 const { config } = require("./mapping")
 
