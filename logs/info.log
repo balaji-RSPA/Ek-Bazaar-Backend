@@ -3371,5 +3371,14 @@
 >>>>>>> staging
 {"message":"Listening:8070","level":"info","timestamp":"2021-09-07T05:20:49.215Z"}
 >>>>>>> staging
+<<<<<<< HEAD
 >>>>>>> a48cf76f9cf1da1fd86167c10335e4dee48a5ddf
 {"message":"Listening:8070","level":"info","timestamp":"2021-09-07T08:06:17.476Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-07T05:36:44.182Z"}
+>>>>>>> 3fb2c2cbb9cb7bb6c9699270a1c62989abea0f7f
+{"code":"EADDRINUSE","errno":"EADDRINUSE","syscall":"listen","address":"::","port":8070,"level":"error","timestamp":"2021-09-07T09:25:03.732Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-07T09:59:56.851Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-07T10:00:14.924Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-07T10:07:39.893Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-07T10:08:52.847Z"}
