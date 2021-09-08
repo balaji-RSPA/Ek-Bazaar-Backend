@@ -98,16 +98,17 @@ module.exports.getAllSellerTypes = async (req, res) => {
 module.exports.getSpecificCategories = async (req, res) => {
     try {
         const idsArray = [
-            "6114cc830a3c0d4159143515",
-            "6114cc830a3c0d4159143516",
-            "6114cc830a3c0d4159143517",
-            "6114cc830a3c0d415914351c",
-            "6114cc830a3c0d4159143522"
-            // "5fddf6051a15802b9764520d",
-            // "5fddf6051a15802b97645214",
-            // "5fddf6051a15802b9764520e",
-            // "5fddf6051a15802b9764520f",
-            // "5fddf6051a15802b9764521a"
+            // "6114cc830a3c0d4159143515",
+            // "6114cc830a3c0d4159143516",
+            // "6114cc830a3c0d4159143517",
+            // "6114cc830a3c0d415914351c",
+            // "6114cc830a3c0d4159143522",
+
+            "5fddf6051a15802b9764520d",
+            "5fddf6051a15802b97645214",
+            "5fddf6051a15802b9764520e",
+            "5fddf6051a15802b9764520f",
+            "5fddf6051a15802b9764521a"
         ]
 
         // live atlas parent cat ids 
