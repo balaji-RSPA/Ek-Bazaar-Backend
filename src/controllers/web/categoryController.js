@@ -675,15 +675,15 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
             // "5fdf6cedbe4f6810f10106bc",
 
             // old db categories l3
-            // '5fdf6cc9be4f6810f10102d0',
-            // '5fdf6cc9be4f6810f10102d4',
-            // '5fdf6cdcbe4f6810f10104e2',
-            // "5fdf6cc8be4f6810f10102ca"
+            '5fdf6cc9be4f6810f10102d0',
+            '5fdf6cc9be4f6810f10102d4',
+            '5fdf6cdcbe4f6810f10104e2',
+            "5fdf6cc8be4f6810f10102ca"
 
-            "6114cf750a3c0d4159143c8c",
-            "6114cf750a3c0d4159143c94",
-            "6114cf980a3c0d41591440b0",
-            "6114cf750a3c0d4159143c80",
+            // "6114cf750a3c0d4159143c8c",
+            // "6114cf750a3c0d4159143c94",
+            // "6114cf980a3c0d41591440b0",
+            // "6114cf750a3c0d4159143c80",
         ]
 
         // live atlas secondary cat Ids
