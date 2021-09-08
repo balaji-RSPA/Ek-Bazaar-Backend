@@ -12,6 +12,6 @@ module.exports.getAllNews = async (req, res) => {
     const allNews = await getAllNews(query);
     respSuccess(res, allNews);
   } catch (error) {
-    respError(res, error.message);
+    respError(res, error.message);     
   }
 };
