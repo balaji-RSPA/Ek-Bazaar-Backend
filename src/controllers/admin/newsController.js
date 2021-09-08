@@ -17,11 +17,11 @@ module.exports.getAllNews = async (req, res) => {
   try {
     const { search, skip, limit } = req.query;
     const query = search ? {
-      search: {
+      search : {
         $or: [{ news: { $regex: search, $options: "i" } }]
       },
-      skip: parseInt(skip),
-      limit: parseInt(limit)
+      skip :parseInt(skip),
+      limit:parseInt(limit)
     } : {}
     const allNews = await getAllNews(query);
     respSuccess(res, allNews);

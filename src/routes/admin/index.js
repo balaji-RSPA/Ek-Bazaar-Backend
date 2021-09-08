@@ -14,7 +14,7 @@ router.use(location)
 router.use(category)
 router.use(rfp)
 router.use(subscriptionPlan)
-// router.use(news);
+router.use(news);
 router.use(commodity);
 
 module.exports = router
