@@ -2244,10 +2244,10 @@ exports.getSuggestions = (query, range, product, aggs) => new Promise((resolve, 
   };
   // console.log("exports.getSuggestions -> body", JSON.stringify(body))
 
-  // const index = process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions"
+  const index = process.env.NODE_ENV === "production" ? "tradedb.suggestions" : "trade-live.suggestions"
 
   // new elasticsearch single node multi index
-  const index = "tradedb.suggestions"
+  // const index = "tradedb.suggestions"
 
   const searchQuery = {
     index,

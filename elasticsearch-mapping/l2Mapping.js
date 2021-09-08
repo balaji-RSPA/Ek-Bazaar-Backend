@@ -1,5 +1,5 @@
 var client = require('../config/db').esClient;
-const index = process.env.NODE_ENV === "production" ? "tradedb.level2" : "newtradedb.level2"
+const index = process.env.NODE_ENV === "production" ? "tradedb.level2" : "trade-live.level2"
 const type = "_doc"
 
 const { PrimaryCategory } = require("../src/models")
