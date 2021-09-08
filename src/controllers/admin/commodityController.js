@@ -22,18 +22,18 @@ module.exports.createCommodity = async (req, res) => {
 module.exports.getAllCommodity = async (req, res) => {
   try {
     const { search, skip, limit } = req.query;
-    let query = {
-      search : {
-          $or: [
-            { commodityName: { $regex: search, $options: "i" } },
-            { priceUnit: { $regex: search, $options: "i" } }
-          ]
-        },
-      skip:parseInt(skip),
-      limit:parseInt(limit)
-    }
+    let query = search ? {
+      search: {
+        $or: [
+          { commodityName: { $regex: search, $options: "i" } },
+          { priceUnit: { $regex: search, $options: "i" } }
+        ]
+      },
+      skip: parseInt(skip),
+      limit: parseInt(limit)
+    } : {}
     const commodityData = await getAllCommodity(
-     query
+      query
     );
     respSuccess(res, commodityData);
   } catch (error) {
