@@ -102,7 +102,7 @@ module.exports.getSpecificCategories = async (req, res) => {
             // "6114cc830a3c0d4159143516",
             // "6114cc830a3c0d4159143517",
             // "6114cc830a3c0d415914351c",
-            // "6114cc830a3c0d4159143522"
+            // "6114cc830a3c0d4159143522",
 
             "5fddf6051a15802b9764520d",
             "5fddf6051a15802b97645214",

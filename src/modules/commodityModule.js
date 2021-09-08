@@ -11,19 +11,15 @@ module.exports.createCommodity = commodityData =>
   });
 
 /**get all commodity*/
-module.exports.getAllCommodity = (searchQuery, skip, limit) =>
+module.exports.getAllCommodity = (searchQuery) =>
   new Promise((resolve, reject) => {
-    let searchQry = searchQuery
-      ? {
-          $or: [
-            { commodityName: { $regex: searchQuery, $options: "i" } },
-            { priceUnit: { $regex: searchQuery, $options: "i" } }
-          ]
-        }
+    let searchQry = searchQuery.search
+      ? searchQuery.search
       : {};
+
     Commodity.find(searchQry)
-      .skip(skip)
-      .limit(limit)
+      .skip(searchQuery.skip)
+      .limit(searchQuery.limit)
       .sort({ updatedAt: -1 })
       .populate("city.city")
       .then(commodityData => {
