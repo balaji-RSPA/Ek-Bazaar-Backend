@@ -14,11 +14,13 @@ const { getAllSellerDetails,
     getLevelTwo,
     getLevelThree,
     getLevelFour,
-    getLevelFive
+    getLevelFive,
+
+    getAllMasterProducts
 } = require('../../modules/sellerDataMoveModule')
 const { location, category } = require('../../modules')
 const { getCountry, getState, getCity, checkState, getSelectedCountries, getSelectedStates, getFilteredCities } = location
-// const { getParentCat, getSpecificCategories, getPrimaryCat } = category
+const { /* getParentCat, getSpecificCategories, getPrimaryCat, */ getSellerType } = category
 
 module.exports.uploadOnBoardSeller = async (req, res) => {
 
@@ -79,11 +81,17 @@ const locationMap = async (location, seller = {}, type = '') => {
 }
 
 const productStructure = async (product, sell = {}) => {
-    let { parentCategoryId, primaryCategoryId, secondaryCategoryId, poductId, productSubcategoryId, productDetails, serviceCity } = product
+    let { parentCategoryId, primaryCategoryId, secondaryCategoryId, poductId, productSubcategoryId, productDetails, serviceCity, offers, serviceType } = product
 
     const _sList = []
     let details = {
         ...product
+    }
+    if (serviceType) {
+        details = {
+            ...details,
+            serviceType: serviceType && serviceType._id || null
+        }
     }
     // Product Service City Mapping
     if (serviceCity && serviceCity.length) {
@@ -206,54 +214,155 @@ const productStructure = async (product, sell = {}) => {
 
             productDetails["sellingCities"] = sc && sc.length && sc.map((v) => v._id) || []
         }
+        if (offers) {
+            let { location } = offers
+            city = location && location.city && location.city.label ? await getCity({ name: location.city.label.toLowerCase() }) : null
+
+            offers = {
+                ...offers,
+                location: {
+                    city: city && city.name ? {
+                        label: city.name || null,
+                        value: city._id || null
+                    } : null,
+                    state: location && location.state || null
+                }
+            }
+            details = {
+                ...details,
+                offers: offers
+            }
+        }
     }
     return details
 }
 
-const masterMap = async (seller, product) => {
-    console.log("🚀 ~ file: sellerDataMove.js ~ line 214 ~ masterMap ~ seller, product", seller, product)
-    // const data = {
-    //     sellerId: val.sellerId && {
-    //         location: val.sellerId && val.sellerId.location || null,
-    //         name: val.sellerId && val.sellerId.name || null,
-    //         email: val.sellerId && val.sellerId.email || null,
+const masterMap = async (seller, product, offers) => {
+    const sType = seller && seller.sellerType && seller.sellerType.length && seller.sellerType[0] ? await getSellerType({ _id: seller.sellerType[0] }) : null
 
-    //         sellerType: val.sellerId && val.sellerId.sellerType && val.sellerId.sellerType.length && {
-    //             _id: val.sellerId.sellerType[0]._id,
-    //             name: val.sellerId.sellerType[0].name
-    //         } || null,
+    let _offers = null
+    if (product && product.offers) {
+        let { location } = product.offers
+        city = location && location.city && location.city.label ? await getCity({ name: location.city.label.toLowerCase() }) : null
 
-    //         _id: val.sellerId && val.sellerId._id || null,
-    //         mobile: val.sellerId && val.sellerId.mobile || null,
-    //         website: val.sellerId.website || null,
-    //         isEmailVerified: val.sellerId.isEmailVerified || false,
-    //         isPhoneVerified: val.sellerId.isPhoneVerified || false,
-    //         sellerVerified: val.sellerId.sellerVerified || false,
-    //         paidSeller: val.sellerId.paidSeller || false,
-    //         international: val.sellerId.international || false,
-    //         deactivateAccount: val.sellerId.deactivateAccount && val.sellerId.deactivateAccount.status || false,
-    //         businessName: val.sellerId.busenessId && val.sellerId.busenessId.name || null,
-    //         contactDetails: contactDetails,
-    //     } || null,
-    //     userId: val.sellerId && val.sellerId.userId && {
-    //         name: val.sellerId.name || null,
-    //         _id: val.sellerId.userId
-    //     } || null,
-    //     productDetails: val.productDetails && val.productDetails || null,
-    //     status: val.status !== null && val.status !== undefined ? val.status : true,
-    //     batch: 1,
-    //     keywords,
-    //     serviceType: val.serviceType && {
-    //         _id: val.serviceType._id,
-    //         name: val.serviceType.name
-    //     } || null,
-    //     parentCategoryId: val.parentCategoryId && val.parentCategoryId.length && val.parentCategoryId || null,
-    //     primaryCategoryId: val.primaryCategoryId && val.primaryCategoryId.length && val.primaryCategoryId || null,
-    //     secondaryCategoryId: val.secondaryCategoryId && val.secondaryCategoryId.length && val.secondaryCategoryId || null,
-    //     poductId: val.poductId && val.poductId.length && val.poductId || null,
-    //     productSubcategoryId: val.productSubcategoryId && val.productSubcategoryId.length && val.productSubcategoryId || null,
-    // }
+        _offers = {
+            ...product.offers,
+            location: {
+                city: city && city.name ? {
+                    label: city.name || null,
+                    value: city._id || null
+                } : null,
+                state: location && location.state || null
+            }
+        }
+    }
+    const data = {
+        ...product,
+        serviceType: product && product.serviceType && product.serviceType._id && [product.serviceType] || null,
+        sellerId: seller && {
+            location: seller && seller.location && {
+                city: seller && seller.location && seller.location.city &&
+                    { name: seller.location.city.name || null, _id: seller.location.city._id } || null,
+                state: seller && seller.location && seller.location.state &&
+                    { name: seller.location.state.name || null, _id: seller.location.state._id } || null,
+                country: seller && seller.location && seller.location.country &&
+                    { name: seller.location.country.name || null, _id: seller.location.country._id } || null,
+                address: null,
+                pincode: null
+            } || null,
+            name: seller && seller.name || null,
+            email: seller && seller.email || null,
 
+            sellerType: sType && sType._id && [{
+                _id: sType._id,
+                name: sType.name
+            }] || null,
+
+            _id: seller && seller._id || null,
+            mobile: seller && seller.mobile || null,
+            website: seller && seller.website || null,
+            isEmailVerified: seller && seller.isEmailVerified || false,
+            isPhoneVerified: seller && seller.isPhoneVerified || false,
+            sellerVerified: seller && seller.sellerVerified || false,
+            paidSeller: seller && seller.paidSeller || false,
+            international: seller && seller.international || false,
+            status: seller && seller.status || true,
+            deactivateAccount: seller && seller.deactivateAccount && seller.deactivateAccount.status || false,
+            businessName: seller.busenessId && seller.busenessId.name || null,
+
+            contactDetails: seller && seller.sellerContactId && {
+                location: seller && seller.sellerContactId && seller.sellerContactId.location && {
+                    city: seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.city &&
+                    {
+                        name: seller.sellerContactId.location.city.name || null,
+                        _id: seller.sellerContactId.location.city._id || null
+                    } || null,
+
+                    state: seller && seller.sellerContactId.location && seller.sellerContactId.location.state &&
+                    {
+                        name: seller.sellerContactId.location.state.name || null,
+                        _id: seller.sellerContactId.location.state._id || null
+                    }
+                        || null,
+
+                    country: seller && seller.sellerContactId.location && seller.sellerContactId.location.country &&
+                    {
+                        name: seller.sellerContactId.location.country.name || null,
+                        _id: seller.sellerContactId.location.country._id || null
+                    } || null,
+                    address: seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.address || null,
+                    pincode: seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.pincode || null
+                } || null,
+                alternativNumber: seller && seller.sellerContactId && seller.sellerContactId.alternativNumber || null,
+                email: seller && seller.sellerContactId && seller.sellerContactId.email || null,
+                website: seller && seller.sellerContactId && seller.sellerContactId.website || null
+            } || null,
+
+        } || null,
+        userId: seller && seller.userId && {
+            name: seller.name || null,
+            _id: seller.userId
+        } || null,
+        offers: _offers || null
+        // productDetails: product && product.productDetails && product.productDetails || null,
+
+    }
+    return data
+
+}
+module.exports.getSellerMasterProducts = async (req, res) => {
+    try {
+        console.log('get seller master products --------------')
+        const filePath = `public/sellerUploadedbleData.json`
+        const rowData = await fs.readFile(filePath)
+        const data = JSON.parse(rowData)
+        const prod = []
+        if (data && data.length) {
+            for (let index = 0; index < data.length; index++) {
+                const sell = data[index];
+                const { sellerProductId } = sell
+                let newSeller = {
+                    ...sell
+                }
+                const ids = sellerProductId && sellerProductId.length && sellerProductId.map((v) => v._id) || []
+                const masterProducts = ids && ids.length ? await getAllMasterProducts({ _id: { $in: ids } }) : []
+                newSeller = {
+                    ...newSeller,
+                    masterProducts: masterProducts
+                }
+                prod.push(newSeller)
+
+            }
+            console.log(JSON.stringify(prod), 'master --------------------')
+            respSuccess(res, prod)
+        }
+
+    } catch (error) {
+
+        console.log(error)
+        respError(error)
+
+    }
 }
 
 
@@ -334,23 +443,34 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                 }
                 if (sellerProductId && sellerProductId.length) { // seller products map
                     let allProd = []
+                    let masterProducts = []
+                    for (let i = 0; i < sellerProductId.length; i++) {
+                        const product = sellerProductId[i];
+                        const fff = sellerProductId[i]
+
+                        let masterData = await masterMap(sell, fff, null)
+                        // console.log(JSON.stringify(masterData), ' ********************************')
+                        masterProducts.push(masterData)
+
+                    }
+                    console.log(JSON.stringify(masterProducts), "--master products ------------------")
+
                     for (let i = 0; i < sellerProductId.length; i++) {
                         const product = sellerProductId[i];
                         const proStructure = await productStructure(product, sell)
+                        // console.log(JSON.stringify(proStructure), ' %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
                         allProd.push(proStructure)
 
                     }
-                    const masterData = await masterMap(sell, allProd)
+                    console.log(JSON.stringify(allProd), " --------- Seller Products ------------")
                     seller = {
                         ...seller,
-                        sellerProductId: allProd /* && allProd.length && allProd.map((v) => v._id) */ || []
+                        sellerProductId: allProd && allProd.length && allProd.map((v) => v._id) || []
                     }
 
                 }
                 _sel = seller
-
-
-
+                console.log("🚀 ~ file: sellerDataMove.js ~ line 470 ~ module.exports.moveSellerToNewDB= ~ _sel", _sel)
             }
         }
         respSuccess(res, _sel)

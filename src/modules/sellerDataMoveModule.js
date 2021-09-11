@@ -11,7 +11,8 @@ const {
     SellerStatutory,
     SellerCompany,
     SellerEstablishment,
-    SellerContact
+    SellerContact,
+    MasterCollection
 } = require('../models')
 
 /**
@@ -35,6 +36,14 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             populate: {
                 path: "location.city location.state location.country",
                 // model: Cities
+            }
+        })
+        .populate({
+            path: 'sellerProductId',
+            // model: SellersContact,
+            populate: {
+                path: "serviceType",
+                select: "name"
             }
         })
         .populate({
@@ -87,6 +96,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'productDetails.regionOfOrigin',
+                select: "name region"
             },
         })
         .populate({
@@ -94,6 +104,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'productDetails.countryOfOrigin',
+                select: "name"
             },
         })
         .populate({
@@ -101,6 +112,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'productDetails.cityOfOrigin',
+                select: "name"
             },
         })
         .populate({
@@ -108,6 +120,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'productDetails.sellingCountries',
+                select: "name"
             },
         })
         .populate({
@@ -115,6 +128,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'productDetails.sellingStates',
+                select: "name region"
             },
         })
         .populate({
@@ -122,6 +136,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'productDetails.sellingCities',
+                select: "name"
             },
         })
         .populate({
@@ -129,6 +144,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'serviceCity.city',
+                select: "name"
             },
         })
         .populate({
@@ -136,6 +152,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'serviceCity.state',
+                select: "name region"
             },
         })
         .populate({
@@ -143,6 +160,7 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
             model: 'sellerproducts',
             populate: {
                 path: 'serviceCity.country',
+                select: "name"
             },
         })
         .limit(10)
@@ -224,6 +242,11 @@ exports.getLevelFour = (query) => new Promise((resolve, reject) => {
 exports.getLevelFive = (query) => new Promise((resolve, reject) => {
     ProductsSubCategories.find(query)
         .select('name vendorId')
+        .then((doc) => resolve(doc))
+        .catch((error) => reject(error));
+})
+exports.getAllMasterProducts = (query) => new Promise((resolve, reject) => {
+    MasterCollection.find(query)
         .then((doc) => resolve(doc))
         .catch((error) => reject(error));
 })
