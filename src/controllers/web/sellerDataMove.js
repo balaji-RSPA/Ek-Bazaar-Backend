@@ -2,6 +2,7 @@ const {
     respSuccess,
     respError
 } = require('../../utils/respHadler');
+const moment = require('moment')
 const fs = require('fs').promises
 const { getAllSellerDetails,
     addSellerStatutory,
@@ -61,6 +62,26 @@ module.exports.uploadOnBoardSeller = async (req, res) => {
 
     }
 }
+
+const mapPriority = (plan) => new Promise((resolve, reject) => {
+    let priority = 4
+    if (plan && plan.sellerId) {
+        const currentDate = moment().format('YYYY-MM-DD')
+        const expireDate = moment(plan.exprireDate).format('YYYY-MM-DD')
+        // console.log(moment(currentDate).isSameOrAfter(expireDate), ' ggggggggggggggg')
+
+        if (plan.isTrial) {
+            priority = 2
+        } else if (moment(currentDate).isSameOrAfter(expireDate)) {
+            priority = 3
+        } else if (!moment(currentDate).isSameOrAfter(expireDate)) {
+            priority = 1
+        }
+
+    }
+    resolve(priority)
+
+})
 
 const locationMap = async (location, seller = {}, type = '') => {
     let { city, state, country } = location
@@ -237,9 +258,8 @@ const productStructure = async (product, sell = {}) => {
     return details
 }
 
-const masterMap = async (seller, product, offers) => {
+const masterMap = async (seller, product, offers, priority, planExpire) => {
     const sType = seller && seller.sellerType && seller.sellerType.length && seller.sellerType[0] ? await getSellerType({ _id: seller.sellerType[0] }) : null
-
     let _offers = null
     if (product && product.offers) {
         let { location } = product.offers
@@ -259,6 +279,7 @@ const masterMap = async (seller, product, offers) => {
     const data = {
         ...product,
         serviceType: product && product.serviceType && product.serviceType._id && [product.serviceType] || null,
+        priority: priority || 1,
         sellerId: seller && {
             location: seller && seller.location && {
                 city: seller && seller.location && seller.location.city &&
@@ -289,6 +310,7 @@ const masterMap = async (seller, product, offers) => {
             status: seller && seller.status || true,
             deactivateAccount: seller && seller.deactivateAccount && seller.deactivateAccount.status || false,
             businessName: seller.busenessId && seller.busenessId.name || null,
+            planExpired: planExpire || false,
 
             contactDetails: seller && seller.sellerContactId && {
                 location: seller && seller.sellerContactId && seller.sellerContactId.location && {
@@ -383,6 +405,11 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                 let sellerEstablisment = null
                 let planDetails = null
                 let { busenessId, statutoryId, establishmentId, sellerCompanyId, sellerContactId, planId, location, sellerProductId } = sell
+                const _planDetails = planId
+                const planExpire = _planDetails && _planDetails.expireStatus || false
+                console.log("🚀 ~ file: sellerDataMove.js ~ line 408 ~ module.exports.moveSellerToNewDB= ~ _planDetails", _planDetails)
+                const priority = await mapPriority(_planDetails || "")
+                // console.log(priority, '  ------ Search Priority -------')
                 let seller = {
                     ...sell
                 }
@@ -448,7 +475,7 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                         const product = sellerProductId[i];
                         const fff = sellerProductId[i]
 
-                        let masterData = await masterMap(sell, fff, null)
+                        let masterData = await masterMap(sell, fff, null, priority, planExpire)
                         // console.log(JSON.stringify(masterData), ' ********************************')
                         masterProducts.push(masterData)
 
@@ -457,12 +484,12 @@ module.exports.moveSellerToNewDB = async (req, res) => {
 
                     for (let i = 0; i < sellerProductId.length; i++) {
                         const product = sellerProductId[i];
-                        const proStructure = await productStructure(product, sell)
+                        const proStructure = await productStructure(product, sell, priority)
                         // console.log(JSON.stringify(proStructure), ' %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
                         allProd.push(proStructure)
 
                     }
-                    console.log(JSON.stringify(allProd), " --------- Seller Products ------------")
+                    // console.log(JSON.stringify(allProd), " --------- Seller Products ------------")
                     seller = {
                         ...seller,
                         sellerProductId: allProd && allProd.length && allProd.map((v) => v._id) || []
@@ -470,7 +497,7 @@ module.exports.moveSellerToNewDB = async (req, res) => {
 
                 }
                 _sel = seller
-                console.log("🚀 ~ file: sellerDataMove.js ~ line 470 ~ module.exports.moveSellerToNewDB= ~ _sel", _sel)
+                // console.log("🚀 ~ file: sellerDataMove.js ~ line 470 ~ module.exports.moveSellerToNewDB= ~ _sel", _sel)
             }
         }
         respSuccess(res, _sel)

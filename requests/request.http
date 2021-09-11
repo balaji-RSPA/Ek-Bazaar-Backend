@@ -330,13 +330,13 @@ content-type: application/json
 # content-type: application/json
 
 
-# ###
-# GET  http://localhost:8070/uploadOnBoardSeller HTTP/1.1
-# content-type: application/json
-
 ###
-GET  http://localhost:8070/getSellerMasterProducts HTTP/1.1
+GET  http://localhost:8070/uploadOnBoardSeller HTTP/1.1
 content-type: application/json
+
+# ###
+# GET  http://localhost:8070/getSellerMasterProducts HTTP/1.1
+# content-type: application/json
 
 ###
 GET  http://localhost:8070/moveSellerToNewDB HTTP/1.1
