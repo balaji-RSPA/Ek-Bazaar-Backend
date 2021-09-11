@@ -24,7 +24,7 @@ const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const { deleteTestData, uploadInternationalCity, getCityList } = require('./src/controllers/web/testController')
-const _request = require("request")
+const { uploadOnBoardSeller, moveSellerToNewDB } = require('./src/controllers/web/sellerDataMove')
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 
 // const { suggestions} = require("./elasticsearch-mapping");
@@ -117,6 +117,19 @@ app.get("/deleteTestData", async function (req, res) {
 app.get("/gujaratSellerData", async function (req, res) {
   try {
     const result = await gujaratSellerData(req, res)
+  } catch (error) { }
+  // res.send('Its delete records  live')
+});
+
+app.get("/uploadOnBoardSeller", async function (req, res) {
+  try {
+    const result = await uploadOnBoardSeller(req, res)
+  } catch (error) { }
+  // res.send('Its delete records  live')
+});
+app.get("/moveSellerToNewDB", async function (req, res) {
+  try {
+    const result = await moveSellerToNewDB(req, res)
   } catch (error) { }
   // res.send('Its delete records  live')
 });
