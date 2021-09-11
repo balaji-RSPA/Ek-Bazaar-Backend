@@ -352,41 +352,6 @@ const masterMap = async (seller, product, offers, priority, planExpire) => {
     return data
 
 }
-module.exports.getSellerMasterProducts = async (req, res) => {
-    try {
-        console.log('get seller master products --------------')
-        const filePath = `public/sellerUploadedbleData.json`
-        const rowData = await fs.readFile(filePath)
-        const data = JSON.parse(rowData)
-        const prod = []
-        if (data && data.length) {
-            for (let index = 0; index < data.length; index++) {
-                const sell = data[index];
-                const { sellerProductId } = sell
-                let newSeller = {
-                    ...sell
-                }
-                const ids = sellerProductId && sellerProductId.length && sellerProductId.map((v) => v._id) || []
-                const masterProducts = ids && ids.length ? await getAllMasterProducts({ _id: { $in: ids } }) : []
-                newSeller = {
-                    ...newSeller,
-                    masterProducts: masterProducts
-                }
-                prod.push(newSeller)
-
-            }
-            console.log(JSON.stringify(prod), 'master --------------------')
-            respSuccess(res, prod)
-        }
-
-    } catch (error) {
-
-        console.log(error)
-        respError(error)
-
-    }
-}
-
 
 module.exports.moveSellerToNewDB = async (req, res) => {
     try {
@@ -398,6 +363,7 @@ module.exports.moveSellerToNewDB = async (req, res) => {
         if (data && data.length) {
             for (let index = 0; index < data.length; index++) {
                 const sell = data[index];
+                console.log(sell && sell.name, sell && sell.mobile && sell.mobile.length && sell.mobile[0].mobile, ' [---# Seller Name #---]')
                 let sellerBusiness = null
                 let sellerStatutoryDetails = null
                 let sellerCompanyDetails = null
@@ -407,7 +373,6 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                 let { busenessId, statutoryId, establishmentId, sellerCompanyId, sellerContactId, planId, location, sellerProductId } = sell
                 const _planDetails = planId
                 const planExpire = _planDetails && _planDetails.expireStatus || false
-                console.log("🚀 ~ file: sellerDataMove.js ~ line 408 ~ module.exports.moveSellerToNewDB= ~ _planDetails", _planDetails)
                 const priority = await mapPriority(_planDetails || "")
                 // console.log(priority, '  ------ Search Priority -------')
                 let seller = {
@@ -497,14 +462,48 @@ module.exports.moveSellerToNewDB = async (req, res) => {
 
                 }
                 _sel = seller
-                // console.log("🚀 ~ file: sellerDataMove.js ~ line 470 ~ module.exports.moveSellerToNewDB= ~ _sel", _sel)
             }
         }
-        respSuccess(res, _sel)
+        respSuccess(res, 'Uploaded all seller data successfully--------')
     } catch (error) {
 
         console.log(error)
         respError(error)
 
     }
+}
+
+module.exports.getSellerMasterProducts = async (req, res) => {
+    // try {
+    //     console.log('get seller master products --------------')
+    //     const filePath = `public/sellerUploadedbleData.json`
+    //     const rowData = await fs.readFile(filePath)
+    //     const data = JSON.parse(rowData)
+    //     const prod = []
+    //     if (data && data.length) {
+    //         for (let index = 0; index < data.length; index++) {
+    //             const sell = data[index];
+    //             const { sellerProductId } = sell
+    //             let newSeller = {
+    //                 ...sell
+    //             }
+    //             const ids = sellerProductId && sellerProductId.length && sellerProductId.map((v) => v._id) || []
+    //             const masterProducts = ids && ids.length ? await getAllMasterProducts({ _id: { $in: ids } }) : []
+    //             newSeller = {
+    //                 ...newSeller,
+    //                 masterProducts: masterProducts
+    //             }
+    //             prod.push(newSeller)
+
+    //         }
+    //         console.log(JSON.stringify(prod), 'master --------------------')
+    //         respSuccess(res, prod)
+    //     }
+
+    // } catch (error) {
+
+    //     console.log(error)
+    //     respError(error)
+
+    // }
 }
