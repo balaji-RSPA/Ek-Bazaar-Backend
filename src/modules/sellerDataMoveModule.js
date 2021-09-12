@@ -12,7 +12,9 @@ const {
     SellerCompany,
     SellerEstablishment,
     SellerContact,
-    MasterCollection
+    MasterCollection,
+
+    Buyers
 } = require('../models')
 
 /**
@@ -163,7 +165,9 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
                 select: "name"
             },
         })
-        .limit(10)
+        .lean()
+        .skip(2100)
+        .limit(200)
         .then(doc => {
             resolve(doc)
         })
@@ -174,43 +178,43 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
    * Add seller business details
   */
 module.exports.addSellerBusiness = (data) => new Promise((resolve, reject) => {
-    // SellerBusiness.create(data)
-    //     .then(doc => {
-    //         resolve(doc)
-    //     })
-    // .catch (error => reject(error))
+    SellerBusiness.create(data)
+        .then(doc => {
+            resolve(doc)
+        })
+        .catch(error => reject(error))
 })
 
 module.exports.addSellerStatutory = (data) => new Promise((resolve, reject) => {
-    // SellerStatutory.create(data)
-    //     .then(doc => {
-    //         resolve(doc)
-    //     })
-    // .catch (error => reject(error))
+    SellerStatutory.create(data)
+        .then(doc => {
+            resolve(doc)
+        })
+        .catch(error => reject(error))
 })
 
 module.exports.addSellerCompany = (data) => new Promise((resolve, reject) => {
-    // SellerCompany.create(data)
-    //     .then(doc => {
-    //         resolve(doc)
-    //     })
-    // .catch (error => reject(error))
+    SellerCompany.create(data)
+        .then(doc => {
+            resolve(doc)
+        })
+        .catch(error => reject(error))
 })
 
 module.exports.addSellerContact = (data) => new Promise((resolve, reject) => {
-    // SellerContact.create(data)
-    //     .then(doc => {
-    //         resolve(doc)
-    //     })
-    // .catch (error => reject(error))
+    SellerContact.create(data)
+        .then(doc => {
+            resolve(doc)
+        })
+        .catch(error => reject(error))
 })
 
 module.exports.addSellerEstablishment = (data) => new Promise((resolve, reject) => {
-    // SellerEstablishment.create(data)
-    //     .then(doc => {
-    //         resolve(doc)
-    //     })
-    // .catch (error => reject(error))
+    SellerEstablishment.create(data)
+        .then(doc => {
+            resolve(doc)
+        })
+        .catch(error => reject(error))
 })
 
 module.exports.getLevelOne = (query) => new Promise((resolve, reject) => {
@@ -250,3 +254,11 @@ exports.getAllMasterProducts = (query) => new Promise((resolve, reject) => {
         .then((doc) => resolve(doc))
         .catch((error) => reject(error));
 })
+
+// Buyers 
+exports.getAllBuyers = (query) => new Promise((resolve, reject) => {
+    Buyers.find(query)
+        .then((doc) => resolve(doc))
+        .catch((error) => reject(error));
+})
+

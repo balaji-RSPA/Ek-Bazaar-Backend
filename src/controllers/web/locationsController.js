@@ -177,7 +177,7 @@ module.exports.getAllCountries = async (req, res) => {
         else if (a.priority > b.priority) return 1
         else return 0
       })
-      console.log("🚀 ~ file: locationsController.js ~ line 169 ~ let_countries=countries.filter ~ _countries", _countries)
+      // console.log("🚀 ~ file: locationsController.js ~ line 169 ~ let_countries=countries.filter ~ _countries", _countries)
 
       _countries = _countries.concat(countries.reduce((acc, curr) => {
         if (newArray.findIndex(country => country.name === curr.name) === -1) acc.push(curr)

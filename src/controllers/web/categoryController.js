@@ -119,11 +119,11 @@ module.exports.getSpecificCategories = async (req, res) => {
         //     "6114cc830a3c0d4159143517",
         //     "6114cc830a3c0d4159143522"
         // ]
-
         const query = {
-            _id: {
-                $in: idsArray
-            }
+            // _id: {
+            //     $in: idsArray
+            // }
+            vendorId: { $in: ["3", "21", "4", "5", "40"] }
         }
         const result = await getSpecificCategories(query)
         respSuccess(res, result)
@@ -675,10 +675,10 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
             // "5fdf6cedbe4f6810f10106bc",
 
             // old db categories l3
-            '5fdf6cc9be4f6810f10102d0',
-            '5fdf6cc9be4f6810f10102d4',
-            '5fdf6cdcbe4f6810f10104e2',
-            "5fdf6cc8be4f6810f10102ca"
+            // '5fdf6cc9be4f6810f10102d0',
+            // '5fdf6cc9be4f6810f10102d4',
+            // '5fdf6cdcbe4f6810f10104e2',
+            // "5fdf6cc8be4f6810f10102ca"
 
             // "6114cf750a3c0d4159143c8c",
             // "6114cf750a3c0d4159143c94",
@@ -699,8 +699,11 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
         // ]
 
         const query = {
-            _id: {
-                $in: idsArray
+            // _id: {
+            //     $in: idsArray
+            // }
+            vendorId: {
+                $in: ["L3F13", "L3F17", "L3PM1", "L3F7"]
             }
         }
         let secondaryCategories = await getAllSecondaryCategories(query)

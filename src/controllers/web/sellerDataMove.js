@@ -17,42 +17,25 @@ const { getAllSellerDetails,
     getLevelFour,
     getLevelFive,
 
-    getAllMasterProducts
+    getAllMasterProducts,
+    getAllBuyers
 } = require('../../modules/sellerDataMoveModule')
-const { location, category } = require('../../modules')
+const { location, category, sellers, mastercollections } = require('../../modules')
 const { getCountry, getState, getCity, checkState, getSelectedCountries, getSelectedStates, getFilteredCities } = location
+const { addSeller, addSellerProduct, getSellerVal } = sellers
+const { insertManyMaster } = mastercollections
 const { /* getParentCat, getSpecificCategories, getPrimaryCat, */ getSellerType } = category
 
 module.exports.uploadOnBoardSeller = async (req, res) => {
 
     try {
         console.log(' upload seller data ......')
-        const result = await getAllSellerDetails({ /* userId: { $ne: null } */ "mobile.mobile": "9916905753" })
+        const result = await getAllSellerDetails({ userId: { $ne: null } /* "mobile.mobile": "9916905753"  */})
+        console.log(result.length, ' count')
         const filePath = `public/sellerUploadedbleData.json`
         const err = await fs.writeFile(filePath, JSON.stringify(result))
         if (err) throw err;
-
-        // if (result && result.length) {
-        //     for (let index = 0; index < result.length; index++) {
-        //         const seller = result[index];
-
-        //         let sellerBusiness = null
-        //         let sellercontactDetails = null
-        //         let sellerStatutoryDetails = null
-        //         let sellerEstablisment = null
-        //         let sellerCompanyDetails = null
-
-        //         // if (seller && seller.busenessId) {
-        //         //     sellerBusiness = await getSellerBusinessDetails({ _id: seller.busenessId })
-        //         // }
-        //         // console.log(sellerBusiness, ' rrrrrrrrr')
-
-
-
-
-
-        //     }
-        // }
+        console.log(' completed -----------------')
         respSuccess(res, { count: result.length, result/* : result[0].sellerProductId */ })
 
     } catch (error) {
@@ -83,21 +66,30 @@ const mapPriority = (plan) => new Promise((resolve, reject) => {
 
 })
 
-const locationMap = async (location, seller = {}, type = '') => {
+const locationMap = async (location, seller = {}, type = '', status) => {
     let { city, state, country } = location
     let existingCity = city
-
     city = city && city.name ? await getCity({ name: city.name }) : null
     state = state && state.name ? await checkState({ name: state.name.toString() }) : null
     country = country ? await getCountry({ _id: country._id }) : null
     if (existingCity && existingCity._id && !city) {
         console.log(seller && seller.name, `${type} city ot exist -----------`)
     }
-    return {
-        city: city && city._id || null,
-        state: state && state._id || null,
-        country: country && country._id || null,
-        region: state && state.region || null
+    if (status) {
+        return {
+            city: city && { name: city.name || null, _id: city._id } || null,
+            state: state && { name: state.name || null, _id: state._id } || null,
+            country: country && { name: country.name || null, _id: country._id } || null,
+            region: state && state.region || null
+        }
+    } else {
+
+        return {
+            city: city && city._id || null,
+            state: state && state._id || null,
+            country: country && country._id || null,
+            region: state && state.region || null
+        }
     }
 }
 
@@ -108,6 +100,9 @@ const productStructure = async (product, sell = {}) => {
     let details = {
         ...product
     }
+    let masterData = {
+        ...product
+    }
     if (serviceType) {
         details = {
             ...details,
@@ -116,16 +111,23 @@ const productStructure = async (product, sell = {}) => {
     }
     // Product Service City Mapping
     if (serviceCity && serviceCity.length) {
+        const masterServiceCity = []
         console.log('--------- Product Service City mapping --------------')
         for (let index = 0; index < serviceCity.length; index++) {
             const _serviceCity = serviceCity[index];
 
-            const service_City = await locationMap(_serviceCity, sell, "Products")
+            const service_City = await locationMap(_serviceCity, sell, "Products", false)
+            const master_service_City = await locationMap(_serviceCity, sell, "Products", true)
             _sList.push(service_City)
+            masterServiceCity.push(master_service_City)
         }
         details = {
             ...details,
             serviceCity: _sList
+        }
+        masterData = {
+            ...masterData,
+            serviceCity: masterServiceCity
         }
     }
 
@@ -141,6 +143,10 @@ const productStructure = async (product, sell = {}) => {
             details = {
                 ...details,
                 parentCategoryId
+            }
+            masterData = {
+                ...masterData,
+                parentCategoryId: list || null
             }
         }
     }
@@ -158,6 +164,10 @@ const productStructure = async (product, sell = {}) => {
                 ...details,
                 primaryCategoryId
             }
+            masterData = {
+                ...masterData,
+                primaryCategoryId: list || null
+            }
         }
     }
     // Level 3 category mapping 
@@ -172,6 +182,10 @@ const productStructure = async (product, sell = {}) => {
             details = {
                 ...details,
                 secondaryCategoryId
+            }
+            masterData = {
+                ...masterData,
+                secondaryCategoryId: list || null
             }
         }
     }
@@ -189,6 +203,10 @@ const productStructure = async (product, sell = {}) => {
                 ...details,
                 poductId
             }
+            masterData = {
+                ...masterData,
+                poductId: list || null
+            }
         }
     }
     // Level 5 category mapping 
@@ -205,57 +223,106 @@ const productStructure = async (product, sell = {}) => {
                 ...details,
                 productSubcategoryId
             }
+            masterData = {
+                ...masterData,
+                productSubcategoryId: list || null
+            }
         }
     }
 
-    if (productDetails) { // Product details map
-        let { countryOfOrigin, regionOfOrigin, cityOfOrigin, sellingCountries, sellingStates, sellingCities } = productDetails
+    if (details.productDetails) { // Product details map
+        let { countryOfOrigin, regionOfOrigin, cityOfOrigin, sellingCountries, sellingStates, sellingCities } = details.productDetails
         if (countryOfOrigin) {
-            productDetails["countryOfOrigin"] = countryOfOrigin._id || null
+            /* details.productDetails["countryOfOrigin"] */ const coo = countryOfOrigin._id || null
+            details = {
+                ...details,
+                productDetails: {
+                    ...details.productDetails,
+                    countryOfOrigin: coo
+                }
+            }
         }
         if (regionOfOrigin) {
-            productDetails["regionOfOrigin"] = regionOfOrigin._id || null
+            /* details.productDetails["regionOfOrigin"] */ const roo = regionOfOrigin._id || null
+            details = {
+                ...details,
+                productDetails: {
+                    ...details.productDetails,
+                    regionOfOrigin: roo
+                }
+            }
         }
         if (cityOfOrigin) {
             const cofo = cityOfOrigin && cityOfOrigin.name ? await getCity({ name: cityOfOrigin.name }) : null
-            productDetails["cityOfOrigin"] = cofo && cofo._id || null
+            /* details.productDetails["cityOfOrigin"] */ const rood = cofo && cofo._id || null
+            details = {
+                ...details,
+                productDetails: {
+                    ...details.productDetails,
+                    cityOfOrigin: rood
+                }
+            }
         }
 
         if (sellingCountries && sellingCountries.length) {
-            productDetails["sellingCountries"] = sellingCountries.map((c) => c._id) || []
+            /* details.productDetails["sellingCountries"] */ const rest = sellingCountries.map((c) => c._id) || []
+            details = {
+                ...details,
+                productDetails: {
+                    ...details.productDetails,
+                    sellingCountries: rest
+                }
+            }
         }
 
         if (sellingStates && sellingStates.length) {
-            productDetails["sellingStates"] = sellingStates.map((c) => c._id) || []
+            /* details.productDetails["sellingStates"] */const rest1 = sellingStates.map((c) => c._id) || []
+            details = {
+                ...details,
+                productDetails: {
+                    ...details.productDetails,
+                    sellingStates: rest1
+                }
+            }
         }
 
         if (sellingCities && sellingCities.length) {
             const li = sellingCities.map((c) => c.name)
             const sc = await getFilteredCities({ name: { $in: li } })
 
-            productDetails["sellingCities"] = sc && sc.length && sc.map((v) => v._id) || []
-        }
-        if (offers) {
-            let { location } = offers
-            city = location && location.city && location.city.label ? await getCity({ name: location.city.label.toLowerCase() }) : null
-
-            offers = {
-                ...offers,
-                location: {
-                    city: city && city.name ? {
-                        label: city.name || null,
-                        value: city._id || null
-                    } : null,
-                    state: location && location.state || null
-                }
-            }
+            /* details.productDetails["sellingCities"] */const setmax = sc && sc.length && sc.map((v) => v._id) || []
             details = {
                 ...details,
-                offers: offers
+                productDetails: {
+                    ...details.productDetails,
+                    sellingCities: setmax
+                }
             }
         }
     }
-    return details
+    if (offers) {
+        let { location } = offers
+        city = location && location.city && location.city.label ? await getCity({ name: location.city.label.toLowerCase() }) : null
+
+        offers = {
+            ...offers,
+            location: {
+                city: city && city.name ? {
+                    label: city.name || null,
+                    value: city._id || null
+                } : null,
+                state: location && location.state || null
+            }
+        }
+        details = {
+            ...details,
+            offers: offers
+        }
+    }
+    // console.log(JSON.stringify(masterData), ' new master -------------')
+    // console.log(JSON.stringify(product), ' old master -------------')
+    // console.log(JSON.stringify(details), ' structured master -------------')
+    return { details, masterData, product }
 }
 
 const masterMap = async (seller, product, offers, priority, planExpire) => {
@@ -375,18 +442,25 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                 const planExpire = _planDetails && _planDetails.expireStatus || false
                 const priority = await mapPriority(_planDetails || "")
                 // console.log(priority, '  ------ Search Priority -------')
+                let allProd = []
+                let masterProducts = []
+                let _masterData = []
                 let seller = {
-                    ...sell
+                    ...sell,
+                    manual: true
                 }
 
                 if (busenessId) {
+                    console.log('-- Business details create --')
                     sellerBusiness = busenessId
+                    // await addSellerBusiness(busenessId)
                     seller = {
                         ...seller,
                         busenessId: busenessId._id || null
                     }
                 }
                 if (statutoryId) {
+                    console.log('--- Statutory details create --')
                     sellerStatutoryDetails = statutoryId
                     // await addSellerStatutory(statutoryId)
                     seller = {
@@ -395,6 +469,7 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     }
                 }
                 if (sellerCompanyId) {
+                    console.log('---- Company details create --')
                     sellerCompanyDetails = sellerCompanyId
                     // await addSellerCompany(sellerCompanyId)
                     seller = {
@@ -403,6 +478,7 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     }
                 }
                 if (sellerContactId) {
+                    console.log('--- Contact details create --')
                     sellercontactDetails = sellerContactId
                     // await addSellerContact(sellerContactId)
                     seller = {
@@ -411,6 +487,7 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     }
                 }
                 if (establishmentId) {
+                    console.log('-- Establishment details create --')
                     sellerEstablisment = establishmentId
                     // await addSellerEstablishment(establishmentId)
                     seller = {
@@ -426,7 +503,7 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     planDetails = planId
                 }
                 if (sell.location, sell) { // Seller location map
-                    console.log(sell.name, ' -------Seller Locatio mapping -------------')
+                    console.log(sell.name, ' -------Seller Location mapping -------------')
                     location = await locationMap(location, sell)
                     seller = {
                         ...seller,
@@ -434,34 +511,58 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     }
                 }
                 if (sellerProductId && sellerProductId.length) { // seller products map
-                    let allProd = []
-                    let masterProducts = []
+
                     for (let i = 0; i < sellerProductId.length; i++) {
                         const product = sellerProductId[i];
-                        const fff = sellerProductId[i]
+                        const { details, masterData } = await productStructure(product, sell, priority)
+                        allProd.push(details)
+                        _masterData.push(masterData)
+
+                    }
+                    for (let i = 0; i < _masterData.length; i++) {
+                        const product = _masterData[i];
+                        const fff = _masterData[i]
 
                         let masterData = await masterMap(sell, fff, null, priority, planExpire)
-                        // console.log(JSON.stringify(masterData), ' ********************************')
                         masterProducts.push(masterData)
 
                     }
-                    console.log(JSON.stringify(masterProducts), "--master products ------------------")
-
-                    for (let i = 0; i < sellerProductId.length; i++) {
-                        const product = sellerProductId[i];
-                        const proStructure = await productStructure(product, sell, priority)
-                        // console.log(JSON.stringify(proStructure), ' %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-                        allProd.push(proStructure)
-
-                    }
-                    // console.log(JSON.stringify(allProd), " --------- Seller Products ------------")
                     seller = {
                         ...seller,
                         sellerProductId: allProd && allProd.length && allProd.map((v) => v._id) || []
                     }
 
                 }
-                _sel = seller
+                if (seller) {
+                    const checkSeller = await getSellerVal({ _id: seller._id })
+                    if (!checkSeller) {
+                        const _seller_add = await addSeller(seller)
+                        console.log('-- Seller Added --')
+                    } else {
+                        console.log(' $$$$$ Seller Exist -----')
+                    }
+                    // if (sellerBusiness) {
+                    //     const busi = await addSellerBusiness(sellerBusiness)
+                    //     console.log('--- Business addedd ---')
+                    // }
+                    // const sta = sellerStatutoryDetails ? await addSellerStatutory(sellerStatutoryDetails) : false
+                    // console.log('---- Statutory addedd ---')
+                    // const comp = sellerCompanyDetails ? await addSellerCompany(sellerCompanyDetails) : false
+                    // console.log('----- Company addedd -----')
+                    // const cont = sellercontactDetails ? await addSellerContact(sellercontactDetails) : false
+                    // console.log('------ Seller contact addedd ------')
+                    // const esss = sellerEstablisment ? await addSellerEstablishment(sellerEstablisment) : false
+                    // console.log('------- Establisment addedd ------')
+                    if (allProd && allProd.length) {
+                        const selPro = await addSellerProduct(allProd)
+                        console.log('-------->> Seller Procucts added ---------')
+                    }
+                    if (masterProducts && masterProducts.length) {
+                        const mss = await insertManyMaster(masterProducts)
+                        console.log(' ---------- $$ Master products addedd ---------')
+                    }
+                }
+                console.log(seller && seller.name, seller && seller.mobile.length && seller.mobile[0].mobile, ' #########-----------------Seller addedd successfully --------------------------### ')
             }
         }
         respSuccess(res, 'Uploaded all seller data successfully--------')
@@ -506,4 +607,23 @@ module.exports.getSellerMasterProducts = async (req, res) => {
     //     respError(error)
 
     // }
+}
+
+// Buyers
+module.exports.uploadOnBoardBuyers = async (req, res) => {
+
+    try {
+        console.log(' upload buyers data ......')
+        const result = await getAllBuyers({"mobile": "9916905753" })
+        const filePath = `public/buyerUploadedbleData.json`
+        const err = await fs.writeFile(filePath, JSON.stringify(result))
+        if (err) throw err;
+        respSuccess(res, { count: result.length, result/* : result[0].sellerProductId */ })
+
+    } catch (error) {
+
+        console.log(error)
+        respError(error)
+
+    }
 }
