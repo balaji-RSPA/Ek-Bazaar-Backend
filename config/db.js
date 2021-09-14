@@ -31,10 +31,10 @@ function dbConnection() {
     // options.sslCA = tradeDb.certFileBuf
     // url = `${tradeDb.protocol}://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}`
 
-    url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+    // url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
 
-    // //Aksha new atlas db connection
-    // url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
+    //Aksha new atlas db connection
+    url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
 
     // // new live atlas mongodb connection
     // url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
@@ -65,7 +65,10 @@ let host = '', conf = {
 if (env) {
   if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
-    conf.host = 'tradebazaarapi.tech-active.com:5085'
+    // conf.host = 'tradebazaarapi.tech-active.com:5085'
+
+    // New atlas elastic
+    conf.host = "143.110.253.230:9200"
 
     // new single node multi shard elasticsearch
     // conf.host = '165.22.209.173:9200'
@@ -77,7 +80,11 @@ if (env) {
     // host = '139.59.19.170:5085'
     // host = '139.59.95.19:5085'
     // host = "167.71.233.251:5085"
+
+    // live
     conf.host = "157.245.109.173:5086"
+
+
 
   }
 
