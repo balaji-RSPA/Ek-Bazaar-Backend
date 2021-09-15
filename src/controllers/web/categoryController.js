@@ -185,9 +185,10 @@ module.exports.addParentCategories = async (req, res) => {
                 l1: element.vendorId,
                 vendorId: element.vendorId
             }
-            const sugge = await createSuggestions(suggestion)
+            // const sugge = await createSuggestions(suggestion)
         }
-        respSuccess(res, result)
+        console.log(' Completed Uploading parent categories -----')
+        respSuccess(res, ' Completed Uploading parent categories -----')
 
     } catch (error) {
         console.log(error)
@@ -265,7 +266,7 @@ module.exports.addPrimaryCategories = async (req, res) => {
                     l1: result.l1,
                     vendorId: result.vendorId
                 }
-                const sugge = await createSuggestions(suggestion)
+                // const sugge = await createSuggestions(suggestion)
                 const updateData = {
                     primaryCategotyId: parentCat.primaryCategotyId.concat(result._id)
                 }
@@ -274,8 +275,10 @@ module.exports.addPrimaryCategories = async (req, res) => {
                 console.log("duplicate level2 record")
             }
             // bulkData.push(primaryData)
+            console.log(index, element.name || null, element.vendorId || null, ' uploading ------')
 
         }
+        console.log(' COmpleted primary category uploading -----------')
         respSuccess(res, 'Uploaded Successfully')
 
     } catch (error) {
@@ -355,7 +358,7 @@ module.exports.addSecondaryCategories = async (req, res) => {
                     l1: result.l1,
                     vendorId: result.vendorId
                 }
-                const sugge = await createSuggestions(suggestion)
+                // const sugge = await createSuggestions(suggestion)
 
                 const updateData = {
                     secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
@@ -451,7 +454,7 @@ module.exports.addBulkProducts = async (req, res) => {
                         l1: result.l1,
                         vendorId: result.vendorId
                     }
-                    const sugge = await createSuggestions(suggestion)
+                    // const sugge = await createSuggestions(suggestion)
 
                     const updateData = {
                         productId: parentCat.productId.concat(result._id)
@@ -462,6 +465,7 @@ module.exports.addBulkProducts = async (req, res) => {
             } else {
                 console.log("duplicate level4 record", element.vendorId)
             }
+            console.log(index, element.name || null, element.vendorId || null, ' uploading ------')
 
         }
         console.log('Completed +++++++++++++++')
@@ -503,7 +507,7 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
                         l1: result.l1,
                         vendorId: result.vendorId
                     }
-                    const sugge = await createSuggestions(suggestion)
+                    // const sugge = await createSuggestions(suggestion)
 
                     // console.log("🚀 ~ file: categoryController.js ~ line 354 ~ module.exports.addBulkProductSubCategories= ~ result", result)
                     const updateData = {
@@ -515,6 +519,7 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
             } else {
                 console.log("duplicate level5 record")
             }
+            console.log(index, element.name || null, element.vendorId || null, ' uploading ------')
         }
         console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
