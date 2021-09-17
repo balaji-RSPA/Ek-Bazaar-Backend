@@ -59,7 +59,7 @@ if (process.env.NODE_ENV === "production") {
       // port: "27017",
       // user: "tradeuser",
       // password: "a7L6q193z80FIw2x",
-      // database: "trade-live",
+      // database: "newtradedb",
       // certFileBuf,
       // replicaName: "trade-test",
       protocol: 'mongodb+srv',

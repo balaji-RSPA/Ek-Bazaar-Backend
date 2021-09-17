@@ -374,7 +374,7 @@ exports.sendMessage = async (req, res) => {
                     'X-User-Id': chatUserId
                 }
             })
-        if (language && language !== 'en') {
+        // if (language && language !== 'en') {
 
             const resultTranslate = await axios.post(urlTransalte, {
                 messageId: result.data.message._id,
@@ -388,7 +388,7 @@ exports.sendMessage = async (req, res) => {
                     }
                 })
             // console.log("🚀 ~ file: rocketChatController.js ~ line 366 ~ exports.sendMessage= ~ resultTranslate", resultTranslate)
-        }
+        // }
         // console.log(result.data.message._id, ' send meeeee1111111111111 ----------------')
         // rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
         //     if (err)

@@ -23,9 +23,9 @@ const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
+const { deleteTestData, uploadInternationalCity, getCityList } = require('./src/controllers/web/testController')
 const _request = require("request")
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
-const { deleteTestData, uploadInternationalCity } = require('./src/controllers/web/testController')
 
 // const { suggestions} = require("./elasticsearch-mapping");
 
@@ -52,6 +52,7 @@ app.use(
       "https://trade.onebazaar.com",
       "http://admin.ekbazaar.tech-active.com",
       "https://admin.ekbazaar.tech-active.com",
+      "https://admin.ekbazaar.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -178,6 +179,12 @@ app.post("/uploadInternationalCity", async function (req, res) {
   try {
     const result = await uploadInternationalCity(req, res);
     console.log('city---')
+  } catch (error) { }
+  res.send('Its delete records  live')
+});
+app.get("/getCityList", async function (req, res) {
+  try {
+    const result = await getCityList(req, res);
   } catch (error) { }
   res.send('Its delete records  live')
 });

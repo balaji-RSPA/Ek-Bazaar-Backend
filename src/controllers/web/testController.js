@@ -1,4 +1,5 @@
 const moment = require('moment')
+const fs = require('fs').promises
 const {
     getAllPrimaryCategory,
     updatePrimaryCategory,
@@ -16,7 +17,7 @@ const { getSellerPlan, deleteSellerPlans } = require('../../modules/sellerPlanMo
 const { getUserList, deleteBuyer, deleteUser } = require('../../modules/buyersModule')
 const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
 const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule');
-const { getCountryData, addCity, getCity } = require('../../modules/locationsModule')
+const { getCountryData, addCity, getCity, getCityList } = require('../../modules/locationsModule')
 
 module.exports.updateLevel2l1Data = async (req, res) => {
 
@@ -222,6 +223,50 @@ module.exports.uploadInternationalCity = async (req, res) => new Promise(async (
 
     }
 })
+
+
+module.exports.getCityList = async (req, res) => new Promise(async (resolve, reject) => {
+
+    try {
+        const list = []
+        console.log(' city testing')
+        let totalCount = 49742
+        let limit = 200
+        const ratio = totalCount / limit;
+        let skip = 0;
+        console.log(ratio, "ratio");
+        // if (result) {
+        for (skip; skip <= totalCount; skip += limit) {
+            console.log(' ramesh ------------')
+            const result = await getCityList({ skip, limit })
+
+            for (let index = 0; index < result.length; index++) {
+                const v = result[index];
+
+                list.push({
+                    city: v.name,
+                    state: v.state && v.state.name || '',
+                    country: v.country && v.country.name || ''
+                })
+
+            }
+            console.log(skip, limit, ' --- total count')
+        }
+        // }
+        const fileLocation = `public/uploads/cityListData`
+        const err = await fs.writeFile(fileLocation, JSON.stringify(list))
+        console.log("🚀 ~ file: testController.js ~ line 254 ~ module.exports.getCityList= ~ err", err)
+        
+        respSuccess(res, ' Exported successfully')
+
+    } catch (error) {
+        console.log(error, ' errrrr')
+
+        respError(res, error)
+
+    }
+})
+
 
 module.exports.gujaratSellerData = async (req, res) => new Promise(async (resolve, reject) => {
 
