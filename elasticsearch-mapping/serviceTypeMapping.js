@@ -1,6 +1,6 @@
 var client = require('../config/db').esClient;
 const {getAllSellerTypes} = require("../src/modules/categoryModule")
-const index = process.env.NODE_ENV === "production" ? "tradedb.sellertypes" : "newtradedb.sellertypes"
+const index = process.env.NODE_ENV === "production" ? "tradedb.sellertypes" : "trade-live.sellertypes"
 const type = "_doc"
 
 module.exports.checkIndices = function () {

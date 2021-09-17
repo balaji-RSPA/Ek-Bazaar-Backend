@@ -1,7 +1,7 @@
-// exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections" //tradebazaar
+exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections" //tradebazaar
 
 // new elasticsearch single node multi index
-exports.INDEXNAME = "tradedb.mastercollections"
+// exports.INDEXNAME = "tradedb.mastercollections"
 
 // exports.INDEXNAME = 'opend_contacts.mastercollections'
 

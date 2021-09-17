@@ -33,7 +33,7 @@ module.exports.getAllCommodity = async (req, res) => {
       limit:parseInt(limit)
     } : {}
     const commodityData = await getAllCommodity(
-     query
+      query
     );
     respSuccess(res, commodityData);
   } catch (error) {
