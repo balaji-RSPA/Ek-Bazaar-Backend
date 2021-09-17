@@ -8,7 +8,7 @@ module.exports.getAllCommodity = async (req, res) => {
   try {
     // const { search, skip, limit } = req.query;
     let todayDate = moment().format('YYYY-MM-DD');
-    const query  = { '$where': 'this.updatedAt.toJSON().slice(0, 10) == "' + todayDate + '"' }
+    const query  = { search : {'$where': 'this.updatedAt.toJSON().slice(0, 10) == "' + todayDate + '"' }}
     let commodityData = await getAllCommodity(
       query
     );
