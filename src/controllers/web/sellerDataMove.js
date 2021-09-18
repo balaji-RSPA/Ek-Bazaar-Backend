@@ -30,7 +30,7 @@ module.exports.uploadOnBoardSeller = async (req, res) => {
 
     try {
         console.log(' upload seller data ......')
-        const result = await getAllSellerDetails({ userId: { $ne: null } /* "mobile.mobile": "9916905753"  */})
+        const result = await getAllSellerDetails({ userId: { $ne: null } /* "mobile.mobile": "9916905753"  */ })
         console.log(result.length, ' count')
         const filePath = `public/sellerUploadedbleData.json`
         const err = await fs.writeFile(filePath, JSON.stringify(result))
@@ -68,7 +68,9 @@ const mapPriority = (plan) => new Promise((resolve, reject) => {
 
 const locationMap = async (location, seller = {}, type = '', status) => {
     let { city, state, country } = location
+    // console.log(" @@@@ location list ------ ", location)    
     let existingCity = city
+    
     city = city && city.name ? await getCity({ name: city.name }) : null
     state = state && state.name ? await checkState({ name: state.name.toString() }) : null
     country = country ? await getCountry({ _id: country._id }) : null
@@ -502,7 +504,7 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     }
                     planDetails = planId
                 }
-                if (sell.location, sell) { // Seller location map
+                if (sell && sell.location) { // Seller location map
                     console.log(sell.name, ' -------Seller Location mapping -------------')
                     location = await locationMap(location, sell)
                     seller = {
@@ -538,6 +540,14 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     if (!checkSeller) {
                         const _seller_add = await addSeller(seller)
                         console.log('-- Seller Added --')
+                        if (allProd && allProd.length !== 0) {
+                            const selPro = await addSellerProduct(allProd)
+                            console.log('-------->> Seller Procucts added ---------')
+                        }
+                        if (masterProducts && masterProducts.length !== 0) {
+                            const mss = await insertManyMaster(masterProducts)
+                            console.log(' ---------- $$ Master products addedd ---------')
+                        }
                     } else {
                         console.log(' $$$$$ Seller Exist -----')
                     }
@@ -553,18 +563,12 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     // console.log('------ Seller contact addedd ------')
                     // const esss = sellerEstablisment ? await addSellerEstablishment(sellerEstablisment) : false
                     // console.log('------- Establisment addedd ------')
-                    if (allProd && allProd.length) {
-                        const selPro = await addSellerProduct(allProd)
-                        console.log('-------->> Seller Procucts added ---------')
-                    }
-                    if (masterProducts && masterProducts.length) {
-                        const mss = await insertManyMaster(masterProducts)
-                        console.log(' ---------- $$ Master products addedd ---------')
-                    }
+
                 }
-                console.log(seller && seller.name, seller && seller.mobile.length && seller.mobile[0].mobile, ' #########-----------------Seller addedd successfully --------------------------### ')
+                console.log(index, seller && seller._id, seller && seller.name,/*  seller && seller.mobile.length && seller.mobile[0].mobile, */ ' #########-----------------Seller addedd successfully --------------------------### ')
             }
         }
+        console.log('-------------- all seller data uploades successfully -----------------')
         respSuccess(res, 'Uploaded all seller data successfully--------')
     } catch (error) {
 
@@ -614,7 +618,7 @@ module.exports.uploadOnBoardBuyers = async (req, res) => {
 
     try {
         console.log(' upload buyers data ......')
-        const result = await getAllBuyers({"mobile": "9916905753" })
+        const result = await getAllBuyers({ "mobile": "9916905753" })
         const filePath = `public/buyerUploadedbleData.json`
         const err = await fs.writeFile(filePath, JSON.stringify(result))
         if (err) throw err;
