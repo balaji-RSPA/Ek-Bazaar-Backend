@@ -229,8 +229,8 @@ module.exports.getCityList = async (req, res) => new Promise(async (resolve, rej
     try {
         const list = []
         console.log(' city testing')
-        let totalCount = 49742
-        let limit = 200
+        let totalCount = 23235
+        let limit = 400
         const ratio = totalCount / limit;
         let skip = 0;
         console.log(ratio, "ratio");
@@ -244,6 +244,7 @@ module.exports.getCityList = async (req, res) => new Promise(async (resolve, rej
 
                 list.push({
                     city: v.name,
+                    alias: v.alias && v.alias.length && v.alias.toString(),
                     state: v.state && v.state.name || '',
                     country: v.country && v.country.name || ''
                 })

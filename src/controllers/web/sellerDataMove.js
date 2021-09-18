@@ -4,6 +4,7 @@ const {
 } = require('../../utils/respHadler');
 const moment = require('moment')
 const fs = require('fs').promises
+const Logger = require('../../utils/logger')
 const { getAllSellerDetails,
     addSellerStatutory,
     addSellerBusiness,
@@ -138,8 +139,17 @@ const productStructure = async (product, sell = {}) => {
         console.log('----- Product parent cat mapping ------')
         const l1List = parentCategoryId.map((v) => v.name)
         const list = await getLevelOne({ name: { $in: l1List } })
+
         if (!list.length) {
             console.log('------ Parent Category Not exist ----------', sell && sell.name, product && product._id)
+            Logger.info({
+                sellerId: sell && sell._id || null,
+                sellerName: sell && sell.name || null,
+                productId: product && product._id || null,
+                error: "level1",
+                catid: l1List || null,
+                msg: 'Parent Category Not exist'
+            })
         } else {
             parentCategoryId = list.map((v) => v._id)
             details = {
@@ -160,6 +170,16 @@ const productStructure = async (product, sell = {}) => {
         const list = await getLevelTwo({ name: { $in: l2List } })
         if (!list.length) {
             console.log('-------- Primary Category Not exist ----------', sell && sell.name, product && product._id)
+
+            Logger.info({
+                sellerId: sell && sell._id || null,
+                sellerName: sell && sell.name || null,
+                productId: product && product._id || null,
+                error: "level2",
+                catid: l2List || null,
+                msg: 'Primary Category Not exist'
+            })
+
         } else {
             primaryCategoryId = list.map((v) => v._id)
             details = {
@@ -179,6 +199,16 @@ const productStructure = async (product, sell = {}) => {
         const list = await getLevelThree({ name: { $in: l3List } })
         if (!list.length) {
             console.log('-------- Secondary Category Not exist ----------', sell && sell.name, product && product._id)
+
+            Logger.info({
+                sellerId: sell && sell._id || null,
+                sellerName: sell && sell.name || null,
+                productId: product && product._id || null,
+                error: "level3",
+                catid: l3List || null,
+                msg: 'Secondary Category Not exist'
+            })
+
         } else {
             secondaryCategoryId = list.map((v) => v._id)
             details = {
@@ -199,6 +229,16 @@ const productStructure = async (product, sell = {}) => {
 
         if (!list.length) {
             console.log('-------- Product Category Not exist ----------', sell && sell.name, product && product._id)
+
+            Logger.info({
+                sellerId: sell && sell._id || null,
+                sellerName: sell && sell.name || null,
+                productId: product && product._id || null,
+                error: "level4",
+                catid: l4List || null,
+                msg: 'Product Category Not exist'
+            })
+
         } else {
             poductId = list.map((v) => v._id)
             details = {
@@ -219,6 +259,16 @@ const productStructure = async (product, sell = {}) => {
 
         if (!list.length) {
             console.log('-------- product productsub Category Not exist ----------', sell && sell.name, product && product._id)
+
+            Logger.info({
+                sellerId: sell && sell._id || null,
+                sellerName: sell && sell.name || null,
+                productId: product && product._id || null,
+                error: "level5",
+                catid: l5List || null,
+                msg: ' product productsub Category Not exist'
+            })
+
         } else {
             productSubcategoryId = list.map((v) => v._id)
             details = {
@@ -321,9 +371,6 @@ const productStructure = async (product, sell = {}) => {
             offers: offers
         }
     }
-    // console.log(JSON.stringify(masterData), ' new master -------------')
-    // console.log(JSON.stringify(product), ' old master -------------')
-    // console.log(JSON.stringify(details), ' structured master -------------')
     return { details, masterData, product }
 }
 
@@ -535,6 +582,9 @@ module.exports.moveSellerToNewDB = async (req, res) => {
                     }
 
                 }
+                // console.log(JSON.stringify(seller), 'seller details ------------')
+                // console.log(JSON.stringify(allProd), 'Products details ------------')
+                // console.log(JSON.stringify(masterProducts), 'Master details ------------')
                 if (seller) {
                     const checkSeller = await getSellerVal({ _id: seller._id })
                     if (!checkSeller) {
@@ -616,18 +666,18 @@ module.exports.getSellerMasterProducts = async (req, res) => {
 // Buyers
 module.exports.uploadOnBoardBuyers = async (req, res) => {
 
-    try {
-        console.log(' upload buyers data ......')
-        const result = await getAllBuyers({ "mobile": "9916905753" })
-        const filePath = `public/buyerUploadedbleData.json`
-        const err = await fs.writeFile(filePath, JSON.stringify(result))
-        if (err) throw err;
-        respSuccess(res, { count: result.length, result/* : result[0].sellerProductId */ })
+    // try {
+    //     console.log(' upload buyers data ......')
+    //     const result = await getAllBuyers({ "mobile": "9916905753" })
+    //     const filePath = `public/buyerUploadedbleData.json`
+    //     const err = await fs.writeFile(filePath, JSON.stringify(result))
+    //     if (err) throw err;
+    //     respSuccess(res, { count: result.length, result/* : result[0].sellerProductId */ })
 
-    } catch (error) {
+    // } catch (error) {
 
-        console.log(error)
-        respError(error)
+    //     console.log(error)
+    //     respError(error)
 
-    }
+    // }
 }
