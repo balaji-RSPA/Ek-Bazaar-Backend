@@ -165,9 +165,9 @@ module.exports.getAllSellerDetails = (query) => new Promise((resolve, reject) =>
                 select: "name"
             },
         })
+        .skip(1800)
+        .limit(723)
         .lean()
-        .skip(2100)
-        .limit(200)
         .then(doc => {
             resolve(doc)
         })

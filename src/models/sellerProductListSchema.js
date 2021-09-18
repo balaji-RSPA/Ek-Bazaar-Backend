@@ -137,6 +137,10 @@ const offerSchema = new Schema({
 })
 
 const productDetailsSchema = new Schema({
+  manual:{
+    type: Boolean,
+    default: false
+  },
   name: {
     type: String,
     trim: true,
@@ -442,6 +446,10 @@ const sellerProductSchema = new Schema(
       default: 1
     },
     isDeleted: {
+      type: Boolean,
+      default: false
+    },
+    manual:{
       type: Boolean,
       default: false
     },

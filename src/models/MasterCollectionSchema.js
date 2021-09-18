@@ -480,6 +480,10 @@ const masterCollectionSchema = new Schema(
             type: Boolean,
             default: false
         },
+        manual: {
+            type: Boolean,
+            default: false
+        },
     },
     {
         timestamps: true,
