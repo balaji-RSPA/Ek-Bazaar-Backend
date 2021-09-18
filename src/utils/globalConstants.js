@@ -1,4 +1,4 @@
-exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "trade-live.mastercollections" //tradebazaar
+exports.INDEXNAME = process.env.NODE_ENV === "production" ? "tradedb.mastercollections" : "tradedb.mastercollections" //"trade-live.mastercollections" //tradebazaar
 
 // new elasticsearch single node multi index
 // exports.INDEXNAME = "tradedb.mastercollections"
@@ -89,7 +89,7 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
   }
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
-  logo: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",  
+  logo: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",
   emailVerified: "https://tradebazaarapi.tech-active.com/images/Unsubscribe.png",
   registrationthanks: "https://tradebazaarapi.tech-active.com/images/registrationthanks.png",
   otpverification: "https://tradebazaarapi.tech-active.com/images/passwordreset.png",
@@ -107,11 +107,14 @@ exports.imageURLS = {
   announcements: "https://tradebazaarapi.tech-active.com/images/announcement@2x.png"
 }
 
-exports.rocketChatDomain = NODE_ENV === 'production' ? "chatbot.ekbazaar.com" : "chatbot.active.agency"
+exports.rocketChatDomain = NODE_ENV === 'production' ? "chatbot.ekbazaar.com" : "chatbot.ekbazaar.com" 
+//"chatbot.active.agency"
 exports.rocketChatAdminLogin = NODE_ENV === 'production' ? {
   username: "ramesh@active.agency",
   password: "rameshTechActive"
 } : {
-  username: "ramesh",
-  password: "ramesh123"
+  // username: "ramesh",
+  // password: "ramesh123"
+  username: "ramesh@active.agency",
+  password: "rameshTechActive"
 }

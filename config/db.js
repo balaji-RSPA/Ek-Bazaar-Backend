@@ -66,7 +66,10 @@ let host = '', conf = {
 if (env) {
   if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
-    conf.host = 'tradebazaarapi.tech-active.com:5085'
+    // conf.host = 'tradebazaarapi.tech-active.com:5085'
+
+    // New atlas elastic
+    conf.host = "143.110.253.230:9200"
 
     // new single node multi shard elasticsearch
     // conf.host = '165.22.209.173:9200'
@@ -78,7 +81,11 @@ if (env) {
     // host = '139.59.19.170:5085'
     // host = '139.59.95.19:5085'
     // host = "167.71.233.251:5085"
+
+    // live
     conf.host = "157.245.109.173:5086"
+
+
 
   }
 

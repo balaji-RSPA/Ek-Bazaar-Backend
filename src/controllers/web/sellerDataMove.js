@@ -69,7 +69,7 @@ const mapPriority = (plan) => new Promise((resolve, reject) => {
 
 const locationMap = async (location, seller = {}, type = '', status) => {
     let { city, state, country } = location
-    // console.log(" @@@@ location list ------ ", location)    
+    // console.log(" @@@@ location list ------ ", location)
     let existingCity = city
 
     city = city && city.name ? await getCity({ name: city.name }) : null

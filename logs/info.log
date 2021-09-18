@@ -1,14 +1,1 @@
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"613c8bd297017c1981a6659f","error":"level1","catid":["Electronics Components"],"msg":"Parent Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.204Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"613c8bd297017c1981a6659f","error":"level2","catid":["Relays and Contactors"],"msg":"Primary Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.213Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"613c8bd297017c1981a6659f","error":"level3","catid":["Power Contactors"],"msg":"Secondary Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.230Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"613b9d6c97017c1981a6600f","error":"level1","catid":["Food"],"msg":"Parent Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.282Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"613b9d6c97017c1981a6600f","error":"level2","catid":["Staple Food"],"msg":"Primary Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.292Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"613b9d6c97017c1981a6600f","error":"level3","catid":["Rice"],"msg":"Secondary Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.304Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"613b9d6c97017c1981a6600f","error":"level4","catid":["Basmati Rice"],"msg":"Product Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.399Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"613b9d6c97017c1981a6600f","error":"level5","catid":["1121 Basmati Rice"],"msg":" product productsub Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.416Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"60c71c716164e23cdb966eab","error":"level1","catid":["Machine Tools"],"msg":"Parent Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.576Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"60c71c716164e23cdb966eab","error":"level2","catid":["Pliers, Screwdrivers & Hammers"],"msg":"Primary Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.586Z"}
-{"message":{"sellerId":"601404b6d7bfc7fbf5f46f31","sellerName":"RameshBeta","productId":"60c71c716164e23cdb966eab","error":"level3","catid":["Screwdriver & Screwdriver Set"],"msg":"Secondary Category Not exist"},"level":"info","timestamp":"2021-09-18T12:29:29.598Z"}
-{"message":"Listening:8070","level":"info","timestamp":"2021-09-18T12:31:48.905Z"}
-{"message":"Listening:8070","level":"info","timestamp":"2021-09-18T12:33:31.646Z"}
-{"message":"Listening:8070","level":"info","timestamp":"2021-09-18T12:33:41.003Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-18T13:08:51.059Z"}

@@ -112,11 +112,16 @@ if (process.env.NODE_ENV === "production") {
 
     },
     tenderdb: {
-      host: "139.59.46.227",
+      // host: "139.59.46.227",
+      // port: "5006",
+      // user: "beta",
+      // password: "active.123",
+      // database: "ekbazarsample-beta",
+      host: "tenderdb.ekbazaar.com",
       port: "5006",
-      user: "beta",
-      password: "active.123",
-      database: "ekbazarsample-beta",
+      user: "tender",
+      password: "Bamfesh7grer",
+      database: "tender",
     },
   };
 }

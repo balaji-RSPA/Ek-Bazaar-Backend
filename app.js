@@ -251,7 +251,7 @@ if (env.NODE_ENV === "production") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging1") {
   const planExpire = cron.schedule(
     "50 23 * * *",
     async () => {
