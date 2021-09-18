@@ -291,20 +291,20 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   });
   queEmail.start();
 
-  const priority = cron.schedule("* * * * *", async () => {
-    priority.stop();
-    console.log(
-      "-------------------- priority file cron start --------------------",
-      new Date()
-    );
-    await updatePriority();
-    console.log(
-      "-------------------- priority file cron completed --------------------",
-      new Date()
-    );
-    priority.start();
-  });
-  priority.start();
+  // const priority = cron.schedule("* * * * *", async () => {
+  //   priority.stop();
+  //   console.log(
+  //     "-------------------- priority file cron start --------------------",
+  //     new Date()
+  //   );
+  //   await updatePriority();
+  //   console.log(
+  //     "-------------------- priority file cron completed --------------------",
+  //     new Date()
+  //   );
+  //   priority.start();
+  // });
+  // priority.start();
 
   const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
     console.log(' Incomplete registration cron started ------ ')

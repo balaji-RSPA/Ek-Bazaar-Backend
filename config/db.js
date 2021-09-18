@@ -3,6 +3,7 @@ const elasticsearch = require('elasticsearch');
 const { env } = process;
 const config = require('./config');
 const { tradeDb } = config
+console.log("🚀 ~ file: db.js ~ line 6 ~ tradeDb", tradeDb)
 console.log(env.NODE_ENV, ' elastic search')
 function dbConnection() {
 
