@@ -2283,10 +2283,10 @@ exports.getAllCitiesElastic = (query) => new Promise((resolve, reject) => {
     query
   };
 
-  // const index =  process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities"
+  const index =  process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities"
   
   // new elasticsearch single node multi index
-  const index = "tradedb.cities"
+  // const index = "tradedb.cities"
 
   const searchQuery = {
     index,
@@ -2309,10 +2309,10 @@ exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
     query
   };
 
-  // const index = process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states"
+  const index = process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states"
   
   // new elasticsearch single node multi index
-  const index ="tradedb.states"
+  // const index ="tradedb.states"
 
   const searchQuery = {
     index,
@@ -2336,10 +2336,10 @@ exports.getAllCountriesElastic = query => new Promise((resolve, reject) => {
   }
   console.log("🚀 ~ file: elasticSearchModule.js ~ line 1794 ~ exports.getAllCountriesElastic=query=>newPromise ~ query", query)
 
-  // const index = process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries"
+  const index = process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries"
   
   // new elasticsearch single node multi index
-  const index = "tradedb.countries"
+  // const index = "tradedb.countries"
 
   const searchQuery = {
     index,
