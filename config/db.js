@@ -18,7 +18,7 @@ function dbConnection() {
     serverSelectionTimeoutMS: 10000,
     // reconnectTries: 30,
   };
-  if (env.NODE_ENV === 'production') {
+  if (env.NODE_ENV === 'production' /* || env.NODE_ENV === 'staging' */) {
 
     // url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
     // options = {
@@ -71,6 +71,13 @@ if (env) {
 
     // new single node multi shard elasticsearch
     // conf.host = '165.22.209.173:9200'
+
+    // new multi node(3) multi shards(12) elasticsearch
+    // conf.host = [
+    //   'http://142.93.215.209:9200',
+    //   'http://143.244.139.247:9200',
+    //   'http://143.244.139.250:9200'
+    // ]
 
   } else if (env.NODE_ENV === 'production') {
 
