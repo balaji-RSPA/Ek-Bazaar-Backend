@@ -1,2 +1,10 @@
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-09-06T09:11:49.372Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-09-21T08:30:48.851Z"}
+=======
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-18T15:49:57.170Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-18T15:50:13.891Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-18T15:50:21.736Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-18T15:50:42.220Z"}
+>>>>>>> 43a1fa212d3f84419e5307faf046a575f5ba4989
+{"message":"Listening:8070","level":"info","timestamp":"2021-09-21T08:31:20.519Z"}

@@ -307,6 +307,10 @@ const sellersSchema = new Schema(
     incompleteRegistration:{
       type: Number,
       default: 1,
+    },
+    manual:{
+      type: Boolean,
+      default: false
     }
   },
   {

@@ -4,7 +4,7 @@ var certFileBuf = fs.readFileSync(path.join(__dirname, 'ca-certificate.crt'), { 
 let config;
 
 console.log("🚀 ~ file: config.js ~ line 4 ~ process.env.NODE_ENV", process.env.NODE_ENV)
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" /* || process.env.NODE_ENV === "staging" */) {
   config = {
     tradeDb: {
       // replicaset
@@ -59,7 +59,7 @@ if (process.env.NODE_ENV === "production") {
       // port: "27017",
       // user: "tradeuser",
       // password: "a7L6q193z80FIw2x",
-      // database: "trade-live",
+      // database: "newtradedb",
       // certFileBuf,
       // replicaName: "trade-test",
       protocol: 'mongodb+srv',

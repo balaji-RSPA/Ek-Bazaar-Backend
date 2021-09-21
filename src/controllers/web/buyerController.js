@@ -54,7 +54,7 @@ const getUserAgent = (userAgent) => {
 module.exports.queSmsData = async (productDetails, _loc, user, name, mobile, rfp, url) => {
 
   try {
-    //productDetails.name !== 'undefined' 
+    //productDetails.name !== 'undefined'
     if (productDetails && productDetails.name && productDetails.name.name) {
       // const query = {
       //   "term": {
@@ -237,21 +237,23 @@ module.exports.createRFP = async (req, res, next) => {
         })
         await sendEmailBuyer(email)
       }
-      if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment == "production" && !oneBazaar) {
-
+      console.log(requestType , sellerDtl, ' rames h----------------')
+      if (sellerDtl && sellerDtl.length && requestType === 1 /* && global.environment == "production" */ && !oneBazaar) {
+        console.log(' ramesh messag started -------')
         const sellerData = await getSellerProfile(sellerId)
         const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
         // console.log("🚀 ~ file: buyerController.js ~ line 239 ~ module.exports.createRFP= ~ constsellerContactNo", constsellerContactNo, mobile)
 
         if (constsellerContactNo && constsellerContactNo.mobile) {
-
+          console.log(' ramesh  if condition ------------')
           console.log('message sending...........')
           let { message, templateId } = RFQOneToOne({ productDetails, _loc, name })
           let sellerSMSResp = await sendSMS(`${constsellerContactNo.countryCode || '+91'}${constsellerContactNo.mobile}`, message, templateId)
           console.log("🚀 ~ file: buyerController.js ~ line 244 ~ module.exports.createRFP= ~ sellerSMSResp", sellerSMSResp.data)
-         
+
           let buyerSMS = RFQOneToOneBuyer({buyerName:buyerData.name,sellerName:sellerData && sellerData.length && sellerData[0].name,sellerPhone :`${constsellerContactNo.countryCode || '+91'}${constsellerContactNo.mobile}`})
           message = buyerSMS.message, templateId = buyerSMS.templateId
+          console.log("🚀 ~ file: buyerController.js ~ line 256 ~ module.exports.createRFP= ~ message", message)
           let buyerSMSResp = await sendSMS(`${mobile.countryCode || '+91'}${mobile.mobile}`, message, templateId)
           console.log("🚀 ~ file: buyerController.js ~ line 250 ~ module.exports.createRFP= ~ buyerSMSResp", buyerSMSResp.data)
 
@@ -277,6 +279,7 @@ module.exports.createRFP = async (req, res, next) => {
           let ContactNo = sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
           let countrycode = sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] && sellerDtl[0].mobile[0].countryCode : '+91'
           let { message, templateId } = RFQOneToOneBuyer({buyerName:buyerData && buyerData.name,sellerName:sellerDtl && sellerDtl.length && sellerDtl[0].name,sellerPhone :`${countrycode}${ContactNo.mobile}`})
+          console.log("🚀 ~ file: buyerController.js ~ line 282 ~ module.exports.createRFP= ~ message", message)
           await sendSMS(mobile.mobile, message, templateId)
 
         }
@@ -385,11 +388,13 @@ module.exports.createRFP = async (req, res, next) => {
 
             console.log('message sending...........')
             let { message, templateId } = RFQOneToOne({ productDetails, _loc, name })
+            console.log("🚀 ~ file: buyerController.js ~ line 391 ~ module.exports.createRFP= ~ message", message)
             let sellerSMSResp = await sendSMS(`${constsellerContactNo.countryCode || '+91'}${constsellerContactNo.mobile}`, message, templateId)
             console.log("🚀 ~ file: buyerController.js ~ line 244 ~ module.exports.createRFP= ~ sellerSMSResp", sellerSMSResp.data)
 
             let buyerSMS = RFQOneToOneBuyer({buyerName:buyerData.name,sellerName:sellerData && sellerData.length && sellerData[0].name,sellerPhone :`${constsellerContactNo.countryCode || '+91'}${constsellerContactNo.mobile}`})
             message = buyerSMS.message, templateId = buyerSMS.templateId
+            console.log("🚀 ~ file: buyerController.js ~ line 397 ~ module.exports.createRFP= ~ message", message)
             let buyerSMSResp = await sendSMS(`${mobile.countryCode || '+91'}${mobile.mobile}`, message, templateId)
             console.log("🚀 ~ file: buyerController.js ~ line 395 ~ module.exports.createRFP= ~ buyerSMSResp", buyerSMSResp.data)
 
@@ -582,5 +587,5 @@ async function sendEmailSeller(params) {
 
 //   }catch(err){
 //      console.log(error)
-//   }     
+//   }
 // }
