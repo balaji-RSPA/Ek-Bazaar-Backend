@@ -252,44 +252,44 @@ if (env.NODE_ENV === "production") {
 }
 
 if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
-  // const planExpire = cron.schedule(
-  //   "50 23 * * *",
-  //   async () => {
-  //     //every day 10 am cron will start
-  //     planExpire.stop();
-  //     console.log(
-  //       "-------------------- planExpire file cron start --------------------",
-  //       new Date()
-  //     );
-  //     await getExpirePlansCron();
-  //     await getAboutToExpirePlan();
-  //     console.log(
-  //       "-------------------- planExpire file cron completed --------------------",
-  //       new Date()
-  //     );
-  //     planExpire.start();
-  //   },
-  //   {
-  //     scheduled: true,
-  //     timezone: "Asia/Kolkata",
-  //   }
-  // );
-  // planExpire.start();
+  const planExpire = cron.schedule(
+    "50 23 * * *",
+    async () => {
+      //every day 10 am cron will start
+      planExpire.stop();
+      console.log(
+        "-------------------- planExpire file cron start --------------------",
+        new Date()
+      );
+      await getExpirePlansCron();
+      await getAboutToExpirePlan();
+      console.log(
+        "-------------------- planExpire file cron completed --------------------",
+        new Date()
+      );
+      planExpire.start();
+    },
+    {
+      scheduled: true,
+      timezone: "Asia/Kolkata",
+    }
+  );
+  planExpire.start();
 
-  // const queEmail = cron.schedule("* * * * *", async () => {
-  //   queEmail.stop();
-  //   console.log(
-  //     "-------------------- queEmail file cron start --------------------",
-  //     new Date()
-  //   );
-  //   await sendQueEmails();
-  //   console.log(
-  //     "-------------------- queEmail file cron completed --------------------",
-  //     new Date()
-  //   );
-  //   queEmail.start();
-  // });
-  // queEmail.start();
+  const queEmail = cron.schedule("* * * * *", async () => {
+    queEmail.stop();
+    console.log(
+      "-------------------- queEmail file cron start --------------------",
+      new Date()
+    );
+    await sendQueEmails();
+    console.log(
+      "-------------------- queEmail file cron completed --------------------",
+      new Date()
+    );
+    queEmail.start();
+  });
+  queEmail.start();
 
   // const priority = cron.schedule("* * * * *", async () => {
   //   priority.stop();
