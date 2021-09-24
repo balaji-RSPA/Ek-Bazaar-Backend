@@ -1629,7 +1629,6 @@ exports.sellersOverAllCount = (search) => new Promise((resolve, reject) => {
 })
 
 exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
-  let now = new Date()
   Sellers.aggregate([
     {
       $match: {
@@ -1661,7 +1660,7 @@ const SendNotifc = async (el) => {
     let countryCodeVal = el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode.replace("+", "") : '91';
     let smscountryCode = el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode : '+91'
     let watiData = {
-      mobile: `${countryCodeVal}${el.mobile[0].mobile}`,
+      mobile: `${countryCodeVal}${el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].mobile}`,
       name: el.name
     }
     await Sellers.updateOne({ _id: el._id }, { $set: { incompleteRegistration: 2 } })
