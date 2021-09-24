@@ -695,23 +695,23 @@ module.exports.updateUser = async (req, res) => {
             contactDetails : {
                 location:{
                   city:{
-                     name:sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
-                     _id: sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
+                     name:sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
+                     _id: sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
                   },
                   state:{
-                      name:sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
-                      _id:sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
+                      name:sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
+                      _id:sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
                   },
                   country:{
-                     name:sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
-                     _id:sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
+                     name:sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
+                     _id:sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
                   },
-                  address:sellerContactId.location && sellerContactId.location.address,
-                  pincode:sellerContactId.location && sellerContactId.location.pincode
+                  address:sellerContactId && sellerContactId.location && sellerContactId.location.address,
+                  pincode:sellerContactId && sellerContactId.location && sellerContactId.location.pincode
                 },
-                alternativNumber : sellerContactId.alternativNumber,
-                email : sellerContactId.email,
-                website : sellerContactId.website
+                alternativNumber : sellerContactId && sellerContactId.alternativNumber,
+                email : sellerContactId && sellerContactId.email,
+                website : sellerContactId && sellerContactId.website
             }
           }
           // keywords

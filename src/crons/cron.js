@@ -453,7 +453,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         console.log("🚀 ~ file: cron.js ~ line 452 ~ exports.sendDailyCount= ~ yesterdayTotalSellerCount", yesterdayTotalSellerCount.length)
         // const yesterdayTotalBuyerCount = await Sellers.find({$or: [{$and: [{sellerProductId: {$exists: true}}, {$where: "this.sellerProductId.length < 1"}]},{sellerProductId: {$exists: false}}, { sellerProductId : null }], name: {$exists: true}, createdAt: {$gte: registerdate, $lt: date}}).exec()
         // console.log("🚀 ~ file: cron.js ~ line 453 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount.length)
-        const yesterdayTotalCount = await Sellers.find({ createdAt: { $gte: registerdate, $lt: date }, name: { $exists: true } }).exec()
+        const yesterdayTotalCount = await Sellers.find({ createdAt: { $gte: registerdate, $lt: date }, name: { $exists: true }, userId: { $ne: null } }).exec()
         console.log("🚀 ~ file: cron.js ~ line 456 ~ exports.sendDailyCount= ~ yesterdayTotalCount", yesterdayTotalCount.length)
 
         const yesterdayTotalBuyerCount = yesterdayTotalCount.length - yesterdayTotalSellerCount.length
@@ -484,7 +484,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
-        const recipients = [{ email: 'ashutosh@active.agency', name: 'Ashutosh' }, { email: 'shrey@active.agency', name: 'Shrey Kankaria' },/*  { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' },  */{ email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }]
+        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }]
         console.log("🚀 ~ file: cron 3.js ~ line 488 ~ exports.sendDailyCount= ~ recipients", recipients)
         console.log("🚀 ~ file: cron 3.js ~ line 490 ~ exports.sendDailyCount= ~ source", source)
         let recipientVars = {};

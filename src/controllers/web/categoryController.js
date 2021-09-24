@@ -119,11 +119,11 @@ module.exports.getSpecificCategories = async (req, res) => {
         //     "6114cc830a3c0d4159143517",
         //     "6114cc830a3c0d4159143522"
         // ]
-
         const query = {
-            _id: {
-                $in: idsArray
-            }
+            // _id: {
+            //     $in: idsArray
+            // }
+            vendorId: { $in: ["3", "21", "4", "5", "40"] }
         }
         const result = await getSpecificCategories(query)
         respSuccess(res, result)
@@ -185,9 +185,10 @@ module.exports.addParentCategories = async (req, res) => {
                 l1: element.vendorId,
                 vendorId: element.vendorId
             }
-            const sugge = await createSuggestions(suggestion)
+            // const sugge = await createSuggestions(suggestion)
         }
-        respSuccess(res, result)
+        console.log(' Completed Uploading parent categories -----')
+        respSuccess(res, ' Completed Uploading parent categories -----')
 
     } catch (error) {
         console.log(error)
@@ -265,7 +266,7 @@ module.exports.addPrimaryCategories = async (req, res) => {
                     l1: result.l1,
                     vendorId: result.vendorId
                 }
-                const sugge = await createSuggestions(suggestion)
+                // const sugge = await createSuggestions(suggestion)
                 const updateData = {
                     primaryCategotyId: parentCat.primaryCategotyId.concat(result._id)
                 }
@@ -274,8 +275,10 @@ module.exports.addPrimaryCategories = async (req, res) => {
                 console.log("duplicate level2 record")
             }
             // bulkData.push(primaryData)
+            console.log(index, element.name || null, element.vendorId || null, ' uploading ------')
 
         }
+        console.log(' COmpleted primary category uploading -----------')
         respSuccess(res, 'Uploaded Successfully')
 
     } catch (error) {
@@ -355,7 +358,7 @@ module.exports.addSecondaryCategories = async (req, res) => {
                     l1: result.l1,
                     vendorId: result.vendorId
                 }
-                const sugge = await createSuggestions(suggestion)
+                // const sugge = await createSuggestions(suggestion)
 
                 const updateData = {
                     secondaryCategotyId: parentCat.secondaryCategotyId.concat(result._id)
@@ -451,7 +454,7 @@ module.exports.addBulkProducts = async (req, res) => {
                         l1: result.l1,
                         vendorId: result.vendorId
                     }
-                    const sugge = await createSuggestions(suggestion)
+                    // const sugge = await createSuggestions(suggestion)
 
                     const updateData = {
                         productId: parentCat.productId.concat(result._id)
@@ -462,6 +465,7 @@ module.exports.addBulkProducts = async (req, res) => {
             } else {
                 console.log("duplicate level4 record", element.vendorId)
             }
+            console.log(index, element.name || null, element.vendorId || null, ' uploading ------')
 
         }
         console.log('Completed +++++++++++++++')
@@ -503,7 +507,7 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
                         l1: result.l1,
                         vendorId: result.vendorId
                     }
-                    const sugge = await createSuggestions(suggestion)
+                    // const sugge = await createSuggestions(suggestion)
 
                     // console.log("🚀 ~ file: categoryController.js ~ line 354 ~ module.exports.addBulkProductSubCategories= ~ result", result)
                     const updateData = {
@@ -515,6 +519,7 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
             } else {
                 console.log("duplicate level5 record")
             }
+            console.log(index, element.name || null, element.vendorId || null, ' uploading ------')
         }
         console.log('Completed +++++++++++++++')
         respSuccess(res, 'Uploaded Successfully')
@@ -675,10 +680,10 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
             // "5fdf6cedbe4f6810f10106bc",
 
             // old db categories l3
-            '5fdf6cc9be4f6810f10102d0',
-            '5fdf6cc9be4f6810f10102d4',
-            '5fdf6cdcbe4f6810f10104e2',
-            "5fdf6cc8be4f6810f10102ca"
+            // '5fdf6cc9be4f6810f10102d0',
+            // '5fdf6cc9be4f6810f10102d4',
+            // '5fdf6cdcbe4f6810f10104e2',
+            // "5fdf6cc8be4f6810f10102ca"
 
             // "6114cf750a3c0d4159143c8c",
             // "6114cf750a3c0d4159143c94",
@@ -699,8 +704,11 @@ module.exports.getAllSecondaryCategories = async (req, res) => {
         // ]
 
         const query = {
-            _id: {
-                $in: idsArray
+            // _id: {
+            //     $in: idsArray
+            // }
+            vendorId: {
+                $in: ["L3F13", "L3F17", /* "L3PM1", */ "L3F7"]
             }
         }
         let secondaryCategories = await getAllSecondaryCategories(query)

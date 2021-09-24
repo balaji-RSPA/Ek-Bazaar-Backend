@@ -183,7 +183,7 @@ module.exports.getAllOffers = async (req, res) => {
                 // console.log("dateeeeeeeeeeeeeeeeeeeeeeee", req.productDetails.level1, req.productDetails.validity, new Date(req.productDetails.validity).toLocaleString())
                 if (index === -1 && new Date(req.productDetails.validity).toLocaleString() > new Date().toLocaleString()) {
                     let _products = []
-                    console.log(JSON.stringify(buyerRequest), ' ramesh -------------')
+                    // console.log(JSON.stringify(buyerRequest), ' ramesh -------------')
                     let productsCount = buyerRequest.filter(_req => (_req.productDetails && _req.productDetails.name && _req.productDetails.name.level1 && _req.productDetails.name.level1.id) && _req.productDetails.name.level1.id ===  (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id) && req.productDetails.name.level1.id).reduce((acc, curr) => {
                         if (curr.productDetails.name.level2) {
                             if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
