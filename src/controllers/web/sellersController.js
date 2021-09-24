@@ -408,10 +408,10 @@ const masterMapData = (val, type, contactDetails = null) => new Promise((resolve
     });
   }
   val.serviceCity && val.serviceCity.length && val.serviceCity.map((v) => {
-    _Scity.push(v.city && v.city.name.toLowerCase())
-    _Scity.push(v.state && v.state.name.toLowerCase())
-    _Scity.push(v.country && v.country.name.toLowerCase())
-    _Scity.push(v.region && v.region.toLowerCase())
+    _Scity.push(v.city && v.city.name && v.city.name.toLowerCase())
+    _Scity.push(v.state && v.state.name && v.state.name.toLowerCase())
+    _Scity.push(v.country && v.country.name && v.country.name.toLowerCase())
+    _Scity.push(v.region && v.region && v.region.toLowerCase())
   })
   val.sellerId && val.sellerId.location && delete val.sellerId.location._id
 
@@ -677,7 +677,7 @@ module.exports.updateSellerProduct = async (req, res) => {
     } = req
     let { offers, productId, deleteOffer } = body
     offers = offers ? JSON.parse(offers) : null
-    console.log('update poroduct---', body, productId, deleteOffer)
+    // console.log('update poroduct---', body, productId, deleteOffer)
 
     let updateDetail
 
