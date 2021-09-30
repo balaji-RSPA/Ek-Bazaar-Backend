@@ -51,7 +51,7 @@ module.exports.updateNews = (query, data) =>
 /**delete news*/
 module.exports.deleteNews = query =>
   new Promise((resolve, reject) => {
-    News.deleteOne(query)
+    News.deleteMany(query)
       .then(deleteNews => {
         resolve(deleteNews);
       })
