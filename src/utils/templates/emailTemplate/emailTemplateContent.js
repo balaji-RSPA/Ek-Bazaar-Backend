@@ -158,6 +158,6 @@ module.exports.partialSellerRegistration = () => {
     body: `<p>Please complete your registration in-order to receive business enquiries from buyers.</p>`,
     buttonName: 'Complete your registration',
     buttonLink: `${params.url}/seller/seller-central/bussiness-profile`,
-  }
+  }  
   return message;
 }
