@@ -11,8 +11,27 @@ const commoditySchema = new Schema(
       required: true,
       trim: true
     },
+    veriety: {
+      type: String,
+      trim: true
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true
+    },
     priceUnit: {
       type: String,
+      required: true,
+      trim: true
+    },
+    parentCat: {
+      type: Number,
+      required: true,
+      trim: true
+    },
+    commCat: {
+      type: Number,
       required: true,
       trim: true
     },
