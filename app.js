@@ -278,13 +278,13 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   //   priority.start();
   // });
   // priority.start();
-  const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
-    console.log(' Incomplete registration cron started ------ ')
-    emailSmsToPartiallyRegistered.stop();
-    await fetchPartiallyRegistredSeller();
-    emailSmsToPartiallyRegistered.start();
-    console.log('Incomplete registration cron end ------------------')
-  });
-  emailSmsToPartiallyRegistered.start();
+  // const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
+  //   console.log(' Incomplete registration cron started ------ ')
+  //   emailSmsToPartiallyRegistered.stop();
+  //   await fetchPartiallyRegistredSeller();
+  //   emailSmsToPartiallyRegistered.start();
+  //   console.log('Incomplete registration cron end ------------------')
+  // });
+  // emailSmsToPartiallyRegistered.start();
 
 }
