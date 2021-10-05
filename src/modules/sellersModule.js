@@ -1629,7 +1629,6 @@ exports.sellersOverAllCount = (search) => new Promise((resolve, reject) => {
 })
 
 exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
-  //{ $gte: new Date(moment().subtract(3, 'minutes').utc().format()), $lt: new Date(moment(new Date()).utc().format()) }
   let now = new Date()
   Sellers.aggregate([
     {
@@ -1637,33 +1636,11 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
         $and: [{ incompleteRegistration: 1 }, { $or: [{ statutoryId: { $eq: null } }, { sellerContactId: { $eq: null } }] }]
       }
     },
-    // {
-    //   $lookup: {
-    //     from: "sellertypes",
-    //     localField: "sellerType",
-    //     foreignField: "_id",
-    //     as: "sellerType"
-    //   }
-    // },
-    //   {
-    //  $unwind:{
-    //   path:'$sellerType',
-    //   preserveNullAndEmptyArrays:true
-    // }
-    // }
   ])
     .then((doc) => {
-      // console.log(moment(now).subtract(5, "minutes").toDate())
       let now =  moment()
         doc && doc.length && doc.filter(record => now.diff(record.updatedAt, 'minutes') >= 3).forEach(async (el) => {
          await SendNotifc(el)
-        // if((el.sellerType && el.sellerType.name === 'farmer')){
-        //   await SendNotifc(el)
-        // }else if((el.sellerType && el.sellerType.name !== 'farmer')){ 
-        //     await SendNotifc(el)
-        // }else if((!el.sellerType.length)){
-        //   await SendNotifc(el)
-        // }
         resolve()
 
       })
@@ -1681,15 +1658,15 @@ const SendNotifc = async (el) => {
       subject: "Ekbazaar Incomplete Registration",
       html: commonTemplate(template),
     };
-    let countryCodeVal = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode.replace("+", "") : '91';
-    let smscountryCode = el.mobile && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode : '+91'
+    let countryCodeVal = el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode.replace("+", "") : '91';
+    let smscountryCode = el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode : '+91'
     let watiData = {
       mobile: `${countryCodeVal}${el.mobile[0].mobile}`,
       name: el.name
     }
     await Sellers.updateOne({ _id: el._id }, { $set: { incompleteRegistration: 2 } })
     const { messagePartial, templateId } = partialRegistred({ name: (el.name || '') });
-    el.mobile && smscountryCode && await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, messagePartial, templateId);
+    el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].mobile && smscountryCode && await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, messagePartial, templateId);
     el.email && await sendSingleMail(message);
     // el.mobile && countryCodeVal && await sendwati(watiData);
     return true;

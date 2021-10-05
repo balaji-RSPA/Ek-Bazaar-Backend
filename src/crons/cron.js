@@ -466,7 +466,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         console.log("🚀 ~ file: cron.js ~ line 465 ~ exports.sendDailyCount= ~ smec_ount", smec_ount.length)
         const paper_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Paper Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
         console.log("🚀 ~ file: cron.js ~ line 467 ~ exports.sendDailyCount= ~ paper_ads_count", paper_ads_count.length)
-        const online_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Online Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
+        const online_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Online Ads " }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
         console.log("🚀 ~ file: cron.js ~ line 469 ~ exports.sendDailyCount= ~ online_ads_count", online_ads_count.length)
         const social_media_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Social media" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
         console.log("🚀 ~ file: cron.js ~ line 471 ~ exports.sendDailyCount= ~ social_media_count", social_media_count.length)
@@ -484,9 +484,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
-        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }]
-        console.log("🚀 ~ file: cron 3.js ~ line 488 ~ exports.sendDailyCount= ~ recipients", recipients)
-        console.log("🚀 ~ file: cron 3.js ~ line 490 ~ exports.sendDailyCount= ~ source", source)
+        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' }]
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
             recipientVars = {

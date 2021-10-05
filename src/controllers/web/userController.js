@@ -461,8 +461,6 @@ module.exports.updateUser = async (req, res) => {
       mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (Boolean(mobile) && parseInt(mobile)) || __usr.mobile,
       countryCode: (mobile && Boolean(mobile.countryCode)&& mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
     };
-    console.log("🚀 ~ file: userController.js ~ line 467 ~ module.exports.updateUser= ~ userData", userData)
-
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
     if (!_seller) {
