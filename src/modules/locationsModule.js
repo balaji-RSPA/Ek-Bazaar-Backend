@@ -416,3 +416,24 @@ module.exports.getCityList = (query) =>
         reject(error);
       });
   });
+
+module.exports.getSelectedCountries = (query) =>
+  new Promise((resolve, reject) => {
+    Countries.find(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+module.exports.getSelectedStates = (query) =>
+  new Promise((resolve, reject) => {
+    States.find(query)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });

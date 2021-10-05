@@ -453,7 +453,8 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         console.log("🚀 ~ file: cron.js ~ line 452 ~ exports.sendDailyCount= ~ yesterdayTotalSellerCount", yesterdayTotalSellerCount.length)
         // const yesterdayTotalBuyerCount = await Sellers.find({$or: [{$and: [{sellerProductId: {$exists: true}}, {$where: "this.sellerProductId.length < 1"}]},{sellerProductId: {$exists: false}}, { sellerProductId : null }], name: {$exists: true}, createdAt: {$gte: registerdate, $lt: date}}).exec()
         // console.log("🚀 ~ file: cron.js ~ line 453 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount.length)
-        const yesterdayTotalCount = await Sellers.find({ createdAt: { $gte: registerdate, $lt: date }, name: { $exists: true } }).exec()
+        const yesterdayTotalCount = await Sellers.find({ createdAt: { $gte: registerdate, $lt: date }, name: { $exists: true }, userId: { $ne: null } }).exec()
+
         console.log("🚀 ~ file: cron.js ~ line 456 ~ exports.sendDailyCount= ~ yesterdayTotalCount", yesterdayTotalCount.length)
 
         const yesterdayTotalBuyerCount = yesterdayTotalCount.length - yesterdayTotalSellerCount.length
@@ -477,13 +478,13 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
-        const recipients = [{email: 'ashutosh@active.agency', name: 'Ashutosh'}, {email: 'shrey@active.agency', name: 'Shrey Kankaria'}, /* {email: 'akshay@active.agency', name: 'Akshay Agarwal'}, {email: 'ameen@active.agency', name: Ameen}, {email: 'nagesh@ekbazaar.com', name: 'Nagesh'}, {email: 'sandeep@ekbazaar.com', name: 'Sandeep'} */ {email: 'ramesh@active.agency', name: 'Ramesh Shettanoor'}, {email: 'darshan@active.agency', name: 'Darshan'}]
+        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }]
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
             recipientVars = {
                 ...recipientVars,
                 [recipient.email]: {
-                    id: index+1,
+                    id: index + 1,
                     name: recipient.name
                 }
             }
@@ -758,7 +759,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                 </div>
                                 <div style="margin-top: 15px;">
                                     <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${yesterdayTotalCount.length}</h4>
-                                    <h4>Incomplete Buyers: <span>${yesterdayTotalCount.length}</span></h4>
+                                    <h4>Incomplete Sellers: <span>${yesterdayTotalCount.length}</span></h4>
                                     <h4>Registered Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
                                     <h4>Thank you. </h4>
                                 </div>

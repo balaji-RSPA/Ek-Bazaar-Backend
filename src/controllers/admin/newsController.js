@@ -17,11 +17,11 @@ module.exports.getAllNews = async (req, res) => {
   try {
     const { search, skip, limit } = req.query;
     const query = search ? {
-      search : {
+      search: {
         $or: [{ news: { $regex: search, $options: "i" } }]
       },
-      skip :parseInt(skip),
-      limit:parseInt(limit)
+      skip: parseInt(skip),
+      limit: parseInt(limit)
     } : {}
     const allNews = await getAllNews(query);
     respSuccess(res, allNews);
@@ -65,8 +65,9 @@ module.exports.updateNews = async (req, res) => {
 /**delete news*/
 module.exports.deleteNews = async (req, res) => {
   try {
-    const id = req.params.id;
-    const deleteStatus = await deleteNews({ _id: id });
+    // const id = req.params.id;
+    const { _ids } = req.body
+    const deleteStatus = await deleteNews({ _id: { $in: _ids } });
     respSuccess(res, deleteStatus, "Record deleted successfully");
   } catch (error) {
     respError(res, error.message);

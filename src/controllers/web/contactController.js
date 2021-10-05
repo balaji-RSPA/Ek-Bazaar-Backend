@@ -20,15 +20,16 @@ module.exports.addContact = async (req, res) => {
   try {
   let result
   let url 
-  if (process.env.NODE_ENV === 'development'){
+  if (process.env.NODE_ENV === 'development') {
+    url = `https://tenderapi.tech-active.com/api/v1/`
+  }
+  else if (process.env.NODE_ENV === 'production') {
     url = `https://api.ekbazaar.com/api/v1/`
-   }
-   else if(process.env.NODE_ENV === 'production'){
-     url = `https://api.ekbazaar.com/api/v1/`
-   }
-   else if(process.env.NODE_ENV === 'staging'){
-      url = `https://elastic.tech-active.com:8443/api/v1/`
-   }
+  }
+  else if (process.env.NODE_ENV === 'staging') {
+    // url = `https://elastic.tech-active.com:8443/api/v1/`
+    url = `https://tenderapi.tech-active.com/api/v1/`
+  }
   let response = await axios.post(`${url}contact`, req.body)
   if(response.data.success === false){
     throw new Error(response.data.message)

@@ -201,50 +201,6 @@ content-type: application/json
     "Level_2": "FB9",
     "Level_3": "L3FB113",
     "Level_4": "L4FB1605,L4FB1606,L4FB1607,L4FB1608,L4FB1609,L4FB1610,L4FB1611,L4FB1612,L4FB1613,L4FB1614,L4FB1615,L4FB1616,L4FB1617,L4FB1618,L4FB1619,L4FB1620,L4FB1621,L4FB1622"
-  },
-  {
-    "name": "D Spices manufacture",
-    "Service_Type": "Wholesalers",
-    "Service_City": "Jaipur",
-    "Service_Category": "Spice",
-    "address": "agra road, Agra Road, Jaipur - 302004, near Jodhpur sweet home",
-    "City": "Jaipur",
-    "Mobile 1": 918302363030,
-    "Mobile 2": "",
-    "Mobile 3": "",
-    "Mobile 4": "",
-    "Mobile 5": "",
-    "Mobile 6": "",
-    "Mobile 7": "",
-    "Mobile 8": "",
-    "Mobile 9": "",
-    "Mobile 10": "",
-    "Level_1": 3,
-    "Level_2": "FB3",
-    "Level_3": "L3FB41,L3FB42,L3FB43,L3FB44,L3FB45,L3FB46,L3FB47,L3FB48,L3FB49,L3FB50,L3FB51,L3FB52",
-    "Level_4": ""
-  },
-  {
-    "name": "Frozen Cafe",
-    "Service_Type": "Distributors",
-    "Service_City": "Belgaum",
-    "Service_Category": "Frozen Vegetable,Frozen Seafood",
-    "address": "Aknli Road, Chikodi, Belgaum - 591201, Opp  Bc College",
-    "City": "Belgaum",
-    "Mobile 1": 919673220574,
-    "Mobile 2": 919673220043,
-    "Mobile 3": "",
-    "Mobile 4": "",
-    "Mobile 5": "",
-    "Mobile 6": "",
-    "Mobile 7": "",
-    "Mobile 8": "",
-    "Mobile 9": "",
-    "Mobile 10": "",
-    "Level_1": 3,
-    "Level_2": "FB8,FB17",
-    "Level_3": "L3FB106,L3FB181,L3FB182",
-    "Level_4": "L4FB1525,L4FB1526,L4FB1527,L4FB1528,L4FB1529,L4FB1530,L4FB1531,L4FB1532,L4FB1533,L4FB1534,L4FB1535,L4FB1536,L4FB1537,L4FB1538,L4FB1539,L4FB1540"
   }
 ]
 
@@ -264,23 +220,6 @@ content-type: application/json
     "Mobile_5": "",
     "Service_City": "Durgapur",
     "Service_Type": "Wholesalers",
-    "Service_Category": "Meat",
-    "Level_1": 3,
-    "Level_2": "FB19",
-    "Level_3": "L3FB191",
-    "Level_4": "L4FB2615,L4FB2616,L4FB2617,L4FB2618,L4FB2619,L4FB2620,L4FB2621,L4FB2622,L4FB2623,L4FB2624,L4FB2625,L4FB2626,L4FB2627,L4FB2628,L4FB2629,L4FB2630,L4FB2631,L4FB2632,L4FB2633,L4FB2634,L4FB2635,L4FB2636,L4FB2637,L4FB2638,L4FB2639,L4FB2640,L4FB2641,L4FB2642,L4FB2643,L4FB2644,L4FB2645,L4FB2646,L4FB2647,L4FB2648,L4FB2649,L4FB2650,L4FB2651,L4FB2652,L4FB2653,L4FB2654,L4FB2655,L4FB2656,L4FB2657,L4FB2658,L4FB2659,L4FB2660,L4FB2661,L4FB2662,L4FB2663,L4FB2664,L4FB2665,L4FB2666,L4FB2667,L4FB2668,L4FB2669,L4FB2670,L4FB2671,L4FB2672,L4FB2673,L4FB2674,L4FB2675,L4FB2676,L4FB2677,L4FB2678,L4FB2679,L4FB2680,L4FB2681,L4FB2682,L4FB2683,L4FB2684,L4FB2685,L4FB2686,L4FB2687,L4FB2688,L4FB2689,L4FB2690,L4FB2691"
-  },
-  {
-    "name": "1 No Meat Shop",
-    "address": "Chandi Das Market, Marconi Avenue, Durgapur Steel Town East, Durgapur - 713205",
-    "City": "Durgapur",
-    "Mobile_1": 919635533745,
-    "Mobile_2": "",
-    "Mobile_3": "",
-    "Mobile_4": "",
-    "Mobile_5": "",
-    "Service_City": "Durgapur",
-    "Service_Type": "Distributors",
     "Service_Category": "Meat",
     "Level_1": 3,
     "Level_2": "FB19",
@@ -312,9 +251,9 @@ content-type: application/json
 #   }
 # ]
 
-####
-POST  http://localhost:8070/uploadInternationalCity HTTP/1.1
-content-type: application/json
+# ####
+# POST  http://localhost:8070/uploadInternationalCity HTTP/1.1
+# content-type: application/json
 
 # [
 #   {
@@ -328,3 +267,22 @@ content-type: application/json
 ###
 GET  http://localhost:8070/getCityList HTTP/1.1
 content-type: application/json
+
+
+# ###
+# GET  http://localhost:8070/uploadOnBoardSeller HTTP/1.1
+# content-type: application/json
+
+# ###
+# GET  http://localhost:8070/getSellerMasterProducts HTTP/1.1
+# content-type: application/json
+
+# ###
+# GET  http://localhost:8070/moveSellerToNewDB HTTP/1.1
+# content-type: application/json
+
+
+# Buyers 
+# ###
+# GET  http://localhost:8070/uploadOnBoardBuyers HTTP/1.1
+# content-type: application/json

@@ -26,6 +26,6 @@ router.put("/commodity/:id", commodity.updateCommodity);
 /**
  * delete commodity
  */
-router.delete("/commodity/:id", commodity.deleteCommodity);
+router.post("/deleteCommodity", commodity.deleteCommodity);
 
 module.exports = router;
