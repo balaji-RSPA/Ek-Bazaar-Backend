@@ -11,6 +11,13 @@ const {
 /**create Commodity*/
 module.exports.createCommodity = async (req, res) => {
   try {
+    const { check, veriety, commodityName } = req.body
+    if (check) {
+      const exist = await getCommodity({ veriety, commodityName })
+      if (exist) {
+        await deleteCommodity({ _id: { $in: [exist._id] } })
+      }
+    }
     const commodity = await createCommodity(req.body);
     respSuccess(res, commodity, "Record created successfully");
   } catch (error) {
@@ -23,14 +30,14 @@ module.exports.getAllCommodity = async (req, res) => {
   try {
     const { search, skip, limit } = req.query;
     let query = search ? {
-      search : {
-          $or: [
-            { commodityName: { $regex: search, $options: "i" } },
-            { priceUnit: { $regex: search, $options: "i" } }
-          ]
-        },
-      skip:parseInt(skip),
-      limit:parseInt(limit)
+      search: {
+        $or: [
+          { commodityName: { $regex: search, $options: "i" } },
+          { priceUnit: { $regex: search, $options: "i" } }
+        ]
+      },
+      skip: parseInt(skip),
+      limit: parseInt(limit)
     } : {}
     const commodityData = await getAllCommodity(
       query
@@ -59,20 +66,21 @@ module.exports.updateCommodity = async (req, res) => {
     const updatedCommodityData = {};
     const { commodityName, priceUnit, city } = req.body;
 
-    if (commodityName) {
-      updatedCommodityData.commodityName = commodityName;
-    }
-    if (priceUnit) {
-      updatedCommodityData.priceUnit = priceUnit;
-    }
+    // if (commodityName) {
+    //   updatedCommodityData.commodityName = commodityName;
+    // }
+    // if (priceUnit) {
+    //   updatedCommodityData.priceUnit = priceUnit;
+    // }
 
-    if (city) {
-      updatedCommodityData.city = city;
-    }
+    // if (city) {
+    //   updatedCommodityData.city = city;
+    // }
 
     const updatedCommodity = await updateCommodity(
       { _id: id },
-      updatedCommodityData
+      // updatedCommodityData
+      req.body
     );
     respSuccess(res, updatedCommodity, "Record updated successfully");
   } catch (error) {
@@ -83,8 +91,9 @@ module.exports.updateCommodity = async (req, res) => {
 /**delete Commodity*/
 module.exports.deleteCommodity = async (req, res) => {
   try {
-    const _id = req.params.id;
-    const deleteStatus = await deleteCommodity({ _id });
+    // const _id = req.params.id;
+    const { _ids } = req.body
+    const deleteStatus = await deleteCommodity({ _id: { $in: _ids } });
     respSuccess(res, deleteStatus, "Record deleted successfully");
   } catch (error) {
     respError(res, error.message);

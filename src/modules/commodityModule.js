@@ -54,7 +54,7 @@ module.exports.updateCommodity = (query, updatedData) =>
 /**delete Commodity*/
 module.exports.deleteCommodity = query =>
   new Promise((resolve, reject) => {
-    Commodity.deleteOne(query)
+    Commodity.deleteMany(query)
       .then(deleted => {
         resolve(deleted);
       })

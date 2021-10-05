@@ -156,6 +156,8 @@ module.exports.partialSellerRegistration = () => {
     let message = {
     title: 'Ekbazaar Trade - Incomplete Registration',
     body: `<p>Please complete your registration in-order to receive business enquiries from buyers.</p>`,
-  }
+    buttonName: 'Complete your registration',
+    buttonLink: `${params.url}/seller/seller-central/bussiness-profile`,
+  }  
   return message;
 }
