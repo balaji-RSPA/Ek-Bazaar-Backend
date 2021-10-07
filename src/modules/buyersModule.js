@@ -200,6 +200,15 @@ exports.deleteBuyer = (query) => new Promise((resolve, reject) => {
       reject(error);
     });
 })
+exports.deleteBuyers = (query) => new Promise((resolve, reject) => {
+  Buyers.deleteMany(query)
+    .then((doc) => {
+      resolve(doc);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+})
 
 module.exports.createSellerContact = (data) => new Promise((resolve, reject) => {
   SellerOffferContacts.create(data)

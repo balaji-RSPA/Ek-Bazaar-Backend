@@ -1597,7 +1597,7 @@ module.exports.getProduct = (query) =>
 module.exports.getAllSellerData = (query, range) =>
   new Promise((resolve, reject) => {
     const skip = range.skip || 0
-    const limit = range.limit || 10
+    const limit = range.limit || 100
     const sort = range.sort || ''
     Sellers.find(query)
       .skip(skip)
