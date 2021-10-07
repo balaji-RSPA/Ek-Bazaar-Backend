@@ -435,7 +435,7 @@ const sellerProductSchema = new Schema(
     },
     flag: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     batch: {
       type: Number,
@@ -444,6 +444,10 @@ const sellerProductSchema = new Schema(
     isDeleted: {
       type: Boolean,
       default: false
+    },
+    manual: {
+      type: Boolean,
+      default: true
     },
   },
   {

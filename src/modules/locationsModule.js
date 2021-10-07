@@ -142,11 +142,19 @@ exports.getAllCities = (reqQuery) =>
     const limit = parseInt(reqQuery.limit) || 2000 //parseInt(reqQuery.limit) || 2000;
     const search = reqQuery.search || "";
 
-    let { state, countryId, indiaCity } = reqQuery;
+    let { state, stateId, countryId, indiaCity } = reqQuery;
     let match;
 
-    if (state) {
-      state = Array.isArray(state) ? state : [state];
+    if (state || stateId) {
+      state = state
+        ? Array.isArray(state)
+          ? state
+          : [state]
+        : stateId
+          ? Array.isArray(stateId)
+            ? stateId
+            : [stateId]
+          : []
       match = {
         $match: {
           name: {
