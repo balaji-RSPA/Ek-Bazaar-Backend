@@ -23,12 +23,6 @@ module.exports.addContact = async (req, res) => {
     if (process.env.NODE_ENV === 'development') {
       url = `https://tenderapi.tech-active.com/api/v1/`
     }
-<<<<<<< HEAD
-    sendSingleMail(message)
-   } 
-  }
-   respSuccess(res, result, "Your request has been successfully submitted")
-=======
     else if (process.env.NODE_ENV === 'production') {
       url = `https://api.ekbazaar.com/api/v1/`
     }
@@ -54,7 +48,6 @@ module.exports.addContact = async (req, res) => {
       }
     }
     respSuccess(res, result, "Your request has been successfully submitted")
->>>>>>> 7a642bb8cc6db2841ffc5a5bc20fd240cfdf7fb2
   } catch (error) {
     console.log("🚀 ~ file: contactController.js ~ line 50 ~ module.exports.addContact= ~ error", error)
     respError(res, error.message);

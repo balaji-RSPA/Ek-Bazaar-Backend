@@ -1,4 +1,4 @@
-const {ObjectId} = require("mongoose").Types
+const { ObjectId } = require("mongoose").Types
 const camelcaseKeys = require("camelcase-keys");
 const { location } = require("../../modules");
 const { respSuccess, respError } = require("../../utils/respHadler");
@@ -53,7 +53,7 @@ module.exports.getAllCities = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
     console.log("module.exports.getAllCities -> req.query", req.headers.origin)
-    if(req.headers.origin === "https://trade.ekbazaar.com") {
+    if (req.headers.origin === "https://trade.ekbazaar.com" && !req.query.stateId) {
       req.query.country = ObjectId("5e312f978acbee60ab54de08")
       req.query.countryId = [ObjectId("5e312f978acbee60ab54de08")]
     }
