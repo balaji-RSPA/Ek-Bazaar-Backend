@@ -1638,9 +1638,11 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
     },
   ])
     .then((doc) => {
-      let now =  moment()
-        doc && doc.length && doc.filter(record => now.diff(record.updatedAt, 'minutes') >= 3).forEach(async (el) => {
-         await SendNotifc(el)
+      let now = moment()
+      const data = doc && doc.length && doc.filter(record => now.diff(record.updatedAt, 'minutes') >= 3) || []
+      // doc && doc.length && doc.filter(record => now.diff(record.updatedAt, 'minutes') >= 3).forEach(async (el) => {
+        data && data.length && data.forEach(async (el) => {
+        await SendNotifc(el)
         resolve()
 
       })
@@ -1651,7 +1653,9 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
 
 const SendNotifc = async (el) => {
   try {
-    const template = await partialSellerRegistration();
+    const { NODE_ENV } = process.env
+    const siteURL = NODE_ENV === "production" ? "https://trade.ekbazaar.com" : "https://tradebazaar.tech-active.com"
+    const template = await partialSellerRegistration({ url: siteURL });
     const message = {
       from: MailgunKeys.senderMail,
       to: el.email,
@@ -1660,10 +1664,10 @@ const SendNotifc = async (el) => {
     };
     let countryCodeVal = el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode.replace("+", "") : '91';
     let smscountryCode = el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].countryCode && el.mobile[0].countryCode ? el.mobile[0].countryCode : '+91'
-    let watiData = {
-      mobile: `${countryCodeVal}${el.mobile[0].mobile}`,
-      name: el.name
-    }
+    // let watiData = {
+    //   mobile: `${countryCodeVal}${el.mobile[0].mobile}`,
+    //   name: el.name
+    // }
     await Sellers.updateOne({ _id: el._id }, { $set: { incompleteRegistration: 2 } })
     const { messagePartial, templateId } = partialRegistred({ name: (el.name || '') });
     el.mobile && el.mobile.length && el.mobile[0] && el.mobile[0].mobile && smscountryCode && await sendSMS(`${smscountryCode}${el.mobile[0].mobile}`, messagePartial, templateId);

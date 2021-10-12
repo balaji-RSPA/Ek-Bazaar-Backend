@@ -226,8 +226,42 @@ exports.sellerSearch = async (reqQuery) => {
       ]
     }
   }
-
   query.bool.filter.push(sellerActiveAccount)
+
+  const sellerDeletedAccount = {
+    bool: {
+      should: [
+        {
+          bool: {
+            must: [
+              {
+                exists: {
+                  field: "isDeleted"
+                }
+              },
+              {
+                term: {
+                  "isDeleted": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          bool: {
+            must_not: {
+              exists: {
+                field: "isDeleted"
+              }
+            }
+          }
+        }
+      ],
+      minimum_should_match: 1
+    }
+  }
+
+  query.bool.filter.push(sellerDeletedAccount)
   if (paidSeller) {
     query.bool.filter.push({
       "bool": {
@@ -2284,7 +2318,6 @@ exports.getAllCitiesElastic = (query) => new Promise((resolve, reject) => {
   };
 
   const index =  process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities"
-  
   // new elasticsearch single node multi index
   // const index = "tradedb.cities"
 
@@ -2310,7 +2343,6 @@ exports.getAllStatesElastic = (query) => new Promise((resolve, reject) => {
   };
 
   const index = process.env.NODE_ENV === "production" ? "tradedb.states" : "trade-live.states"
-  
   // new elasticsearch single node multi index
   // const index ="tradedb.states"
 
@@ -2337,7 +2369,6 @@ exports.getAllCountriesElastic = query => new Promise((resolve, reject) => {
   console.log("🚀 ~ file: elasticSearchModule.js ~ line 1794 ~ exports.getAllCountriesElastic=query=>newPromise ~ query", query)
 
   const index = process.env.NODE_ENV === "production" ? "tradedb.countries" : "trade-live.countries"
-  
   // new elasticsearch single node multi index
   // const index = "tradedb.countries"
 
