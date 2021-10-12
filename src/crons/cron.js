@@ -554,7 +554,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             from: MailgunKeys.senderMail,
             to: recipients.map(recipient => recipient.email),
             subject: `${_dateyesterday} Seller Subscriber count`,
-            // 'recipient-variables': recipientVars,
+            'recipient-variables': JSON.stringify(recipientVars),
             attachments: [{
                 filename: FilePath,
                 content: sellerrawData.length && _fs.createReadStream(FileSource) || 'NoSellerData'
