@@ -447,13 +447,14 @@ exports.updateKeywords = async (req, res) => new Promise(async (resolve, reject)
 
 exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject) => {
     try {
+        console.log(' email count started ------------')
         let sellerrawData = []
         const registerdate = new Date(moment('2021-07-16').startOf('day')).toISOString()
         const date = new Date(moment().startOf('day')).toISOString()
         const dateyesterday = new Date(moment.utc().subtract(1, 'day').startOf('day')).toISOString()
         const _dateyesterday = dateyesterday.substring(0, dateyesterday.indexOf('T'))
         // return true
-        const yesterdayTotalSellerCount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }], createdAt: { $gte: registerdate, $lt: date } }).exec()
+        const yesterdayTotalSellerCount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }/* , { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" } */, { userId: { $ne: null } }], createdAt: { $gte: registerdate, $lt: date } }).exec()
 
         console.log("🚀 ~ file: cron.js ~ line 452 ~ exports.sendDailyCount= ~ yesterdayTotalSellerCount", yesterdayTotalSellerCount.length)
 
@@ -472,27 +473,30 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
 
         let source = ["GCC", "SMEC", "Paper Ads", "Online Ads", "Social Media", "From a Friend", "Desh Aur Vyapar"]
 
-        const gcc_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Gujarat Chamber of Commerce" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        const gcc_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Gujarat Chamber of Commerce" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         gcc_count && gcc_count.length && sellerrawData.push(...gcc_count)
 
-        const smec_ount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "SME Chamber of India (Maharashtra)" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        const smec_ount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "SME Chamber of India (Maharashtra)" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         smec_ount && smec_ount.length && sellerrawData.push(...smec_ount)
 
-        const paper_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Paper Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        const paper_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Paper Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         paper_ads_count && paper_ads_count.length && sellerrawData.push(...paper_ads_count)
 
-        const online_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Online Ads " }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        const online_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Online Ads " }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         online_ads_count && online_ads_count.length && sellerrawData.push(...online_ads_count)
 
-        const social_media_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Social media" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        const social_media_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Social media" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
 
         social_media_count && social_media_count.legth && sellerrawData.push(...social_media_count)
 
-        const from_a_friend_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        const from_a_friend_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         from_a_friend_count && from_a_friend_count.length && sellerrawData.push(...from_a_friend_count)
 
-        const desh_or_vyapar_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Desh aur Vyapar Rajasthan Newspaper" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        const desh_or_vyapar_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Desh aur Vyapar Rajasthan Newspaper " }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         desh_or_vyapar_count && desh_or_vyapar_count.length && sellerrawData.push(...desh_or_vyapar_count)
+
+        const hearingSourseNull = await Sellers.find({ $and: [{ "hearingSource.referralCode": { $exists: true } }, { "hearingSource.source": null }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        hearingSourseNull && hearingSourseNull.length && sellerrawData.push(...hearingSourseNull)
 
         sellerrawData = sellerrawData && sellerrawData.length && sellerrawData.map((v) => {
             return {
@@ -508,7 +512,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         })
         const FilePath = `sellerDetails-${new Date()}.csv`
         const FileSource = 'public/sellerDetailFiles/' + FilePath
-        if(sellerrawData.length){
+        if (sellerrawData.length) {
 
             const csv = Papa.unparse(sellerrawData, {
                 quotes: false, //or array of booleans
