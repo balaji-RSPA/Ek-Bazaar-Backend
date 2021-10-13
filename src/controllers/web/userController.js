@@ -589,7 +589,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans) {
-        const code = ['GCC0721', 'SMEC0721', 'DVRN0721']
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
         console.log("🚀 ~ file: userController.js ~ line 597 ~ module.exports.updateUser= ~ hearingSource.referralCode", hearingSource.referralCode)
         console.log("🚀 ~ file: userController.js ~ line 594 ~ module.exports.updateUser= ~ promoCode", promoCode)
