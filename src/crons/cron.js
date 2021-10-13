@@ -1,4 +1,7 @@
-const { reject } = require('lodash');
+const Papa = require('papaparse')
+const _fs = require('fs')
+const fs = require('fs').promises
+const path = require("path");
 const _ = require('lodash');
 const moment = require("moment");
 const { Sellers } = require('../models')
@@ -444,34 +447,85 @@ exports.updateKeywords = async (req, res) => new Promise(async (resolve, reject)
 
 exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject) => {
     try {
+        console.log(' email count started ------------')
+        let sellerrawData = []
         const registerdate = new Date(moment('2021-07-16').startOf('day')).toISOString()
         const date = new Date(moment().startOf('day')).toISOString()
         const dateyesterday = new Date(moment.utc().subtract(1, 'day').startOf('day')).toISOString()
         const _dateyesterday = dateyesterday.substring(0, dateyesterday.indexOf('T'))
         // return true
-        const yesterdayTotalSellerCount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }], createdAt: { $gte: registerdate, $lt: date } }).exec()
+        const yesterdayTotalSellerCount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }/* , { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" } */, { userId: { $ne: null } }], createdAt: { $gte: registerdate, $lt: date } }).exec()
+
         console.log("🚀 ~ file: cron.js ~ line 452 ~ exports.sendDailyCount= ~ yesterdayTotalSellerCount", yesterdayTotalSellerCount.length)
+
         // const yesterdayTotalBuyerCount = await Sellers.find({$or: [{$and: [{sellerProductId: {$exists: true}}, {$where: "this.sellerProductId.length < 1"}]},{sellerProductId: {$exists: false}}, { sellerProductId : null }], name: {$exists: true}, createdAt: {$gte: registerdate, $lt: date}}).exec()
         // console.log("🚀 ~ file: cron.js ~ line 453 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount.length)
+
         const yesterdayTotalCount = await Sellers.find({ createdAt: { $gte: registerdate, $lt: date }, name: { $exists: true }, userId: { $ne: null } }).exec()
         console.log("🚀 ~ file: cron.js ~ line 456 ~ exports.sendDailyCount= ~ yesterdayTotalCount", yesterdayTotalCount.length)
 
         const yesterdayTotalBuyerCount = yesterdayTotalCount.length - yesterdayTotalSellerCount.length
         console.log("🚀 ~ file: cron.js ~ line 459 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount)
 
+        const selectFileds = 'name busenessId.name mobile hearingSource hearingSource email website createdAt sellerProductId'
+
         let source = ["GCC", "SMEC", "Paper Ads", "Online Ads", "Social Media", "From a Friend", "Desh Aur Vyapar"]
-        const gcc_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Gujarat Chamber of Commerce" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
-        console.log("🚀 ~ file: cron.js ~ line 463 ~ exports.sendDailyCount= ~ gcc_count", gcc_count.length)
-        const smec_ount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "SME Chamber of India (Maharashtra)" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
-        console.log("🚀 ~ file: cron.js ~ line 465 ~ exports.sendDailyCount= ~ smec_ount", smec_ount.length)
-        const paper_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Paper Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
-        const online_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Online Ads " }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
-        const social_media_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Social media" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
-        console.log("🚀 ~ file: cron.js ~ line 471 ~ exports.sendDailyCount= ~ social_media_count", social_media_count.length)
-        const from_a_friend_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
-        console.log("🚀 ~ file: cron.js ~ line 473 ~ exports.sendDailyCount= ~ from_a_friend_count", from_a_friend_count.length)
-        const desh_or_vyapar_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { "hearingSource.source": "Desh aur Vyapar Rajasthan Newspaper" }], createdAt: { $gte: dateyesterday, $lt: date } }).exec()
-        console.log("🚀 ~ file: cron.js ~ line 475 ~ exports.sendDailyCount= ~ desh_or_vyapar_count", desh_or_vyapar_count.length)
+
+        const gcc_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Gujarat Chamber of Commerce" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        gcc_count && gcc_count.length && sellerrawData.push(...gcc_count)
+
+        const smec_ount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "SME Chamber of India (Maharashtra)" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        smec_ount && smec_ount.length && sellerrawData.push(...smec_ount)
+
+        const paper_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Paper Ads" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        paper_ads_count && paper_ads_count.length && sellerrawData.push(...paper_ads_count)
+
+        const online_ads_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Online Ads " }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        online_ads_count && online_ads_count.length && sellerrawData.push(...online_ads_count)
+
+        const social_media_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Social media" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+
+        social_media_count && social_media_count.legth && sellerrawData.push(...social_media_count)
+
+        const from_a_friend_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        from_a_friend_count && from_a_friend_count.length && sellerrawData.push(...from_a_friend_count)
+
+        const desh_or_vyapar_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Desh aur Vyapar Rajasthan Newspaper " }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        desh_or_vyapar_count && desh_or_vyapar_count.length && sellerrawData.push(...desh_or_vyapar_count)
+
+        const hearingSourseNull = await Sellers.find({ $and: [{ "hearingSource.referralCode": { $exists: true } }, { "hearingSource.source": null }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        hearingSourseNull && hearingSourseNull.length && sellerrawData.push(...hearingSourseNull)
+
+        sellerrawData = sellerrawData && sellerrawData.length && sellerrawData.map((v) => {
+            return {
+                name: v.name && v.name || null,
+                businessName: v.busenessId && v.busenessId.name || "",
+                email: v.email && v.email || "",
+                mobile: v.mobile && v.mobile.length && v.mobile[0] && v.mobile[0].mobile || "",
+                'hearingSource.source': v.hearingSource && v.hearingSource.source || "",
+                'hearingSource.referralCode': v.hearingSource && v.hearingSource.referralCode || "",
+                productsCount: v.sellerProductId && v.sellerProductId.length || 0,
+                createdDate: v.createdAt || null
+            }
+        })
+        const FilePath = `sellerDetails-${new Date()}.csv`
+        const FileSource = 'public/sellerDetailFiles/' + FilePath
+        if (sellerrawData.length) {
+
+            const csv = Papa.unparse(sellerrawData, {
+                quotes: false, //or array of booleans
+                quoteChar: '"',
+                escapeChar: '"',
+                delimiter: ",",
+                header: true,
+                newline: "\r\n",
+                skipEmptyLines: false, //other option is 'greedy', meaning skip delimiters, quotes, and whitespace.
+                columns: null, //or array of strings
+            });
+            fs.writeFile(path.resolve(__dirname, '../../public/sellerDetailFiles', FilePath), csv, (err, data) => {
+                console.log(err, "Completed data", data)
+            })
+        }
 
         const sum = gcc_count.length + smec_ount.length + paper_ads_count.length + online_ads_count.length + social_media_count.length + from_a_friend_count.length + desh_or_vyapar_count.length
         console.log("🚀 ~ file: cron 3.js ~ line 479 ~ exports.sendDailyCount= ~ sum", sum)
@@ -482,6 +536,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
+        // return true
         const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' }]
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
@@ -500,6 +555,10 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             to: recipients.map(recipient => recipient.email),
             subject: `${_dateyesterday} Seller Subscriber count`,
             'recipient-variables': JSON.stringify(recipientVars),
+            attachments: [{
+                filename: FilePath,
+                content: sellerrawData.length && _fs.createReadStream(FileSource) || 'NoSellerData'
+            }],
             html: `<!doctype html>
                 <html lang="en">
                     <head>
