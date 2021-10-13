@@ -310,7 +310,7 @@ module.exports.getAllOffers = async (req, res) => {
                 }
             } */
         }))
-        console.log(JSON.stringify(arrayObj), '  ramesh ---------------------------')
+        // console.log(JSON.stringify(arrayObj), '  ramesh ---------------------------')
 
         respSuccess(res, { offersCount: arrayObj })
 
