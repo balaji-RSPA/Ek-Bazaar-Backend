@@ -22,10 +22,18 @@ module.exports.createCommodity = async (req, res) => {
 module.exports.getAllCommodity = async (req, res) => {
   try {
     const { search, skip, limit } = req.query;
+    let query = search ? {
+      search : {
+          $or: [
+            { commodityName: { $regex: search, $options: "i" } },
+            { priceUnit: { $regex: search, $options: "i" } }
+          ]
+        },
+      skip:parseInt(skip),
+      limit:parseInt(limit)
+    } : {}
     const commodityData = await getAllCommodity(
-      search,
-      parseInt(skip),
-      parseInt(limit)
+      query
     );
     respSuccess(res, commodityData);
   } catch (error) {
@@ -49,7 +57,7 @@ module.exports.updateCommodity = async (req, res) => {
   try {
     const id = req.params.id;
     const updatedCommodityData = {};
-    const { commodityName, priceUnit, cities } = req.body;
+    const { commodityName, priceUnit, city } = req.body;
 
     if (commodityName) {
       updatedCommodityData.commodityName = commodityName;
@@ -58,8 +66,8 @@ module.exports.updateCommodity = async (req, res) => {
       updatedCommodityData.priceUnit = priceUnit;
     }
 
-    if (cities) {
-      updatedCommodityData.cities = cities;
+    if (city) {
+      updatedCommodityData.city = city;
     }
 
     const updatedCommodity = await updateCommodity(

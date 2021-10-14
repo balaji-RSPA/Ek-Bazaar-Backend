@@ -16,7 +16,7 @@ const commoditySchema = new Schema(
       required: true,
       trim: true
     },
-    cities: [
+    city: [
       {
         city: {
           type: ObjectId,

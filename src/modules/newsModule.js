@@ -11,16 +11,14 @@ module.exports.createNews = newsData =>
   });
 
 /**get all News*/
-module.exports.getAllNews = (searchQuery, skip, limit) =>
+module.exports.getAllNews = (searchQuery) =>
   new Promise((resolve, reject) => {
-    let searchQry = searchQuery
-      ? {
-          $or: [{ news: { $regex: searchQuery, $options: "i" } }]
-        }
+    let searchQry = searchQuery.search
+      ? searchQuery.search
       : {};
     News.find(searchQry)
-      .skip(skip)
-      .limit(limit)
+      // .skip(skip)
+      // .limit(limit)
       .sort({ updatedAt: -1 })
       .then(newsData => {
         resolve(newsData);

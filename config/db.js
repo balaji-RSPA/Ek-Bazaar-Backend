@@ -3,6 +3,7 @@ const elasticsearch = require('elasticsearch');
 const { env } = process;
 const config = require('./config');
 const { tradeDb } = config
+console.log("🚀 ~ file: db.js ~ line 6 ~ tradeDb", tradeDb)
 console.log(env.NODE_ENV, ' elastic search')
 function dbConnection() {
 
@@ -17,22 +18,26 @@ function dbConnection() {
     serverSelectionTimeoutMS: 10000,
     // reconnectTries: 30,
   };
-  if (env.NODE_ENV === 'production') {
+  if (env.NODE_ENV === 'production' /* || env.NODE_ENV === 'staging' */) {
 
-    url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
-    options = {
-      ...options,
-      keepAlive: true,
-      replicaSet: `${tradeDb.replicaName}`,
-      // useMongoClient: true,
-    }
+    // url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port},${tradeDb.host4}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+    // options = {
+    //   ...options,
+    //   keepAlive: true,
+    //   replicaSet: `${tradeDb.replicaName}`,
+    //   // useMongoClient: true,
+    // }
+
+
+    // //Aksha new atlas db connection
+    url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
   } else {
 
     // options.sslCA = tradeDb.certFileBuf
     // url = `${tradeDb.protocol}://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}`
-   
+
     url = `mongodb://${tradeDb.host1}:${tradeDb.port},${tradeDb.host2}:${tradeDb.port},${tradeDb.host3}:${tradeDb.port}/${tradeDb.database}?replicaSet=${tradeDb.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
-    
+
     // // new live atlas mongodb connection
     // url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
   }
@@ -67,6 +72,13 @@ if (env) {
     // new single node multi shard elasticsearch
     // conf.host = '165.22.209.173:9200'
 
+    // new multi node(3) multi shards(12) elasticsearch
+    // conf.host = [
+    //   'http://142.93.215.209:9200',
+    //   'http://143.244.139.247:9200',
+    //   'http://143.244.139.250:9200'
+    // ]
+
   } else if (env.NODE_ENV === 'production') {
 
     // host = 'searchtrade.ekbazaar.com:5085'
@@ -74,7 +86,12 @@ if (env) {
     // host = '139.59.19.170:5085'
     // host = '139.59.95.19:5085'
     // host = "167.71.233.251:5085"
-    conf.host = "157.245.109.173:5086"
+
+    // Old Live server
+    // conf.host = "157.245.109.173:5086"
+
+    // New Atlas Elastic server
+    conf.host = "143.110.253.230:9200"
 
   }
 
