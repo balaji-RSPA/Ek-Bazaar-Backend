@@ -166,6 +166,10 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.sendOtp = async (req, res) => {
   try {
     const { mobile, reset, email, countryCode } = req.body;
+
+    console.log(req.body);
+    console.log("APOO");
+
     let otp = 1234;
     let otpMessage = otpVerification({ otp });
     let query = {}
@@ -187,13 +191,15 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].email &&
       seller[0].isEmailVerified === 2;
 
-    if (isProd) {
+    if (!isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
       otpMessage = otpVerification({ otp });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
         // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
-        let response = await sendExotelSms(`${countryCode}${mobile}`, otpMessage);
+        let code = countryCode || seller[0].countryCode || user[0].countryCode;
+        let response = await sendExotelSms(`${code}${mobile}`, otpMessage);
+
         console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
       } else if (checkUser || (email && !reset)) {
         const message = {
