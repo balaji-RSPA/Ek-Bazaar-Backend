@@ -376,18 +376,18 @@ exports.sendMessage = async (req, res) => {
             })
         // if (language && language !== 'en') {
 
-            const resultTranslate = await axios.post(urlTransalte, {
-                messageId: result.data.message._id,
-                targetLanguage: language
-            },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Auth-Token': chatAthToken,
-                        'X-User-Id': chatUserId
-                    }
-                })
-            // console.log("🚀 ~ file: rocketChatController.js ~ line 366 ~ exports.sendMessage= ~ resultTranslate", resultTranslate)
+        const resultTranslate = await axios.post(urlTransalte, {
+            messageId: result.data.message._id,
+            targetLanguage: language
+        },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+        // console.log("🚀 ~ file: rocketChatController.js ~ line 366 ~ exports.sendMessage= ~ resultTranslate", resultTranslate)
         // }
         // console.log(result.data.message._id, ' send meeeee1111111111111 ----------------')
         // rocketChatClient.chat.postMessage({ roomId: roomId, text: message }, (err, body) => {
@@ -791,12 +791,37 @@ exports.contactSupport = async (req, res) => {
     }
 }
 
-exports.deleteChatAccount = async (req, res) => {
+exports.deleteChatAccount = async (data) => /* new Promise(async (resolve, reject) => */ {
     try {
-        respSuccess(res, "Request Submitted Successfully")
+        const { mobile, token, userId } = data
+        const url = `${chatDomain}/api/v1/users.delete`
+        console.log(mobile, data, 'Delete user -----------')
+        // const userInfoUrl = `${chatDomain}/api/v1/users.info?username=${mobile}`
+
+        // const userInfo = await axios.get(userInfoUrl, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'X-Auth-Token': token,
+        //         'X-User-Id': userId
+        //     }
+        // })
+        // console.log("🚀 user information --------------", userInfo)
+        const result = await axios.post(url, {
+            username: mobile.toString()
+        },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': token,
+                    'X-User-Id': userId
+                }
+            })
+        // resolve(userInfo.data, "Request Submitted Successfully")
+        return true
     } catch (error) {
-        console.log(error.message)
-        respError(res, error.message)
+        console.log(error.data, ' error -----------------------')
+        // reject(error.message)
+        return false
     }
-}
+}/* ) */
 

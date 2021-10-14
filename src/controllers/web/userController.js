@@ -460,7 +460,6 @@ module.exports.updateUser = async (req, res) => {
       mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (Boolean(mobile) && parseInt(mobile)) || __usr.mobile,
       countryCode: (mobile && Boolean(mobile.countryCode)&& mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
     };
-
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
     if (!_seller) {
@@ -590,7 +589,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans) {
-        const code = ['GCC0721', 'SMEC0721', 'DVRN0721']
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
         console.log("🚀 ~ file: userController.js ~ line 597 ~ module.exports.updateUser= ~ hearingSource.referralCode", hearingSource.referralCode)
         console.log("🚀 ~ file: userController.js ~ line 594 ~ module.exports.updateUser= ~ promoCode", promoCode)
@@ -694,23 +693,23 @@ module.exports.updateUser = async (req, res) => {
             contactDetails : {
                 location:{
                   city:{
-                     name:sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
-                     _id: sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
+                     name:sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
+                     _id: sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
                   },
                   state:{
-                      name:sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
-                      _id:sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
+                      name:sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
+                      _id:sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
                   },
                   country:{
-                     name:sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
-                     _id:sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
+                     name:sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
+                     _id:sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
                   },
-                  address:sellerContactId.location && sellerContactId.location.address,
-                  pincode:sellerContactId.location && sellerContactId.location.pincode
+                  address:sellerContactId && sellerContactId.location && sellerContactId.location.address,
+                  pincode:sellerContactId && sellerContactId.location && sellerContactId.location.pincode
                 },
-                alternativNumber : sellerContactId.alternativNumber,
-                email : sellerContactId.email,
-                website : sellerContactId.website
+                alternativNumber : sellerContactId && sellerContactId.alternativNumber,
+                email : sellerContactId && sellerContactId.email,
+                website : sellerContactId && sellerContactId.website
             }
           }
           // keywords
