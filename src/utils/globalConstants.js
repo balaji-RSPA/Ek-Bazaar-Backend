@@ -56,6 +56,16 @@ exports.sms = {
   "password": "NAG@087",
   "smsURL": "http://180.179.215.100/sendurl.aspx?user=20060709&pwd=NAG@087&senderid=EKBZAR&"
 }
+
+exports.exotelSms = {
+  'apiKey' : 'a16cbb8f78d846f10c0eef9bd8786a3bd6ee79132e5e3f15',
+  'apiToken' : '0d5f5b66e3554da61966d96f3307e5a7caab58d6fa9b07ee',
+  'subDomain' : '@api.exotel.com',
+  'accountSid' : 'techactivesolutionsindia1',
+  'senderID': 'EKBZAR',
+  'apiURL': "https://a16cbb8f78d846f10c0eef9bd8786a3bd6ee79132e5e3f15:0d5f5b66e3554da61966d96f3307e5a7caab58d6fa9b07ee@api.exotel.com/v1/Accounts/techactivesolutionsindia1"
+}
+
 const { NODE_ENV } = process.env
 exports.siteUrl = NODE_ENV === "production" ? "https://www.trade.ebazaar.com" : "http://tradebazaar.tech-active.com"
 

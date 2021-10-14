@@ -3,7 +3,7 @@ const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendSMS, sendwati } = require("../../utils/utils");
+const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms } = require("../../utils/utils");
 const {
   sendOtp,
   successfulRegistration,
@@ -192,7 +192,8 @@ module.exports.sendOtp = async (req, res) => {
       otpMessage = otpVerification({ otp });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
-        let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
+        // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
+        let response = await sendExotelSms(`${countryCode}${mobile}`, otpMessage);
         console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
       } else if (checkUser || (email && !reset)) {
         const message = {
@@ -230,6 +231,18 @@ module.exports.sendOtp = async (req, res) => {
     return respError(res, error.message);
   }
 };
+
+// module.exports.sendExotelSms = async (req, res) => {
+//   try {
+//     let to = req.body.mobile;
+//     console.log(to);
+//     let msg = '9999 is your OTP to complete your mobile number verification at Ekbazaar.com.';
+//     let response = await sendExotelSms(to, msg);
+//     return respSuccess(res, response.data, "SMS RESPONSE");
+//   }catch(error){
+//     return respError(res, error.message);
+//   }
+// }
 
 module.exports.verifySellerMobile = async (req, res) => {
   try {
@@ -666,7 +679,7 @@ module.exports.updateUser = async (req, res) => {
       // keywords = _.without(_.uniq(keywords), '', null, undefined)
       let masterRecords = await getMasterRecords({ 'userId._id': seller.userId }, {})
       if (masterRecords && masterRecords.length) {
-        
+
         console.log("🚀 ~ file: userController.js ~ line 669 ~ module.exports.updateUser= ~ masterRecords", masterRecords)
         masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
         let sellerId = masterRecords.sellerId || {}
@@ -1028,8 +1041,8 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       if (!buyerId) query.userId = userId
       else query._id = buyerId
       let buyerQuery = {
-       $or:[ 
-          {userId:userID}, {_id:buyerId} 
+       $or:[
+          {userId:userID}, {_id:buyerId}
        ]
       }
       const _buyer = await deleteBuyer(buyerQuery)
@@ -1038,8 +1051,8 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       delete query.userId
       query.sellerId = sellerData._id
       let sellerQuery = {
-       $or:[ 
-          {userId:userID}, {_id:sellerId} 
+       $or:[
+          {userId:userID}, {_id:sellerId}
        ]
       }
       const _seller = await deleteSellerRecord(sellerQuery);
