@@ -483,6 +483,7 @@ module.exports.searchSuggestion = async (req, res) => {
     const { skip, limit, search, product, group, sellerId, productId, restrictl1 } = reqQuery
 
     if (productId && productId !== '' && productId !== 'undefined') {
+      console.log('1111111111111111111111')
       const query = {
         "bool": {
           "must": {
@@ -505,7 +506,9 @@ module.exports.searchSuggestion = async (req, res) => {
       // console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length - 1])
       return respSuccess(res, suggestions[0], suggestions[1]["products"])
     } else if (sellerId && sellerId !== '' && sellerId !== 'undefined') {
+      console.log('2222222222222222222222')
       const result = await sellerSearch({ elastic: true, id: sellerId });
+      console.log(JSON.stringify(result), ' ffffffffffffffffffffffff')
       const { query, catId } = result;
       const aggs = {
         "aggs": {
@@ -555,6 +558,8 @@ module.exports.searchSuggestion = async (req, res) => {
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
       return respSuccess(res, suggestions, sellers[1]["products"])
     } else {
+
+      console.log('3333333333333333333333333333')
       let query = {
         bool: {
           should: [],
