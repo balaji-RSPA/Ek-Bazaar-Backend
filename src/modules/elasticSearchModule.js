@@ -262,6 +262,41 @@ exports.sellerSearch = async (reqQuery) => {
   }
 
   query.bool.filter.push(sellerDeletedAccount)
+
+  const sellerActiveProducts = {
+    bool: {
+      should: [
+        {
+          bool: {
+            must: [
+              {
+                exists: {
+                  field: "status"
+                }
+              },
+              {
+                term: {
+                  "status": true
+                }
+              }
+            ]
+          }
+        },
+        {
+          bool: {
+            must_not: {
+              exists: {
+                field: "status"
+              }
+            }
+          }
+        }
+      ],
+      minimum_should_match: 1
+    }
+  }
+
+  query.bool.filter.push(sellerActiveProducts)
   if (paidSeller) {
     query.bool.filter.push({
       "bool": {
@@ -2305,7 +2340,7 @@ exports.getAllCitiesElastic = (query) => new Promise((resolve, reject) => {
     query
   };
 
-  const index =  process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities"
+  const index = process.env.NODE_ENV === "production" ? "tradedb.cities" : "trade-live.cities"
   // new elasticsearch single node multi index
   // const index = "tradedb.cities"
 

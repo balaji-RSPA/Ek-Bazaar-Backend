@@ -483,7 +483,6 @@ module.exports.searchSuggestion = async (req, res) => {
     const { skip, limit, search, product, group, sellerId, productId, restrictl1 } = reqQuery
 
     if (productId && productId !== '' && productId !== 'undefined') {
-      console.log('1111111111111111111111')
       const query = {
         "bool": {
           "must": {
@@ -506,9 +505,7 @@ module.exports.searchSuggestion = async (req, res) => {
       // console.log("module.exports.searchSuggestion -> suggestions", suggestions[0][suggestions[0].length - 1])
       return respSuccess(res, suggestions[0], suggestions[1]["products"])
     } else if (sellerId && sellerId !== '' && sellerId !== 'undefined') {
-      console.log('2222222222222222222222')
       const result = await sellerSearch({ elastic: true, id: sellerId });
-      console.log(JSON.stringify(result), ' ffffffffffffffffffffffff')
       const { query, catId } = result;
       const aggs = {
         "aggs": {
@@ -524,7 +521,13 @@ module.exports.searchSuggestion = async (req, res) => {
       const suggestions = []
       _sellers.forEach(elem => {
         if (elem.productSubcategoryId && elem.productSubcategoryId.length) {
-          suggestions.push(...elem.productSubcategoryId.map(item => ({ _source: { ...item, search: "level5" } })))
+          // suggestions.push(...elem.productSubcategoryId.map(item => ({ _source: { ...item, search: "level5" } })))
+          suggestions.push(...elem.productSubcategoryId.map(item => ({
+            _source: { ...item, search: "level5" },
+            _index: 'trade-live.mastercollections',
+            _type: '_doc',
+            _id: item.id,
+          })))
         } else if (elem.poductId && elem.poductId.length) {
           suggestions.push(...elem.poductId.map(item => ({
             _source: { ...item, search: "level4" },
@@ -558,8 +561,6 @@ module.exports.searchSuggestion = async (req, res) => {
       // console.log("🚀 ~ file: elasticSearchController.js ~ line 177 ~ module.exports.searchSuggestion= ~ suggestions", sellers)
       return respSuccess(res, suggestions, sellers[1]["products"])
     } else {
-
-      console.log('3333333333333333333333333333')
       let query = {
         bool: {
           should: [],
