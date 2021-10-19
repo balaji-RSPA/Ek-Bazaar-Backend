@@ -44,7 +44,7 @@ module.exports.serachSeller = async (req, res) => {
 
     let { productId, primaryId, level5Id, secondaryId, parentId, skip, limit, country } = reqQuery
     country = country && country.toLowerCase() || country
-    if(reqQuery.country) reqQuery.country = reqQuery.country.toLowerCase()
+    if (reqQuery.country) reqQuery.country = reqQuery.country.toLowerCase()
     if (country) {
       reqQuery._country = reqQuery.country
       reqQuery.country = undefined
@@ -132,7 +132,7 @@ module.exports.serachSeller = async (req, res) => {
         newKeyword = newKeyword.split(" ")
       }
 
-      
+
 
       /****** CITIES FROM ELASTICSEARCH **************/
       const citiesQuery = await sellerSearch({ cityFromKeyWord: newKeyword })
@@ -159,13 +159,13 @@ module.exports.serachSeller = async (req, res) => {
         }) || []
         __cities = __cities && __cities.length && __cities || []
       }
-      
+
       /****** STATES FROM ELASTICSEARCH **************/
-      
+
       const statesQuery = await sellerSearch({ stateFromKeyWord: newKeyword.split(" ") })
       query = statesQuery.query
       const _states = await getAllStatesElastic(query)
-      
+
       if (_states[0].length) {
         __states = _states[0].filter(state => newKeyword.includes(state._source.name))
       }
@@ -480,7 +480,7 @@ module.exports.searchSuggestion = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
 
-    const { skip, limit, search, product, group, sellerId, productId } = reqQuery
+    const { skip, limit, search, product, group, sellerId, productId, restrictl1 } = reqQuery
 
     if (productId && productId !== '' && productId !== 'undefined') {
       const query = {
@@ -521,7 +521,13 @@ module.exports.searchSuggestion = async (req, res) => {
       const suggestions = []
       _sellers.forEach(elem => {
         if (elem.productSubcategoryId && elem.productSubcategoryId.length) {
-          suggestions.push(...elem.productSubcategoryId.map(item => ({ _source: { ...item, search: "level5" } })))
+          // suggestions.push(...elem.productSubcategoryId.map(item => ({ _source: { ...item, search: "level5" } })))
+          suggestions.push(...elem.productSubcategoryId.map(item => ({
+            _source: { ...item, search: "level5" },
+            _index: 'trade-live.mastercollections',
+            _type: '_doc',
+            _id: item.id,
+          })))
         } else if (elem.poductId && elem.poductId.length) {
           suggestions.push(...elem.poductId.map(item => ({
             _source: { ...item, search: "level4" },
@@ -579,7 +585,6 @@ module.exports.searchSuggestion = async (req, res) => {
         }
 
       } else if (group === '3') {
-
         for (let i = 0; i < service.length; i++) {
           const _service = service[i]
           const categoryMatch = {
@@ -607,7 +612,14 @@ module.exports.searchSuggestion = async (req, res) => {
           // }
         }
         query.bool.must.push(searchQuery)
-
+        if (restrictl1) {
+          const l1 = {
+            "term": {
+              "search": 'level1',
+            }
+          };
+          query.bool.must_not.push(l1)
+        }
         const aggs = {
           "aggs": {
             "products": {
@@ -633,6 +645,15 @@ module.exports.searchSuggestion = async (req, res) => {
           // }
         }
         query.bool.must.push(searchQuery)
+        if (restrictl1) {
+          const l1 = {
+            "term": {
+              "search": 'level1',
+            }
+          };
+          query.bool.must_not.push(l1)
+        }
+
         const aggs = {
           "aggs": {
             "products": {
