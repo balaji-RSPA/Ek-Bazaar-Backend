@@ -454,19 +454,22 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         const dateyesterday = new Date(moment.utc().subtract(1, 'day').startOf('day')).toISOString()
         const _dateyesterday = dateyesterday.substring(0, dateyesterday.indexOf('T'))
         // return true
-        const yesterdayTotalSellerCount = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }/* , { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" } */, { userId: { $ne: null } }], createdAt: { $gte: registerdate, $lt: date } }).exec()
+        const totalSellerCount = await Sellers.find({ $and: [/* { sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, */ { userId: { $ne: null } }], createdAt: { $gte: registerdate, $lt: date } }).count().exec()
 
-        console.log("🚀 ~ file: cron.js ~ line 452 ~ exports.sendDailyCount= ~ yesterdayTotalSellerCount", yesterdayTotalSellerCount.length)
+        const totalRegisteredSellers = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, { userId: { $ne: null } }], createdAt: { $gte: registerdate, $lt: date } }).count().exec()
+
+        console.log("🚀 ~ file: cron.js ~ line 452 ~ exports.sendDailyCount= ~ totalSellerCount", totalSellerCount, totalRegisteredSellers)
 
         // const yesterdayTotalBuyerCount = await Sellers.find({$or: [{$and: [{sellerProductId: {$exists: true}}, {$where: "this.sellerProductId.length < 1"}]},{sellerProductId: {$exists: false}}, { sellerProductId : null }], name: {$exists: true}, createdAt: {$gte: registerdate, $lt: date}}).exec()
         // console.log("🚀 ~ file: cron.js ~ line 453 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount.length)
 
-        const yesterdayTotalCount = await Sellers.find({ createdAt: { $gte: registerdate, $lt: date }, name: { $exists: true }, userId: { $ne: null } }).exec()
+        // const yesterdayTotalCount = await Sellers.find({ createdAt: { $gte: registerdate, $lt: date }, name: { $exists: true }, userId: { $ne: null } }).exec()
 
-        console.log("🚀 ~ file: cron.js ~ line 456 ~ exports.sendDailyCount= ~ yesterdayTotalCount", yesterdayTotalCount.length)
+        // console.log("🚀 ~ file: cron.js ~ line 456 ~ exports.sendDailyCount= ~ yesterdayTotalCount", yesterdayTotalCount.length, registerdate, date)
 
-        const yesterdayTotalBuyerCount = yesterdayTotalCount.length - yesterdayTotalSellerCount.length
-        console.log("🚀 ~ file: cron.js ~ line 459 ~ exports.sendDailyCount= ~ yesterdayTotalBuyerCount", yesterdayTotalBuyerCount)
+        // const yesterdayTotalBuyerCount = yesterdayTotalCount.length - totalSellerCount.length
+        const incompletSellerCount = totalSellerCount - totalRegisteredSellers
+        console.log("🚀 ~ file: cron.js ~ line 472 ~ exports.sendDailyCount= ~ incompletSellerCount", incompletSellerCount)
         // return true
 
         const selectFileds = 'name busenessId.name mobile hearingSource hearingSource email website createdAt sellerProductId'
@@ -554,7 +557,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             from: MailgunKeys.senderMail,
             to: recipients.map(recipient => recipient.email),
             subject: `${_dateyesterday} Seller Subscriber count`,
-            // 'recipient-variables': recipientVars,
+            'recipient-variables': JSON.stringify(recipientVars),
             attachments: [{
                 filename: FilePath,
                 content: sellerrawData.length && _fs.createReadStream(FileSource) || 'NoSellerData'
@@ -822,9 +825,9 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                     </div>
                                 </div>
                                 <div style="margin-top: 15px;">
-                                    <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${yesterdayTotalCount.length}</h4>
-                                    <h4>Incomplete Sellers: <span>${yesterdayTotalCount.length}</span></h4>
-                                    <h4>Registered Sellers: <span>${yesterdayTotalSellerCount.length}</span></h4>
+                                    <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${/* yesterdayTotalCount.length */ totalSellerCount}</h4>
+                                    <h4>Incomplete Sellers: <span>${/* yesterdayTotalCount.length */ incompletSellerCount}</span></h4>
+                                    <h4>Registered Sellers: <span>${/* totalSellerCount.length */ totalRegisteredSellers}</span></h4>
                                     <h4>Thank you. </h4>
                                 </div>
                             </div>
