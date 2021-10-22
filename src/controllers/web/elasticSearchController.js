@@ -522,19 +522,11 @@ module.exports.searchSuggestion = async (req, res) => {
       _sellers.forEach(elem => {
         if (elem.productSubcategoryId && elem.productSubcategoryId.length) {
           // suggestions.push(...elem.productSubcategoryId.map(item => ({ _source: { ...item, search: "level5" } })))
-<<<<<<< HEAD
-          suggestions.push(...elem.productSubcategoryId.map(item => ({ 
-            _source: { ...item, search: "level5" },
-            _index: 'trade-live.mastercollections', 
-            _type: '_doc', 
-            _id: item.id, 
-=======
           suggestions.push(...elem.productSubcategoryId.map(item => ({
             _source: { ...item, search: "level5" },
             _index: 'trade-live.mastercollections',
             _type: '_doc',
             _id: item.id,
->>>>>>> staging
           })))
         } else if (elem.poductId && elem.poductId.length) {
           suggestions.push(...elem.poductId.map(item => ({

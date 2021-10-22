@@ -274,10 +274,10 @@ module.exports.addUser = async (req, res, next) => {
       mobile: Boolean(mobile.mobile) ? mobile.mobile : null,
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
-      email
+      email: email ? email : user.email
     };
     const sellerData = {
-      email,
+      email: email ? email : user.email,
       mobile: Boolean(mobile.mobile) ? mobile : [],
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
