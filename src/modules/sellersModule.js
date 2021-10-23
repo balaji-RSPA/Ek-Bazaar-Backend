@@ -1523,7 +1523,6 @@ module.exports.getSellerProduct = (query) =>
       //   path: 'serviceCity.state'
       // })
       .then((doc) => {
-        console.log("doc", doc)
         resolve(doc)
       })
       .catch(reject)
