@@ -20,8 +20,8 @@ module.exports.successfulRegistration = (params) => {
 module.exports.sendOtp = (params) => {
 
   const otpMessage = params.reset ?
-    // `${params.otp} is your OTP to reset password at Ekbazaar.com.`
-    `${params.otp} is your OTP to complete your mobile number verification at Ekbazaar.com.`
+    `${params.otp} is your OTP to reset password at Ekbazaar.com.`
+    // `${params.otp} is your OTP to complete your mobile number verification at Ekbazaar.com.`
     :
     // `${params.otp} is your OTP to complete your mobile number verification at Ekbazaar.com.`
     `“Dear Customer, ${params.otp} is the verification code to register or login for ekbazaar.com. Verification code is valid only for 30 minutes."`
