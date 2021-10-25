@@ -23,7 +23,8 @@ module.exports.sendOtp = (params) => {
     // `${params.otp} is your OTP to reset password at Ekbazaar.com.`
     `${params.otp} is your OTP to complete your mobile number verification at Ekbazaar.com.`
     :
-    `${params.otp} is your OTP to complete your mobile number verification at Ekbazaar.com.`
+    // `${params.otp} is your OTP to complete your mobile number verification at Ekbazaar.com.`
+    `“Dear Customer, ${params.otp} is the verification code to register or login for ekbazaar.com. Verification code is valid only for 30 minutes."`
     // "'" + params.otp + "' is your OTP to complete your mobile number verification at Ekbazaar.com."
   return {
     otpMessage, templateId: params.reset ? "1707161760961818887" : "1707160102358853974"
