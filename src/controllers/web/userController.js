@@ -274,13 +274,23 @@ module.exports.addUser = async (req, res, next) => {
       mobile: Boolean(mobile.mobile) ? mobile.mobile : null,
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
-      email: email ? email : user.email
+      email: email ? email : user.email,
+      location: {
+        city: user && user.city || null,
+        country: user && user.country || null,
+        state: user && user.state || null,
+      }
     };
     const sellerData = {
       email: email ? email : user.email,
       mobile: Boolean(mobile.mobile) ? mobile : [],
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
+      location: {
+        city: user && user.city || null,
+        country: user && user.country || null,
+        state: user && user.state || null,
+      }
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -456,6 +466,10 @@ module.exports.updateUser = async (req, res) => {
         (_buyer && _buyer.location && Boolean(_buyer.location.city) && _buyer.location.city) ||
         (location && location.city) ||
         null,
+      state: (_buyer && _buyer.location && Boolean(_buyer.location.state) && _buyer.location.state) ||
+        (location && location.state) || null,
+      country: (_buyer && _buyer.location && Boolean(_buyer.location.country) && _buyer.location.country) ||
+        (location && location.country) || null,
       email: (Boolean(_buyer && _buyer.email) && _buyer.email) || (Boolean(email) && email) || __usr.email,
       mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (Boolean(mobile) && parseInt(mobile)) || __usr.mobile,
       countryCode: (mobile && Boolean(mobile.countryCode)&& mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
