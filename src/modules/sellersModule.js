@@ -284,7 +284,8 @@ module.exports.getUserProfile = (id) =>
         countryCode: 1,
         deleteTrade: 1,
         deleteInvestement: 1,
-        deleteTendor: 1
+        deleteTendor: 1,
+        reresigistered: 1
         // _id: -1,
       })
       .then((doc) => {
