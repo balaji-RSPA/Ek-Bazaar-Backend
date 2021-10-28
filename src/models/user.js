@@ -214,6 +214,9 @@ const userSchema = new Schema({
   source: {
     type: String,
     default: "trade"
+  },
+  reresigistered: {
+    type: Boolean
   }
 }, {
   versionKey: false,

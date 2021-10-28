@@ -619,11 +619,10 @@ module.exports.updateUser = async (req, res) => {
       }
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
-      if (userType === "seller" && !sellerPlans) {
+      if (userType === "seller" && !sellerPlans && !__usr.reresigistered) {
         const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
-        console.log("🚀 ~ file: userController.js ~ line 597 ~ module.exports.updateUser= ~ hearingSource.referralCode", hearingSource.referralCode)
-        console.log("🚀 ~ file: userController.js ~ line 594 ~ module.exports.updateUser= ~ promoCode", promoCode)
+
         const dateNow = new Date();
         const trialPlan = await getSubscriptionPlanDetail({
           planType: "trail",
@@ -1050,7 +1049,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
 
     const { userID, token } = req;
-    const result = await updateUser({ _id: userId }, { deleteTrade })
+    const result = await updateUser({ _id: userId }, { deleteTrade, reresigistered: true })
     if (result) {
       let query = {}
       if (!sellerId) query.userId = userId
