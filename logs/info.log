@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 {"message":"Listening:8070","level":"info","timestamp":"2021-08-16T16:18:52.918Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-08-16T20:32:05.798Z"}
 {"message":"Listening:8070","level":"info","timestamp":"2021-08-17T10:30:16.852Z"}
@@ -3421,6 +3422,43 @@
 {"message":"Listening:8070","level":"info","timestamp":"2021-09-22T05:15:43.163Z"}
 =======
 =======
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-14T12:56:44.501Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-14T13:24:51.000Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:02:07.528Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:02:30.656Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:03:25.661Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:03:58.990Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:04:01.108Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:04:05.945Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:06:41.599Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:07:35.173Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:08:16.718Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:10:57.308Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:11:44.211Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:12:02.993Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:12:15.102Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:12:49.683Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:13:01.338Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:13:28.678Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:16:46.615Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:16:56.682Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:17:00.134Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:17:41.448Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:19:15.718Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:19:17.861Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:19:41.246Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:20:34.239Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:21:16.942Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:46:13.952Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:46:16.577Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:46:31.487Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:47:43.515Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:50:14.770Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-25T06:55:42.839Z"}
+=======
+<<<<<<< HEAD
+>>>>>>> b577e9621ee8b6fe54b2519d4a776ecdbebb82c4
+=======
 <<<<<<< HEAD
 >>>>>>> staging
 {"message":"Listening:8070","level":"info","timestamp":"2021-09-18T15:49:57.170Z"}
@@ -4597,6 +4635,9 @@
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-21T10:00:12.315Z"}
 =======
 >>>>>>> 0c87a1eaddca5584351ce09a22710681e47372e5
+<<<<<<< HEAD
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T03:06:54.797Z"}
+=======
 >>>>>>> staging
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-22T03:50:36.010Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-22T08:29:50.725Z"}
@@ -4796,9 +4837,44 @@
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-25T11:46:49.250Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-25T11:47:06.692Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-25T11:47:09.993Z"}
+<<<<<<< HEAD
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:01:21.077Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:01:25.475Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:01:52.395Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:04:03.048Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:45:19.822Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:45:25.093Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:48:07.382Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:48:10.930Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-25T12:55:45.347Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-26T03:53:38.013Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T02:59:26.568Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T03:15:46.038Z"}
+=======
 {"message":"Listening:8070","level":"info","timestamp":"2021-10-26T05:19:23.708Z"}
 >>>>>>> suman
 >>>>>>> 660bd3df4936152763c080fd1ad39d88f90c7404
+<<<<<<< HEAD
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-26T05:21:55.968Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-26T05:22:29.809Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-10-26T05:22:37.698Z"}
+=======
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T03:09:13.407Z"}
+>>>>>>> staging
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T03:25:06.092Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T08:46:35.816Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T08:46:52.279Z"}
+{"date":"Wed Oct 27 2021 16:50:44 GMT+0530 (India Standard Time)","error":{},"exception":true,"level":"error","message":"uncaughtException: Identifier 'productCount' has already been declared\n/media/mapper/suman/ekbazaar/tradebazaar-backend/src/controllers/web/authController.js:159\n      const productCount = seller && seller.sellerProductId && seller.sellerProductId.length ? true : false\n            ^\n\nSyntaxError: Identifier 'productCount' has already been declared\n    at compileFunction (<anonymous>)\n    at wrapSafe (internal/modules/cjs/loader.js:915:16)\n    at Module._compile (internal/modules/cjs/loader.js:963:27)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/suman/ekbazaar/tradebazaar-backend/src/routes/web/buyerRoutes.js:5:14)\n    at Module._compile (internal/modules/cjs/loader.js:999:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/suman/ekbazaar/tradebazaar-backend/src/routes/web/index.js:3:15)","os":{"loadavg":[0.72,0.69,0.68],"uptime":30168},"process":{"argv":["/snap/node/5480/bin/node","/media/mapper/suman/ekbazaar/tradebazaar-backend/app.js"],"cwd":"/media/mapper/suman/ekbazaar/tradebazaar-backend","execPath":"/snap/node/5480/bin/node","gid":1000,"memoryUsage":{"arrayBuffers":21440592,"external":22945784,"heapTotal":85839872,"heapUsed":62020056,"rss":124633088},"pid":32043,"uid":1000,"version":"v12.22.7"},"stack":"/media/mapper/suman/ekbazaar/tradebazaar-backend/src/controllers/web/authController.js:159\n      const productCount = seller && seller.sellerProductId && seller.sellerProductId.length ? true : false\n            ^\n\nSyntaxError: Identifier 'productCount' has already been declared\n    at compileFunction (<anonymous>)\n    at wrapSafe (internal/modules/cjs/loader.js:915:16)\n    at Module._compile (internal/modules/cjs/loader.js:963:27)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/suman/ekbazaar/tradebazaar-backend/src/routes/web/buyerRoutes.js:5:14)\n    at Module._compile (internal/modules/cjs/loader.js:999:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/media/mapper/suman/ekbazaar/tradebazaar-backend/src/routes/web/index.js:3:15)","timestamp":"2021-10-27T11:20:44.458Z","trace":[{"column":null,"file":null,"function":"compileFunction","line":null,"method":null,"native":false},{"column":16,"file":"internal/modules/cjs/loader.js","function":"wrapSafe","line":915,"method":null,"native":false},{"column":27,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":963,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1027,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":863,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":708,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":887,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":14,"file":"/media/mapper/suman/ekbazaar/tradebazaar-backend/src/routes/web/buyerRoutes.js","function":null,"line":5,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":999,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1027,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":863,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":708,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":887,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":15,"file":"/media/mapper/suman/ekbazaar/tradebazaar-backend/src/routes/web/index.js","function":null,"line":3,"method":null,"native":false}]}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T11:20:49.775Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T11:20:52.320Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T11:21:01.791Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T11:21:05.634Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-27T11:21:18.855Z"}
+>>>>>>> staging
+{"error":{},"level":"error","message":"uncaughtException: Unexpected token '<<'\n/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/controllers/web/userController.js:1062\n<<<<<<< HEAD\n^^\n\nSyntaxError: Unexpected token '<<'\n    at wrapSafe (internal/modules/cjs/loader.js:915:16)\n    at Module._compile (internal/modules/cjs/loader.js:963:27)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/web/userRoutes.js:4:14)\n    at Module._compile (internal/modules/cjs/loader.js:999:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/web/index.js:7:14)\n    at Module._compile (internal/modules/cjs/loader.js:999:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/index.js:3:13)","stack":"/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/controllers/web/userController.js:1062\n<<<<<<< HEAD\n^^\n\nSyntaxError: Unexpected token '<<'\n    at wrapSafe (internal/modules/cjs/loader.js:915:16)\n    at Module._compile (internal/modules/cjs/loader.js:963:27)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/web/userRoutes.js:4:14)\n    at Module._compile (internal/modules/cjs/loader.js:999:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/web/index.js:7:14)\n    at Module._compile (internal/modules/cjs/loader.js:999:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)\n    at Module.load (internal/modules/cjs/loader.js:863:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:708:14)\n    at Module.require (internal/modules/cjs/loader.js:887:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/index.js:3:13)","exception":true,"date":"Thu Oct 28 2021 10:56:42 GMT+0530 (India Standard Time)","process":{"pid":288146,"uid":1000,"gid":1000,"cwd":"/home/ashu/Documents/ekbazaar-all/trade/trade_api","execPath":"/usr/bin/node","version":"v12.22.4","argv":["/usr/bin/node","/home/ashu/Documents/ekbazaar-all/trade/trade_api/app.js"],"memoryUsage":{"rss":111255552,"heapTotal":86511616,"heapUsed":63564712,"external":21543573,"arrayBuffers":20039367}},"os":{"loadavg":[10.78,5.79,2.47],"uptime":603927},"trace":[{"column":16,"file":"internal/modules/cjs/loader.js","function":"wrapSafe","line":915,"method":null,"native":false},{"column":27,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":963,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1027,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":863,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":708,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":887,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":14,"file":"/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/web/userRoutes.js","function":null,"line":4,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":999,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1027,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":863,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":708,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":887,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":14,"file":"/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/web/index.js","function":null,"line":7,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":999,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":1027,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":863,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":708,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":887,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":13,"file":"/home/ashu/Documents/ekbazaar-all/trade/trade_api/src/routes/index.js","function":null,"line":3,"method":null,"native":false}],"timestamp":"2021-10-28T05:26:42.841Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-28T05:28:25.924Z"}
+{"message":"Listening:8070","level":"info","timestamp":"2021-10-28T05:28:34.033Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-28T05:30:21.597Z"}
+>>>>>>> b577e9621ee8b6fe54b2519d4a776ecdbebb82c4
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-28T05:32:34.778Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-10-28T05:32:43.874Z"}

@@ -3,7 +3,7 @@ const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendSMS, sendwati } = require("../../utils/utils");
+const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms } = require("../../utils/utils");
 const {
   sendOtp,
   successfulRegistration,
@@ -165,7 +165,9 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
-    const { mobile, reset, email, countryCode } = req.body;
+    const { mobile, reset, email } = req.body;
+    const countryCode = req.body.countryCode || '+91';
+
     let otp = 1234;
     let otpMessage = otpVerification({ otp });
     let query = {}
@@ -187,12 +189,15 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].email &&
       seller[0].isEmailVerified === 2;
 
-    if (isProd) {
+    if (isProd || process.env.NODE_ENV === "staging") {
       otp = Math.floor(1000 + Math.random() * 9000);
       otpMessage = otpVerification({ otp });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
-        let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
+        // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
+        let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
+        let response = await sendExotelSms(`${code}${mobile}`, otpMessage);
+
         console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
       } else if (checkUser || (email && !reset)) {
         const message = {
@@ -230,6 +235,18 @@ module.exports.sendOtp = async (req, res) => {
     return respError(res, error.message);
   }
 };
+
+// module.exports.sendExotelSms = async (req, res) => {
+//   try {
+//     let to = req.body.mobile;
+//     console.log(to);
+//     let msg = '9999 is your OTP to complete your mobile number verification at Ekbazaar.com.';
+//     let response = await sendExotelSms(to, msg);
+//     return respSuccess(res, response.data, "SMS RESPONSE");
+//   }catch(error){
+//     return respError(res, error.message);
+//   }
+// }
 
 module.exports.verifySellerMobile = async (req, res) => {
   try {

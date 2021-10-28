@@ -8,6 +8,7 @@ const { authenticate } = require("../../middleware/auth");
 router.get("/user/access-token", user.getAccessToken)
 router.post("/user/check-user-exist", user.checkUserExistOrNot)
 router.post("/user/send-otp", user.sendOtp)
+// router.post("/user/send-sms", user.sendExotelSms)
 router.post("/user/verify-mobile", authenticate, user.verifySellerMobile)
 router.post("/user/verify-email", user.verifiedEmail)
 router.post("/user/email-verification", authenticate, user.verificationEmail)
