@@ -521,7 +521,13 @@ module.exports.searchSuggestion = async (req, res) => {
       const suggestions = []
       _sellers.forEach(elem => {
         if (elem.productSubcategoryId && elem.productSubcategoryId.length) {
-          suggestions.push(...elem.productSubcategoryId.map(item => ({ _source: { ...item, search: "level5" } })))
+          // suggestions.push(...elem.productSubcategoryId.map(item => ({ _source: { ...item, search: "level5" } })))
+          suggestions.push(...elem.productSubcategoryId.map(item => ({
+            _source: { ...item, search: "level5" },
+            _index: 'trade-live.mastercollections',
+            _type: '_doc',
+            _id: item.id,
+          })))
         } else if (elem.poductId && elem.poductId.length) {
           suggestions.push(...elem.poductId.map(item => ({
             _source: { ...item, search: "level4" },

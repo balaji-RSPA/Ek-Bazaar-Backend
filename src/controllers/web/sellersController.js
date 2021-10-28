@@ -23,7 +23,7 @@ const {
 } = require('../../modules')
 const { sellerSearch, searchFromElastic } = elastic;
 const _ = require('lodash')
-const { getMasterRecords,updateMasterSellerDetails } = require("../../modules/masterModule");
+const { getMasterRecords, updateMasterSellerDetails } = require("../../modules/masterModule");
 
 const {
   updateSeller,
@@ -144,16 +144,16 @@ module.exports.updateSeller = async (req, res) => {
         _id: sellerID
       }, newData)
       let masterRecords = await getMasterRecords({ 'userId._id': userID }, {})
-              masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
-        let sellerId = masterRecords.sellerId || {}
-        const masterData = {
-          sellerId: {
-            ...sellerId,
-            businessName: bsnsDtls && bsnsDtls.name,
-          }
-          // keywords
+      masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
+      let sellerId = masterRecords.sellerId || {}
+      const masterData = {
+        sellerId: {
+          ...sellerId,
+          businessName: bsnsDtls && bsnsDtls.name,
         }
-        updateMasterSellerDetails({ 'userId._id': userID }, masterData)
+        // keywords
+      }
+      updateMasterSellerDetails({ 'userId._id': userID }, masterData)
     }
     //statutoryDetails
     if (company || CinNumber || GstNumber || IeCode || (req.files && (req.files.multidoc || req.files.gst))) {
@@ -205,34 +205,34 @@ module.exports.updateSeller = async (req, res) => {
       let masterRecords = await getMasterRecords({ 'userId._id': userID }, {})
       masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
       let sellerId = masterRecords.sellerId || {}
-        const masterData = {
-          sellerId: {
-            ...sellerId,
-            contactDetails : {
-                location:{
-                  city:{
-                     name:cntctDtls.location && cntctDtls.location.city && cntctDtls.location.city.name,
-                     _id: cntctDtls.location && cntctDtls.location.city && cntctDtls.location.city._id,
-                  },
-                  state:{
-                      name:cntctDtls.location && cntctDtls.location.state && cntctDtls.location.state.name,
-                      _id:cntctDtls.location && cntctDtls.location.state && cntctDtls.location.state._id
-                  },
-                  country:{
-                     name:cntctDtls.location && cntctDtls.location.country && cntctDtls.location.country.name,
-                     _id:cntctDtls.location && cntctDtls.location.country && cntctDtls.location.country._id
-                  },
-                  address:cntctDtls.location && cntctDtls.location.address,
-                  pincode:cntctDtls.location && cntctDtls.location.pincode
-                },
-                alternativNumber : cntctDtls.alternativNumber,
-                email : cntctDtls.email,
-                website : cntctDtls.website
-            }
+      const masterData = {
+        sellerId: {
+          ...sellerId,
+          contactDetails: {
+            location: {
+              city: {
+                name: cntctDtls.location && cntctDtls.location.city && cntctDtls.location.city.name,
+                _id: cntctDtls.location && cntctDtls.location.city && cntctDtls.location.city._id,
+              },
+              state: {
+                name: cntctDtls.location && cntctDtls.location.state && cntctDtls.location.state.name,
+                _id: cntctDtls.location && cntctDtls.location.state && cntctDtls.location.state._id
+              },
+              country: {
+                name: cntctDtls.location && cntctDtls.location.country && cntctDtls.location.country.name,
+                _id: cntctDtls.location && cntctDtls.location.country && cntctDtls.location.country._id
+              },
+              address: cntctDtls.location && cntctDtls.location.address,
+              pincode: cntctDtls.location && cntctDtls.location.pincode
+            },
+            alternativNumber: cntctDtls.alternativNumber,
+            email: cntctDtls.email,
+            website: cntctDtls.website
           }
-          // keywords
         }
-        updateMasterSellerDetails({ 'userId._id': userID }, masterData)
+        // keywords
+      }
+      updateMasterSellerDetails({ 'userId._id': userID }, masterData)
     }
     if (!productDetails && req.files && (req.files.image1 || req.files.image2 || req.files.image3 || req.files.image4 || req.files.image5 || req.files.image6)) {
       let photos = [];
@@ -684,6 +684,19 @@ module.exports.updateSellerProduct = async (req, res) => {
     if (offers) {
       var d1 = new Date(offers.validity.toDate);
       var d2 = new Date(offers.validity.fromDate);
+      let dte
+      var pro_Details = await getProduct({ _id: productId })
+      if (pro_Details && pro_Details.offers) {
+        dte = {
+          createdAt: pro_Details && pro_Details.offers && pro_Details.offers.createdAt || new Date() || null,
+          updatedAt: new Date()
+        }
+      } else {
+        dte = {
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      }
       const offerData = {
         // offers: offers,
         offers: {
@@ -691,7 +704,8 @@ module.exports.updateSellerProduct = async (req, res) => {
           validity: {
             fromDate: new Date(`${offers.validity.fromDate}`),
             toDate: new Date(`${offers.validity.toDate}`)
-          }
+          },
+          ...dte
         }
       }
       // [new Date(), subDays(new Date(), 1)]

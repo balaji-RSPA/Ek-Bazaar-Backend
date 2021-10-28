@@ -144,8 +144,8 @@ module.exports.getAccessToken = async (req, res) => {
 module.exports.checkUserExistOrNot = async (req, res) => {
   try {
     const { mobile, email, countryCode } = req.body;
-    let query  = {}
-    if(email) query = {email}
+    let query = {}
+    if (email) query = { email }
     else query = { mobile, 'countryCode': countryCode || "+91" }
     const seller = await checkUserExistOrNot(query);
     console.log(
@@ -177,7 +177,7 @@ module.exports.sendOtp = async (req, res) => {
     const user = await checkBuyerExistOrNot(query)
     console.log("🚀 ~ file: userController.js ~ line 174 ~ module.exports.sendOtp= ~ seller", seller, user)
 
-    if (seller && seller.length && !reset /* && user && user.length */&& !seller[0]["deleteTrade"]["status"]) {
+    if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
       return respError(res, "User already exist");
     }
     if (reset && (!seller || !seller.length))
@@ -291,13 +291,23 @@ module.exports.addUser = async (req, res, next) => {
       mobile: Boolean(mobile.mobile) ? mobile.mobile : null,
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
-      email
+      email: email ? email : user.email,
+      location: {
+        city: user && user.city || null,
+        country: user && user.country || null,
+        state: user && user.state || null,
+      }
     };
     const sellerData = {
-      email,
+      email: email ? email : user.email,
       mobile: Boolean(mobile.mobile) ? mobile : [],
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
+      location: {
+        city: user && user.city || null,
+        country: user && user.country || null,
+        state: user && user.state || null,
+      }
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -473,9 +483,13 @@ module.exports.updateUser = async (req, res) => {
         (_buyer && _buyer.location && Boolean(_buyer.location.city) && _buyer.location.city) ||
         (location && location.city) ||
         null,
+      state: (_buyer && _buyer.location && Boolean(_buyer.location.state) && _buyer.location.state) ||
+        (location && location.state) || null,
+      country: (_buyer && _buyer.location && Boolean(_buyer.location.country) && _buyer.location.country) ||
+        (location && location.country) || null,
       email: (Boolean(_buyer && _buyer.email) && _buyer.email) || (Boolean(email) && email) || __usr.email,
       mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (Boolean(mobile) && parseInt(mobile)) || __usr.mobile,
-      countryCode: (mobile && Boolean(mobile.countryCode)&& mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
+      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
     };
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
@@ -707,26 +721,26 @@ module.exports.updateUser = async (req, res) => {
               name: seller.name,
               _id: seller.userId
             },
-            contactDetails : {
-                location:{
-                  city:{
-                     name:sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
-                     _id: sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
-                  },
-                  state:{
-                      name:sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
-                      _id:sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
-                  },
-                  country:{
-                     name:sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
-                     _id:sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
-                  },
-                  address:sellerContactId && sellerContactId.location && sellerContactId.location.address,
-                  pincode:sellerContactId && sellerContactId.location && sellerContactId.location.pincode
+            contactDetails: {
+              location: {
+                city: {
+                  name: sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
+                  _id: sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
                 },
-                alternativNumber : sellerContactId && sellerContactId.alternativNumber,
-                email : sellerContactId && sellerContactId.email,
-                website : sellerContactId && sellerContactId.website
+                state: {
+                  name: sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
+                  _id: sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
+                },
+                country: {
+                  name: sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
+                  _id: sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
+                },
+                address: sellerContactId && sellerContactId.location && sellerContactId.location.address,
+                pincode: sellerContactId && sellerContactId.location && sellerContactId.location.pincode
+              },
+              alternativNumber: sellerContactId && sellerContactId.alternativNumber,
+              email: sellerContactId && sellerContactId.email,
+              website: sellerContactId && sellerContactId.website
             }
           }
           // keywords
@@ -1045,9 +1059,9 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       if (!buyerId) query.userId = userId
       else query._id = buyerId
       let buyerQuery = {
-       $or:[
-          {userId:userID}, {_id:buyerId}
-       ]
+        $or: [
+          { userId: userID }, { _id: buyerId }
+        ]
       }
       const _buyer = await deleteBuyer(buyerQuery)
 
@@ -1055,9 +1069,9 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       delete query.userId
       query.sellerId = sellerData._id
       let sellerQuery = {
-       $or:[
-          {userId:userID}, {_id:sellerId}
-       ]
+        $or: [
+          { userId: userID }, { _id: sellerId }
+        ]
       }
       const _seller = await deleteSellerRecord(sellerQuery);
 
@@ -1110,7 +1124,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     respSuccess(res, "Deleted Succesfully")
 
   } catch (error) {
-   console.log(error,"==============eeeeeeeeeeeeeeeeee===============")
+    console.log(error, "==============eeeeeeeeeeeeeeeeee===============")
   }
 
 }
@@ -1118,10 +1132,10 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 //whatsApp twilio
 
 module.exports.sendWhatappWati = async (req, res) => {
-  try{
+  try {
     let result = await sendwati()
-     respSuccess(res, result)
-  }catch(err){
+    respSuccess(res, result)
+  } catch (err) {
     console.log(err)
   }
 }

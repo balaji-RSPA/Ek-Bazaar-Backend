@@ -133,7 +133,13 @@ const offerSchema = new Schema({
     toDate: {
       type: Date
     }
-  }
+  },
+  createdAt: {
+    type: Date
+  },
+  updatedAt: {
+    type: Date
+  },
 })
 
 const productDetailsSchema = new Schema({
@@ -247,7 +253,7 @@ const productDetailsSchema = new Schema({
   },
   isOrganic: {
     type: Boolean,
-    default:false,
+    default: false,
     trim: true,
   },
   document: documentSchema,
@@ -306,49 +312,49 @@ const productDetailsSchema = new Schema({
       },
     }
   },
-  type:{
-      type: String,
-      trim: true,
-   },
-  brand:{
+  type: {
     type: String,
     trim: true,
   },
-  model_name_number:{
-    type: String,
-    trim: true,
-    default: null
-  },
-  payment_terms:{
+  brand: {
     type: String,
     trim: true,
   },
-  color:{
+  model_name_number: {
     type: String,
     trim: true,
     default: null
   },
-  supply_service_ability: { 
-    supply_service_ability:{
+  payment_terms: {
+    type: String,
+    trim: true,
+  },
+  color: {
+    type: String,
+    trim: true,
+    default: null
+  },
+  supply_service_ability: {
+    supply_service_ability: {
       type: String,
       trim: true,
       default: null
-    }, 
+    },
     unit: {
       type: String,
       trim: true,
       default: null
-    } 
+    }
   },
-  usage_application:{
-      type: String,
-      trim: true,
-      default: null
+  usage_application: {
+    type: String,
+    trim: true,
+    default: null
   },
-  dimension:{
-      type: String,
-      trim: true,
-      default: null
+  dimension: {
+    type: String,
+    trim: true,
+    default: null
   }
 });
 
