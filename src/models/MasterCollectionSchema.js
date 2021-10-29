@@ -271,7 +271,13 @@ const offerSchema = new Schema({
         toDate: {
             type: Date
         }
-    }
+    },
+    createdAt: {
+        type: Date
+    },
+    updatedAt: {
+        type: Date
+    },
 })
 
 
