@@ -214,29 +214,75 @@ const register = async (req, res, next) => {
   };
 
   let url = "";
+  const findUser = await UserModel.findOne({mobile:tenderUser.mobile});
   if (origin === "trade") {
     baseURL = trade;
     url = baseURL + "user";
     req.query.serviceURL = _trade;
-    tenderUser.deleteTrade = {
+    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+      tenderUser.deleteTrade = {
       status: false,
       reason: ""
     }
-  } else if (origin === "tender") {
-    baseURL = tender;
-    url = baseURL + "v1/user";
-    req.query.serviceURL = _tender;
     tenderUser.deleteTendor = {
       status: false,
       reason: ""
+    }  
+    tenderUser.deleteInvestement = {
+      status: false,
+      reason: ""
+    }    
+    }else{
+      tenderUser.deleteTrade = {
+      status: false,
+      reason: ""
+    }
+    }
+   } else if (origin === "tender") {
+    baseURL = tender;
+    url = baseURL + "v1/user";
+    req.query.serviceURL = _tender;
+    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+      tenderUser.deleteTrade = {
+      status: false,
+      reason: ""
+    }
+    tenderUser.deleteTendor = {
+      status: false,
+      reason: ""
+    }  
+    tenderUser.deleteInvestement = {
+      status: false,
+      reason: ""
+    }    
+    }else{
+    tenderUser.deleteTendor = {
+      status: false,
+      reason: ""
+    }
     }
   } else {
     baseURL = investment;
     url = baseURL + "user";
     req.query.serviceURL = _investment;
+    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+      tenderUser.deleteTrade = {
+      status: false,
+      reason: ""
+    }
+    tenderUser.deleteTendor = {
+      status: false,
+      reason: ""
+    }  
     tenderUser.deleteInvestement = {
       status: false,
       reason: ""
+    }    
+    }else{
+    tenderUser.deleteInvestement = {
+      status: false,
+      reason: ""
+    }
     }
   }
 
@@ -310,7 +356,7 @@ const doLogin = async (req, res, next) => {
   // but the goal is not to do the same in this right now,
   // like checking with Datebase and all, we are skiping these section
   // const { email, password } = req.body;
-  const { password, ipAddress, mobile, userType, origin, location, countryCode, email } = req.body;
+  let { password, ipAddress, mobile, userType, origin, location, countryCode, email } = req.body;
   let query = {}
   if (req.body.email) query = { email: req.body.email }
   else query = { mobile, countryCode: countryCode || "+91" }
