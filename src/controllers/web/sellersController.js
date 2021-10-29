@@ -431,6 +431,7 @@ const masterMapData = (val, type, contactDetails = null) => new Promise((resolve
   keywords = _.without(_.uniq(keywords), '', null, undefined, 0)
   let data;
   if (type === "update") {
+  console.log(val.offers, ' oooooooooooooffffffffffffffffffffff-------------')
     data = {
       productDetails: val.productDetails && val.productDetails && { ...val.productDetails } || null,
       status: val.status !== null && val.status !== undefined ? val.status : true,
