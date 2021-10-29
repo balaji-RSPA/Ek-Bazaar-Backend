@@ -202,7 +202,6 @@ const register = async (req, res, next) => {
     countryCode,
     origin,
   } = req.body;
-  console.log("🚀 ~ file: index.js ~ line 203 ~ register ~ req.body", req.body, Boolean(mobile.mobile), Boolean("123"))
   req.body.password = encodePassword(password);
   const tenderUser = {
     email,
@@ -360,6 +359,7 @@ const doLogin = async (req, res, next) => {
   if (req.body.email) query = { email: req.body.email }
   else query = { mobile, countryCode: countryCode || "+91" }
   const user = await UserModel.findOne(query)
+  // .sort({ _id: -1 })
     .select({
       name: 1,
       email: 1,
@@ -400,7 +400,6 @@ const doLogin = async (req, res, next) => {
     req.query.serviceURL = _investment;
     if (user && user.deleteInvestement && user.deleteInvestement.status) return respError(res, "Your account has been deleted")
   }
-  console.log("🚀 ~ file: index.js ~ line 329 ~ doLogin ~ url", user)
 
   const {
     // mobile,
@@ -413,7 +412,7 @@ const doLogin = async (req, res, next) => {
   } = user;
   const registered = user.password ? await bcrypt.compare(password, user.password) : true;
   userDB = {
-    [user.mobile]: {
+    [user.mobile || user.email]: {
       password,
       userId: _id, //encodedId() // incase you dont want to share the user-email.
       appPolicy: {
@@ -453,6 +452,7 @@ const doLogin = async (req, res, next) => {
       mobile,
       userType,
       location,
+      _base: req.headers.origin,
       email,
       countryCode
     },
