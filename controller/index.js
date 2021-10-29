@@ -64,7 +64,8 @@ const alloweOrigin = {
   /** ekbazaar development + beta + live **/
   // tenders
   "http://localhost:8060": true,
-  "https://elastic.tech-active.com:8443": true,
+  // "https://elastic.tech-active.com:8443": true,
+  "https://tenderapi.tech-active.com": true,
   "https://api.ekbazaar.com": true,
   //trade
   "http://localhost:8070": true,
@@ -88,7 +89,8 @@ const originAppName = {
   /** ekbazaar development + beta + live **/
   //tenders
   "http://localhost:8060": "tenders_sso_consumer",
-  "https://elastic.tech-active.com:8443": "tenders_sso_consumer",
+  // "https://elastic.tech-active.com:8443": "tenders_sso_consumer",
+  "https://tenderapi.tech-active.com": "tenders_sso_consumer",
   "https://api.ekbazaar.com": "tenders_sso_consumer",
   //trade
   "http://localhost:8070": "trade_sso_consumer",
@@ -204,7 +206,7 @@ const register = async (req, res, next) => {
   req.body.password = encodePassword(password);
   const tenderUser = {
     email,
-    countryCode: Boolean(mobile.countryCode) && mobile.countryCode || countryCode || null,
+    countryCode: Boolean(mobile.countryCode) && mobile.countryCode || countryCode || "+91",
     mobile: Boolean(mobile.mobile) && parseInt(mobile.mobile) || mobile && parseInt(mobile) || null,
     isPhoneVerified: 2,
     password: req.body.password,
@@ -239,12 +241,12 @@ const register = async (req, res, next) => {
   }
 
   if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage;
-  const findUser = await UserModel.findOne({mobile:tenderUser.mobile});
+  const findUser = await UserModel.findOne({ mobile: tenderUser.mobile });
   let user;
-  if(findUser){
-     user = await UserModel.findOneAndUpdate({mobile:findUser.mobile},tenderUser); //.exec()
-  }else{
-     user = await UserModel.create(tenderUser); //.exec()
+  if (findUser) {
+    user = await UserModel.findOneAndUpdate({ mobile: findUser.mobile }, { ...tenderUser, email: findUser.email }); //.exec()
+  } else {
+    user = await UserModel.create(tenderUser); //.exec()
   }
   console.log("🚀 ~ file: index.js ~ line 229 ~ register ~ user", user)
   // const user = await UserModel.findOneAndUpdate({ mobile: mobile.mobile || mobile }, { $set: tenderUser }, { new: true, upsert: true }); //.exec()
@@ -290,9 +292,7 @@ const register = async (req, res, next) => {
       origin,
     },
   });
-  console.log('1111111111111111111111111')
   const { data } = response;
-  console.log("🚀 ~ file: index.js ~ line 251 ~ register ~ data", data);
   if (data.success) {
     req.session.token = data.data.token;
     req.session.ssoToken = intrmid;
@@ -306,7 +306,6 @@ const register = async (req, res, next) => {
 };
 
 const doLogin = async (req, res, next) => {
-  console.log("🚀 ~ file: index.js ~ line 204 ~ doLogin ~ req", req.body);
   // do the validation with email and password
   // but the goal is not to do the same in this right now,
   // like checking with Datebase and all, we are skiping these section
@@ -331,7 +330,6 @@ const doLogin = async (req, res, next) => {
       // _id: -1,
     })
     .exec();
-
   if (!user) {
     return respError(res, "User not found");
   }
@@ -345,18 +343,17 @@ const doLogin = async (req, res, next) => {
     baseURL = trade;
     url = baseURL + "user/login";
     req.query.serviceURL = _trade;
-    console.log("teri maa ki", user)
-    if (user && user.deleteTrade && user.deleteTrade.status) return respError(res, "User not found")
+    if (user && user.deleteTrade && user.deleteTrade.status) return respError(res, "Your account has been deleted")
   } else if (origin === "tender") {
     baseURL = tender;
     url = baseURL + "v1/user/login";
     req.query.serviceURL = _tender;
-    if (user && user.deleteTendor && user.deleteTendor.status) return respError(res, "User not found")
+    if (user && user.deleteTendor && user.deleteTendor.status) return respError(res, "Your account has been deleted")
   } else {
     baseURL = investment;
     url = baseURL + "user/login";
     req.query.serviceURL = _investment;
-    if (user && user.deleteInvestement && user.deleteInvestement.status) return respError(res, "User not found")
+    if (user && user.deleteInvestement && user.deleteInvestement.status) return respError(res, "Your account has been deleted")
   }
   console.log("🚀 ~ file: index.js ~ line 329 ~ doLogin ~ url", user)
 
@@ -369,9 +366,7 @@ const doLogin = async (req, res, next) => {
     // isMobileVerified,
     _id,
   } = user;
-  console.log("🚀 ~ file: index.js ~ line 357 ~ doLogin ~ user", user)
   const registered = user.password ? await bcrypt.compare(password, user.password) : true;
-  console.log("🚀 ~ file: index.js ~ line 359 ~ doLogin ~ registered", registered)
   userDB = {
     [user.mobile]: {
       password,
@@ -391,7 +386,6 @@ const doLogin = async (req, res, next) => {
 
   // else redirect
   const { serviceURL } = req.query;
-  console.log("🚀 ~ file: index.js ~ line 379 ~ doLogin ~ serviceURL", serviceURL)
   const id = encodedId();
   req.session.user = id;
   sessionUser[id] = user.mobile;
@@ -401,7 +395,6 @@ const doLogin = async (req, res, next) => {
   const _url = new URL(serviceURL);
 
   const intrmid = encodedId();
-  console.log("🚀 ~ file: index.js ~ line 375 ~ doLogin ~ intrmid", intrmid)
   storeApplicationInCache(_url.origin, id, intrmid);
   const response = await axios({
     url,
@@ -420,10 +413,6 @@ const doLogin = async (req, res, next) => {
     },
   });
   const { data } = response;
-  console.log(
-    "🚀 ~ file: index.js ~ line 281 ~ doLogin ~ response",
-    response.data
-  );
   if (response.data.success) {
     req.session.token = data.data.token;
     req.session.ssoToken = intrmid;
@@ -435,6 +424,7 @@ const doLogin = async (req, res, next) => {
         token: data.data.token,
         activeChat: data.data.activeChat,
         productCount: data.data.productCount,
+        sellerType: data.data.sellerType
       },
       data.message
     );
@@ -444,7 +434,6 @@ const doLogin = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  console.log("🚀 ~ file: index.js ~ line 415 ~ login ~ req", req.headers)
   // The req.query will have the redirect url where we need to redirect after successful
   // login and with sso token.
   // This can also be used to verify the origin from where the request has came in
@@ -533,9 +522,6 @@ const postRFP = async (req, res, next) => {
     requestType,
     sellerId,
   } = req.body;
-  console.log("🚀 ~ file: index.js ~ line 500 ~ postRFP ~ req.body", req.body)
-  console.log("llllllllllllllllllllllllllllllllllll")
-  console.log({ ...sessionApp }, { ...sessionUser }, { intrmTokenCache });
 
   let user = await UserModel.findOne({ mobile: mobile.mobile })
     .select({
@@ -609,7 +595,6 @@ const postRFP = async (req, res, next) => {
     },
   });
   if (response.data.success) {
-    console.log("🚀 ~ file: index.js ~ line 575 ~ postRFP ~ response.data", response.data)
     if (response.data && response.data.data && response.data.data.token) req.session.token = response.data.data.token
     return respSuccess(res, { ...response.data.data }, response.data.message);
   } else {
@@ -627,13 +612,11 @@ const setUserLanguage = async (req, res, next) => {
   const intrmid = encodedId();
   storeApplicationInCache(_url.origin, id, intrmid);
   req.session.featuredLanguage = langCode
-  console.log("🚀 ~ file: index 2.js ~ line 640 ~ setUserLanguage ~ req.session.featuredLanguage", req.session.featuredLanguage)
 
   return respSuccess(res, { langCode })
 }
 
 const getUserLanguage = async (req, res, next) => {
-  console.log("🚀 ~ file: index 2.js ~ line 646 ~ getUserLanguage ~ req.session.featuredLanguage", req.session.featuredLanguage)
   return respSuccess(res, { langCode: req.session.featuredLanguage })
 }
 
