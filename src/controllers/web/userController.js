@@ -752,6 +752,7 @@ module.exports.updateUser = async (req, res) => {
         {
           seller,
           buyer,
+          user:__usr,
           activeChat,
         },
         user.email && user.isEmailVerified === 1
