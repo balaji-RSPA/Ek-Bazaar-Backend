@@ -287,7 +287,6 @@ const register = async (req, res, next) => {
   }
 
   if (preferredLanguage) tenderUser.preferredLanguage = preferredLanguage;
-  const findUser = await UserModel.findOne({ mobile: tenderUser.mobile });
   let user;
   if (findUser) {
     user = await UserModel.findOneAndUpdate({ mobile: findUser.mobile }, { ...tenderUser, email: findUser.email }); //.exec()
