@@ -476,7 +476,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                             //     "gte": new Date(moment.utc().startOf('day'))
                             // }
                             "offers.createdAt": {
-                                "gte": new Date(moment.utc().startOf('day'))
+                                "gte": new Date(moment.utc().subtract(1, 'day').startOf('day'))
                             }
                         }
                     }
