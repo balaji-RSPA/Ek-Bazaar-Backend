@@ -213,75 +213,75 @@ const register = async (req, res, next) => {
   };
 
   let url = "";
-  const findUser = await UserModel.findOne({mobile:tenderUser.mobile});
+  const findUser = await UserModel.findOne({ mobile: tenderUser.mobile });
   if (origin === "trade") {
     baseURL = trade;
     url = baseURL + "user";
     req.query.serviceURL = _trade;
-    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+    if (findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)) {
       tenderUser.deleteTrade = {
-      status: false,
-      reason: ""
-    }
-    tenderUser.deleteTendor = {
-      status: false,
-      reason: ""
-    }  
-    tenderUser.deleteInvestement = {
-      status: false,
-      reason: ""
-    }    
-    }else{
+        status: false,
+        reason: ""
+      }
+      tenderUser.deleteTendor = {
+        status: false,
+        reason: ""
+      }
+      tenderUser.deleteInvestement = {
+        status: false,
+        reason: ""
+      }
+    } else {
       tenderUser.deleteTrade = {
-      status: false,
-      reason: ""
+        status: false,
+        reason: ""
+      }
     }
-    }
-   } else if (origin === "tender") {
+  } else if (origin === "tender") {
     baseURL = tender;
     url = baseURL + "v1/user";
     req.query.serviceURL = _tender;
-    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+    if (findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)) {
       tenderUser.deleteTrade = {
-      status: false,
-      reason: ""
-    }
-    tenderUser.deleteTendor = {
-      status: false,
-      reason: ""
-    }  
-    tenderUser.deleteInvestement = {
-      status: false,
-      reason: ""
-    }    
-    }else{
-    tenderUser.deleteTendor = {
-      status: false,
-      reason: ""
-    }
+        status: false,
+        reason: ""
+      }
+      tenderUser.deleteTendor = {
+        status: false,
+        reason: ""
+      }
+      tenderUser.deleteInvestement = {
+        status: false,
+        reason: ""
+      }
+    } else {
+      tenderUser.deleteTendor = {
+        status: false,
+        reason: ""
+      }
     }
   } else {
     baseURL = investment;
     url = baseURL + "user";
     req.query.serviceURL = _investment;
-    if(findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)){
+    if (findUser && (findUser.deleteTrade && findUser.deleteTrade.status) && (findUser.deleteTendor && findUser.deleteTendor.status) && (findUser.deleteInvestement && findUser.deleteInvestement.status)) {
       tenderUser.deleteTrade = {
-      status: false,
-      reason: ""
-    }
-    tenderUser.deleteTendor = {
-      status: false,
-      reason: ""
-    }  
-    tenderUser.deleteInvestement = {
-      status: false,
-      reason: ""
-    }    
-    }else{
-    tenderUser.deleteInvestement = {
-      status: false,
-      reason: ""
-    }
+        status: false,
+        reason: ""
+      }
+      tenderUser.deleteTendor = {
+        status: false,
+        reason: ""
+      }
+      tenderUser.deleteInvestement = {
+        status: false,
+        reason: ""
+      }
+    } else {
+      tenderUser.deleteInvestement = {
+        status: false,
+        reason: ""
+      }
     }
   }
 
@@ -334,6 +334,7 @@ const register = async (req, res, next) => {
       preferredLanguage,
       countryCode,
       origin,
+      _base: req.headers.origin
     },
   });
   const { data } = response;
@@ -359,7 +360,7 @@ const doLogin = async (req, res, next) => {
   if (req.body.email) query = { email: req.body.email }
   else query = { mobile, countryCode: countryCode || "+91" }
   const user = await UserModel.findOne(query)
-  // .sort({ _id: -1 })
+    // .sort({ _id: -1 })
     .select({
       name: 1,
       email: 1,
