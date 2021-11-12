@@ -23,6 +23,7 @@ const {
 const Logger = require('../utils/logger');
 const { sendSingleMail } = require('../utils/mailgunService')
 const { globalVaraibles } = require('../utils/utils')
+const { searchFromElastic } = require('../modules/elasticSearchModule')
 const isProd = globalVaraibles._IS_PROD_
 const { pricing } = globalVaraibles.authServiceURL()
 
@@ -448,6 +449,87 @@ exports.updateKeywords = async (req, res) => new Promise(async (resolve, reject)
 exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject) => {
     try {
         console.log(' email count started ------------')
+        const query = {
+            "bool": {
+                "must": [
+                    {
+                        "exists": {
+                            "field": "offers"
+                        }
+                    }
+                ]
+            }
+        }
+
+        const query_daily_offers = {
+            "bool": {
+                "must": [
+                    {
+                        "exists": {
+                            "field": "offers"
+                        }
+                    },
+                    {
+                        "range": {
+                            // "offers.validity.toDate": {
+                            //     // "gte": new Date().toISOString()
+                            //     "gte": new Date(moment.utc().startOf('day'))
+                            // }
+                            "offers.createdAt": {
+                                "gte": new Date(moment.utc().subtract(1, 'day').startOf('day'))
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+
+        const aggs = {
+            "aggs": {
+                "level1": {
+                    "terms": {
+                        "field": "parentCategoryId._id.keyword"
+                    },
+                    "aggs": {
+                        "level2": {
+                            "terms": {
+                                "field": "primaryCategoryId._id.keyword"
+                            },
+                            "aggs": {
+                                "level3": {
+                                    "terms": {
+                                        "field": "secondaryCategoryId._id.keyword"
+                                    },
+                                    "aggs": {
+                                        "level4": {
+                                            "terms": {
+                                                "field": "poductId._id.keyword"
+                                            },
+                                            "aggs": {
+                                                "level5": {
+                                                    "terms": {
+                                                        "field": "productSubcategoryId._id.keyword"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        const totalOffers = await searchFromElastic(query, { skip: 0, limit: 10 }, aggs);
+        let totalOfferCount = totalOffers && totalOffers.length && totalOffers[1] || 0;
+
+        const dailyOffers = await searchFromElastic(query_daily_offers, { skip: 0, limit: 10 }, aggs);
+        let dailyOffersCoount = dailyOffers && dailyOffers.length && dailyOffers[1] || 0
+
+        console.log("🚀 offers count: ", totalOfferCount, dailyOffersCoount)
+
         let sellerrawData = []
         const registerdate = new Date(moment('2021-07-16').startOf('day')).toISOString()
         const date = new Date(moment().startOf('day')).toISOString()
@@ -474,7 +556,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
 
         const selectFileds = 'name busenessId.name mobile hearingSource hearingSource email website createdAt sellerProductId'
 
-        let source = ["GCC", "SMEC", "Paper Ads", "Online Ads", "Social Media", "From a Friend", "Desh Aur Vyapar"]
+        let source = ["GCC", "SMEC", "Paper Ads", "Online Ads", "Social Media", "From a Friend", "Desh Aur Vyapar", "Tamil Nadu", "Uttar Pradesh"]
 
         const gcc_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Gujarat Chamber of Commerce" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         gcc_count && gcc_count.length && sellerrawData.push(...gcc_count)
@@ -497,6 +579,14 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
 
         const desh_or_vyapar_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Desh aur Vyapar Rajasthan Newspaper " }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         desh_or_vyapar_count && desh_or_vyapar_count.length && sellerrawData.push(...desh_or_vyapar_count)
+
+
+        const tamil_nadu_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { "hearingSource.source": "Tamil Nadu" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        tamil_nadu_count && tamil_nadu_count.length && sellerrawData.push(...tamil_nadu_count)
+
+
+        const uttar_pradesh_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { "hearingSource.source": "Uttar Pradesh" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
+        uttar_pradesh_count && uttar_pradesh_count.length && sellerrawData.push(...uttar_pradesh_count)
 
         const hearingSourseNull = await Sellers.find({ $and: [{ "hearingSource.referralCode": { $exists: true } }, { "hearingSource.source": null }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').select(selectFileds).lean().exec()
         hearingSourseNull && hearingSourseNull.length && sellerrawData.push(...hearingSourseNull)
@@ -532,9 +622,11 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             })
         }
 
-        const sum = gcc_count.length + smec_ount.length + paper_ads_count.length + online_ads_count.length + social_media_count.length + from_a_friend_count.length + desh_or_vyapar_count.length
-        console.log("🚀 ~ file: cron 3.js ~ line 479 ~ exports.sendDailyCount= ~ sum", sum)
-        source = source.map((src, i) => ({ key: src, value: i == 0 ? gcc_count.length : i == 1 ? smec_ount.length : i == 2 ? paper_ads_count.length : i == 3 ? online_ads_count.length : i == 4 ? social_media_count.length : i == 5 ? from_a_friend_count.length : desh_or_vyapar_count.length }))
+        const sum = gcc_count.length + smec_ount.length + paper_ads_count.length + online_ads_count.length + social_media_count.length + from_a_friend_count.length + desh_or_vyapar_count.length + tamil_nadu_count.length + uttar_pradesh_count.length
+
+        source = source.map((src, i) => ({ key: src, value: i == 0 ? gcc_count.length : i == 1 ? smec_ount.length : i == 2 ? paper_ads_count.length : i == 3 ? online_ads_count.length : i == 4 ? social_media_count.length : i == 5 ? from_a_friend_count.length : i == 6 ? desh_or_vyapar_count.length : i == 7 ? tamil_nadu_count.length : uttar_pradesh_count.length }))
+
+
         let elem = source.map(src =>
             `<tr>
                 <td>${src.key}</td>
@@ -558,7 +650,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         const message = {
             from: MailgunKeys.senderMail,
             to: recipients.map(recipient => recipient.email),
-            subject: `${_dateyesterday} Seller Subscriber count`,
+            subject: `${_dateyesterday} Seller Subscriber/Offer Count`,
             'recipient-variables': JSON.stringify(recipientVars),
             attachments: [{
                 filename: FilePath,
@@ -830,6 +922,8 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                     <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${/* yesterdayTotalCount.length */ totalSellerCount}</h4>
                                     <h4>Incomplete Sellers: <span>${/* yesterdayTotalCount.length */ incompletSellerCount}</span></h4>
                                     <h4>Registered Sellers: <span>${/* totalSellerCount.length */ totalRegisteredSellers}</span></h4>
+                                    <h4>Total Offers: <span>${totalOfferCount}</span></h4>
+                                    <h4>Todays Offers: <span>${dailyOffersCoount}</span></h4>
                                     <h4>Thank you. </h4>
                                 </div>
                             </div>

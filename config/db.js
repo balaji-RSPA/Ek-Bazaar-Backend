@@ -90,8 +90,10 @@ if (env) {
     // Old Live server
     // conf.host = "157.245.109.173:5086"
 
-    // New Atlas Elastic server
-    conf.host = "143.110.253.230:9200"
+    // New Atlas Elastic server multi node
+    // conf.host = "143.110.253.230:9200"
+    conf.host = "143.110.191.91:5006"
+
 
   }
 

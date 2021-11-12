@@ -3,7 +3,7 @@ const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendSMS, sendwati } = require("../../utils/utils");
+const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms } = require("../../utils/utils");
 const {
   sendOtp,
   successfulRegistration,
@@ -164,7 +164,9 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
-    const { mobile, reset, email, countryCode } = req.body;
+    const { mobile, reset, email } = req.body;
+    const countryCode = req.body.countryCode || '+91';
+
     let otp = 1234;
     let otpMessage = otpVerification({ otp });
     let query = {}
@@ -186,13 +188,15 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].email &&
       seller[0].isEmailVerified === 2;
 
-    if (isProd) {
+    if (isProd || process.env.NODE_ENV === "staging") {
       otp = Math.floor(1000 + Math.random() * 9000);
       otpMessage = otpVerification({ otp });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
-        console.log(otpMessage, templateId, "lllllllllllllllllllllllllllllllllllllll")
-        let response = await sendSMS(`${countryCode || "+91"}${mobile}`, otpMessage, templateId);
+        // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
+        let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
+        let response = await sendExotelSms(`${code}${mobile}`, otpMessage);
+
         console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
       } else if (checkUser || (email && !reset)) {
         const message = {
@@ -230,6 +234,18 @@ module.exports.sendOtp = async (req, res) => {
     return respError(res, error.message);
   }
 };
+
+// module.exports.sendExotelSms = async (req, res) => {
+//   try {
+//     let to = req.body.mobile;
+//     console.log(to);
+//     let msg = '9999 is your OTP to complete your mobile number verification at Ekbazaar.com.';
+//     let response = await sendExotelSms(to, msg);
+//     return respSuccess(res, response.data, "SMS RESPONSE");
+//   }catch(error){
+//     return respError(res, error.message);
+//   }
+// }
 
 module.exports.verifySellerMobile = async (req, res) => {
   try {
@@ -274,13 +290,23 @@ module.exports.addUser = async (req, res, next) => {
       mobile: Boolean(mobile.mobile) ? mobile.mobile : null,
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
-      email
+      email: email ? email : user.email,
+      location: {
+        city: user && user.city || null,
+        country: user && user.country || null,
+        state: user && user.state || null,
+      }
     };
     const sellerData = {
-      email,
+      email: email ? email : user.email,
       mobile: Boolean(mobile.mobile) ? mobile : [],
       isPhoneVerified: Boolean(mobile.mobile),
       userId: user._id,
+      location: {
+        city: user && user.city || null,
+        country: user && user.country || null,
+        state: user && user.state || null,
+      }
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -457,9 +483,13 @@ module.exports.updateUser = async (req, res) => {
         (_buyer && _buyer.location && Boolean(_buyer.location.city) && _buyer.location.city) ||
         (location && location.city) ||
         null,
+      state: (_buyer && _buyer.location && Boolean(_buyer.location.state) && _buyer.location.state) ||
+        (location && location.state) || null,
+      country: (_buyer && _buyer.location && Boolean(_buyer.location.country) && _buyer.location.country) ||
+        (location && location.country) || null,
       email: (Boolean(_buyer && _buyer.email) && _buyer.email) || (Boolean(email) && email) || __usr.email,
       mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (Boolean(mobile) && parseInt(mobile)) || __usr.mobile,
-      countryCode: (mobile && Boolean(mobile.countryCode)&& mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
+      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
     };
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
@@ -589,10 +619,9 @@ module.exports.updateUser = async (req, res) => {
       }
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
-      if (userType === "seller" && !sellerPlans) {
+      if (userType === "seller" && !sellerPlans && !__usr.reresigistered) {
         const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
-        console.log("🚀 ~ file: userController.js ~ line 603 ~ module.exports.updateUser= ~ promoCode", promoCode)
         const dateNow = new Date();
         const trialPlan = await getSubscriptionPlanDetail({
           planType: "trail",
@@ -666,7 +695,7 @@ module.exports.updateUser = async (req, res) => {
       // keywords = _.without(_.uniq(keywords), '', null, undefined)
       let masterRecords = await getMasterRecords({ 'userId._id': seller.userId }, {})
       if (masterRecords && masterRecords.length) {
-        
+
         console.log("🚀 ~ file: userController.js ~ line 669 ~ module.exports.updateUser= ~ masterRecords", masterRecords)
         masterRecords = masterRecords && masterRecords.length ? masterRecords[0] : {}
         let sellerId = masterRecords.sellerId || {}
@@ -690,26 +719,26 @@ module.exports.updateUser = async (req, res) => {
               name: seller.name,
               _id: seller.userId
             },
-            contactDetails : {
-                location:{
-                  city:{
-                     name:sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
-                     _id: sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
-                  },
-                  state:{
-                      name:sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
-                      _id:sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
-                  },
-                  country:{
-                     name:sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
-                     _id:sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
-                  },
-                  address:sellerContactId && sellerContactId.location && sellerContactId.location.address,
-                  pincode:sellerContactId && sellerContactId.location && sellerContactId.location.pincode
+            contactDetails: {
+              location: {
+                city: {
+                  name: sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city.name,
+                  _id: sellerContactId && sellerContactId.location && sellerContactId.location.city && sellerContactId.location.city._id,
                 },
-                alternativNumber : sellerContactId && sellerContactId.alternativNumber,
-                email : sellerContactId && sellerContactId.email,
-                website : sellerContactId && sellerContactId.website
+                state: {
+                  name: sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state.name,
+                  _id: sellerContactId && sellerContactId.location && sellerContactId.location.state && sellerContactId.location.state._id
+                },
+                country: {
+                  name: sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country.name,
+                  _id: sellerContactId && sellerContactId.location && sellerContactId.location.country && sellerContactId.location.country._id
+                },
+                address: sellerContactId && sellerContactId.location && sellerContactId.location.address,
+                pincode: sellerContactId && sellerContactId.location && sellerContactId.location.pincode
+              },
+              alternativNumber: sellerContactId && sellerContactId.alternativNumber,
+              email: sellerContactId && sellerContactId.email,
+              website: sellerContactId && sellerContactId.website
             }
           }
           // keywords
@@ -722,6 +751,7 @@ module.exports.updateUser = async (req, res) => {
         {
           seller,
           buyer,
+          user:__usr,
           activeChat,
         },
         user.email && user.isEmailVerified === 1
@@ -1016,10 +1046,10 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     const { deleteTrade, userId, sellerId, buyerId, permanentDelete, investment, tender } = req.body
 
     const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' : 'https://investmentapi.tech-active.com/api/permanentlydisable'
-    const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
+    const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://tradebazaarapi.tech-active.com/api/v1/deleteTenderUser/${userId}`
 
     const { userID, token } = req;
-    const result = await updateUser({ _id: userId }, { deleteTrade })
+    const result = await updateUser({ _id: userId }, { deleteTrade, reresigistered: true })
     if (result) {
       let query = {}
       if (!sellerId) query.userId = userId
@@ -1028,9 +1058,9 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       if (!buyerId) query.userId = userId
       else query._id = buyerId
       let buyerQuery = {
-       $or:[ 
-          {userId:userID}, {_id:buyerId} 
-       ]
+        $or: [
+          { userId: userID }, { _id: buyerId }
+        ]
       }
       const _buyer = await deleteBuyer(buyerQuery)
 
@@ -1038,9 +1068,9 @@ module.exports.deleteCurrentAccount = async (req, res) => {
       delete query.userId
       query.sellerId = sellerData._id
       let sellerQuery = {
-       $or:[ 
-          {userId:userID}, {_id:sellerId} 
-       ]
+        $or: [
+          { userId: userID }, { _id: sellerId }
+        ]
       }
       const _seller = await deleteSellerRecord(sellerQuery);
 
@@ -1089,7 +1119,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     respSuccess(res, "Deleted Succesfully")
 
   } catch (error) {
-   console.log(error,"==============eeeeeeeeeeeeeeeeee===============")
+    console.log(error, "==============eeeeeeeeeeeeeeeeee===============")
   }
 
 }
@@ -1097,10 +1127,10 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 //whatsApp twilio
 
 module.exports.sendWhatappWati = async (req, res) => {
-  try{
+  try {
     let result = await sendwati()
-     respSuccess(res, result)
-  }catch(err){
+    respSuccess(res, result)
+  } catch (err) {
     console.log(err)
   }
 }

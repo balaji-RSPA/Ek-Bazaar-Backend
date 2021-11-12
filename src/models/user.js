@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 // const conn = require('../../config/tenderdb')
 const { Schema, Types } = mongoose;
 const { ObjectId } = Types;
+const City = require("./citiesSchema");
+const State = require("./statesSchema");
+const Country = require("./countriesSchema");
 // const { model } = conn
 
 // const bcrypt = require('bcrypt');
@@ -192,6 +195,28 @@ const userSchema = new Schema({
       type: String,
       trim: true
     },
+  },
+  city: {
+    type: ObjectId,
+    ref: City,
+    required: true,
+  },
+  state: {
+    type: ObjectId,
+    ref: State,
+    required: true,
+  },
+  country: {
+    type: ObjectId,
+    ref: Country,
+    // required: true,
+  },
+  source: {
+    type: String,
+    default: "trade"
+  },
+  reresigistered: {
+    type: Boolean
   }
 }, {
   versionKey: false,

@@ -157,6 +157,8 @@ exports.login = async (req, res, next) => {
       // const result1 = await sellers.handleUserSession(_user._id, finalData);
       sellers.handleUserSession(_user._id, finalData);
       const productCount = seller && seller.sellerProductId && seller.sellerProductId.length ? true : false
+      const sellerType = seller && seller.sellerType && seller.sellerType.length ? true : false
+
       console.log("🚀 ~ file: authController.js ~ line 119 ~ exports.login= ~ ProductCount------------", productCount, seller, _user)
       // const chatLogin = await getChat({ userId: _user._id })
       let activeChat = {
@@ -192,7 +194,7 @@ exports.login = async (req, res, next) => {
       //   console.log(activeChat, '------ New Chat activated-----------')
       // }
       console.log('1111111111111111111 --------------')
-      return respSuccess(res, { user, token, activeChat, productCount }, "successfully logged in!");
+      return respSuccess(res, { user, token, activeChat, productCount, sellerType }, "successfully logged in!");
     }
     return respAuthFailed(res, undefined, "Invalid Credentials!");
 
