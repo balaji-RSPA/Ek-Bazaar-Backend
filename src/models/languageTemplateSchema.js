@@ -17,7 +17,10 @@ const languageTemplateSchema = new Schema(
             type: String
         },
 
-        languages: {
+        questions: {
+            type: Object
+        },
+        categoryNames: {
             type: Object
         }
     },
