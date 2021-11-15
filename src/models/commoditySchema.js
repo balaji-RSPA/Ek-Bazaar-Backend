@@ -17,7 +17,7 @@ const commoditySchema = new Schema(
     },
     category: {
       type: String,
-      required: true,
+      // required: true,
       trim: true
     },
     priceUnit: {
@@ -27,12 +27,12 @@ const commoditySchema = new Schema(
     },
     parentCat: {
       type: Number,
-      required: true,
+      // required: true,
       trim: true
     },
     commCat: {
       type: Number,
-      required: true,
+      // required: true,
       trim: true
     },
     city: [

@@ -12,6 +12,7 @@ const {
 module.exports.createCommodity = async (req, res) => {
   try {
     const { check, veriety, commodityName } = req.body
+    console.log("🚀 ~ file: commodityController.js ~ line 15 ~ module.exports.createCommodity= ~ req.body", req.body)
     if (check) {
       const exist = await getCommodity({ veriety, commodityName })
       if (exist) {
@@ -21,6 +22,7 @@ module.exports.createCommodity = async (req, res) => {
     const commodity = await createCommodity(req.body);
     respSuccess(res, commodity, "Record created successfully");
   } catch (error) {
+    console.log(error, ' hhhhhhhhhhhhhhhhhhh')
     respError(res, error.message);
   }
 };
