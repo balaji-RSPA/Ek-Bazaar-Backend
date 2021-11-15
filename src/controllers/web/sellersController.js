@@ -19,7 +19,8 @@ const {
   category,
   mastercollections,
   elastic,
-  sellerProducts
+  sellerProducts,
+  LanguageTemplate
 } = require('../../modules')
 const { sellerSearch, searchFromElastic } = elastic;
 const _ = require('lodash')
@@ -60,6 +61,7 @@ const {
 const { getFilteredCities, getSellerSelectedCities } = location;
 const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct, insertManyEslint, updateESDoc } = mastercollections
 const { updateSellerProducts } = sellerProducts
+const { getChatTemplate } = LanguageTemplate
 
 // module.exports.razorPay = async (req, res) => {
 
@@ -431,7 +433,7 @@ const masterMapData = (val, type, contactDetails = null) => new Promise((resolve
   keywords = _.without(_.uniq(keywords), '', null, undefined, 0)
   let data;
   if (type === "update") {
-  console.log(val.offers, ' oooooooooooooffffffffffffffffffffff-------------')
+    console.log(val.offers, ' oooooooooooooffffffffffffffffffffff-------------')
     data = {
       productDetails: val.productDetails && val.productDetails && { ...val.productDetails } || null,
       status: val.status !== null && val.status !== undefined ? val.status : true,
@@ -848,9 +850,15 @@ module.exports.updateSellerProduct = async (req, res) => {
 module.exports.getSellerProduct = async (req, res) => {
   try {
     const { sellerProductId } = req.body
+    console.log("🚀 ~ file: sellersController.js ~ line 851 ~ module.exports.getSellerProduct= ~ req.body", req.body)
     let sellerProduct = await getSellerProduct({ _id: sellerProductId })
-    // console.log("module.exports.getSellerProduct -> sellerProduct", sellerProduct)
-    respSuccess(res, sellerProduct)
+    // console.log("module.exports.getSellerProduct -> sellerProduct", JSON.stringify(sellerProduct))
+    let temp = {}
+    if (sellerProduct && sellerProduct.secondaryCategoryId && sellerProduct.secondaryCategoryId.length) {
+      temp = await getChatTemplate({ l3: sellerProduct.secondaryCategoryId[0]._id })
+      console.log("🚀 ~ file: sellersController.js ~ line 858 ~ module.exports.getSellerProduct= ~ temp", temp)
+    }
+    respSuccess(res, { sellerProduct, chatTemplat: temp })
   } catch (error) {
     respError(res, error.message)
   }

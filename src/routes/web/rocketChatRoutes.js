@@ -14,7 +14,7 @@ router.get('/chat/getHistory', authenticate, chat.getHistory);
 router.post('/chat/markAsRead', authenticate, chat.markAsRead);
 router.post('/chat/sendMessage', authenticate, chat.sendMessage);
 router.post('/chat/setLanguage', authenticate, chat.setLanguage);
-router.post('/chat/checkSellerChat', chat.checkSellerChat);
+router.post('/chat/checkSellerChat', authenticate, chat.checkSellerChat);
 router.post('/chat/logout',/*  authenticate,  */chat.chatLogout);
 // router.get('/chat/getUserDetails', chat.userDetails);
 
