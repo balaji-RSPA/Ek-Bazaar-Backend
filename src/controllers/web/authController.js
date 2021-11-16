@@ -155,7 +155,23 @@ exports.login = async (req, res, next) => {
       }
       // const result1 = await sellers.handleUserSession(_user._id, finalData);
       sellers.handleUserSession(_user._id, finalData);
-      const productCount = seller && seller.sellerProductId && seller.sellerProductId.length ? true : false
+      const fff = seller.sellerProductId.filter((vay) => vay.status)
+      
+      const productSeller = seller && seller.sellerProductId && seller.sellerProductId.length ? seller.sellerProductId.filter((vay) => vay.status) : []
+
+
+      // const productCount = seller && seller.sellerProductId && seller.sellerProductId.length  ? true : false
+      let productCount= false
+      if (seller && seller.sellerProductId && seller.sellerProductId.length && !productSeller.length){
+        productCount = "1"
+      } else if (seller && seller.sellerProductId && seller.sellerProductId.length && productSeller.length){
+        productCount = true
+      }else{
+        productCount = false
+      }
+      // const productCount = productSeller && productSeller && productSeller.length  ? true : false
+
+
       const sellerType = seller && seller.sellerType && seller.sellerType.length ? true : false
 
       console.log("🚀 ~ file: authController.js ~ line 119 ~ exports.login= ~ ProductCount------------", productCount, seller, _user)
