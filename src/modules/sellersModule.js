@@ -308,6 +308,7 @@ module.exports.updateUser = (query, data) =>
         isMobileVerified: 1,
         password: 1,
         isEmailVerified: 1,
+        preferredLanguage: 1
         // _id: -1,
       })
       .then((doc) => {
