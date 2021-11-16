@@ -12,16 +12,18 @@
         .words {
             margin: 0;
         }
-        .sign{
+
+        .sign {
             margin-top: 65px;
         }
-        .sign p{
+
+        .sign p {
             text-align: right;
             font-weight: 600;
             color: #000;
             font-size: 14px;
             font-family: 'Open Sans', sans-serif;
-            
+
         }
 
         .words p {
@@ -194,8 +196,7 @@
                         justify-content: space-between;">
                             <td class="title">
                                 <!-- <img src="https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png" -->
-                                <img src="https://tenders.ekbazaar.com/assets/images/Final.svg"
-                                    style="width:50%;">
+                                <img src="https://tenders.ekbazaar.com/assets/images/Final.svg" style="width:50%;">
                             </td>
 
                             <td class="title-bold" style="font-weight: 700;color: #000000;">
@@ -217,7 +218,8 @@
                                 </div>
                                 <div class="card">
                                     <h5>Address :</h5>
-                                    <p>Singarpura Village,<br /> Vidyaranyapura Post,<br /> Bengaluru, Karnataka 560097</p>
+                                    <p>Singarpura Village,<br /> Vidyaranyapura Post,<br /> Bengaluru, Karnataka 560097
+                                    </p>
                                 </div>
                                 {{#if details.orderData.currencyFlag}}
                                 <div class="card">
@@ -235,7 +237,7 @@
                                 </div>
                                 {{#if details.orderData.currencyFlag}}
                                 <div class="card">
-                                    <h5>GST Number :</h5>
+                                    <h5>{{details.sellerDetails.gstLable}} :</h5>
                                     <p>{{details.sellerDetails.gstNo}}</p>
                                 </div>
                                 {{else}}
@@ -284,7 +286,7 @@
                     <td class="text-center">Net Amount</td>
                     {{#if details.orderData.currencyFlag}}
                     {{#if details.orderData.igstAmount}}
-                     <td style="text-align:left" class="text-center">IGST (18%)</td>
+                    <td style="text-align:left" class="text-center">IGST (18%)</td>
                     {{else}}
                     <td style="text-align:left" class="text-center">CGST (9%)</td>
                     <td style="text-align:left" class="text-center">SGST (9%)</td>
@@ -302,14 +304,14 @@
                     <td class="text-right">{{details.orderData.currency}} {{details.orderData.amount}}</td>
                     {{#if details.orderData.currencyFlag}}
                     {{#if details.orderData.igstAmount}}
-                     <td class="text-right">{{details.orderData.currency}} {{details.orderData.igstAmount}}</td>
+                    <td class="text-right">{{details.orderData.currency}} {{details.orderData.igstAmount}}</td>
                     {{else}}
-                     <td class="text-right">{{details.orderData.currency}} {{details.orderData.cgstAmount}}</td>
-                     <td class="text-right">{{details.orderData.currency}} {{details.orderData.sgstAmount}}</td>
+                    <td class="text-right">{{details.orderData.currency}} {{details.orderData.cgstAmount}}</td>
+                    <td class="text-right">{{details.orderData.currency}} {{details.orderData.sgstAmount}}</td>
                     {{/if}}
                     {{/if}}
                     <td class="text-right">{{details.orderData.currency}} {{details.orderData.orderTotal}}</td>
-                 </tr>
+                </tr>
 
                 <tr style="border:1px solid #ddd;background-color: #F9F9F9;">
                     <td style="font-weight:600;font-size: 12px;color: #000;" class="highrow">Total</td>
@@ -320,13 +322,14 @@
                     {{#if details.orderData.currencyFlag}}
                     <td class="highrow"></td>
                     {{#if details.orderData.cgstAmount }}
-                     {{#if details.orderData.sgstAmount }}
-                      <td class="highrow"></td>
-                     {{/if}}
+                    {{#if details.orderData.sgstAmount }}
+                    <td class="highrow"></td>
                     {{/if}}
                     {{/if}}
-                    <td style="font-weight:600;font-size: 12px;color: #000; width: 80px ;" class="highrow text-right">{{details.orderData.currency}} {{details.orderData.orderTotal}}</td>
-                   
+                    {{/if}}
+                    <td style="font-weight:600;font-size: 12px;color: #000; width: 80px ;" class="highrow text-right">
+                        {{details.orderData.currency}} {{details.orderData.orderTotal}}</td>
+
                 </tr>
 
 

@@ -46,6 +46,7 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             city: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.city.name) || '',
             state: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.state.name) || '',
             country: seller && seller.location && seller.location.country && capitalizeFirstLetter(seller.location.country.name) || '',
+            gstLable: seller && seller.sellerType && seller.sellerType.length && seller.sellerType[0]["name"] === "farmer" ? "Aadhar Number" : "GST Number",
             gstNo: orderDetails && orderDetails.gstNo || '',
             address: orderDetails && orderDetails.address || '',
             pincode: orderDetails && orderDetails.pincode || '',
@@ -370,7 +371,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
                             // Generate invoice
                             const invoice = await createPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth }, order_details)
-                            console.log(invoice, ' Invoice file path')
+                            
 
                             await addSellerPlanLog(planLog)
                             if (deleteProduct === true && seller.sellerProductId && seller.sellerProductId.length) {
