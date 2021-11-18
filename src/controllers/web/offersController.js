@@ -243,7 +243,10 @@ module.exports.getAllOffers = async (req, res) => {
                 if (index === -1 && new Date(req.productDetails.validity).toLocaleString() > new Date().toLocaleString()) {
                     let _products = []
 
-                    let productsCount = buyerRequest.filter(_req => (_req.productDetails && _req.productDetails.name && _req.productDetails.name.level1 && _req.productDetails.name.level1.id) && _req.productDetails.name.level1.id === (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id) && req.productDetails.name.level1.id).reduce((acc, curr) => {
+                    let productsCount = buyerRequest.filter(_req => {
+                        return((_req.productDetails && _req.productDetails.name && _req.productDetails.name.level1 && _req.productDetails.name.level1.id) && _req.productDetails.name.level1.id === (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id) && req.productDetails.name.level1.id)
+                    })
+                    productsCount = productsCount.reduce((acc, curr) => {
                         if (curr.productDetails.name.level2) {
                             if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
                                 acc[curr.productDetails.name.level2.name] = 1
@@ -251,7 +254,7 @@ module.exports.getAllOffers = async (req, res) => {
                                 acc[curr.productDetails.name.level2.name] = acc[curr.productDetails.name.level2.name] + 1
                             }
                         } else if (!curr.productDetails.name.level2) {
-                            if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
+                            if (!acc.hasOwnProperty(curr.productDetails.name && curr.productDetails.name.level2 &&  curr.productDetails.name.level2.name)) {
                                 acc[curr.productDetails.name.name] = 1
                             } else {
                                 acc[curr.productDetails.name.name] = acc[curr.productDetails.name.name] + 1
