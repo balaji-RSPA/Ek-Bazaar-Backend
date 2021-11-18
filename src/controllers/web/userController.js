@@ -296,7 +296,8 @@ module.exports.addUser = async (req, res, next) => {
         city: user && user.city || null,
         country: user && user.country || null,
         state: user && user.state || null,
-      }
+      },
+      isPartialyRegistor: true
     };
     const sellerData = {
       email: email ? email : user.email,
@@ -307,7 +308,8 @@ module.exports.addUser = async (req, res, next) => {
         city: user && user.city || null,
         country: user && user.country || null,
         state: user && user.state || null,
-      }
+      },
+      isPartialyRegistor: true
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -489,7 +491,8 @@ module.exports.updateUser = async (req, res) => {
         (location && location.country) || null,
       email: (Boolean(_buyer && _buyer.email) && _buyer.email) || (Boolean(email) && email) || __usr.email,
       mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (Boolean(mobile) && parseInt(mobile)) || __usr.mobile,
-      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
+      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode,
+      // isPartialyRegistor: false
     };
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
@@ -509,7 +512,8 @@ module.exports.updateUser = async (req, res) => {
         email: (Boolean(email) && email) || __usr.email || null,
         mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
         countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode,
-        userId: userID
+        userId: userID,
+        isPartialyRegistor: false
       }
       buyer = await updateBuyer({ userId: userID }, buyerData)
       _seller = await updateSeller({ userId: userID }, sellerData)
@@ -522,6 +526,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
       countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode,
+      isPartialyRegistor: false,
       ..._buyer,
     };
     let sellerData;
@@ -535,6 +540,7 @@ module.exports.updateUser = async (req, res) => {
         mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
         countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
       }],
+      isPartialyRegistor: false,
       ..._buyer,
     };
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
@@ -752,7 +758,7 @@ module.exports.updateUser = async (req, res) => {
         {
           seller,
           buyer,
-          user:__usr,
+          user,
           activeChat,
         },
         user.email && user.isEmailVerified === 1
