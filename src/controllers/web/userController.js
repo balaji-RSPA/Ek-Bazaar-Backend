@@ -46,9 +46,16 @@ const {
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan;
 const { createTrialPlan, deleteSellerPlans, getSellerPlan } = SellerPlans;
-const { createChat } = Chat;
+const { createChat, deleteChat } = Chat;
 
-const { createChatUser, userChatLogin } = require("./rocketChatController");
+const { createChatUser, userChatLogin, deleteChatAccount } = require("./rocketChatController");
+
+const { rocketChatDomain, rocketChatAdminLogin } = require('../../utils/globalConstants')
+const chatDomain = `https://${rocketChatDomain}`
+const admin = {
+  username: rocketChatAdminLogin.username,
+  password: rocketChatAdminLogin.password
+}
 
 const algorithm = "aes-256-cbc";
 const key = crypto.randomBytes(32);
@@ -752,7 +759,7 @@ module.exports.updateUser = async (req, res) => {
         {
           seller,
           buyer,
-          user:__usr,
+          user: __usr,
           activeChat,
         },
         user.email && user.isEmailVerified === 1
@@ -1044,6 +1051,7 @@ exports.verificationEmail = async (req, res) => {
 module.exports.deleteCurrentAccount = async (req, res) => {
 
   try {
+
     const { deleteTrade, userId, sellerId, buyerId, permanentDelete, investment, tender } = req.body
 
     const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' : 'https://investmentapi.tech-active.com/api/permanentlydisable'
@@ -1051,6 +1059,8 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 
     const { userID, token } = req;
     const result = await updateUser({ _id: userId }, { deleteTrade, reresigistered: true })
+
+
     if (result) {
       let query = {}
       if (!sellerId) query.userId = userId
@@ -1081,13 +1091,25 @@ module.exports.deleteCurrentAccount = async (req, res) => {
             $in: sellerData.sellerProductId,
           }
         };
-        console.log("🚀 ~ file: userController.js ~ line 1012 ~ module.exports.deleteCurrentAccount ~ pQuery", pQuery)
         const delRec = deleteSellerProducts(pQuery);
-        console.log("🚀 ~ file: userController.js ~ line 1013 ~ module.exports.deleteCurrentAccount ~ delRec", delRec)
         const delMaster = bulkDeleteMasterProducts(pQuery);
         console.log('master collectiona nd seller product delete')
       }
       const delMaster1 = deleteSellerPlans({ sellerId: sellerData._id });
+
+      /* Delete Rocket Chat Account start */
+      const chatLog = await userChatLogin({ userId: "60023283293d9c7dacb6d705", username: admin.username, password: admin.password })
+      const chatDetails = {
+        mobile: result.mobile || '',
+        token: chatLog.authToken,
+        userId: chatLog.userId
+
+      }
+      const chatDelete = await deleteChatAccount(chatDetails)
+      const del = await deleteChat({ userId: result._id })
+      console.log(del, chatDelete, chatLog, ' -------chat delete --------------')
+      /* Delete Rocket Chat Ends */
+
       if (permanentDelete) {
 
         const update = {

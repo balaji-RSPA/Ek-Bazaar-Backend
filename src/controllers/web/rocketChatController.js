@@ -223,6 +223,7 @@ exports.userList = async (req, res) => {
         const { chatUserType } = req.query
 
         const url = `${chatDomain}/api/v1/im.list`
+        console.log(chatAthToken, chatUserId, chatUsername, url, '3333')
         const list = await axios.get(url, {
             headers: {
                 'Content-Type': 'application/json',
@@ -267,7 +268,9 @@ exports.userList = async (req, res) => {
         // })
 
     } catch (error) {
-        // console.log(err)
+        if (error && error.response && error.response.status === 401) {
+            return respSuccess(res, {status: 401})
+        }
         return respError(res, error.message)
     }
 }
@@ -507,9 +510,9 @@ exports.checkSellerChat = async (req, res) => {
             const newData = userInfo && userInfo.data && userInfo.data.user || ''
             checkChat = {
                 ...checkChat,
-                details:{
+                details: {
                     ...checkChat.details,
-                    user:{
+                    user: {
                         ...checkChat.details.user,
                         ...newData
                     }
@@ -517,7 +520,7 @@ exports.checkSellerChat = async (req, res) => {
 
             }
         }
-        
+
         respSuccess(res, checkChat)
     } catch (error) {
 
