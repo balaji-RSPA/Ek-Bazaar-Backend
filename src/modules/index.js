@@ -19,6 +19,7 @@ const Chat = require('./chatModule')
 const Pincode = require('./pincodeModule')
 const News = require('./newsModule');
 const Commodity = require('./commodityModule');
+const LanguageTemplate = require('./languageTemplateModule')
 
 module.exports = {
     location,
@@ -41,5 +42,6 @@ module.exports = {
     Chat,
     Pincode,
     News,
-    Commodity
+    Commodity,
+    LanguageTemplate
 }

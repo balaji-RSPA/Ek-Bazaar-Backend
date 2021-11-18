@@ -522,7 +522,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             }
         }
 
-        const totalOffers = await searchFromElastic(query, { skip: 0, limit: 10 }, aggs);
+        const totalOffers = await searchFromElastic(query, { skip: 0, limit: 1 }, aggs);
         let totalOfferCount = totalOffers && totalOffers.length && totalOffers[1] || 0;
 
         const dailyOffers = await searchFromElastic(query_daily_offers, { skip: 0, limit: 10 }, aggs);
