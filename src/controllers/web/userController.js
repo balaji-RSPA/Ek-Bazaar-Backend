@@ -1047,7 +1047,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
     const { deleteTrade, userId, sellerId, buyerId, permanentDelete, investment, tender } = req.body
 
     const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' : 'https://investmentapi.tech-active.com/api/permanentlydisable'
-    const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://elastic.tech-active.com:8443/api/v1/deleteTenderUser/${userId}`
+    const tenderUrl = process.env.NODE_ENV === "production" ? `https://api.ekbazaar.com/api/v1/deleteTenderUser/${userId}` : `https://tradebazaarapi.tech-active.com/api/v1/deleteTenderUser/${userId}`
 
     const { userID, token } = req;
     const result = await updateUser({ _id: userId }, { deleteTrade, reresigistered: true })

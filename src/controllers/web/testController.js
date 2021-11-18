@@ -1,4 +1,6 @@
 const moment = require('moment')
+const Papa = require('papaparse')
+const path = require("path");
 const fs = require('fs').promises
 const {
     getAllPrimaryCategory,
@@ -17,10 +19,12 @@ const { getMasterRecords, updateMasterBulkProducts, updateMaster, getMaster, bul
 const { getSellerPlan, deleteSellerPlans } = require('../../modules/sellerPlanModule')
 const { getUserList, deleteBuyer, deleteUser, deleteBuyers } = require('../../modules/buyersModule')
 const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
-const { getAllSellerData, deleteSellerRecord } = require('../../modules/sellersModule');
+const { getAllSellerData, deleteSellerRecord, getSeller } = require('../../modules/sellersModule');
 const { getCountryData, addCity, getCity, getCityList } = require('../../modules/locationsModule')
 const { deleteChatAccount, userLogin, userChatLogin } = require('./rocketChatController')
 const { rocketChatAdminLogin } = require('../../utils/globalConstants')
+const SellerSchema = require('../../models/sellersSchema')
+const _ = require('lodash')
 const admin = {
     username: rocketChatAdminLogin.username,
     password: rocketChatAdminLogin.password
@@ -1756,9 +1760,177 @@ module.exports.gujaratSellerData = async (req, res) => new Promise(async (resolv
     try {
 
         console.log('gujarat seller date -----')
-        const data = await getAllSellerData({ "location.city": ObjectId("6058831286dcf826a46bf4ad") })
-        console.log("🚀 ~ file: testController.js ~ line 229 ~ module.exports.gujaratSellerData= ~ data", data)
-    } catch (error) {
+        // const data = await getAllSellerData({ "location.city": ObjectId("6058831286dcf826a46bf4ad") })
+        // console.log("🚀 ~ file: testController.js ~ line 229 ~ module.exports.gujaratSellerData= ~ data", data)
 
+        const registerdate = new Date(moment('2021-07-16').startOf('day')).toISOString()
+        const date = new Date(moment().startOf('day')).toISOString()
+
+        // const totalSellerCount = await SellerSchema.find({ $and: [/* { sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, */ { userId: { $ne: null } }], createdAt: { $gte: registerdate, $lt: date } }).populate('sellerProductId').select('name email mobile website sellerProductId hearingSource').exec()
+
+        // const totalSellerCount = await SellerSchema.find({ name: { $regex: "rameshLive", $options: 'i' } }).populate('sellerProductId').select('name email mobile website sellerProductId createdAt').exec()
+        const totalSellerCount = await getSeller('', '', { $and: [{ userId: { $ne: null } }/* , { name: { $regex: "rameshLive", $options: 'i' }} */], createdAt: { $gte: registerdate, $lt: date } })
+        console.log("🚀 ~ file: testController.js ~ line 1769 ~ module.exports.gujaratSellerData= ~ totalSellerCount", totalSellerCount.length)
+
+
+        let produts = []
+        if (totalSellerCount && totalSellerCount.length) {
+            for (let index = 0; index < totalSellerCount.length; index++) {
+                let l1 = [], l1Id = [], l2 = [], l2Id = [], l3 = [], l3Id = [], l4 = [], l4Id = [], l5 = [], l5Id = [], pro_names = []
+                const seller = totalSellerCount[index];
+
+                console.log(seller.sellerProductId.length, 'aaaaaaaaaaaaaa')
+                const details = seller.sellerProductId && seller.sellerProductId.length && seller.sellerProductId.map((pro) => {
+
+                    pro.parentCategoryId && pro.parentCategoryId.length && l1.push(...pro.parentCategoryId.map((v) => v.name))
+                    pro.parentCategoryId && pro.parentCategoryId.length && l1Id.push(...pro.parentCategoryId.map((v) => v.vendorId))
+
+                    pro.primaryCategoryId && pro.primaryCategoryId.length && l2.push(...pro.primaryCategoryId.map((v) => v.name))
+                    pro.primaryCategoryId && pro.primaryCategoryId.length && l2Id.push(...pro.primaryCategoryId.map((v) => v.vendorId))
+
+                    pro.secondaryCategoryId && pro.secondaryCategoryId.length && l3.push(...pro.secondaryCategoryId.map((v) => v.name))
+                    pro.secondaryCategoryId && pro.secondaryCategoryId.length && l3Id.push(...pro.secondaryCategoryId.map((v) => v.vendorId))
+
+                    pro.poductId && pro.poductId.length && l4.push(...pro.poductId.map((v) => v.name))
+                    pro.poductId && pro.poductId.length && l4Id.push(...pro.poductId.map((v) => v.vendorId))
+
+                    pro.productSubcategoryId && pro.productSubcategoryId.length && l5.push(...pro.productSubcategoryId.map((v) => v.name))
+                    pro.productSubcategoryId && pro.productSubcategoryId.length && l5Id.push(...pro.productSubcategoryId.map((v) => v.vendorId))
+
+                    pro.productDetails && pro.productDetails.name && pro_names.push(pro.productDetails.name)
+
+
+                }) || ''
+
+                // console.log(l1, l1Id, l4, l4Id, ' ggggggggggggg')
+
+
+                const qqq = {
+                    name: seller.name,
+                    email: seller.email,
+                    hearingSource: seller.hearingSource && seller.hearingSource.source || '',
+                    mobile: seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile,
+                    productCount: seller.sellerProductId && seller.sellerProductId.length || 0,
+
+                    // sellerProducts: seller.sellerProductId && seller.sellerProductId.length && seller.sellerProductId.map((pro) => pro.productDetails && pro.productDetails.name || '').toString() || '',
+                    sellerProductsName: _.uniq(pro_names).toString() || '',
+
+                    level1: _.uniq(l1).toString(),
+                    level1_ids: _.uniq(l1Id).toString(),
+
+                    level2: _.uniq(l2).toString(),
+                    level2_ids: _.uniq(l2Id).toString(),
+
+                    level3: _.uniq(l3).toString(),
+                    level3_ids: _.uniq(l3Id).toString(),
+
+                    level4: _.uniq(l4).toString(),
+                    level4_ids: _.uniq(l4Id).toString(),
+
+                    level5: _.uniq(l5).toString(),
+                    level5_ids: _.uniq(l5Id).toString(),
+
+                    createdDate: seller.createdAt || '',
+                }
+                // console.log(JSON.stringify(qqq), ' ttttttttttttttt')
+                produts.push(qqq)
+
+
+            }
+        }
+
+        // const first = produts.slice(0, 1000);
+        // const sec = produts.slice(1001, 2000);
+        // const thr = produts.slice(2001, 3000);
+        // const forth = produts.slice(3001, 4000);
+        // const fifth = produts.slice(4000, 5397);
+        // if (first) {
+        //     // const fileLocation = `public/sellerDetailFiles/sellerProductListFirst.json`
+        //     // const err = await fs.writeFile(fileLocation, JSON.stringify(first))
+        //     // console.log(err, ' fffffffffffff')
+
+        //     const FilePath = `sellerDetails-1-${new Date()}.csv`
+        //     await this.csvFile(first, FilePath)
+        //     console.log('11111')
+        // }
+        // if (sec) {
+        //     // const fileLocation = `public/sellerDetailFiles/sellerProductListSecond.json`
+        //     // const err = await fs.writeFile(fileLocation, JSON.stringify(sec))
+        //     // console.log(err, ' ssssssssss')
+        //     const FilePath = `sellerDetails-2-${new Date()}.csv`
+        //     await this.csvFile(sec, FilePath)
+        //     console.log('2222222')
+        // }
+        // if (thr) {
+        //     // const fileLocation = `public/sellerDetailFiles/sellerProductListThird.json`
+        //     // const err = await fs.writeFile(fileLocation, JSON.stringify(thr))
+        //     // console.log(err, ' ssssssssss')
+        //     const FilePath = `sellerDetails-3-${new Date()}.csv`
+        //     await this.csvFile(thr, FilePath)
+        //     console.log('333333333')
+        // }
+        // if (forth) {
+        //     // const fileLocation = `public/sellerDetailFiles/sellerProductListFourth.json`
+        //     // const err = await fs.writeFile(fileLocation, JSON.stringify(forth))
+        //     // console.log(err, ' ssssssssss')
+        //     const FilePath = `sellerDetails-4-${new Date()}.csv`
+        //     await this.csvFile(forth, FilePath)
+        //     console.log('4444444')
+        // }
+        // if (fifth) {
+        //     // const fileLocation = `public/sellerDetailFiles/sellerProductListFive.json`
+        //     // const err = await fs.writeFile(fileLocation, JSON.stringify(fifth))
+        //     // console.log(err, ' ssssssssss')
+        //     const FilePath = `sellerDetails-5-${new Date()}.csv`
+        //     await this.csvFile(fifth, FilePath)
+        //     console.log('5555555555')
+        // }
+
+        const FilePath = `sellerDetails-${new Date()}.csv`
+        const FileSource = 'public/sellerDetailFiles/' + FilePath
+        if (produts.length) {
+
+            const csv = Papa.unparse(produts, {
+                quotes: false, //or array of booleans
+                quoteChar: '"',
+                escapeChar: '"',
+                delimiter: ",",
+                header: true,
+                newline: "\r\n",
+                skipEmptyLines: false, //other option is 'greedy', meaning skip delimiters, quotes, and whitespace.
+                columns: null, //or array of strings
+            });
+            fs.writeFile(path.resolve(__dirname, '../../../public/sellerDetailFiles', FilePath), csv, (err, data) => {
+                console.log(err, "Completed data", data)
+            })
+        }
+
+    } catch (error) {
+        console.log(error, ' gggggggggggggg')
     }
 })
+
+
+module.exports.csvFile = async (produts, FilePath) => {
+
+    try {
+
+
+        const csv = Papa.unparse(produts, {
+            quotes: false, //or array of booleans
+            quoteChar: '"',
+            escapeChar: '"',
+            delimiter: ",",
+            header: true,
+            newline: "\r\n",
+            skipEmptyLines: false, //other option is 'greedy', meaning skip delimiters, quotes, and whitespace.
+            columns: null, //or array of strings
+        });
+        fs.writeFile(path.resolve(__dirname, '../../../public/sellerDetailFiles', FilePath), csv, (err, data) => {
+            console.log(err, "Completed data", data)
+        })
+    } catch (error) {
+        console.log(error, ' gggggggggggggg')
+    }
+
+}
