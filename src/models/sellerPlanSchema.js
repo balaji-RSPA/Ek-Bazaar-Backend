@@ -38,6 +38,9 @@ const sellerPlanSchema = new Schema({
     exprireDate: {
         type: Date
     },
+    subscriptionValidety: {
+        type: Date
+    },
     expireStatus: {
         type: Boolean,
         default: false
@@ -80,6 +83,9 @@ const sellerPlanSchema = new Schema({
     createdOn: {
         type: Date,
         default: new Date()
+    },
+    hearingSourceCode: {
+        type: String
     }
 }, {
     versionKey: false,

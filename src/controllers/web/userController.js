@@ -474,7 +474,7 @@ module.exports.updateUser = async (req, res) => {
       userType,
       hearingSource
     } = req.body;
-    // console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body)
+    console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body,"llllllllllll");
     // return false
 
     // console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
@@ -626,7 +626,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans && !__usr.reresigistered) {
-        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721']
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
 
         const dateNow = new Date();
@@ -656,6 +656,7 @@ module.exports.updateUser = async (req, res) => {
             exprireDate: dateNow.setDate(
               dateNow.getDate() + parseInt(promoCode ? "90" : trialPlan.days)
             ),
+            hearingSourceCode: hearingSource.referralCode || null,
             userId: seller.userId,
             sellerId: seller._id,
             isTrial: true,

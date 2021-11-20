@@ -26,7 +26,7 @@ const {
     getSubscriptionPlanDetail,
 } = subscriptionPlan;
 
-const { getSellerProfile, updateSeller } = sellers
+const { getSellerProfile, updateSeller, getUserProfile } = sellers
 const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans
 const { addOrders, updateOrder } = Orders
 const { addPayment, updatePayment } = Payments
@@ -64,6 +64,7 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             orderTotal: orderDetails && orderDetails.total.toFixed(2),
             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
             expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
+            subscriptionValidety: plan && moment(new Date(plan.subscriptionValidety)).format('DD/MM/YYYY'),
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
             // currency: orderDetails && orderDetails.currency || '',
             currency: orderDetails && orderDetails.currency === 'INR' ? "₹" : '$' || '',
@@ -171,7 +172,7 @@ module.exports.createRazorPayOrder = async (req, res) => {
             // console.log(planDetails, 'test')
             if (planDetails) {
                 const gstValue = 18
-                const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
+                const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Half Yearly" ? 6 : planDetails.type === "Yearly" ? 12 : ''
 
                 const pricePerMonth = planDetails && (currency === 'INR' ? planDetails.price : planDetails.usdPrice)
                 const price = pricePerMonth /* * parseInt(months) */
@@ -224,7 +225,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                 const oldPlanType = sellerPlanDetails && sellerPlanDetails.planType;
                 let newPlanType = '';
 
-                const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Annually" ? 12 : ''
+                const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Half Yearly" ? 6 : planDetails.type === "Yearly" ? 12 : ''
                 const pricePerMonth = planDetails && (currency === 'INR' ? planDetails.price : planDetails.usdPrice)
                 const price = pricePerMonth/*  * parseInt(months) */
                 const includedGstAmount = await CalculateGst(price, findpincode, currency);
@@ -254,7 +255,22 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                         if (response.statusCode === 200) {
                             const invoiceNumner = await getInvoiceNumber({ id: 1 })
                             const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
-                            const planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
+                            let planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
+                            let date = new Date()
+                            let subscriptionValidety = date.setDate(date.getDate() + parseInt(planDetails.days))
+                            const SourceCode = seller && seller.hearingSource && seller.hearingSource.referralCode;
+                            if (seller && seller.hearingSource && seller.hearingSource.source === 'Uttarakhand' && seller.hearingSource.referralCode === 'UTK1121') {
+                                if (seller && seller.planId && seller.planId.isTrial) {
+                                    const trialCreatedAt = seller.planId && seller.planId.createdAt;
+                                    const today = moment();
+                                    const daysFromRegistration = today.diff(moment(trialCreatedAt, 'DD-MM-YYYY'), 'days');
+                                    const todayDate = new Date();
+                                    if (daysFromRegistration <= 7) {
+                                        planExpireDate = todayDate.setDate(todayDate.getDate() + parseInt(planDetails.days) + parseInt(seller.planId.days) - daysFromRegistration)
+                                        planDetails.days = `${parseInt(planDetails.days) + parseInt(seller.planId.days) - daysFromRegistration}`
+                                    }
+                                }
+                            }
                             await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
 
                             const sellerDetails = {
@@ -282,6 +298,8 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 days: planDetails.days,
                                 extendTimes: null,
                                 exprireDate: planExpireDate,
+                                subscriptionValidety,
+                                hearingSourceCode: SourceCode,
                                 isTrial: false,
                                 planType: planDetails.type,
                                 extendDays: planDetails.days,
@@ -320,6 +338,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 sgstAmount: includedGstAmount.sgstAmount,
                                 total: includedGstAmount.totalAmount,
                                 orderedOn: new Date(),
+                                hearingSourceCode: SourceCode,
                                 // paymentId: '', // payment collection id
                                 // paymentStatus: '',
                                 ipAddress: orderDetails && orderDetails.ipAddress || null,
@@ -412,7 +431,8 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 let planChangedEmailMsg = planChangedEmail({
                                     oldPlanType,
                                     newPlanType: _p_details.planType,
-                                    till: _p_details.exprireDate,
+                                    // till: _p_details.exprireDate,
+                                    till: _p_details.subscriptionValidety,
                                     url
                                 })
                                 const message = {
