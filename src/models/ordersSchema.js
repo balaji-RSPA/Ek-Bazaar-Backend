@@ -168,6 +168,9 @@ const orderSchema = new Schema({
     status: {
         type: Boolean,
         default: true
+    },
+    hearingSourceCode: {
+        type: String
     }
 }, {
     versionKey: false,
