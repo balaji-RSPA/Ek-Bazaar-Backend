@@ -12,7 +12,7 @@ module.exports.getChatAllTemplates = (query, range) => new Promise((resolve, rej
     const { skip, limit } = range
     LanguageTemplate.find(query)
         .skip(skip || 0)
-        .limit(limit || 5)
+        .limit(limit || 10)
         .lean()
         .then((doc) => {
             resolve(doc);
