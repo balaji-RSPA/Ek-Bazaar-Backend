@@ -311,6 +311,9 @@ const sellersSchema = new Schema(
     manual:{
       type: Boolean,
       default: false
+    },
+    isPartialyRegistor: {
+      type: Boolean
     }
   },
   {
