@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-18T06:13:15.641Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-18T06:13:35.046Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-18T07:05:22.097Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-18T07:05:30.780Z"}
 {"address":"::","code":"EADDRINUSE","errno":"EADDRINUSE","level":"error","port":8070,"syscall":"listen","timestamp":"2021-11-18T09:41:09.746Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-18T10:36:44.788Z"}
+=======
+{"level":"info","message":"Listening:8070","timestamp":"2021-11-22T04:24:50.321Z"}
+>>>>>>> 673e0d0d00975d6f45510ba1d6b939c4554d00bf
+{"level":"info","message":"Listening:8070","timestamp":"2021-11-22T05:08:42.249Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-11-22T05:09:01.189Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-11-22T10:32:52.710Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-11-23T05:24:52.011Z"}

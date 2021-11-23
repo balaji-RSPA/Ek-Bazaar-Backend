@@ -296,22 +296,40 @@ content-type: application/json
 # content-type: application/json
 
 ####
-POST  http://localhost:8070/uploadChatLanguageCategory HTTP/1.1
+POST  http://localhost:8070/api/uploadChatLanguageCategory HTTP/1.1
 content-type: application/json
 
 [
   {
-    "name": "Rice",
-    "English": "Rice",
-    "Marathi": "तांदूळ",
-    "Gujarati": "ચોખા",
-    "Bengali": "চাল",
-    "Kannada": "ಅಕ್ಕಿ",
-    "Telugu": "వరి",
-    "Assamese": "চাউল",
-    "Tamil": "அரிசி",
-    "Malayalam": "അരി",
-    "Hindi": "चावल"
+    "Category": "Milling Machines",
+    "English": "Milling Machines",
+    "Marathi": "घरघंटी",
+    "Gujarati": "દળવાની ઘંટી",
+    "Bengali": "মিলিং মেশিন",
+    "Kannada": "ಗಿರಣಿ ಯಂತ್ರಗಳು",
+    "Telugu": "మిల్లింగ్ యంత్రాలు",
+    "Tamil": "மில்லிங் மெஷின்கள்",
+    "Malayalam": "മില്ലിംഗ് മെഷീനുകൾ",
+    "Hindi": "मिलिंग मशीन"
+  },
+]
+
+####
+POST  http://localhost:8070/api/uploadChatLanguageQuestions HTTP/1.1
+content-type: application/json
+
+[
+  {
+    "Category": "Milling Machines",
+    "English": "What are the types of Milling Machine?",
+    "Marathi": "घरघंटीचे किती प्रकार आहेत?",
+    "Gujarati": "દળવાની ઘંટીના પ્રકારો શું છે?",
+    "Bengali": "মিলিং মেশিন কত প্রকারের?",
+    "Kannada": "ಗಿರಣಿ ಯಂತ್ರದ ವಿಧಗಳು ಯಾವುವು?",
+    "Telugu": "మిల్లింగ్ యంత్రాలలో రకాలు ఏమిటి?",
+    "Tamil": "மில்லிங் மெஷினின் வகைகள் என்ன?",
+    "Malayalam": "ഏതെല്ലാം തരം മില്ലിംഗ് മെഷീനുകളാണ് ഉള്ളത്?",
+    "Hindi": "मिलिंग मशीन कितने प्रकार की होती है?"
   }
 ]
 
