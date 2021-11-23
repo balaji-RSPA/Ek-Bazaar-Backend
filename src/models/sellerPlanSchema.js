@@ -38,7 +38,14 @@ const sellerPlanSchema = new Schema({
     exprireDate: {
         type: Date
     },
-    subscriptionValidety: {
+    // subscriptionValidety: {
+    //     type: Date
+    // },
+    isFreeTrialIncluded: {
+        type: Boolean,
+        default: false
+    },
+    planValidFrom: {
         type: Date
     },
     expireStatus: {
