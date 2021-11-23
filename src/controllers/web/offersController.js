@@ -188,6 +188,10 @@ module.exports.getAllOffers = async (req, res) => {
                             count: buyerRequest.filter(elem => elem.productDetails && elem.productDetails.name && elem.productDetails.name.level2 && elem.productDetails.name.level2.name && elem.productDetails.name.level2.name.toString().trim() === (item.productDetails && item.productDetails.name && item.productDetails.name.level2 && item.productDetails.name.level2.name && item.productDetails.name.level2.name.toString().trim())).length
                         }))) : ""
             products = products && products.length && products.filter((b) => b) || []
+            // Extra Line added
+            products = Array.from(new Set(products.map(a => a._id))).map(id => {
+                return products.find(a => a._id === id)
+            }) 
 
             obj = {
                 ...obj,
@@ -262,9 +266,12 @@ module.exports.getAllOffers = async (req, res) => {
                         }
                         return acc
                     }, {})
-                    _products = productsCount && productsCount.length && Object.keys(productsCount).map(count => {
-                        let __products = buyerRequest.find(item => (item.productDetails && productDetails.name && item.productDetails.name.level2 && productDetails.name.level2.name) && item.productDetails.name.level2.name === count)
+                    // _products = productsCount && productsCount.length && Object.keys(productsCount).map(count => {
+                    //     let __products = buyerRequest.find(item => (item.productDetails && productDetails.name && item.productDetails.name.level2 && productDetails.name.level2.name) && item.productDetails.name.level2.name === count)
+                    _products = productsCount && Object.keys(productsCount).length && Object.keys(productsCount).map(count => {
+                        let __products = buyerRequest.find(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level2 && item.productDetails.name.level2.name) && item.productDetails.name.level2.name === count)
 
+                        
                         let _obj = {
                             key: count,
                             count: productsCount[count],

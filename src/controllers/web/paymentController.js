@@ -63,8 +63,9 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             amount: plan && plan.totalPlanPrice,
             orderTotal: orderDetails && orderDetails.total.toFixed(2),
             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
+            startDate: plan && plan.isFreeTrialIncluded && plan.planValidFrom ? plan && moment(plan.planValidFrom).format('DD/MM/YYYY') : moment(new Date()).format('DD/MM/YYYY'),
             expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
-            subscriptionValidety: plan && moment(new Date(plan.subscriptionValidety)).format('DD/MM/YYYY'),
+            // subscriptionValidety: plan && moment(new Date(plan.subscriptionValidety)).format('DD/MM/YYYY'),
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
             // currency: orderDetails && orderDetails.currency || '',
             currency: orderDetails && orderDetails.currency === 'INR' ? "₹" : '$' || '',
@@ -257,8 +258,11 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
                             let planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
                             let date = new Date()
-                            let subscriptionValidety = date.setDate(date.getDate() + parseInt(planDetails.days))
+                            // let subscriptionValidety = date.setDate(date.getDate() + parseInt(planDetails.days))
                             const SourceCode = seller && seller.hearingSource && seller.hearingSource.referralCode;
+                            let isFreeTrialIncluded = false;
+                            let planValidFrom = moment()
+
                             if (seller && seller.hearingSource && seller.hearingSource.source === 'Uttarakhand' && seller.hearingSource.referralCode === 'UTK1121') {
                                 if (seller && seller.planId && seller.planId.isTrial) {
                                     const trialCreatedAt = seller.planId && seller.planId.createdAt;
@@ -267,7 +271,12 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                     const todayDate = new Date();
                                     if (daysFromRegistration <= 7) {
                                         planExpireDate = todayDate.setDate(todayDate.getDate() + parseInt(planDetails.days) + parseInt(seller.planId.days) - daysFromRegistration)
+
                                         planDetails.days = `${parseInt(planDetails.days) + parseInt(seller.planId.days) - daysFromRegistration}`
+
+                                        isFreeTrialIncluded = true
+
+                                        planValidFrom = moment(seller.planId.exprireDate)
                                     }
                                 }
                             }
@@ -298,7 +307,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 days: planDetails.days,
                                 extendTimes: null,
                                 exprireDate: planExpireDate,
-                                subscriptionValidety,
+                                // subscriptionValidety,
                                 hearingSourceCode: SourceCode,
                                 isTrial: false,
                                 planType: planDetails.type,
@@ -313,6 +322,8 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             const planData = {
                                 ...userData,
                                 ..._p_details,
+                                isFreeTrialIncluded,
+                                planValidFrom,
                                 createdAt: new Date(),
                                 createdOn: new Date()
                             }
@@ -351,7 +362,10 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 ...userData,
                                 orderId: OrdersData._id,
                                 subscriptionId: planDetails._id,
-                                ..._p_details
+                                ..._p_details,
+                                isFreeTrialIncluded,
+                                planValidFrom
+
                             }
                             const orderItemData = await addOrdersPlans(orderItem)
                             let sellerUpdate = {
@@ -389,7 +403,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             }
                             const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
                             // Generate invoice
-                            const invoice = await createPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth }, order_details)
+                            const invoice = await createPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth, isFreeTrialIncluded, planValidFrom }, order_details)
                             
 
                             await addSellerPlanLog(planLog)
@@ -431,8 +445,9 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 let planChangedEmailMsg = planChangedEmail({
                                     oldPlanType,
                                     newPlanType: _p_details.planType,
-                                    // till: _p_details.exprireDate,
-                                    till: _p_details.subscriptionValidety,
+                                    from: isFreeTrialIncluded && planValidFrom ? moment(planValidFrom).format('DD/MM/YYYY') : moment(new Date()).format('DD/MM/YYYY'),
+                                    till: _p_details.exprireDate,
+                                    // till: _p_details.subscriptionValidety,
                                     url
                                 })
                                 const message = {
