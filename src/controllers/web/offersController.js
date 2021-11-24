@@ -49,6 +49,16 @@ module.exports.getAllOffers = async (req, res) => {
             "bool": {
                 "must": [
                     {
+                        exists: {
+                            field: "status"
+                        }
+                    },
+                    {
+                        term: {
+                            "status": true
+                        }
+                    },
+                    {
                         "exists": {
                             "field": "offers"
                         }
@@ -167,7 +177,7 @@ module.exports.getAllOffers = async (req, res) => {
 
 
             let _prdcts = buyerRequest.filter(req => products && products.length && products.findIndex(item => item._id === (req.productDetails && req.productDetails.name && req.productDetails.name.level2 && req.productDetails.name.level2.id)) === -1)
-            
+
             _prdcts && _prdcts.length ? products
                 .push(..._prdcts.filter(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level1 && item.productDetails.name.level1.id) === obj._id)
                     .map(item => (item.productDetails && item.productDetails.name && item.productDetails.name.search && item.productDetails.name.search === 'level2'
@@ -188,6 +198,10 @@ module.exports.getAllOffers = async (req, res) => {
                             count: buyerRequest.filter(elem => elem.productDetails && elem.productDetails.name && elem.productDetails.name.level2 && elem.productDetails.name.level2.name && elem.productDetails.name.level2.name.toString().trim() === (item.productDetails && item.productDetails.name && item.productDetails.name.level2 && item.productDetails.name.level2.name && item.productDetails.name.level2.name.toString().trim())).length
                         }))) : ""
             products = products && products.length && products.filter((b) => b) || []
+            // Extra Line added
+            products = Array.from(new Set(products.map(a => a._id))).map(id => {
+                return products.find(a => a._id === id)
+            })
 
             obj = {
                 ...obj,
@@ -243,7 +257,10 @@ module.exports.getAllOffers = async (req, res) => {
                 if (index === -1 && new Date(req.productDetails.validity).toLocaleString() > new Date().toLocaleString()) {
                     let _products = []
 
-                    let productsCount = buyerRequest.filter(_req => (_req.productDetails && _req.productDetails.name && _req.productDetails.name.level1 && _req.productDetails.name.level1.id) && _req.productDetails.name.level1.id === (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id) && req.productDetails.name.level1.id).reduce((acc, curr) => {
+                    let productsCount = buyerRequest.filter(_req => {
+                        return ((_req.productDetails && _req.productDetails.name && _req.productDetails.name.level1 && _req.productDetails.name.level1.id) && _req.productDetails.name.level1.id === (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id) && req.productDetails.name.level1.id)
+                    })
+                    productsCount = productsCount.reduce((acc, curr) => {
                         if (curr.productDetails.name.level2) {
                             if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
                                 acc[curr.productDetails.name.level2.name] = 1
@@ -251,7 +268,7 @@ module.exports.getAllOffers = async (req, res) => {
                                 acc[curr.productDetails.name.level2.name] = acc[curr.productDetails.name.level2.name] + 1
                             }
                         } else if (!curr.productDetails.name.level2) {
-                            if (!acc.hasOwnProperty(curr.productDetails.name.level2.name)) {
+                            if (!acc.hasOwnProperty(curr.productDetails.name && curr.productDetails.name.level2 && curr.productDetails.name.level2.name)) {
                                 acc[curr.productDetails.name.name] = 1
                             } else {
                                 acc[curr.productDetails.name.name] = acc[curr.productDetails.name.name] + 1
@@ -259,8 +276,11 @@ module.exports.getAllOffers = async (req, res) => {
                         }
                         return acc
                     }, {})
-                    _products = productsCount && productsCount.length && Object.keys(productsCount).map(count => {
-                        let __products = buyerRequest.find(item => (item.productDetails && productDetails.name && item.productDetails.name.level2 && productDetails.name.level2.name) && item.productDetails.name.level2.name === count)
+                    // _products = productsCount && productsCount.length && Object.keys(productsCount).map(count => {
+                    //     let __products = buyerRequest.find(item => (item.productDetails && productDetails.name && item.productDetails.name.level2 && productDetails.name.level2.name) && item.productDetails.name.level2.name === count)
+                    _products = productsCount && Object.keys(productsCount).length && Object.keys(productsCount).map(count => {
+                        let __products = buyerRequest.find(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level2 && item.productDetails.name.level2.name) && item.productDetails.name.level2.name === count)
+
 
                         let _obj = {
                             key: count,

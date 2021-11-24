@@ -46,9 +46,16 @@ const {
 const { ssoRedirect } = require("../../../sso-tools/checkSSORedirect");
 const { getSubscriptionPlanDetail } = subscriptionPlan;
 const { createTrialPlan, deleteSellerPlans, getSellerPlan } = SellerPlans;
-const { createChat } = Chat;
+const { createChat, deleteChat } = Chat;
 
-const { createChatUser, userChatLogin } = require("./rocketChatController");
+const { createChatUser, userChatLogin, deleteChatAccount } = require("./rocketChatController");
+
+const { rocketChatDomain, rocketChatAdminLogin } = require('../../utils/globalConstants')
+const chatDomain = `https://${rocketChatDomain}`
+const admin = {
+  username: rocketChatAdminLogin.username,
+  password: rocketChatAdminLogin.password
+}
 
 const algorithm = "aes-256-cbc";
 const key = crypto.randomBytes(32);
@@ -295,7 +302,8 @@ module.exports.addUser = async (req, res, next) => {
         city: user && user.city || null,
         country: user && user.country || null,
         state: user && user.state || null,
-      }
+      },
+      isPartialyRegistor: true
     };
     const sellerData = {
       email: email ? email : user.email,
@@ -306,7 +314,8 @@ module.exports.addUser = async (req, res, next) => {
         city: user && user.city || null,
         country: user && user.country || null,
         state: user && user.state || null,
-      }
+      },
+      isPartialyRegistor: true
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -471,7 +480,7 @@ module.exports.updateUser = async (req, res) => {
       userType,
       hearingSource
     } = req.body;
-    // console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body)
+    console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body,"llllllllllll");
     // return false
 
     // console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
@@ -489,7 +498,8 @@ module.exports.updateUser = async (req, res) => {
         (location && location.country) || null,
       email: (Boolean(_buyer && _buyer.email) && _buyer.email) || (Boolean(email) && email) || __usr.email,
       mobile: (mobile && Boolean(mobile.mobile) && parseInt(mobile.mobile)) || (Boolean(mobile) && parseInt(mobile)) || __usr.mobile,
-      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
+      countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode,
+      // isPartialyRegistor: false
     };
     let _seller = await getSeller(userID);
     let buyer = await getBuyer(userID);
@@ -509,7 +519,8 @@ module.exports.updateUser = async (req, res) => {
         email: (Boolean(email) && email) || __usr.email || null,
         mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
         countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode,
-        userId: userID
+        userId: userID,
+        isPartialyRegistor: false
       }
       buyer = await updateBuyer({ userId: userID }, buyerData)
       _seller = await updateSeller({ userId: userID }, sellerData)
@@ -522,6 +533,7 @@ module.exports.updateUser = async (req, res) => {
       userId: userID,
       mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
       countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode,
+      isPartialyRegistor: false,
       ..._buyer,
     };
     let sellerData;
@@ -535,6 +547,7 @@ module.exports.updateUser = async (req, res) => {
         mobile: (mobile && Boolean(mobile.mobile) && mobile.mobile) || (Boolean(mobile) && mobile) || (__usr.mobile && __usr.mobile.toString()),
         countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
       }],
+      isPartialyRegistor: false,
       ..._buyer,
     };
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
@@ -620,7 +633,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans && !__usr.reresigistered) {
-        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721']
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
         const dateNow = new Date();
         const trialPlan = await getSubscriptionPlanDetail({
@@ -649,6 +662,7 @@ module.exports.updateUser = async (req, res) => {
             exprireDate: dateNow.setDate(
               dateNow.getDate() + parseInt(promoCode ? "90" : trialPlan.days)
             ),
+            hearingSourceCode: hearingSource.referralCode || null,
             userId: seller.userId,
             sellerId: seller._id,
             isTrial: true,
@@ -751,7 +765,7 @@ module.exports.updateUser = async (req, res) => {
         {
           seller,
           buyer,
-          user:__usr,
+          user,
           activeChat,
         },
         user.email && user.isEmailVerified === 1
@@ -1043,6 +1057,7 @@ exports.verificationEmail = async (req, res) => {
 module.exports.deleteCurrentAccount = async (req, res) => {
 
   try {
+
     const { deleteTrade, userId, sellerId, buyerId, permanentDelete, investment, tender } = req.body
 
     const investmentUrl = process.env.NODE_ENV === "production" ? 'https://investmentapi.ekbazaar.com/api/permanentlydisable' : 'https://investmentapi.tech-active.com/api/permanentlydisable'
@@ -1050,6 +1065,8 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 
     const { userID, token } = req;
     const result = await updateUser({ _id: userId }, { deleteTrade, reresigistered: true })
+
+
     if (result) {
       let query = {}
       if (!sellerId) query.userId = userId
@@ -1085,6 +1102,20 @@ module.exports.deleteCurrentAccount = async (req, res) => {
         console.log('master collectiona nd seller product delete')
       }
       const delMaster1 = deleteSellerPlans({ sellerId: sellerData._id });
+
+      /* Delete Rocket Chat Account start */
+      const chatLog = await userChatLogin({ userId: "60023283293d9c7dacb6d705", username: admin.username, password: admin.password })
+      const chatDetails = {
+        mobile: result.mobile || '',
+        token: chatLog.authToken,
+        userId: chatLog.userId
+
+      }
+      const chatDelete = await deleteChatAccount(chatDetails)
+      const del = await deleteChat({ userId: result._id })
+      console.log(del, chatDelete, chatLog, ' -------chat delete --------------')
+      /* Delete Rocket Chat Ends */
+
       if (permanentDelete) {
 
         const update = {

@@ -25,6 +25,7 @@ const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const { deleteTestData, uploadInternationalCity, getCityList, deleteTestDataRemaining, deleteTestDataChat } = require('./src/controllers/web/testController')
 const { uploadOnBoardSeller, moveSellerToNewDB, getSellerMasterProducts, uploadOnBoardBuyers } = require('./src/controllers/web/sellerDataMove')
+const { uploadChatLanguageCategory } = require('./src/controllers/web/languageTempateController')
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 
 // const { suggestions} = require("./elasticsearch-mapping");
@@ -108,6 +109,13 @@ app.post("/capture/:paymentId", async function (req, res) {
   } catch (error) { }
   // res.send('Its delete records  live')
 });
+
+// app.post("/uploadChatLanguageCategory", async function (req, res) {
+//   try {
+//     const result = await uploadChatLanguageCategory(req, res);
+//   } catch (error) { }
+//   // res.send('Its delete records  live')
+// });
 
 // app.get("/deleteTestData", async function (req, res) {
 //   try {
