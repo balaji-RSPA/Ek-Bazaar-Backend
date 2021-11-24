@@ -134,7 +134,7 @@ module.exports.planChangedEmail = (params) => {
     title: 'Ekbazaar Trade- Plan changed',
     image: planChange,
     body: `<p style="text-align: left">Your plan has been changed from ${params.oldPlanType} to ${params.newPlanType}.</p>
-    <p style="text-align: left">Valid from : ${moment().format("Do MMM YYYY")}</p>
+    <p style="text-align: left">Valid from : ${moment(params.from).format("Do MMM YYYY")}</p>
     <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>
     `,
     buttonName: 'VIEW YOUR PLAN',

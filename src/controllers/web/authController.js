@@ -155,7 +155,7 @@ exports.login = async (req, res, next) => {
       }
       // const result1 = await sellers.handleUserSession(_user._id, finalData);
       sellers.handleUserSession(_user._id, finalData);
-      const fff = seller.sellerProductId.filter((vay) => vay.status)
+      const fff = seller && seller.length && seller.sellerProductId.filter((vay) => vay.status)
       
       const productSeller = seller && seller.sellerProductId && seller.sellerProductId.length ? seller.sellerProductId.filter((vay) => vay.status) : []
 
@@ -214,7 +214,7 @@ exports.login = async (req, res, next) => {
     return respAuthFailed(res, undefined, "Invalid Credentials!");
 
   } catch (error) {
-
+    console.log(error, ' 111111111111111111111111111111')
     return respError(res, error.message);
 
   }
