@@ -442,10 +442,10 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 console.log("================sms not send===========")
                             }
                             if (orderDetails && orderDetails.email/* seller && seller.email */ && planTo && planFrom && checkPaidSeller) {
-                                let planChangedEmailMsg = planChangedEmail({
+                                let planChangedEmailMsg = planChangedEmail({ 
                                     oldPlanType,
                                     newPlanType: _p_details.planType,
-                                    from: isFreeTrialIncluded && planValidFrom ? moment(planValidFrom).format('DD/MM/YYYY') : moment(new Date()).format('DD/MM/YYYY'),
+                                    from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
                                     till: _p_details.exprireDate,
                                     // till: _p_details.subscriptionValidety,
                                     url
@@ -461,8 +461,9 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 console.log("==============Plan Changed Email Not Send====================")
                             }
                             if (orderDetails && orderDetails.email) {
-                                let invoiceEmailMsg = invoiceContent({
+                                let invoiceEmailMsg = invoiceContent({ 
                                     plan: _p_details.planType,
+                                    from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
                                     till: _p_details.exprireDate,
                                     price: includedGstAmount.totalAmount,
                                     invoiceLink: invoice.Location,

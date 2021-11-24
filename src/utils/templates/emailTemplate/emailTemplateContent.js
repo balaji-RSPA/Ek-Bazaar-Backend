@@ -44,13 +44,13 @@ module.exports.contactus = (params) => {
   }
   return message;
 }
-module.exports.invoiceContent = (params) => {
+module.exports.invoiceContent = (params) => { 
   let message = {
     title: 'Ekbazaar Trade- Invoice',
     image: invoice,
     body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. The credit card ending x${params.cardNo} has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
     <p style="text-align: left">Plan       : ${params.plan}</p>
-    <p style="text-align: left">Valid from : ${moment().format("Do MMM YYYY")}</p>
+    <p style="text-align: left">Valid from : ${moment(params.from).format("Do MMM YYYY")}</p>
     <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
     buttonName: 'VIEW FULL INVOICE',
     buttonLink: params.invoiceLink,
