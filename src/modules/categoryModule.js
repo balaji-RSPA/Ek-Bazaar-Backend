@@ -53,7 +53,7 @@ module.exports.checkAndAddSellerType = (query) =>
 module.exports.getAllSellerTypes = (skip, limit, query) =>
   new Promise((resolve, reject) => {
     SellerTypes.find(query || {})
-      .sort({sequence: 1})
+      .sort({ sequence: 1 })
       .select("name group status sequence")
       .skip(skip)
       .limit(limit)
@@ -306,7 +306,7 @@ exports.getAllPrimaryCategory = (searchQuery, skip, limit) =>
   });
 
 module.exports.getPrimaryCategories = (query) => new Promise((resolve, reject) => {
-  if(query._id) query = {_id: query._id}
+  if (query._id) query = { _id: query._id }
   PrimaryCategory.findOne(query)
     .limit(query.limit)
     .skip(query.skip)
@@ -934,17 +934,17 @@ module.exports.getAllLevel5Categories = (searchQuery, skip, limit) =>
       .catch(reject);
   });
 
-  /* 
-    Suggestion collection starts
-  */
-  module.exports.createSuggestions = (data, id) =>
-    new Promise((resolve, reject) => {
-      Suggestions.create(data)
-        .then((doc) => {
-          resolve(doc && id ? doc._id : doc);
-        })
-        .catch(reject);
-    });
+/* 
+  Suggestion collection starts
+*/
+module.exports.createSuggestions = (data, id) =>
+  new Promise((resolve, reject) => {
+    Suggestions.create(data)
+      .then((doc) => {
+        resolve(doc && id ? doc._id : doc);
+      })
+      .catch(reject);
+  });
 
 module.exports.bulkInsertSuggestions = (data) =>
   new Promise((resolve, reject) => {
@@ -956,6 +956,31 @@ module.exports.bulkInsertSuggestions = (data) =>
       })
       .catch(reject);
   });
-  /* 
-    Suggestions collection end
-  */
+/* 
+  Suggestions collection end
+*/
+
+exports.getlevel3Cat = (query, id) =>
+  new Promise((resolve, reject) => {
+    SecondaryCategory.findOne(query)
+      // .populate({
+      //   path: "primaryCatId",
+      //   model: PrimaryCategory,
+      //   select: "name venderId",
+      // })
+      .populate({
+        path: "primaryCatId",
+        model: PrimaryCategory,
+        select: "name venderId",
+        populate: {
+          path: "parentCatId",
+          model: ParentCategory,
+          select: "name venderId",
+        }
+      })
+      .select("name venderId")
+      .then((doc) => {
+        resolve(doc && id ? doc.primaryCatId._id : doc);
+      })
+      .catch(reject);
+  });

@@ -53,7 +53,7 @@ module.exports.getAllCities = async (req, res) => {
   try {
     const reqQuery = camelcaseKeys(req.query)
     console.log("module.exports.getAllCities -> req.query", req.query, req.headers.origin)
-    if (req.headers.origin === "http://localhost:8085") {
+    if ((req.headers.origin === "http://localhost:8085" || req.headers.origin === "https://tradebazaar.tech-active.com" || req.headers.origin === "https://trade.ekbazaar.com") && !req.query.stateId) {
       console.log(' enterd ------------------' && !req.query.stateId)
       req.query.country = ObjectId("5e312f978acbee60ab54de08")
       req.query.countryId = [ObjectId("5e312f978acbee60ab54de08")]

@@ -308,6 +308,7 @@ module.exports.updateUser = (query, data) =>
         isMobileVerified: 1,
         password: 1,
         isEmailVerified: 1,
+        preferredLanguage: 1
         // _id: -1,
       })
       .then((doc) => {
@@ -1679,4 +1680,103 @@ const SendNotifc = async (el) => {
   }
 
 }
+
+module.exports.getSellerAllDetails = (query) =>
+  new Promise((resolve, reject) => {
+    Sellers.find(query)
+      .populate('sellerProductId')
+      // .populate('sellerType')
+      .populate('busenessId')
+      // .populate('statutoryId')
+      // .populate({
+      //   path: 'sellerContactId',
+      //   model: SellersContact,
+      //   populate: {
+      //     path: "location.city location.state location.country",
+      //     // model: Cities
+      //   }
+      // })
+      // .populate({
+      //   path: 'sellerContactId',
+      //   model: SellersContact,
+      //   populate: {
+      //     path: "location.state",
+      //     model: States,
+      //   }
+      // })
+      // .populate({
+      //   path: 'sellerContactId',
+      //   model: SellersContact,
+      //   populate: {
+      //     path: "location.country",
+      //     model: Countries,
+      //   }
+      // })
+      // .populate('sellerCompanyId')
+      // .populate('establishmentId')
+
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "parentCategoryId",
+          model: ParentCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          model: PrimaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
+      // .populate({
+      //   path: 'sellerProductId',
+      //   model: 'sellerproducts',
+      //   populate: {
+      //     path: 'productDetails.regionOfOrigin',
+      //   },
+      // })
+      // .populate({
+      //   path: 'sellerProductId',
+      //   model: 'sellerproducts',
+      //   populate: {
+      //     path: 'productDetails.countryOfOrigin',
+      //   },
+      // })
+      // .populate('location.city', 'name')
+      // .populate('location.state', 'name')
+      // .populate('location.country', 'name')
+      // .populate('planId')
+      .lean()
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch((error) => reject(error))
+  })
 

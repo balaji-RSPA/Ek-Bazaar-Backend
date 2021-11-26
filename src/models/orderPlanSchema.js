@@ -74,6 +74,14 @@ const orderPlanSchema = new Schema({
     exprireDate: {
         type: Date,
         default: null
+    },
+    isFreeTrialIncluded: {
+        type: Boolean,
+        default: false
+    },
+    planValidFrom : {
+        type: Date,
+        default: null
     }
 }, {
     versionKey: false,

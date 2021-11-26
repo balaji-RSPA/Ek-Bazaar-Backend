@@ -34,6 +34,7 @@ const SellerOffferContacts = require('./sellerOfferContactSchema')
 // const Users = require('./user')
 const News = require("./newsSchema");
 const Commodity = require("./commoditySchema");
+const LanguageTemplate = require('./languageTemplateSchema')
 
 module.exports = {
     Cities,
@@ -70,5 +71,6 @@ module.exports = {
     Pincodes,
     SellerOffferContacts,
     News,
-    Commodity
+    Commodity,
+    LanguageTemplate
 }
