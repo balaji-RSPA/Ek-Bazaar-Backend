@@ -223,6 +223,7 @@ exports.userList = async (req, res) => {
         const { chatUserType } = req.query
 
         const url = `${chatDomain}/api/v1/im.list`
+        console.log(chatAthToken, chatUserId, chatUsername, url, '3333')
         const list = await axios.get(url, {
             headers: {
                 'Content-Type': 'application/json',
@@ -267,7 +268,9 @@ exports.userList = async (req, res) => {
         // })
 
     } catch (error) {
-        // console.log(err)
+        if (error && error.response && error.response.status === 401) {
+            return respSuccess(res, {status: 401})
+        }
         return respError(res, error.message)
     }
 }
@@ -480,8 +483,11 @@ exports.checkSellerChat = async (req, res) => {
 
     try {
         const { sellerId } = req.query
+        const {
+            chatAthToken, chatUserId, chatUsername
+        } = req
+
         let checkChat = await getChat({ sellerId })
-        console.log(checkChat, '111111111111111111111--------------------')
         if (!checkChat) {
             const seller = await getSellerProfile(sellerId)
             const user = seller[0]
@@ -489,6 +495,32 @@ exports.checkSellerChat = async (req, res) => {
             checkChat = await createChat({ details: chatUser, sellerId: user._id, buyerId: user.buyer || null, userId: user.userId || null })
             // checkChat = await this.userChatLogin({ username: creatChat.details.user.username, password: "active123", customerUserId: user._id })
         }
+        if (checkChat && checkChat.details && checkChat.details.user && checkChat.details.user.username) {
+            const uid = checkChat && checkChat.details && checkChat.details.user && checkChat.details.user.username
+
+            const userInfoUrl = `${chatDomain}/api/v1/users.info?username=${uid}`
+
+            const userInfo = await axios.get(userInfoUrl, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': chatAthToken,
+                    'X-User-Id': chatUserId
+                }
+            })
+            const newData = userInfo && userInfo.data && userInfo.data.user || ''
+            checkChat = {
+                ...checkChat,
+                details: {
+                    ...checkChat.details,
+                    user: {
+                        ...checkChat.details.user,
+                        ...newData
+                    }
+                }
+
+            }
+        }
+
         respSuccess(res, checkChat)
     } catch (error) {
 

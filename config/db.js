@@ -32,7 +32,7 @@ function dbConnection() {
     // //Aksha new atlas db connection
     url = `mongodb+srv://tradedbuser:c4Acevcz3V6srqln@ekbazaar-trade.vju7b.mongodb.net/tradedb?retryWrites=true&w=majority`
   } else {
-    
+
     // options.sslCA = tradeDb.certFileBuf
     // url = `${tradeDb.protocol}://${tradeDb.user}:${tradeDb.password}@${tradeDb.host}/${tradeDb.database}`
 
@@ -91,7 +91,8 @@ if (env) {
     // conf.host = "157.245.109.173:5086"
 
     // New Atlas Elastic server
-    conf.host = "143.110.253.230:9200"
+    // conf.host = "143.110.253.230:9200"
+    conf.host = "143.110.191.91:5006"
 
   }
 

@@ -40,3 +40,12 @@ module.exports.updateChatSession = (query, data) =>
             })
             .catch((error) => reject(error.message));
     });
+
+module.exports.deleteChat = (query) =>
+    new Promise((resolve, reject) => {
+        Chat.deleteOne(query)
+            .then((doc) => {
+                resolve(doc);
+            })
+            .catch((error) => reject(error.message));
+    });

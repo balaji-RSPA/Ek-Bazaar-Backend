@@ -522,7 +522,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             }
         }
 
-        const totalOffers = await searchFromElastic(query, { skip: 0, limit: 10 }, aggs);
+        const totalOffers = await searchFromElastic(query, { skip: 0, limit: 1 }, aggs);
         let totalOfferCount = totalOffers && totalOffers.length && totalOffers[1] || 0;
 
         const dailyOffers = await searchFromElastic(query_daily_offers, { skip: 0, limit: 10 }, aggs);
@@ -694,7 +694,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             </tr>`
         )
 
-        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' } ]
+        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' }, { email: 'sowjanya@ekbazaar.com', name: 'Sowjanya' } ]
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
             recipientVars = {

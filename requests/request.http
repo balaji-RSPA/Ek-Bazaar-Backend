@@ -294,3 +294,50 @@ content-type: application/json
 # ###
 # GET  http://localhost:8070/uploadOnBoardBuyers HTTP/1.1
 # content-type: application/json
+
+####
+POST  http://localhost:8070/api/uploadChatLanguageCategory HTTP/1.1
+content-type: application/json
+
+[
+  {
+    "Category": "Rice",
+    "English": "Rice",
+    "Marathi": "तांदूळ",
+    "Gujarati": "ચોખા",
+    "Bengali": "চাল",
+    "Kannada": "ಅಕ್ಕಿ",
+    "Telugu": "వరి",
+    "Tamil": "அரிசி",
+    "Malayalam": "അരി",
+    "Hindi": "चावल"
+  }
+]
+
+####
+POST  http://localhost:8070/api/uploadChatLanguageQuestions HTTP/1.1
+content-type: application/json
+
+[
+  {
+    "Category": "Rice",
+    "English": "What are the varieties of Rice",
+    "Marathi": "तांदळाचे विविध प्रकार कोणते?",
+    "Gujarati": "ચોખાની જાતો કઇ છે",
+    "Bengali": "চাল কয় প্রকারের হয়",
+    "Kannada": "ಅಕ್ಕಿಯ ವೈವಿಧ್ಯಗಳು ಯಾವುವು",
+    "Telugu": "వరిలోని రకాలు ఏవి",
+    "Tamil": "அரிசியின் வகைகள் என்னென்ன",
+    "Malayalam": "അരി ഇനങ്ങൾ ഏതൊക്കെയാണ്?",
+    "Hindi": "चावल की किस्में कौन सी हैं?"
+  }
+]
+
+###
+GET  http://localhost:8070/api/chatAllTemplates HTTP/1.1
+content-type: application/json
+
+###
+GET  http://localhost:8070/api/chatTemplate/5fdf6cc7be4f6810f10102c4 HTTP/1.1
+content-type: application/json
+
