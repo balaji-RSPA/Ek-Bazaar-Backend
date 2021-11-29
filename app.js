@@ -90,8 +90,14 @@ app.get("/", async function (req, res) {
 });
 
 app.get("/send-daily-report", async function (req, res) {
-  await sendDailyCount();
-  res.send("Send Daily report manually api called (Trade)");
+  try {
+    let response = await sendDailyCount();
+    console.log(response);
+    return respSuccess(res, response);
+  } catch (error) {
+    console.log(error);
+    return respError(res, error);
+  }
 });
 
 app.get("/api/logged", async (req, res, next) => {
