@@ -109,8 +109,8 @@ exports.getExpirePlansCron = async (req, res) =>
                     //        sellerId: element._id,
                     //        requestId: element._id,
                     //         mobile:{
-                    //             mobile:element.sellerId.mobile[0].mobile, 
-                    //             countryCode:element.sellerId.mobile[0].countryCode 
+                    //             mobile:element.sellerId.mobile[0].mobile,
+                    //             countryCode:element.sellerId.mobile[0].countryCode
                     //         },
                     //         message: planExpiry(element.exprireDate),
                     //         messageType: "plan_expiry",
@@ -694,7 +694,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             </tr>`
         )
 
-        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' } ]
+        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' }, { email: 'sowjanya@ekbazaar.com', name: 'Sowjanya' } ]
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
             recipientVars = {
@@ -733,21 +733,21 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                             }
                         </style>
                         <![endif]-->
-                        
+
                         <!--[if !mso]><!-->
                         <link href='https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700' rel='stylesheet' type='text/css'>
                         <!--<![endif]-->
-                        
+
                         <!-- Web Font / @font-face : END -->
-                    
+
                         <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
-                    
+
                         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-                        
+
                         <link rel="stylesheet" href="/table/css/style.css">
 
                         <!-- Web Font / @font-face : BEGIN -->
-        
+
                         <!--[if mso]>
                         <style>
                             * {
@@ -755,17 +755,17 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                             }
                         </style>
                         <![endif]-->
-                    
+
                         <!--[if !mso]><!-->
                         <link href='https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700' rel='stylesheet' type='text/css'>
                         <!--<![endif]-->
-                    
+
                         <!-- Web Font / @font-face : END -->
-                    
+
                         <!-- CSS Reset -->
                         <style>
-                    
-                    
+
+
                             html,
                             body {
                                 margin: 0 auto !important;
@@ -773,72 +773,72 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                 height: 100% !important;
                                 width: 100% !important;
                             }
-                    
+
                             * {
                                 -ms-text-size-adjust: 100%;
                                 -webkit-text-size-adjust: 100%;
                             }
-                    
+
                             div[style*="margin: 16px 0"] {
                                 margin: 0 !important;
                             }
-                    
-                            
-                    
+
+
+
                             img {
                                 -ms-interpolation-mode: bicubic;
                             }
-                    
+
                             *[x-apple-data-detectors] {
                                 color: inherit !important;
                                 text-decoration: none !important;
                             }
-                    
+
                             .x-gmail-data-detectors,
                             .x-gmail-data-detectors *,
                             .aBn {
                                 border-bottom: 0 !important;
                                 cursor: default !important;
                             }
-                    
+
                             .a6S {
                                 display: none !important;
                                 opacity: 0.01 !important;
                             }
-                    
-                    
+
+
                             img.g-img + div {
                                 display: none !important;
                             }
-                    
+
                             .button-link {
                                 text-decoration: none !important;
                             }
-                    
+
                             @media  only screen and (min-device-width: 375px) and (max-device-width: 413px) {
                                 /* iPhone 6 and 6+ */
                                 .email-container {
                                     min-width: 375px !important;
                                 }
                             }
-                    
+
                             #table1 {
                                 font-family: Arial, Helvetica, sans-serif;
                                 border-collapse: collapse;
                                 width: 300px;
-                                margin-left: 20px; 
+                                margin-left: 20px;
                                 margin-right: auto;
                               }
-                              
+
                               #table1 td, #table1 th {
                                 border: 1px solid #ddd;
                                 padding: 8px;
                               }
-                              
+
                               #table1 tr:nth-child(even){background-color: #f2f2f2;}
-                              
+
                               #table1 tr:hover {background-color: #ddd;}
-                              
+
                               #table1 th {
                                 padding-top: 12px;
                                 padding-bottom: 12px;
@@ -851,19 +851,19 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                 font-family: Arial, Helvetica, sans-serif;
                                 border-collapse: collapse;
                                 width: 300px;
-                                margin-left: 20px; 
+                                margin-left: 20px;
                                 margin-right: auto;
                               }
-                              
+
                               #table2 td, #table2 th {
                                 border: 1px solid #ddd;
                                 padding: 8px;
                               }
-                              
+
                               #table2 tr:nth-child(even){background-color: #f2f2f2;}
-                              
+
                               #table2 tr:hover {background-color: #ddd;}
-                              
+
                               #table2 th {
                                 padding-top: 12px;
                                 padding-bottom: 12px;
@@ -882,24 +882,24 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                             </o:OfficeDocumentSettings>
                         </xml>
                         <![endif]-->
-                        <style>        
+                        <style>
                             body, h1, h2, h3, h4, h5, h6, p, a {
                                 font-family: 'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;;
                             }
-                    
+
                             .button-td,
                             .button-a {
                                 transition: all 100ms ease-in;
                             }
-                    
+
                             .button-td:hover,
                             .button-a:hover {
                                 background: #45C8FF !important;
                                 border-color: #45C8FF !important;
                             }
-                    
+
                             @media  screen and (max-width: 480px) {
-                    
+
                                 .fluid {
                                     width: 100% !important;
                                     max-width: 100% !important;
@@ -907,7 +907,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                     margin-left: auto !important;
                                     margin-right: auto !important;
                                 }
-                    
+
                                 .stack-column,
                                 .stack-column-center {
                                     display: block !important;
@@ -915,11 +915,11 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                     max-width: 100% !important;
                                     direction: ltr !important;
                                 }
-                    
+
                                 .stack-column-center {
                                     text-align: center !important;
                                 }
-                    
+
                                 .center-on-narrow {
                                     text-align: center !important;
                                     display: block !important;
@@ -927,12 +927,12 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                     margin-right: auto !important;
                                     float: none !important;
                                 }
-                    
+
                                 table.center-on-narrow {
                                     display: inline-block !important;
                                 }
                             }
-        
+
                         </style>
                     </head>
                     <body>
@@ -991,7 +991,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                         <script src="/js/popper.js"></script>
                         <script src="/js/bootstrap.min.js"></script>
                         <script src="/js/main.js"></script>
-                
+
                     </body>
                 </html>`,
         };

@@ -90,6 +90,17 @@ app.get("/", async function (req, res) {
   res.send("It's Ekbazaar Trade beta api server");
 });
 
+app.get("/send-daily-report", async function (req, res) {
+  try {
+    let response = await sendDailyCount();
+    console.log(response);
+    return respSuccess(res, response);
+  } catch (error) {
+    console.log(error);
+    return respError(res, error);
+  }
+});
+
 app.get("/api/logged", async (req, res, next) => {
   const response = await request({
     url: ssoLoginUrl,
