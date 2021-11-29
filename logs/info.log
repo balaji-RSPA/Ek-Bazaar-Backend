@@ -15,6 +15,12 @@
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-23T05:24:52.011Z"}
 =======
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-23T13:19:23.781Z"}
+<<<<<<< HEAD
 >>>>>>> c33f9cc668254a11098f43843c964c07828d824c
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-23T13:22:44.851Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2021-11-23T13:23:16.885Z"}
+=======
+{"level":"info","message":"Listening:8070","timestamp":"2021-11-24T06:00:40.664Z"}
+>>>>>>> 8c5acc4c16af056e399f5b96eed6663227309cdb
+{"level":"info","message":"Listening:8070","timestamp":"2021-11-24T09:06:40.398Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2021-11-24T09:06:53.579Z"}
