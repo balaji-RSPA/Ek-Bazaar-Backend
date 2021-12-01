@@ -218,7 +218,7 @@ server.on("error", (e) => {
 //   }
 // })
 
-console.log("lokiiiiiiiiiii")
+console.log("lokiiiiiiiiiii test")
 // sendDailyCount()
 console.log("thorrrrrrrrrrrrrrrr")
 

@@ -164,13 +164,16 @@ module.exports.createRazorPayOrder = async (req, res) => {
             key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
             key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
         });
+        
         const { planId, pincode, currency } = req.body
+        console.log("createRazorPayOrder--> ", req.body,razorPayCredentials);
         let findpincode = currency === 'INR' ? await findPincode({ pincode }) : '';
         if (!findpincode && currency === 'INR') {
             respError(res, "Invalid pincode");
         } else {
+            console.log("createRazorPayOrder--> 1")
             const planDetails = await getSubscriptionPlanDetail({ _id: planId })
-            // console.log(planDetails, 'test')
+            console.log("createRazorPayOrder--> 2", planDetails)
             if (planDetails) {
                 const gstValue = 18
                 const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Half Yearly" ? 6 : planDetails.type === "Yearly" ? 12 : ''
@@ -186,6 +189,7 @@ module.exports.createRazorPayOrder = async (req, res) => {
 
                 respSuccess(res, { ...result, key_id: razorPayCredentials.key_id })
             }
+            
         }
     } catch (error) {
         console.log(error)
