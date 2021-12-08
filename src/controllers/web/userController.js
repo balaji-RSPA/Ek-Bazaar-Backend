@@ -196,7 +196,7 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].email &&
       seller[0].isEmailVerified === 2;
 
-    if (isProd || process.env.NODE_ENV === "staging") {
+    if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
       otpMessage = otpVerification({ otp });
       if (mobile) {
