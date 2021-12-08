@@ -363,6 +363,16 @@ module.exports.getAllSellerOffers = async (req, res) => {
             "bool": {
                 "must": [
                     {
+                        exists: {
+                            field: "status"
+                        }
+                    },
+                    {
+                        term: {
+                            "status": true
+                        }
+                    },
+                    {
                         "exists": {
                             "field": "offers"
                         }
