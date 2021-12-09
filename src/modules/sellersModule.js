@@ -1360,7 +1360,7 @@ module.exports.deleteSellerProduct = (data) =>
       .catch(reject)
   })
 /**
- * 
+ *
  * Multiple insert seller Product
  * */
 module.exports.addSellerProduct = (data) =>
@@ -1377,7 +1377,7 @@ module.exports.addSellerProduct = (data) =>
   })
 
 /**
-* 
+*
 * Find Established photos
 * */
 module.exports.findEstablishment = (id) =>
@@ -1391,7 +1391,7 @@ module.exports.findEstablishment = (id) =>
       .catch(reject)
   })
 /**
-* 
+*
 * Get seller product detail
 * */
 module.exports.getSellerProductDtl = (query) =>
@@ -1403,7 +1403,7 @@ module.exports.getSellerProductDtl = (query) =>
       .catch(reject)
   })
 /**
-* 
+*
 * Get all seller products
 * */
 module.exports.listAllSellerProduct = (serviceType, searchQuery, skip, limit) =>
@@ -1433,10 +1433,10 @@ module.exports.listAllSellerProduct = (serviceType, searchQuery, skip, limit) =>
 
     //   SelleresProductList.aggregate([{
     //       $lookup:{
-    //           from: ParentCategory.collection.name,      
-    //           localField: "parentCategoryId",   
+    //           from: ParentCategory.collection.name,
+    //           localField: "parentCategoryId",
     //           foreignField: "_id",
-    //           as: "level_1"        
+    //           as: "level_1"
     //       }
     //     // $lookup:{
     //     //     from:"level1",
@@ -1448,13 +1448,13 @@ module.exports.listAllSellerProduct = (serviceType, searchQuery, skip, limit) =>
     //   {
     //     $match:{'name' : "Medicine,Pharma & Drugs"}
     //   }
-    // ]) 
+    // ])
     //   .then((doc) => {
     //     console.log(doc,"===============adsghfsfhshf")
     //     resolve(doc)
     //   })
     //   .catch(reject)
-    // let searchQry = searchQuery ? 
+    // let searchQry = searchQuery ?
     //   { "productDetails.name" : { $regex: searchQuery, $options: 'i' } }: {};
 
     SelleresProductList.find(searchQry)
@@ -1466,7 +1466,7 @@ module.exports.listAllSellerProduct = (serviceType, searchQuery, skip, limit) =>
       .catch(reject)
   })
 /**
-* 
+*
 * Get seller product detail
 * */
 module.exports.getSellerProduct = (query) =>
