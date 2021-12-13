@@ -1634,7 +1634,7 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
   Sellers.aggregate([
     {
       $match: {
-        $and: [{ incompleteRegistration: 1 }, { $or: [{ statutoryId: { $eq: null } }, { sellerContactId: { $eq: null } }] }]
+        $and: [{ incompleteRegistration: 1 },{ sellerType: { $exists: true, $not: { $size: 0 } } }, { $or: [{ statutoryId: { $eq: null } }, { sellerContactId: { $eq: null } }] }]
       }
     },
   ])
