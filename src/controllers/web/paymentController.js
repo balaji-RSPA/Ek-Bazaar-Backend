@@ -404,7 +404,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
                             // Generate invoice
                             const invoice = await createPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth, isFreeTrialIncluded, planValidFrom }, order_details)
-                            
+
 
                             await addSellerPlanLog(planLog)
                             if (deleteProduct === true && seller.sellerProductId && seller.sellerProductId.length) {
@@ -442,7 +442,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 console.log("================sms not send===========")
                             }
                             if (orderDetails && orderDetails.email/* seller && seller.email */ && planTo && planFrom && checkPaidSeller) {
-                                let planChangedEmailMsg = planChangedEmail({ 
+                                let planChangedEmailMsg = planChangedEmail({
                                     oldPlanType,
                                     newPlanType: _p_details.planType,
                                     from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
@@ -461,7 +461,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                 console.log("==============Plan Changed Email Not Send====================")
                             }
                             if (orderDetails && orderDetails.email) {
-                                let invoiceEmailMsg = invoiceContent({ 
+                                let invoiceEmailMsg = invoiceContent({
                                     plan: _p_details.planType,
                                     from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
                                     till: _p_details.exprireDate,
