@@ -512,6 +512,7 @@ module.exports.updateUser = async (req, res) => {
           countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
         }],
         userId: userID,
+        hearingSource,
         sellerProductId: []
       }
       const buyerData = {
@@ -548,6 +549,7 @@ module.exports.updateUser = async (req, res) => {
         countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
       }],
       isPartialyRegistor: false,
+      hearingSource,
       ..._buyer,
     };
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
