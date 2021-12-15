@@ -15,6 +15,7 @@ const DigitalSpace = require('./digitalSpaceRoutes')
 const Offers = require('./offerRouter')
 const News = require('./newsRoutes');
 const Commodity = require('./commodityRoutes');
+const currencyConvter = require('./currencyConvterRoutes')
 
 router.use(location)
 router.use(buyer)
@@ -32,5 +33,6 @@ router.use(DigitalSpace)
 router.use(Offers)
 router.use(News)
 router.use(Commodity)
+router.use(currencyConvter)
 
 module.exports = router

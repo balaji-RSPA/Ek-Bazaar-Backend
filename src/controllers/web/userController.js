@@ -196,7 +196,7 @@ module.exports.sendOtp = async (req, res) => {
       seller[0].email &&
       seller[0].isEmailVerified === 2;
 
-    if (isProd || process.env.NODE_ENV === "staging") {
+    if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
       otpMessage = otpVerification({ otp });
       if (mobile) {
@@ -512,6 +512,7 @@ module.exports.updateUser = async (req, res) => {
           countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
         }],
         userId: userID,
+        hearingSource,
         sellerProductId: []
       }
       const buyerData = {
@@ -548,6 +549,7 @@ module.exports.updateUser = async (req, res) => {
         countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
       }],
       isPartialyRegistor: false,
+      hearingSource,
       ..._buyer,
     };
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {

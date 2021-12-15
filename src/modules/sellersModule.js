@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const _ = require('lodash')
 const Sellers = require('../models/sellersSchema')
+const Buyer = require('../models/buyersSchema')
 const SellersBusiness = require('../models/sellerBusinessSchema')
 const SellersCompany = require('../models/sellerCompanySchema')
 const SellersContact = require('../models/sellerContactsSchema')
@@ -1634,7 +1635,7 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
   Sellers.aggregate([
     {
       $match: {
-        $and: [{ incompleteRegistration: 1 }, { $or: [{ statutoryId: { $eq: null } }, { sellerContactId: { $eq: null } }] }]
+        $and: [{ incompleteRegistration: 1 },{ sellerType: { $exists: true, $not: { $size: 0 } } }, { $or: [{ statutoryId: { $eq: null } }, { sellerContactId: { $eq: null } }] }]
       }
     },
   ])
@@ -1651,6 +1652,50 @@ exports.fetchPartiallyRegistredSeller = () => new Promise((resolve, reject) => {
     })
     .catch((err) => resolve())
 })
+
+
+exports.fetchPartiallyRegistredBuyer = () => new Promise((resolve, reject) => {
+  let now = new Date()
+  Buyer.aggregate([
+    {
+      $match: {
+        $and: [{ incompleteRegistration: 1 }, { $or: [{ isPartialyRegistor: { $eq: true } }] }]
+      }
+    },
+  ])
+    .then((doc) => {
+      let now = moment()
+      const data = doc && doc.length && doc.filter(record => now.diff(record.updatedAt, 'minutes') >= 3) || []
+      // doc && doc.length && doc.filter(record => now.diff(record.updatedAt, 'minutes') >= 3).forEach(async (el) => {
+      data && data.length && data.forEach(async (el) => {
+        await SendSMSNotifc(el)
+        resolve()
+
+      })
+      resolve()
+    })
+    .catch((err) => resolve()
+    )
+})
+
+const SendSMSNotifc = async (el) => {
+  try {
+    const { NODE_ENV } = process.env
+    const siteURL = NODE_ENV === "production" ? "https://trade.ekbazaar.com" : "https://tradebazaar.tech-active.com"
+    let smscountryCode = el.countryCode && el.countryCode.length ? el.countryCode : '+91'
+    let mobile = el.mobile && el.mobile.length && el.mobile
+    await Buyer.updateOne({ _id: el._id }, { $set: { incompleteRegistration: 2 } })
+    const { messagePartial, templateId } = partialRegistred({ name: (el.name || 'User') });
+    console.log(`${smscountryCode}${mobile}`,"smscountryCode smscountryCode");
+    console.log(messagePartial,"messagePartial messagePartial")
+    console.log(templateId,"templateId templateId")
+    el.mobile && el.mobile.length && smscountryCode && await sendSMS(`${smscountryCode}${mobile}`, messagePartial, templateId);
+    return true;
+  } catch (error) {
+    console.log(error, "=============")
+  }
+
+}
 
 const SendNotifc = async (el) => {
   try {
