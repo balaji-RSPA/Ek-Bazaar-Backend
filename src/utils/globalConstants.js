@@ -125,3 +125,7 @@ exports.rocketChatAdminLogin = NODE_ENV === 'production' ? {
   username: "ramesh",
   password: "ramesh123"
 }
+
+exports.stripeApiKeys = NODE_ENV === 'production' ? {clientKey: "", secretKey: ""} : {
+  clientKey: "pk_test_51JhBmfSIrsAhsOaISFcd4J61fweaSlL7AwqYxZPzrNZXR1NfwPp3U6cF9CkYu68JE8rzksfo8dUMWhuLMbuazqru00XRhHRY7j", secretKey: "sk_test_51JhBmfSIrsAhsOaIafy9CUJ5SVhFBA2XtRXxdFLV5SvZFHuwIW52KbgtyZLz9BANufK3HYI1KGV94vaHCwzMcWrJ00q9gtQz7n"
+};
