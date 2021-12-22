@@ -6,4 +6,7 @@ const payment = require('../../controllers/web/paymentController')
 router.post('/createRazorPayOrder', payment.createRazorPayOrder)
 router.post('/captureRazorPayPayment/:paymentId', payment.captureRazorPayPayment)
 
+router.post('/stripe/charge', payment.createStripePayment)
+router.post('/planActivation/:paymentId', payment.planActivation)
+
 module.exports = router
