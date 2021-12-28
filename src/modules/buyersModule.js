@@ -30,7 +30,7 @@ module.exports.getRFPData = (query, range) => new Promise((resolve, reject) => {
     .limit(limit)
     .sort({ _id: -1 })
     .populate({
-      path: 'buyerDetails.location.city buyerDetails.location.state'
+      path: 'buyerDetails.location.city buyerDetails.location.state buyerDetails.location.country'
     })
     .then(doc => {
       resolve(doc)
