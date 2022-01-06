@@ -363,6 +363,16 @@ module.exports.getAllSellerOffers = async (req, res) => {
             "bool": {
                 "must": [
                     {
+                        exists: {
+                            field: "status"
+                        }
+                    },
+                    {
+                        term: {
+                            "status": true
+                        }
+                    },
+                    {
                         "exists": {
                             "field": "offers"
                         }
@@ -457,6 +467,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 title: product,
                 location: _prod.offers.location.city.label,
                 price: `Rs.${_prod.offers.price.price}/${_prod.offers.price.unit}`,
+                amountInRs: _prod.offers.price.price,
+                productUnit: _prod.offers.price.unit,
                 validity: moment(_prod.offers.validity.toDate).format('ll'),
                 seller: true,
                 value: `Rs.${_prod.offers.price.price}/${_prod.offers.price.unit}`,
@@ -475,6 +487,8 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 title: buyer.productDetails.name.label,
                 location: buyer.productDetails.location.city.label,
                 price: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
+                amountInRs: buyer.productDetails.price,
+                productUnit: buyer.productDetails.weight,
                 validity: moment(buyer.productDetails.validity.toDate || buyer.productDetails.validity).format('ll'),
                 btnname: 'View more',
                 seller: false,
