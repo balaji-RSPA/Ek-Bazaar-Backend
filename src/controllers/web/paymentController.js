@@ -71,7 +71,9 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
             // currency: orderDetails && orderDetails.currency || '',
             currency: orderDetails && orderDetails.currency === 'INR' ? "₹" : '$' || '',
-            currencyInWords: toWords.convert(orderDetails && orderDetails.total/* , { currency: true } */),
+            currencyInWords: orderDetails && orderDetails.currency === 'INR' 
+                ? `${toWords.convert(orderDetails && orderDetails.total/* , { currency: true } */)} Rupees Only`
+                : `${toWords.convert(orderDetails && orderDetails.total/* , { currency: true } */)} Dollars Only`,
             country: orderDetails && orderDetails.country || '',
             currencyFlag: orderDetails && orderDetails.currency === 'INR' ? true : ''
 
@@ -133,6 +135,99 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
 
 })
 
+
+// const createOnebazaarPdf = async (seller, plan, orderDetails) => new Promise((resolve, reject) => {
+
+//     try {
+//         const sellerDetails = {
+//             name: orderDetails && orderDetails.sellerDetails && capitalizeFirstLetter(orderDetails.sellerDetails.name) || seller.name,
+//             city: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.city.name) || '',
+//             state: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.state.name) || '',
+//             country: seller && seller.location && seller.location.country && capitalizeFirstLetter(seller.location.country.name) || '',
+//             gstLable: seller && seller.sellerType && seller.sellerType.length && seller.sellerType[0]["name"] === "farmer" ? "Aadhar Number" : "GST Number",
+//             gstNo: orderDetails && orderDetails.gstNo || '',
+//             address: orderDetails && orderDetails.address || '',
+//             pincode: orderDetails && orderDetails.pincode || '',
+//         }
+//         const orderData = {
+//             planType: plan && plan.type || '',
+//             pricePerMonth: plan && plan.price || '',
+//             // months: '3',
+//             features: plan && plan.features,
+//             igstAmount: orderDetails && orderDetails.gstAmount,
+//             cgstAmount: orderDetails && orderDetails.cgstAmount,
+//             sgstAmount: orderDetails && orderDetails.sgstAmount,
+
+//             amount: plan && plan.totalPlanPrice,
+//             orderTotal: orderDetails && orderDetails.total.toFixed(2),
+//             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
+//             startDate: plan && plan.isFreeTrialIncluded && plan.planValidFrom ? plan && moment(plan.planValidFrom).format('DD/MM/YYYY') : moment(new Date()).format('DD/MM/YYYY'),
+//             expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
+//             // subscriptionValidety: plan && moment(new Date(plan.subscriptionValidety)).format('DD/MM/YYYY'),
+//             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
+//             // currency: orderDetails && orderDetails.currency || '',
+//             currency: orderDetails && orderDetails.currency === 'INR' ? "₹" : '$' || '',
+//             currencyInWords: toWords.convert(orderDetails && orderDetails.total/* , { currency: true } */),
+//             country: orderDetails && orderDetails.country || '',
+//             currencyFlag: orderDetails && orderDetails.currency === 'INR' ? true : ''
+
+//         }
+//         const html = fs.readFileSync(path.resolve(__dirname, '../../..', 'src/utils/templates/invoice', 'invoiceTemplateOnebazaar.html'), 'utf8');
+//         const options = {
+//             format: "A4",
+//             // orientation: "portrait",
+//             border: "10mm",
+//             // header: {
+//             //     // height: "45mm",
+//             //     contents: '<div style="text-align: center;">Ekbazaar</div>'
+//             // },
+//             // "footer": {
+//             //     // "height": "28mm",
+//             //     "contents": {
+//             //         // first: 'Cover page',
+//             //         2: 'Second page', // Any page number is working. 1-based index
+//             //         default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+//             //         // last: 'Last Page'
+//             //     }
+//             // }
+//         }
+
+//         const details = {
+//             orderData: { ...orderData },
+//             sellerDetails: { ...sellerDetails }
+//         }
+//         const invoiceFileName = orderDetails && orderDetails.invoiceNo.toString() + '-invoice.pdf'
+//         const document = {
+//             html: html,
+//             data: {
+//                 details: details
+//             },
+//             path: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName)
+//         };
+//         pdf.create(document, options)
+//             .then(async (res) => {
+//                 console.log(res)
+//                 const output = `invoice-${orderDetails && orderDetails.invoiceNo}.pdf`
+//                 const invoice = fs.readFileSync(res.filename);
+//                 let data = {
+//                     Key: `${seller._id}/${orderDetails && orderDetails.invoiceNo}/${output}`,
+//                     body: invoice
+//                 }
+//                 const multidoc = await uploadToDOSpace(data)
+//                 resolve({ ...multidoc, attachement: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName) })
+
+//             })
+//             .catch(error => {
+//                 console.error(error)
+//             });
+
+//     } catch (error) {
+//         console.log(error)
+//         respError(error)
+
+//     }
+
+// })
 
 async function CalculateGst(price, findPinCode, currency) {
     const gstValue = 18
@@ -741,6 +836,8 @@ module.exports.planActivation = async (req, res) => {
                         const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
                         // Generate invoice
                         const invoice = await createPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth, isFreeTrialIncluded, planValidFrom }, order_details)
+
+                    // const invoice = await createOnebazaarPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth, isFreeTrialIncluded, planValidFrom }, order_details)
 
 
                         await addSellerPlanLog(planLog)

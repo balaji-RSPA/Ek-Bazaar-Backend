@@ -195,14 +195,8 @@
                         align-items: center;
                         justify-content: space-between;">
                             <td class="title">
-                                {{#if details.orderData.currencyFlag}}
-                                <!-- <img src="https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png" -->
-                                    <img src="https://tenders.ekbazaar.com/assets/images/Final.svg" style="width:50%;">
-                                {{else}}
-                                <!-- <img src="https://tenders.onebazaar.com/assets/images/One-bazaar.svg"> -->
-                                    <img src="https://tenders.ekbazaar.com/assets/images/One-bazaar.svg" style="width:50%;">
-                                    <!-- <img src="https://tradebazaarapi.tech-active.com/images/One-bazaar.svg"> -->
-                                {{/if}}
+                                <!-- <img src="https://tradebazaarapi.tech-active.com/images/One-bazaar.svg" -->
+                                <img src="https://tenders.onebazaar.com/assets/images/One-bazaar.svg" style="width:80%;">
                             </td>
 
                             <td class="title-bold" style="font-weight: 700;color: #000000;">
@@ -292,10 +286,10 @@
                     <td class="text-center">Net Amount</td>
                     {{#if details.orderData.currencyFlag}}
                     {{#if details.orderData.igstAmount}}
-                    <td style="text-align:left" class="text-center">IGST (18%)</td>
+                    <!-- <td style="text-align:left" class="text-center">IGST (18%)</td>
                     {{else}}
                     <td style="text-align:left" class="text-center">CGST (9%)</td>
-                    <td style="text-align:left" class="text-center">SGST (9%)</td>
+                    <td style="text-align:left" class="text-center">SGST (9%)</td> -->
                     {{/if}}
                     {{/if}}
                     <td class="text-center" style="width:80px !important;">Total</td>
@@ -310,10 +304,10 @@
                     <td class="text-right">{{details.orderData.currency}} {{details.orderData.amount}}</td>
                     {{#if details.orderData.currencyFlag}}
                     {{#if details.orderData.igstAmount}}
-                    <td class="text-right">{{details.orderData.currency}} {{details.orderData.igstAmount}}</td>
+                    <!-- <td class="text-right">{{details.orderData.currency}} {{details.orderData.igstAmount}}</td>
                     {{else}}
                     <td class="text-right">{{details.orderData.currency}} {{details.orderData.cgstAmount}}</td>
-                    <td class="text-right">{{details.orderData.currency}} {{details.orderData.sgstAmount}}</td>
+                    <td class="text-right">{{details.orderData.currency}} {{details.orderData.sgstAmount}}</td> -->
                     {{/if}}
                     {{/if}}
                     <td class="text-right">{{details.orderData.currency}} {{details.orderData.orderTotal}}</td>
@@ -323,8 +317,8 @@
                     <td style="font-weight:600;font-size: 12px;color: #000;" class="highrow">Total</td>
                     <td class="highrow"></td>
                     <td class="highrow"></td>
-                    <td class="highrow"></td>
-                    <td class="highrow"></td>
+                    <!-- <td class="highrow"></td>
+                    <td class="highrow"></td> -->
                     {{#if details.orderData.currencyFlag}}
                     <td class="highrow"></td>
                     {{#if details.orderData.cgstAmount }}
