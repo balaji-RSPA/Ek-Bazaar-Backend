@@ -71,7 +71,7 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
             // currency: orderDetails && orderDetails.currency || '',
             currency: orderDetails && orderDetails.currency === 'INR' ? "₹" : '$' || '',
-            currencyInWords: orderDetails && orderDetails.currency === 'INR' 
+            currencyInWords: orderDetails && orderDetails.currency === 'INR'
                 ? `${toWords.convert(orderDetails && orderDetails.total/* , { currency: true } */)} Rupees Only`
                 : `${toWords.convert(orderDetails && orderDetails.total/* , { currency: true } */)} Dollars Only`,
             country: orderDetails && orderDetails.country || '',
@@ -102,7 +102,14 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             orderData: { ...orderData },
             sellerDetails: { ...sellerDetails }
         }
+
+        console.log(orderDetails, "orderDetailsorderDetails");
+
         const invoiceFileName = orderDetails && orderDetails.invoiceNo.toString() + '-invoice.pdf'
+
+        console.log(invoiceFileName, 'invoiceFileName')
+
+
         const document = {
             html: html,
             data: {

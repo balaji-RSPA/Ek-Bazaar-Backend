@@ -4,6 +4,7 @@ const { env } = process;
 const config = require("./config");
 const { tenderdb } = config;
 const userSchema = require('../src/models/user')
+const commonInvoiceSchema = require('../src/models/commonInvoiceSchema');
 const sessionSchema = require('../src/models/session')
 const sessionLogSchema = require('../src/models/sessionLog')
 
@@ -28,9 +29,11 @@ if (conn.name) {
 const userModel = conn.model('users', userSchema)
 const sessionModel = conn.model('sessions', sessionSchema)
 const sessionLogModel = conn.model('sessionLogs', sessionLogSchema)
+const commonInvoiceModel = conn.model('invoicenumbers', commonInvoiceSchema)
 module.exports = {
     conn,
     userModel,
     sessionModel,
-    sessionLogModel
+    sessionLogModel,
+    commonInvoiceModel
 }
