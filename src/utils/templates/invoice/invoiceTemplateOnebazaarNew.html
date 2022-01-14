@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Invoice-Ekbazaar</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .words {
+        margin: 0;
+      }
+
+      .sign {
+        margin-top: 65px;
+      }
+
+      .sign p {
+        text-align: right;
+        font-weight: 600;
+        color: #000;
+        font-size: 14px;
+        font-family: "Open Sans", sans-serif;
+      }
+
+      .words p {
+        font-size: 12px !important;
+        margin: 0;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-top: none;
+        font-weight: 600;
+        color: #000;
+      }
+
+      .highrow {
+        border: none !important;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      .title-product {
+        background: #f1f1f1;
+      }
+
+      .title-product td {
+        font-weight: 700;
+        color: #000;
+      }
+
+      .text-right {
+        text-align: right;
+      }
+
+      .product-info td {
+        color: #000000;
+        font-size: 12px;
+      }
+
+      .card h5 {
+        font-size: 12px;
+        color: #000;
+        font-weight: 700;
+        font-family: "Open Sans", sans-serif;
+        margin-bottom: 0;
+        margin-top: 15px;
+      }
+
+      .card p {
+        font-size: 12px;
+        color: #000;
+        font-family: "Open Sans", sans-serif;
+      }
+
+      .table-condensed {
+        font-family: "Open Sans", sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      .table-condensed td,
+      .table-condensed th {
+        border: 1px solid #ddd;
+        padding: 7px !important;
+        font-size: 12px !important;
+      }
+
+      .invoice-box {
+        /* max-width: 800px; */
+        /* margin: auto; */
+        /* padding: 20px; */
+        /* border: 1px solid #eee; */
+        /* box-shadow: 0 0 10px rgba(0, 0, 0, .15); */
+        font-size: 14px;
+        line-height: 16px;
+        font-family: "Open Sans", sans-serif;
+        color: #555;
+      }
+
+      .invoice-box table {
+        width: 100%;
+        line-height: inherit;
+        text-align: left;
+      }
+
+      .invoice-box table td {
+        padding: 5px;
+        vertical-align: top;
+      }
+
+      .invoice-box table tr td:nth-child(2) {
+        text-align: right;
+      }
+
+      .invoice-box table tr.top table td {
+        padding-bottom: 10px;
+      }
+
+      /* .invoice-box table tr.top table td.title {
+            font-size: 45px;
+            line-height: 35px;
+            color: #333;
+        } */
+
+      /* .invoice-box table tr.information table td {
+            padding-bottom: 40px;
+        } */
+
+      .invoice-box table tr.heading td {
+        background: #eee;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+      }
+
+      .invoice-box table tr.details td {
+        padding-bottom: 10px;
+      }
+
+      .invoice-box table tr.item td {
+        border-bottom: 1px solid #eee;
+      }
+
+      .invoice-box table tr.item.last td {
+        border-bottom: none;
+      }
+
+      .invoice-box table tr.total td:nth-child(2) {
+        border-top: 2px solid #eee;
+        font-weight: bold;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .invoice-box table tr.top table td {
+          width: 100%;
+          display: block;
+          text-align: center;
+        }
+
+        .invoice-box table tr.information table td {
+          width: 100%;
+          display: block;
+          text-align: center;
+        }
+      }
+
+      /** RTL **/
+      .rtl {
+        direction: rtl;
+        font-family: Tahoma, "Helvetica Neue", "Helvetica", Helvetica, Arial,
+          sans-serif;
+      }
+
+      .rtl table {
+        text-align: right;
+      }
+
+      .rtl table tr td:nth-child(2) {
+        text-align: left;
+      }
+
+      .addressFrom {
+        font-size: 12px;
+        color: #000;
+        font-family: "Open Sans", sans-serif;
+      }
+
+      .card h4 {
+        margin: 0 0 36px 0 !important;
+        color: black;
+        font-size: 20px;
+        font-weight: 400;
+        margin-top: 0px;
+      }
+
+      .new_table_style {
+        font-size: 10px;
+        padding: 6px !important;
+        text-align: left !important;
+        font-weight: normal;
+        color: black;
+      }
+
+      .border_span1 {
+        border-top: 0.7px solid grey;
+        margin-top: 21px;
+      }
+
+      .invoiceHead {
+        /* font-family: sans-serif; */
+        /* color: #228B22; */
+        text-align: center;
+        /* font-size: 30px; */
+        /* max-width: 100%;
+            position: relative; */
+      }
+
+      .billingAddress {
+        margin: 4px 0;
+        font-size: 11px;
+      }
+      /* .invoiceHead:before {
+        content: "";
+        display: block;
+        width: 130px;
+        height: 5px;
+        background: #191970;
+        left: 0;
+        top: 50%;
+        position: absolute;
+        margin-right:40%;
+      }
+      .invoiceHead:after {
+        content: "";
+        display: block;
+        width: 130px;
+        height: 5px;
+        background: #191970;
+        right: 0;
+        top: 50%;
+        position: absolute;
+        margin-left:40%; */
+    </style>
+  </head>
+
+  <body>
+    <div class="invoice-box">
+      <table cellpadding="0" cellspacing="0">
+        <tr class="top">
+          <td colspan="2">
+            <table>
+              <tr
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                "
+              >
+                <td class="title">
+                    <!-- <img src="https://tenders.ekbazaar.com/assets/images/One-bazaar.svg"> -->
+                    <img src="https://tenders.onebazaar.com/assets/images/One-bazaar.svg"
+                    style="width:80%;">                
+                </td>
+
+                <td class="title-bold">
+                  <p
+                    style="
+                      font-size: 16px;
+                      font-weight: 700;
+                      color: #000000;
+                      margin-top: 0;
+                      margin-bottom: 5px;
+                    "
+                  >
+                    Subramanya Infotech Pvt Ltd
+                  </p>
+                  <p class="addressFrom">
+                    SUBRAMANYA INFOTECH PRIVATE LIMITED,<br />
+                    Singarpura Village, <br />Vidyaranyapura Post,<br />
+                    Bengaluru, Karnataka 560097
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- <tr style="display: flex;justify-content: center;">
+
+                    <td class="invoiceHead" style="
+                      color: #5d7bb0;
+                      font-weight: bold;
+                      font-size: 28px;
+                    ">
+                        PROFORMA INVOICE
+                </td>
+
+
+            </tr> -->
+        <!-- <tr style="width: 100%;"><td style="display:block;text-align: center;  color: #5d7bb0;
+                font-weight: bold;
+                font-size: 22px;">PROFORMA INVOICE</td></tr> -->
+
+        <!-- <tr style="display: flex">
+                    <td>
+                      <p
+                        style="
+                          text-align: center;
+                          color: #5d7bb0;
+                          font-size: 32px;
+                          margin-top: 15px;
+                        "
+                      >
+                        PROFORMA INVOICE
+                      </p>
+                    </td>
+                  </tr> -->
+        <tr
+          style="display: flex; justify-content: space-between"
+          class="information"
+        >
+          <td style="width: 40%">
+            <div class="card">
+              <h4>Bill To</h4>
+              <p
+                style="
+                  font-weight: 700;
+                  color: #000000;
+                  font-size: 16px;
+                  margin-bottom: 10px;
+                "
+              >
+                GVS81 Media Private Limited
+              </p>
+              <p class="billingAddress">
+                C - 102, Renaissance Park 1, Subramanya Nagar, Next to Bank of
+                India,
+              </p>
+              <p class="billingAddress">Malleswaram (West)</p>
+              <p class="billingAddress">Bengaluru</p>
+              <p class="billingAddress">560055 Karnataka</p>
+              <p class="billingAddress">India</p>
+              <p class="billingAddress">GSTIN 29AAICG3229J1ZC</p>
+            </div>
+
+            <div class="card" style="margin-top: 30px; margin-bottom: 40px">
+              <p
+                style="
+                  font-weight: 700;
+                  color: #000000;
+                  font-size: 16px;
+                  margin-bottom: 10px;
+                "
+              >
+                Place of Supply
+              </p>
+              <p class="billingAddress">29 (Karnataka)</p>
+            </div>
+          </td>
+
+          <td style="width: 30%">
+            <table
+              style="border: 1px solid #ddd; border-collapse: collapse"
+              class="new_table"
+              style="width: 100%"
+            >
+              <tr>
+                <th
+                  class="new_table_style"
+                  style="
+                    background-color: #f1f1f1;
+                    border: 1px solid #ddd;
+                    border-collapse: collapse;
+                  "
+                >
+                  Invoice Number
+                </th>
+                <td
+                  class="new_table_style"
+                  style="border: 1px solid #ddd; border-collapse: collapse"
+                >
+                  P202117
+                </td>
+              </tr>
+              <tr>
+                <th
+                  class="new_table_style"
+                  style="
+                    background-color: #f1f1f1;
+                    border: 1px solid #ddd;
+                    border-collapse: collapse;
+                  "
+                >
+                  Invoice Date
+                </th>
+                <td
+                  class="new_table_style"
+                  style="border: 1px solid #ddd; border-collapse: collapse"
+                >
+                  29/12/2021
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <table class="table table-condensed">
+        <thead>
+          <tr class="title-product">
+            <td class="text-center">S.No.</td>
+            <td style="text-align: left" class="text-left">Description</td>
+            <td class="text-center">Unit Price</td>
+            <td class="text-center">Qty</td>
+            <td class="text-center">Net Amount</td>
+            {{#if details.orderData.currencyFlag}} {{#if
+            details.orderData.igstAmount}}
+            <td class="text-center">IGST (18%)</td>
+            {{else}}
+            <!-- <td class="text-center">CGST (9%)</td>
+            <td class="text-center">SGST (9%)</td> -->
+            {{/if}} {{/if}}
+            <td class="text-center" style="width: 80px !important">Total</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="height: 90px" class="product-info">
+            <td class="text-center">01</td>
+            <td style="text-align: left" class="text-left">
+              {{details.orderData.planType}} - EkBazaar
+              <p>SAC 998319</p>
+            </td>
+            <td class="text-right">
+              {{details.orderData.currency}} {{details.orderData.amount}}
+            </td>
+            <td class="text-right">1</td>
+            <td class="text-right">
+              {{details.orderData.currency}} {{details.orderData.amount}}
+            </td>
+            {{#if details.orderData.currencyFlag}} {{#if
+            details.orderData.igstAmount}}
+            <td class="text-right">
+              {{details.orderData.currency}} {{details.orderData.igstAmount}}
+            </td>
+            {{else}}
+            <!-- <td class="text-right">
+              {{details.orderData.currency}} {{details.orderData.cgstAmount}}
+            </td>
+            <td class="text-right">
+              {{details.orderData.currency}} {{details.orderData.sgstAmount}}
+            </td> -->
+            {{/if}} {{/if}}
+            <td class="text-right">
+              {{details.orderData.currency}} {{details.orderData.orderTotal}}
+            </td>
+          </tr>
+
+          <tr style="border: 1px solid #ddd; background-color: #f9f9f9">
+            <td
+              style="font-weight: 600; font-size: 12px; color: #000"
+              class="highrow"
+            >
+              Total
+            </td>
+            <td class="highrow"></td>
+            <td class="highrow"></td>
+            <td class="highrow"></td>
+            <td class="highrow"></td>
+            <td class="highrow"></td>
+            {{#if details.orderData.currencyFlag}} {{#if
+            details.orderData.cgstAmount }} {{#if details.orderData.sgstAmount
+            }}
+            <td class="highrow"></td>
+            {{/if}} {{/if}} {{/if}}
+            <td
+              style="
+                font-weight: 600;
+                font-size: 12px;
+                color: #000;
+                width: 80px;
+              "
+              class="highrow text-right"
+            >
+              {{details.orderData.currency}} {{details.orderData.orderTotal}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="words">
+        <p>Amounts in Words : {{details.orderData.currencyInWords}} Dollars</p>
+      </div>
+      <div class="sign">
+        <p>Authority Signature</p>
+      </div>
+    </div>
+  </body>
+</html>
