@@ -571,8 +571,10 @@ module.exports.getAllBuyerRequest = async (req, res) => {
             buyerRequests = result.length && result.map(buyer => {
                 let obj = {
                     title: buyer.productDetails.name.label,
-                    location: buyer.productDetails.location.city.label,
+                    location: buyer.productDetails.location.city.label ? buyer.productDetails.location.city.label : buyer.productDetails.location.country.label,
                     price: `Rs.${buyer.productDetails.price}/${buyer.productDetails.weight}`,
+                    amountInRs: buyer.productDetails.price,
+                    productUnit: buyer.productDetails.weight,
                     validity: moment(buyer.productDetails.validity).format('ll'),
                     btnname: 'View more',
                     seller: true,
