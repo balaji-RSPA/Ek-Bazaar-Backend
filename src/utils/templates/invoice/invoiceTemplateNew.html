@@ -17,12 +17,16 @@
       rel="stylesheet"
     />
     <style>
+        body{
+            font-family: "Open Sans", sans-serif;
+        }
       .words {
         margin: 0;
+        font-family: "Open Sans", sans-serif;
       }
 
       .sign {
-        margin-top: 65px;
+        margin-top: 55px;
       }
 
       .sign p {
@@ -34,7 +38,7 @@
       }
 
       .words p {
-        font-size: 12px !important;
+        font-size: 10px !important;
         margin: 0;
         padding: 8px 12px;
         border: 1px solid #ddd;
@@ -79,7 +83,7 @@
       }
 
       .card p {
-        font-size: 12px;
+        font-size: 10px;
         color: #000;
         font-family: "Open Sans", sans-serif;
       }
@@ -94,7 +98,7 @@
       .table-condensed th {
         border: 1px solid #ddd;
         padding: 7px !important;
-        font-size: 12px !important;
+        font-size: 10px !important;
       }
 
       .invoice-box {
@@ -191,15 +195,16 @@
       }
 
       .addressFrom {
-        font-size: 12px;
+        font-size: 10px;
         color: #000;
         font-family: "Open Sans", sans-serif;
+        margin-top: 2px;
       }
 
       .card h4 {
-        margin: 0 0 36px 0 !important;
+        margin: 0 0 10px 0 !important;
         color: black;
-        font-size: 20px;
+        font-size: 12px;
         font-weight: 400;
         margin-top: 0px;
       }
@@ -227,8 +232,8 @@
       }
 
       .billingAddress {
-        margin: 4px 0;
-        font-size: 11px;
+        margin: 0px 0;
+        font-size: 10px;
       }
       /* .invoiceHead:before {
         content: "";
@@ -277,7 +282,7 @@
                 <td class="title-bold">
                   <p
                     style="
-                      font-size: 16px;
+                      font-size: 12px;
                       font-weight: 700;
                       color: #000000;
                       margin-top: 0;
@@ -288,8 +293,9 @@
                   </p>
                   <p class="addressFrom">
                     SUBRAMANYA INFOTECH PRIVATE LIMITED,<br />
-                    Singarpura Village, <br />Vidyaranyapura Post,<br />
-                    Bengaluru, Karnataka 560097
+                    Singarpura Village,Vidyaranyapura Post,<br />
+                    Bengaluru, Karnataka 560097,<br>
+                    GSTIN 29AAZCS0587J1ZC
                   </p>
                 </td>
               </tr>
@@ -337,14 +343,14 @@
                 style="
                   font-weight: 700;
                   color: #000000;
-                  font-size: 16px;
-                  margin-bottom: 10px;
+                  font-size: 12px;
+                  margin-bottom: 5px;
                 "
               >
                 GVS81 Media Private Limited
               </p>
               <p class="billingAddress">
-                C - 102, Renaissance Park 1, Subramanya Nagar, Next to Bank of
+                C - 102, Renaissance Park 1, <br>Subramanya Nagar, <br>Next to Bank of
                 India,
               </p>
               <p class="billingAddress">Malleswaram (West)</p>
@@ -354,13 +360,13 @@
               <p class="billingAddress">GSTIN 29AAICG3229J1ZC</p>
             </div>
 
-            <div class="card" style="margin-top: 30px; margin-bottom: 40px">
+            <div class="card" style="margin-top: 15px; margin-bottom: 40px">
               <p
                 style="
                   font-weight: 700;
                   color: #000000;
-                  font-size: 16px;
-                  margin-bottom: 10px;
+                  font-size: 12px;
+                  margin-bottom: 5px;
                 "
               >
                 Place of Supply
@@ -370,6 +376,7 @@
           </td>
 
           <td style="width: 30%">
+            <div>
             <table
               style="border: 1px solid #ddd; border-collapse: collapse"
               class="new_table"
@@ -412,9 +419,26 @@
                 </td>
               </tr>
             </table>
+            <div class="card" style="margin-top: 10px; ">
+                <p
+                  style="
+                    font-weight: 700;
+                    color: #000000;
+                    font-size: 12px;
+                    margin-bottom: 5px;
+                  "
+                >
+                  Service Period
+                </p>
+                <p class="billingAddress">11/11/2021 to 09/02/2022</p>
+              </div>
+            
+
           </td>
         </tr>
       </table>
+    </div>
+
       <table class="table table-condensed">
         <thead>
           <tr class="title-product">
@@ -422,7 +446,7 @@
             <td style="text-align: left" class="text-left">Description</td>
             <td class="text-center">Unit Price</td>
             <td class="text-center">Qty</td>
-            <td class="text-center">Net Amount</td>
+            <!-- <td class="text-center">Net Amount</td> -->
             {{#if details.orderData.currencyFlag}} {{#if
             details.orderData.igstAmount}}
             <td class="text-center">IGST (18%)</td>
@@ -435,33 +459,34 @@
         </thead>
         <tbody>
           <tr style="height: 90px" class="product-info">
-            <td class="text-center">01</td>
+            <td class="text-center"><p style="margin-top: -21px; margin-bottom: 0px;">01</p></td>
             <td style="text-align: left" class="text-left">
-              {{details.orderData.planType}} - EkBazaar
-              <p>SAC 998319</p>
+             <p style="margin-top: 0px; margin-bottom: 0px;">{{details.orderData.planType}} - EkBazaar</p> 
+              <br>SAC: 998313
             </td>
+
             <td class="text-right">
-              {{details.orderData.currency}} {{details.orderData.amount}}
+             <p style="margin-top: -21px;"> {{details.orderData.currency}} {{details.orderData.amount}}</p>
             </td>
-            <td class="text-right">1</td>
+            <td class="text-right"><p style="margin-top: -21px; margin-bottom: 0px;">1</p></td>
+            <!-- <td class="text-right">
+            <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.amount}}</p>
+            </td> -->
+           <p style="margin-top: -21px;"> {{#if details.orderData.currencyFlag}} {{#if
+            details.orderData.igstAmount}}</p>
             <td class="text-right">
-              {{details.orderData.currency}} {{details.orderData.amount}}
-            </td>
-            {{#if details.orderData.currencyFlag}} {{#if
-            details.orderData.igstAmount}}
-            <td class="text-right">
-              {{details.orderData.currency}} {{details.orderData.igstAmount}}
+             <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.igstAmount}}</p> 
             </td>
             {{else}}
             <td class="text-right">
-              {{details.orderData.currency}} {{details.orderData.cgstAmount}}
+             <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.cgstAmount}}</p>
             </td>
             <td class="text-right">
-              {{details.orderData.currency}} {{details.orderData.sgstAmount}}
+            <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.sgstAmount}}</p>
             </td>
             {{/if}} {{/if}}
             <td class="text-right">
-              {{details.orderData.currency}} {{details.orderData.orderTotal}}
+           <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.orderTotal}}</p> 
             </td>
           </tr>
 
@@ -476,7 +501,7 @@
             <td class="highrow"></td>
             <td class="highrow"></td>
             <td class="highrow"></td>
-            <td class="highrow"></td>
+            <!-- <td class="highrow"></td> -->
             {{#if details.orderData.currencyFlag}} {{#if
             details.orderData.cgstAmount }} {{#if details.orderData.sgstAmount
             }}
@@ -497,11 +522,11 @@
         </tbody>
       </table>
       <div class="words">
-        <p>Amounts in Words : {{details.orderData.currencyInWords}} Rupees</p>
+        <p>Amounts in Words : {{details.orderData.currencyInWords}} Indian Rupees</p>
       </div>
-      <div class="sign">
+      <!-- <div class="sign">
         <p>Authority Signature</p>
-      </div>
+      </div> -->
     </div>
   </body>
 </html>
