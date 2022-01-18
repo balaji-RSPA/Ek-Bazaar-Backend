@@ -37,7 +37,8 @@ module.exports.addContact = async (req, res) => {
     } else {
       result = response && response.data && response.data.data;
       if (result && result.workEmail) {
-        const contactUsEmailMsg = contactus({ id: result._id });
+        const origin = req.get("origin");
+        const contactUsEmailMsg = contactus({ id: result._id , origin});
         const message = {
           from: result.workEmail,
           to: MailgunKeys.senderMail,

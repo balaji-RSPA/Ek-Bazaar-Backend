@@ -593,7 +593,8 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                     till: _p_details.exprireDate,
                                     price: includedGstAmount.totalAmount,
                                     invoiceLink: invoice.Location,
-                                    cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4
+                                    cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
+                                    isOneBazzar : false
                                 });
                                 const message = {
                                     from: MailgunKeys.senderMail,
@@ -904,6 +905,7 @@ module.exports.planActivation = async (req, res) => {
                         } else {
                             console.log("================sms not send===========")
                         }
+                        console.log()
                         if (orderDetails && orderDetails.email/* seller && seller.email */ && planTo && planFrom && checkPaidSeller) {
                             let planChangedEmailMsg = planChangedEmail({
                                 oldPlanType,
@@ -919,7 +921,7 @@ module.exports.planActivation = async (req, res) => {
                                 subject: 'Plan changed',
                                 html: commonTemplate(planChangedEmailMsg),
                             }
-                     /* await */ sendSingleMail(message)
+                      await sendSingleMail(message)
                         } else {
                             console.log("==============Plan Changed Email Not Send====================")
                         }
@@ -930,12 +932,13 @@ module.exports.planActivation = async (req, res) => {
                                 till: _p_details.exprireDate,
                                 price: includedGstAmount.totalAmount,
                                 invoiceLink: invoice.Location,
-                                cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4
+                                cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
+                                isOneBazzar : true,
                             });
                             const message = {
                                 from: MailgunKeys.senderMail,
                                 to: orderDetails.email || seller.email,
-                                subject: 'Ekbazaar Subscription activated successfully',
+                                subject: 'Onebazaar Subscription activated successfully',
                                 html: commonTemplate(invoiceEmailMsg),
                                 // attachment: invoice.attachement,
                                 attachments: [{ // stream as an attachment
@@ -944,7 +947,7 @@ module.exports.planActivation = async (req, res) => {
                                     // path: invoice.Location,
                                 }]
                             }
-                        /* await */ sendSingleMail(message)
+                         await  sendSingleMail(message)
                         } else {
                             console.log("==============Invoice Not Send====================")
                         }

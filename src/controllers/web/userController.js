@@ -176,7 +176,8 @@ module.exports.sendOtp = async (req, res) => {
     const countryCode = req.body.countryCode || '+91';
 
     let otp = 1234;
-    let otpMessage = otpVerification({ otp });
+    const url = req.get("origin");
+    let otpMessage = otpVerification({ otp , url});
     let query = {}
     if (mobile) query = { mobile, 'countryCode': countryCode || '+91' }
     else query = { email }
@@ -198,7 +199,7 @@ module.exports.sendOtp = async (req, res) => {
 
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
-      otpMessage = otpVerification({ otp });
+      otpMessage = otpVerification({ otp, url });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
         // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
