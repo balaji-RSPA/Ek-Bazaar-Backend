@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Invoice-Ekbazaar</title>
+    <title>Invoice-Onebazaar</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
@@ -345,17 +345,15 @@
                   margin-bottom: 5px;
                 "
               >
-                GVS81 Media Private Limited
+              {{details.sellerDetails.name}}
               </p>
               <p class="billingAddress">
-                C - 102, Renaissance Park 1, <br>Subramanya Nagar, <br>Next to Bank of
-                India,
+                {{details.sellerDetails.address}}
               </p>
-              <p class="billingAddress">Malleswaram (West)</p>
+              <!-- <p class="billingAddress">Malleswaram (West)</p>
               <p class="billingAddress">Bengaluru</p>
               <p class="billingAddress">560055 Karnataka</p>
-              <p class="billingAddress">India</p>
-              <p class="billingAddress">GSTIN 29AAICG3229J1ZC</p>
+              <p class="billingAddress">India</p> -->
             </div>
 
             <div class="card" style="margin-top: 15px; margin-bottom: 40px">
@@ -395,7 +393,7 @@
                   class="new_table_style"
                   style="border: 1px solid #ddd; border-collapse: collapse"
                 >
-                  P202117
+                {{details.orderData.invoiceNumber}}
                 </td>
               </tr>
               <tr>
@@ -413,7 +411,7 @@
                   class="new_table_style"
                   style="border: 1px solid #ddd; border-collapse: collapse"
                 >
-                  29/12/2021
+                {{details.orderData.invoiceDate}}
                 </td>
               </tr>
             </table>
@@ -428,7 +426,7 @@
                 >
                   Service Period
                 </p>
-                <p class="billingAddress">11/11/2021 to 09/02/2022</p>
+                <p class="billingAddress">{{details.orderData.startDate}} to {{details.orderData.expireDate}}</p>
               </div>
             
 
@@ -444,14 +442,14 @@
             <td style="text-align: left" class="text-left">Description</td>
             <td class="text-center">Unit Price</td>
             <td class="text-center">Qty</td>
-            <!-- <td class="text-center">Net Amount</td> -->
-            {{#if details.orderData.currencyFlag}} {{#if
-            details.orderData.igstAmount}}
             <td class="text-center">IGST (18%)</td>
+            <!-- <td class="text-center">Net Amount</td> -->
+            {{#if details.orderData.currencyFlag}} 
+            <!-- <td class="text-center">IGST (18%)</td> -->
             {{else}}
             <!-- <td class="text-center">CGST (9%)</td>
             <td class="text-center">SGST (9%)</td> -->
-            {{/if}} {{/if}}
+            {{/if}}
             <td class="text-center" style="width: 80px !important">Total</td>
           </tr>
         </thead>
@@ -459,7 +457,7 @@
           <tr style="height: 90px" class="product-info">
             <td class="text-center"><p style="margin-top: -21px; margin-bottom: 0px;">01</p></td>
             <td style="text-align: left" class="text-left">
-             <p style="margin-top: 0px; margin-bottom: 0px;">{{details.orderData.planType}} - EkBazaar</p> 
+             <p style="margin-top: 0px; margin-bottom: 0px;">{{details.orderData.planType}} - OneBazaar</p> 
               <br>SAC: 998313
             </td>
 
@@ -470,19 +468,18 @@
             <!-- <td class="text-right">
             <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.amount}}</p>
             </td> -->
-           <p style="margin-top: -21px;"> {{#if details.orderData.currencyFlag}} {{#if
-            details.orderData.igstAmount}}</p>
+           <p style="margin-top: -21px;"> </p>
             <td class="text-right">
-             <p style="margin-top: -21px; margin-bottom: 0px;">0</p> 
+             <p style="margin-top: -21px; margin-bottom: 0px;"> 0 %</p> 
             </td>
-            {{else}}
+            
             <!-- <td class="text-right">
              <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.cgstAmount}}</p>
             </td>
             <td class="text-right">
             <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.sgstAmount}}</p>
             </td> -->
-            {{/if}} {{/if}}
+            
             <td class="text-right">
            <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.orderTotal}}</p> 
             </td>
@@ -498,7 +495,7 @@
             <td class="highrow"></td>
             <td class="highrow"></td>
             <td class="highrow"></td>
-            <!-- <td class="highrow"></td> -->
+            <td class="highrow"></td>
             <!-- <td class="highrow"></td> -->
             {{#if details.orderData.currencyFlag}} {{#if
             details.orderData.cgstAmount }} {{#if details.orderData.sgstAmount
@@ -520,7 +517,7 @@
         </tbody>
       </table>
       <div class="words">
-        <p>Amounts in Words : {{details.orderData.currencyInWords}} Dollars</p>
+        <p>Amounts in Words : {{details.orderData.currencyInWords}}</p>
       </div>
       <!-- <div class="sign">
         <p>Authority Signature</p>
