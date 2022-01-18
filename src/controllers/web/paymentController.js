@@ -78,7 +78,29 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             currencyFlag: orderDetails && orderDetails.currency === 'INR' ? true : ''
 
         }
-        const html = fs.readFileSync(path.resolve(__dirname, '../../..', 'src/utils/templates/invoice', 'invoiceTemplate.html'), 'utf8');
+        /* const html = fs.readFileSync(path.resolve(__dirname, '../../..', 'src/utils/templates/invoice', 'invoiceTemplate.html'), 'utf8'); */
+        let html ;
+        if (orderDetails && orderDetails.currency === "INR"){
+            html = fs.readFileSync(
+              path.resolve(
+                __dirname,
+                "../../..",
+                "src/utils/templates/invoice",
+                "invoiceTemplateNew.html"
+              ),
+              "utf8"
+            ); 
+          }else {
+            html =fs.readFileSync(
+              path.resolve(
+                __dirname,
+                "../../..",
+                "src/utils/templates/invoice",
+                "invoiceTemplateOnebazaarNew.html"
+              ),
+              "utf8"
+            );
+          }
         const options = {
             format: "A4",
             // orientation: "portrait",
