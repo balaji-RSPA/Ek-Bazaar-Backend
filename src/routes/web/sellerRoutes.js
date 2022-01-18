@@ -23,4 +23,6 @@ router.post('/getsellerproduct',seller.getSellerProduct)
 router.post('/uploadimage',uploadToDOSpace)
 router.post('/getfilteredcities',seller.getFilteredCities)
 
+router.get('/getSellersList', seller.getSellersList)
+
 module.exports = router
