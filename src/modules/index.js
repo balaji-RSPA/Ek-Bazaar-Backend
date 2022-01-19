@@ -20,6 +20,7 @@ const Pincode = require('./pincodeModule')
 const News = require('./newsModule');
 const Commodity = require('./commodityModule');
 const LanguageTemplate = require('./languageTemplateModule')
+const CurrencyConvrter = require('./currencyConverterModule')
 
 module.exports = {
     location,
@@ -43,5 +44,6 @@ module.exports = {
     Pincode,
     News,
     Commodity,
-    LanguageTemplate
+    LanguageTemplate,
+    CurrencyConvrter
 }

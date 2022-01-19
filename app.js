@@ -17,7 +17,7 @@ require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
 const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
-const { fetchPartiallyRegistredSeller } = require('./src/modules/sellersModule')
+const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
 const { updatePriority, gujaratSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
@@ -95,8 +95,6 @@ app.get("/send-daily-report", async function (req, res) {
   try {
     console.log("send-daily-report api called");
     let response = await sendDailyCount();
-    // let response = await getSellersData();
-
     console.log(response, "send-daily-report response");
     return respSuccess(res, response);
   } catch (error) {
@@ -350,6 +348,7 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
     console.log(' Incomplete registration cron started ------ ')
     emailSmsToPartiallyRegistered.stop();
+    await fetchPartiallyRegistredBuyer();
     await fetchPartiallyRegistredSeller();
     emailSmsToPartiallyRegistered.start();
     console.log('Incomplete registration cron end ------------------')

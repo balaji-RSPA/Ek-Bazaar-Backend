@@ -113,7 +113,11 @@ const buyerSchema = new Schema(
     },
     isPartialyRegistor: {
       type: Boolean
-    }
+    },
+    incompleteRegistration: {
+      type: Number,
+      default: 1,
+    },
   },
   {
     timestamps: true,

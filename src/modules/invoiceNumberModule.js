@@ -1,7 +1,8 @@
-const {
-    InvoiceNumber
-} = require("../models");
+// const {
+//     InvoiceNumber
+// } = require("../models");
 
+const InvoiceNumber = require("../../config/tenderdb").commonInvoiceModel;
 module.exports.addInvoiceNumber = (data) => new Promise((resolve, reject) => {
     InvoiceNumber.create(data)
         .then(doc => {

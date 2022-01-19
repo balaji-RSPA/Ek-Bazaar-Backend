@@ -449,12 +449,38 @@ exports.updateKeywords = async (req, res) => new Promise(async (resolve, reject)
 exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject) => {
     try {
         console.log(' email count started ------------')
+
+        // const query = {
+        //     "bool": {
+        //         "must": [
+        //             {
+        //                 "exists": {
+        //                     "field": "offers"
+        //                 }
+        //             }
+        //         ]
+        //     }
+        // }
+
         const query = {
             "bool": {
                 "must": [
                     {
+                        "term": {
+                            "status": true
+                        }
+                    },
+                    {
                         "exists": {
                             "field": "offers"
+                        }
+                    },
+                    {
+                        "range": {
+                            "offers.validity.toDate": {
+                                // "gte": new Date().toISOString()
+                                "gte": new Date(moment.utc().startOf('day'))
+                            }
                         }
                     }
                 ]
@@ -702,10 +728,9 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
-
         const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' }, { email: 'sowjanya@ekbazaar.com', name: 'Sowjanya' }, { email: 'kavya@active.agency', name: 'Kavya Gannu' }, { email: 'ravinder@active.agency', name: 'Ravinder' } ]
 
-        // const recipients = [{ email: 'ravinder@active.agency', name: 'Ravinder' }]
+        // const recipients = [{ email: 'ravinder@active.agency', name: 'Ravinder' } ]
 
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
