@@ -3,6 +3,7 @@ const {
 } = require('../../globalConstants')
 const {
     logo,
+    logoOne,
     emailVerified,
     facebook,
     twitter,
@@ -199,7 +200,7 @@ exports.emailVerified = (params) => new Promise((resolve, reject) => {
                        width="100%" style="max-width: 680px;">
                     <tr>
                         <td style="padding: 42px 0; text-align: center">
-                            <img src=${logo} aria-hidden="true" width="108"
+                            <img src=${params.link.includes('onebazaar') ? logo : logoOne} aria-hidden="true" width="108"
                                  height="63" alt="alt_text"
                                  border="0"
                                  style = "height: 45px; width: 199px; transform:scale(2); font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
@@ -221,7 +222,7 @@ exports.emailVerified = (params) => new Promise((resolve, reject) => {
                             <tbody>
                             <tr>
                                 <td style="padding: 40px 40px 20px 40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:20px; font-weight:600; letter-spacing:0.07em; line-height:2em;">
-                                Ekbazaar Trade Email verified
+                                ${params.link.includes('onebazaar') ? 'Onebazaar' : 'Ekbazaar'}Trade Email verified
                                 </td>
                             </tr>
                             <tr>
@@ -248,7 +249,7 @@ exports.emailVerified = (params) => new Promise((resolve, reject) => {
                                                 <a href=${params.link}
                                                    style="background: #3225A7; border: 15px solid #3225A7; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;"
                                                    class="button-a">
-                                                    <span style="color:#ffffff;" class="button-link">GO TO EKBAZAAR</span>
+                                                    <span style="color:#ffffff;" class="button-link">GO TO ${params.link.includes('onebazaar') ? 'ONEBAZAAR' : 'EKBAZAAR'}</span>
                                                 </a>
                                             </td>
                                         </tr>
@@ -264,7 +265,7 @@ exports.emailVerified = (params) => new Promise((resolve, reject) => {
                                         <tbody>
                                         <tr>
                                             <td style="padding: 0px 20px 40px 20px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:13.5px; font-weight:300; letter-spacing:0.07em; line-height:2em;">
-                                                Thank you for choosing EkBazaar.
+                                                Thank you for choosing ${params.link.includes('onebazaar') ? 'Onebazaar' : 'Ekbazaar'}.
                                             </td>
                                         </tr>
                                         </tbody>
@@ -288,7 +289,7 @@ exports.emailVerified = (params) => new Promise((resolve, reject) => {
                     <tr>
                         <td style="padding:40px 10px 20px 10px; width: 100%;font-size: 12px; font-family: sans-serif; line-height:18px; text-align: center; color: #888888;"
                             class="x-gmail-data-detectors">
-                             Copyright 2021© EkBazaar.com, All rights reserved.
+                             Copyright 2021© ${params.link.includes('onebazaar') ? 'Onebazaar' : 'Ekbazaar'}.com, All rights reserved.
                         </td>
                     </tr>
                 </table>

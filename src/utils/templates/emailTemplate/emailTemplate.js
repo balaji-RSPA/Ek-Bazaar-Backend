@@ -214,7 +214,7 @@ exports.commonTemplate = (params) => {
                     <tr>
                         <td style="padding:40px 10px 20px 10px; width: 100%;font-size: 12px; font-family: sans-serif; line-height:18px; text-align: center; color: #888888;"
                             class="x-gmail-data-detectors">
-                             Copyright 2021© EkBazaar.com, All rights reserved.
+                             Copyright 2021© ${params.originOneFlag ? 'OneBazaar.com' :'EkBazaar.com'}, All rights reserved.
                         </td>
                     </tr>
                 </table>
