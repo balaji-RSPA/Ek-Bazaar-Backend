@@ -5,6 +5,9 @@ const {
   emailBody
 } = require('./emailBody');
 const {
+    emailLogo
+} = require('./emailLogo')
+const {
     imageURLS
 } = require('../../globalConstants')
 const {logo,facebook,twitter,linkedIn} = imageURLS;
@@ -197,10 +200,9 @@ exports.commonTemplate = (params) => {
                        width="100%" style="max-width: 680px;">
                     <tr>
                         <td style="padding: 25px 0; text-align: center">
-                            <img src=${logo} aria-hidden="true" width="108"
-                                 height="63" alt="logo"
-                                 border="0"
-                                 style="height: 45px; width: 199px; transform:scale(2); font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                                ${
+                                    emailLogo(params)
+                                }
                         </td>
                     </tr>
                 </table>

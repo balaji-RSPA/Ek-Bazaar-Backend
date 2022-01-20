@@ -99,7 +99,8 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
   }
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
-  logo: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",
+  logoEkb: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",
+  logoOne: "https://tradebazaarapi.tech-active.com/images/OneBazaar.png",
   emailVerified: "https://tradebazaarapi.tech-active.com/images/Unsubscribe.png",
   registrationthanks: "https://tradebazaarapi.tech-active.com/images/registrationthanks.png",
   otpverification: "https://tradebazaarapi.tech-active.com/images/passwordreset.png",

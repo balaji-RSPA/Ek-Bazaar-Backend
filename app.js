@@ -18,7 +18,7 @@ const Logger = require('./src/utils/logger');
 const config = require('./config/config')
 const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
-const { updatePriority, gujaratSellerData } = require('./src/controllers/web/testController')
+const { updatePriority, gujaratSellerData, getSellersList } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const { request } = require("./src/utils/request")
@@ -155,6 +155,17 @@ app.get("/gujaratSellerData", async function (req, res) {
   try {
     const result = await gujaratSellerData(req, res)
   } catch (error) { }
+  // res.send('Its delete records  live')
+});
+
+app.get("/getSellersList", async function (req, res) {
+  try {
+    const result = await getSellersList(req, res)
+    res.send(result);
+  } catch (error) { 
+    console.log(error, "getSellersList error");
+    res.send("Some thing went wrong!")
+  }
   // res.send('Its delete records  live')
 });
 

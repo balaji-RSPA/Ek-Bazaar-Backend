@@ -247,7 +247,7 @@ module.exports.createRFP = async (req, res, next) => {
           productDetails,
           name
         })
-        await sendEmailBuyer(email)
+        await sendEmailBuyer(email, url)
       }
       console.log(requestType , sellerDtl, ' rames h----------------')
       if (sellerDtl && sellerDtl.length && requestType === 1 /* && global.environment == "production"  && !oneBazaar*/) {
@@ -277,7 +277,7 @@ module.exports.createRFP = async (req, res, next) => {
       } else if (!sellerId && requestType === 2) {
 
         /* !oneBazaar && */ this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
-        await sendEmailBuyer(email)
+        await sendEmailBuyer(email,url)
         // const message = {
         //   from: MailgunKeys.senderMail,
         //   to: email,
@@ -405,7 +405,7 @@ module.exports.createRFP = async (req, res, next) => {
             productDetails,
             name
           })
-          await sendEmailBuyer(email)
+          await sendEmailBuyer(email,url)
         }
         if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment == "production" /* && !oneBazaar */) {
           // const sellerData = await getSellerProfile(sellerId)
@@ -433,7 +433,7 @@ module.exports.createRFP = async (req, res, next) => {
         } else if (!sellerId && requestType === 2) {
 
           /* !oneBazaar && */ this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
-          await sendEmailBuyer(email)
+          await sendEmailBuyer(email,url)
           // await sendSingleMail(message)
           // await sendSMS(mobile, RFQOneToOneBuyer())
           // this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
@@ -579,8 +579,8 @@ module.exports.getRFPS = async (req, res) => {
   }
 };
 
-async function sendEmailBuyer(email) {
-  let messagecontent = RfpEnquirySend();
+async function sendEmailBuyer(email,url) {
+  let messagecontent = RfpEnquirySend({url});
   const message = {
     from: MailgunKeys.senderMail,
     to: email,

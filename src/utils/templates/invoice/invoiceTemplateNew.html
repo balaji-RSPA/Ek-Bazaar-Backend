@@ -347,16 +347,15 @@
                   margin-bottom: 5px;
                 "
               >
-                GVS81 Media Private Limited
+              {{details.sellerDetails.name}}
               </p>
               <p class="billingAddress">
-                C - 102, Renaissance Park 1, <br>Subramanya Nagar, <br>Next to Bank of
-                India,
+                {{details.sellerDetails.address}}
               </p>
-              <p class="billingAddress">Malleswaram (West)</p>
-              <p class="billingAddress">Bengaluru</p>
-              <p class="billingAddress">560055 Karnataka</p>
-              <p class="billingAddress">India</p>
+              <!-- <p class="billingAddress">Malleswaram (West)</p> -->
+              <!-- <p class="billingAddress">Bengaluru</p> -->
+              <p class="billingAddress">{{details.sellerDetails.pincode}}</p>
+              <!-- <p class="billingAddress">India</p> -->
               <p class="billingAddress">GSTIN 29AAICG3229J1ZC</p>
             </div>
 
@@ -397,7 +396,7 @@
                   class="new_table_style"
                   style="border: 1px solid #ddd; border-collapse: collapse"
                 >
-                  P202117
+                {{details.orderData.invoiceNumber}}
                 </td>
               </tr>
               <tr>
@@ -415,7 +414,7 @@
                   class="new_table_style"
                   style="border: 1px solid #ddd; border-collapse: collapse"
                 >
-                  29/12/2021
+                {{details.orderData.invoiceDate}}
                 </td>
               </tr>
             </table>
@@ -430,7 +429,7 @@
                 >
                   Service Period
                 </p>
-                <p class="billingAddress">11/11/2021 to 09/02/2022</p>
+                <p class="billingAddress">{{details.orderData.startDate}} to {{details.orderData.expireDate}}</p>
               </div>
             
 
@@ -465,27 +464,27 @@
               <br>SAC: 998313
             </td>
 
-            <td class="text-right">
+            <td class="text-center">
              <p style="margin-top: -21px;"> {{details.orderData.currency}} {{details.orderData.amount}}</p>
             </td>
-            <td class="text-right"><p style="margin-top: -21px; margin-bottom: 0px;">1</p></td>
+            <td class="text-center"><p style="margin-top: -21px; margin-bottom: 0px;">1</p></td>
             <!-- <td class="text-right">
             <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.amount}}</p>
             </td> -->
            <p style="margin-top: -21px;"> {{#if details.orderData.currencyFlag}} {{#if
             details.orderData.igstAmount}}</p>
-            <td class="text-right">
+            <td class="text-center">
              <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.igstAmount}}</p> 
             </td>
             {{else}}
-            <td class="text-right">
+            <td class="text-center">
              <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.cgstAmount}}</p>
             </td>
-            <td class="text-right">
+            <td class="text-center">
             <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.sgstAmount}}</p>
             </td>
             {{/if}} {{/if}}
-            <td class="text-right">
+            <td class="text-center">
            <p style="margin-top: -21px; margin-bottom: 0px;">{{details.orderData.currency}} {{details.orderData.orderTotal}}</p> 
             </td>
           </tr>
@@ -522,7 +521,7 @@
         </tbody>
       </table>
       <div class="words">
-        <p>Amounts in Words : {{details.orderData.currencyInWords}} Indian Rupees</p>
+        <p>Amounts in Words : {{details.orderData.currencyInWords}}</p>
       </div>
       <!-- <div class="sign">
         <p>Authority Signature</p>
