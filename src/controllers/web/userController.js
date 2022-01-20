@@ -599,7 +599,7 @@ module.exports.updateUser = async (req, res) => {
         let message = {
           from: MailgunKeys.senderMail,
           to: user.email,
-          subject: "Ekbazaar email verification",
+          subject: url.includes('onebazaar') ? "Onebazaar email verification" : "Ekbazaar email verification",
           html: template,
         };
         sendSingleMail(message);
@@ -984,7 +984,7 @@ exports.verificationEmail = async (req, res) => {
       let message = {
         from: MailgunKeys.senderMail,
         to: email,
-        subject: "Ekbazaar email verification",
+        subject: url.includes('onebazaar') ? "Onebazaar email verification" : "Ekbazaar email verification",
         html: template,
       };
       sendSingleMail(message);
