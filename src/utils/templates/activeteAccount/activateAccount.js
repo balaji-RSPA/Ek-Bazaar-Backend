@@ -3,6 +3,7 @@ const {
 } = require('../../globalConstants')
 const {
     logo,
+    logoOne,
     registerationFlow,
     facebook,
     twitter,
@@ -199,7 +200,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                        width="100%" style="max-width: 680px;">
                     <tr>
                         <td style="padding: 42px 0; text-align: center">
-                            <img src=${logo} aria-hidden="true" width="108"
+                            <img src=${link.includes('onebazaar') ? logo : logoOne} aria-hidden="true" width="108"
                                  height="63" alt="logo"
                                  border="0"
                                  style = "height: 45px; width: 199px; transform:scale(2); font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
@@ -221,7 +222,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                         <tbody>
                         <tr>
                             <td style="padding: 40px 40px 20px 40px; text-align: center; font-family:'Poppins', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; color:#2e343b; font-size:20px; font-weight:600; letter-spacing:0.07em; line-height:2em;">
-                            Ekbazaar Trade- Email verification
+                            ${link.includes('onebazaar')? 'Onebazaar': 'Ekbazaar'} Trade- Email verification
                             </td>
                         </tr>
                         <tr>
@@ -280,7 +281,7 @@ exports.activateAccount = (link) => new Promise((resolve, reject) => {
                     <tr>
                         <td style="padding:40px 10px 20px 10px; width: 100%;font-size: 12px; font-family: sans-serif; line-height:18px; text-align: center; color: #888888;"
                             class="x-gmail-data-detectors">
-                             Copyright 2021© EkBazaar.com, All rights reserved.
+                             Copyright 2021© ${link.includes('onebazaar')? 'Onebazaar.com': 'Ekbazaar.com'}, All rights reserved.
                         </td>
                     </tr>
                 </table>

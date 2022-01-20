@@ -599,7 +599,7 @@ module.exports.updateUser = async (req, res) => {
         let message = {
           from: MailgunKeys.senderMail,
           to: user.email,
-          subject: "Ekbazaar email verification",
+          subject: url.includes('onebazaar') ? "Onebazaar email verification" : "Ekbazaar email verification",
           html: template,
         };
         sendSingleMail(message);
@@ -874,7 +874,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url + '/signin' });
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url });
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
@@ -984,7 +984,7 @@ exports.verificationEmail = async (req, res) => {
       let message = {
         from: MailgunKeys.senderMail,
         to: email,
-        subject: "Ekbazaar email verification",
+        subject: url.includes('onebazaar') ? "Onebazaar email verification" : "Ekbazaar email verification",
         html: template,
       };
       sendSingleMail(message);
