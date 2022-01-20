@@ -284,7 +284,7 @@ module.exports.RfpEnquiryReceived = (params) => {
   }
   return message;
 }
-module.exports.RfpEnquirySend = () => {
+module.exports.RfpEnquirySend = (params) => {
   let message;
   if (!params.url.includes('onebazaar')) {
     // For EKB
@@ -339,7 +339,7 @@ module.exports.planChangedEmail = (params) => {
   }
   return message;
 }
-module.exports.listingRemovalReq = () => {
+module.exports.listingRemovalReq = (params) => {
   let message;
   if (!params.url.includes('onebazaar')) {
     message = {
