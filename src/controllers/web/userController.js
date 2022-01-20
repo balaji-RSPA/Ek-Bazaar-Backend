@@ -874,7 +874,7 @@ module.exports.updateNewPassword = async (req, res) => {
     }
     const user = await updateUser({ _id: userID }, { password });
     if (user && user.email && user.name) {
-      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url + '/signin' });
+      const updatePasswordMsg = passwordUpdate({ name: user.name, url: url });
       const message = {
         from: MailgunKeys.senderMail,
         to: user.email,
