@@ -116,7 +116,7 @@ module.exports.invoiceContent = (params) => {
     message = {
       title: 'Ekbazaar Trade- Invoice',
       image: invoice,
-      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}`:'You'} has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
+      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}` : 'You'} has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
       <p style="text-align: left">Plan       : ${params.plan}</p>
       <p style="text-align: left">Valid from : ${moment(params.from).format("Do MMM YYYY")}</p>
       <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
@@ -130,7 +130,7 @@ module.exports.invoiceContent = (params) => {
     message = {
       title: 'Onebazaar Trade- Invoice',
       image: invoice,
-      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}`:'You'} has been successfully charged $ ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
+      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}` : 'You'} has been successfully charged $ ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
       <p style="text-align: left">Plan       : ${params.plan}</p>
       <p style="text-align: left">Valid from : ${moment(params.from).format("Do MMM YYYY")}</p>
       <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
@@ -204,7 +204,7 @@ module.exports.planExpiring = (params) => {
         originOneFlag: false
       }
     } else if (params.dayDiff && params.isTrial === false) {
-      
+
       message = {
         title: 'Ekbazaar Trade- Plan About To Expire',
         image: planExpiring,
@@ -349,7 +349,7 @@ module.exports.listingRemovalReq = (params) => {
       body: `<p>Your request for removing your product listing has been received. We shall contact you shortly in this regard and take necessary action.</p>`,
       originOneFlag: false
     }
-  }else {
+  } else {
     // FOR ONE
     message = {
       title: 'Onebazaar Trade- Listing Removal Request',
@@ -362,11 +362,25 @@ module.exports.listingRemovalReq = (params) => {
   return message;
 }
 module.exports.partialSellerRegistration = (params) => {
-  let message = {
-    title: 'Ekbazaar Trade - Incomplete Registration',
-    body: `<p>Please complete your registration in-order to receive business enquiries from buyers.</p>`,
-    buttonName: 'Complete your registration',
-    buttonLink: `${params.url}/seller/seller-central/bussiness-profile`,
+  let message;
+  if (params.client === 'ekbazaar') {
+    // FOR EKB
+    message = {
+      title: 'Ekbazaar Trade - Incomplete Registration',
+      body: `<p>Please complete your registration in-order to receive business enquiries from buyers.</p>`,
+      buttonName: 'Complete your registration',
+      buttonLink: `${params.url}/seller/seller-central/bussiness-profile`,
+      originOneFlag: false
+    }
+  }else {
+    // FOR ONE
+    message = {
+      title: 'Onebazaar Trade - Incomplete Registration',
+      body: `<p>Please complete your registration in-order to receive business enquiries from buyers.</p>`,
+      buttonName: 'Complete your registration',
+      buttonLink: `${params.url}/seller/seller-central/bussiness-profile`,
+      originOneFlag: true
+    }
   }
   return message;
 }

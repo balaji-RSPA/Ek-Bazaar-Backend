@@ -289,9 +289,11 @@ module.exports.addUser = async (req, res, next) => {
       user,
       _user,
       url,
+      _base
     } = req.body;
     console.log("🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
+    const client = _base.includes('onebazaar') || _base.includes('8086') ? 'onebazaar' : 'ekbazaar';
 
     req.body.userId = user._id;
     const buyerData = {
@@ -305,7 +307,8 @@ module.exports.addUser = async (req, res, next) => {
         country: user && user.country || null,
         state: user && user.state || null,
       },
-      isPartialyRegistor: true
+      isPartialyRegistor: true,
+      client
     };
     const sellerData = {
       email: email ? email : user.email,
@@ -317,7 +320,8 @@ module.exports.addUser = async (req, res, next) => {
         country: user && user.country || null,
         state: user && user.state || null,
       },
-      isPartialyRegistor: true
+      isPartialyRegistor: true,
+      client
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
