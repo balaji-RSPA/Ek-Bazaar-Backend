@@ -672,7 +672,7 @@ module.exports.createStripePayment = async (req, res) => {
 module.exports.planActivation = async (req, res) => {
 
     try {
-        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency } = req.body
+        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, paymentMethod } = req.body
         console.log("🚀 ~ file: paymentController.js ~ line 199 ~ module.exports.stripe= ~  req.body", req.body)
         const url = req.get('origin');
         const dateNow = new Date();
@@ -755,7 +755,7 @@ module.exports.planActivation = async (req, res) => {
                         const paymentJson = {
                             ...userData,
                             paymentResponse: paymentResponse,
-                            // paymentDetails: JSON.parse(body),
+                            paymentDetails: paymentMethod,
                             paymentSuccess: true
                         }
                         const _p_details = {

@@ -356,7 +356,9 @@
               <!-- <p class="billingAddress">Bengaluru</p> -->
               <p class="billingAddress">{{details.sellerDetails.pincode}}</p>
               <!-- <p class="billingAddress">India</p> -->
+              {{#if details.sellerDetails.gstNo}}
               <p class="billingAddress">GSTIN {{details.sellerDetails.gstNo}}</p>
+              {{/if}}
             </div>
 
             <div class="card" style="margin-top: 15px; margin-bottom: 40px">

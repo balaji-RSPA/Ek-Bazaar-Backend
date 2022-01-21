@@ -78,7 +78,7 @@ module.exports.passwordUpdate = (params) => {
       image: passwordUpdated,
       body: `<p><strong>Hello ${params.name},<strong></p><p>Your password has been changed recently. Please use the updated password to login to your account.</p>`,
       buttonName: 'LOGIN TO YOUR ACCOUNT',
-      buttonLink: `${params.url}`,
+      buttonLink: `${params.url}/signin`,
       extracontent1: `<p style="text-align:center;margin-top: -13px;">If you did not make the change. <a href='${params.url}/contact'>Please contact support.</a></p>`,
       originOneFlag: true
     }
@@ -130,7 +130,7 @@ module.exports.invoiceContent = (params) => {
     message = {
       title: 'Onebazaar Trade- Invoice',
       image: invoice,
-      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}`:'You'} has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
+      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}`:'You'} has been successfully charged $ ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
       <p style="text-align: left">Plan       : ${params.plan}</p>
       <p style="text-align: left">Valid from : ${moment(params.from).format("Do MMM YYYY")}</p>
       <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
