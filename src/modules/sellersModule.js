@@ -1700,7 +1700,6 @@ const SendSMSNotifc = async (el) => {
 const SendNotifc = async (el) => {
   try {
     const { NODE_ENV } = process.env
-    el.client === "ekbazaar"
     const siteURL = el.client === "ekbazaar"
                           ? NODE_ENV === "production" 
                               ? "https://trade.ekbazaar.com" : "https://tradebazaar.tech-active.com"
