@@ -108,3 +108,48 @@
 {"level":"info","message":"Listening:8070","timestamp":"2021-12-14T04:05:40.365Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2022-01-10T05:21:47.409Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2022-01-10T05:28:47.923Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-19T06:46:11.817Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-19T06:49:20.914Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-19T06:51:30.645Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-19T06:53:40.070Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-19T06:54:13.620Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-19T06:55:59.361Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-19T06:56:16.400Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-19T07:00:09.488Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-24T05:25:18.108Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-24T05:26:18.458Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-24T05:27:30.984Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-25T08:36:14.118Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-25T08:36:25.561Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-25T08:47:09.874Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-25T08:49:40.374Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T11:18:36.149Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T11:42:09.033Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T16:29:16.826Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T16:36:41.713Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T16:56:47.210Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T16:59:57.630Z"}
+{"level":"error","message":"totalOfferCount is not defined","timestamp":"2022-01-28T17:00:13.395Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T17:00:38.846Z"}
+{"level":"error","message":"totalOfferCount is not defined","timestamp":"2022-01-28T17:01:00.028Z"}
+{"level":"error","message":"totalOfferCount is not defined","timestamp":"2022-01-28T17:05:57.581Z"}
+{"date":"Fri Jan 28 2022 17:08:05 GMT+0000 (Coordinated Universal Time)","error":{},"exception":true,"level":"error","message":"uncaughtException: Unexpected token '}'\n/home/dev/public_html/trade-api/src/crons/cron.js:1025\n                                    <h4>Total Offers: <span>${/* totalOfferCount */}</span></h4> \n                                                                                   ^\n\nSyntaxError: Unexpected token '}'\n    at Module._compile (internal/modules/cjs/loader.js:895:18)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/app.js:19:97)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)\n    at internal/main/run_main_module.js:17:11","os":{"loadavg":[0.05615234375,0.0439453125,0.0029296875],"uptime":17385633},"process":{"argv":["/usr/bin/node","/home/dev/public_html/trade-api/app.js"],"cwd":"/home/dev/public_html/trade-api","execPath":"/usr/bin/node","gid":1000,"memoryUsage":{"external":19672247,"heapTotal":38084608,"heapUsed":22362000,"rss":75169792},"pid":6424,"uid":1000,"version":"v12.14.0"},"stack":"/home/dev/public_html/trade-api/src/crons/cron.js:1025\n                                    <h4>Total Offers: <span>${/* totalOfferCount */}</span></h4> \n                                                                                   ^\n\nSyntaxError: Unexpected token '}'\n    at Module._compile (internal/modules/cjs/loader.js:895:18)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Module.require (internal/modules/cjs/loader.js:852:19)\n    at require (internal/modules/cjs/helpers.js:74:18)\n    at Object.<anonymous> (/home/dev/public_html/trade-api/app.js:19:97)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)\n    at internal/main/run_main_module.js:17:11","timestamp":"2022-01-28T17:08:05.605Z","trace":[{"column":18,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":895,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":19,"file":"internal/modules/cjs/loader.js","function":"Module.require","line":852,"method":"require","native":false},{"column":18,"file":"internal/modules/cjs/helpers.js","function":"require","line":74,"method":null,"native":false},{"column":97,"file":"/home/dev/public_html/trade-api/app.js","function":null,"line":19,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module.runMain","line":1047,"method":"runMain","native":false},{"column":11,"file":"internal/main/run_main_module.js","function":null,"line":17,"method":null,"native":false}]}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T17:12:43.665Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T17:17:58.061Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T17:36:49.783Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-28T17:42:42.944Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-31T04:59:30.298Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-31T07:04:25.911Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-01-31T07:05:11.892Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T09:15:13.710Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T09:23:27.408Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T09:47:19.266Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T10:32:31.805Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T10:34:10.306Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T10:43:05.821Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T11:29:44.069Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T12:44:31.376Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-02T13:29:04.490Z"}
+{"level":"error","message":"TypeError: this.sellerType is null :\n@:1:15\n","timestamp":"2022-02-03T04:37:29.919Z"}
+{"level":"error","message":"TypeError: this.sellerType is null :\n@:1:15\n","timestamp":"2022-02-03T05:10:18.776Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-02-03T05:12:28.578Z"}
