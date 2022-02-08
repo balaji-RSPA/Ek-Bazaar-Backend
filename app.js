@@ -26,6 +26,7 @@ const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVarai
 const { deleteTestData, uploadInternationalCity, getCityList, deleteTestDataRemaining, deleteTestDataChat } = require('./src/controllers/web/testController')
 const { uploadOnBoardSeller, moveSellerToNewDB, getSellerMasterProducts, uploadOnBoardBuyers } = require('./src/controllers/web/sellerDataMove')
 const { uploadChatLanguageCategory } = require('./src/controllers/web/languageTempateController')
+const { addPlanManully } = require('./src/controllers/web/paymentController')
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 
 // const { suggestions} = require("./elasticsearch-mapping");
@@ -104,6 +105,16 @@ app.get("/send-daily-report", async function (req, res) {
     return respError(res, "Something went wrong try again!");
   }
 });
+
+app.get("/add-plan", async function (req, res) {
+  try {
+    let status = addPlanManully(req,res)
+    return respSuccess(res, { payment: true }, 'subscription activated successfully!')
+    
+  } catch (err) {
+    console.log(error)
+  }
+})
 
 
 app.get("/api/logged", async (req, res, next) => {

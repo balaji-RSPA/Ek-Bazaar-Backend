@@ -48,7 +48,6 @@
         "node-machine-id": "^1.1.12",
         "nodemailer": "^6.4.17",
         "nodemailer-mailgun-transport": "^2.0.2",
-        "nodemon": "^2.0.15",
         "papaparse": "^5.3.1",
         "pdf-creator-node": "^1.4.2",
         "pluralize": "^8.0.0",
@@ -61,5 +60,8 @@
         "translate-google-api": "^1.0.4",
         "twilio": "^3.66.0",
         "winston": "^3.3.3"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.15"
     }
 }

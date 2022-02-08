@@ -314,6 +314,9 @@ const sellersSchema = new Schema(
     },
     isPartialyRegistor: {
       type: Boolean
+    },
+    client: {
+      type: String
     }
   },
   {
