@@ -48,7 +48,8 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             city: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.city.name) || '',
             state: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.state.name) || '',
             country: seller && seller.location && seller.location.country && capitalizeFirstLetter(seller.location.country.name) || '',
-            gstLable: seller && seller.sellerType && seller.sellerType.length && seller.sellerType[0]["name"] === "farmer" ? "Aadhar Number" : "GST Number",
+            showGst: seller && seller.sellerType && seller.sellerType.length && seller.sellerType[0]["name"] === "farmer" ? false : true,
+            gstLable: seller && seller.sellerType && seller.sellerType.length && seller.sellerType[0]["name"] === "farmer" ? "Aadhar Number" : "GSTIN",
             gstNo: orderDetails && orderDetails.gstNo || '',
             address: orderDetails && orderDetails.address || '',
             pincode: orderDetails && orderDetails.pincode || '',
@@ -672,15 +673,13 @@ module.exports.createStripePayment = async (req, res) => {
 module.exports.planActivation = async (req, res) => {
 
     try {
-        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, cardData } = req.body
+        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, cardData,paymentMethod } = req.body
 
         console.log(req.body, "req.bodyreq.body");
 
         const cardLastDigits = cardData.last4;
 
-        console.log(cardLastDigits, "cardLastDigitscardLastDigits");
-
-        console.log(paymentResponse, "paymentResponsepaymentResponse");
+        console.log(cardLastDigits, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",paymentMethod);
 
         console.log("🚀 ~ file: paymentController.js ~ line 199 ~ module.exports.stripe= ~  req.body", req.body)
         const url = req.get('origin');
@@ -764,7 +763,7 @@ module.exports.planActivation = async (req, res) => {
                         const paymentJson = {
                             ...userData,
                             paymentResponse: paymentResponse,
-                            // paymentDetails: JSON.parse(body),
+                            paymentDetails: paymentMethod,
                             paymentSuccess: true
                         }
                         const _p_details = {

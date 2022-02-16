@@ -1700,8 +1700,12 @@ const SendSMSNotifc = async (el) => {
 const SendNotifc = async (el) => {
   try {
     const { NODE_ENV } = process.env
-    const siteURL = NODE_ENV === "production" ? "https://trade.ekbazaar.com" : "https://tradebazaar.tech-active.com"
-    const template = await partialSellerRegistration({ url: siteURL });
+    const siteURL = el.client === "ekbazaar"
+                          ? NODE_ENV === "production" 
+                              ? "https://trade.ekbazaar.com" : "https://tradebazaar.tech-active.com"
+                          : NODE_ENV === "production"
+                              ? "https://trade.onebazaar.com" : "https://tradeonebazaar.tech-active.com"    
+    const template = await partialSellerRegistration({ url: siteURL, client: el.client });
     const message = {
       from: MailgunKeys.senderMail,
       to: el.email,

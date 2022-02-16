@@ -612,7 +612,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
 
         // const from_a_friend_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').populate('sellerProductId').select(selectFileds).lean().exec()
 
-        const from_a_friend_count = await getSellerAllDetails({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday, $lt: date } })
+        const from_a_friend_count = await getSellerAllDetails({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "From a friend" }], createdAt: { $gte: dateyesterday/* , $lt: date */ } })
         from_a_friend_count && from_a_friend_count.length && sellerrawData.push(...from_a_friend_count)
 
         // const desh_or_vyapar_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */ { "hearingSource.source": "Desh aur Vyapar Rajasthan Newspaper " }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').populate('sellerProductId').select(selectFileds).lean().exec()
@@ -634,7 +634,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
 
         // const hearingSourseNull = await Sellers.find({ $and: [{ "hearingSource.referralCode": { $exists: true } }, { "hearingSource.source": null }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').populate('sellerProductId').select(selectFileds).lean().exec()
 
-        const hearingSourseNull = await getSellerAllDetails({ $and: [{ "hearingSource.referralCode": { $exists: true } }, { "hearingSource.source": null }], createdAt: { $gte: dateyesterday, $lt: date } })
+        const hearingSourseNull = await getSellerAllDetails({ $and: [{ "hearingSource.referralCode": null }, { "hearingSource.source": null },{ $where: "this.sellerType.length > 0" }], createdAt: { $gte: dateyesterday/* , $lt: date */ } })
         hearingSourseNull && hearingSourseNull.length && sellerrawData.push(...hearingSourseNull)
         // console.log(JSON.stringify(sellerrawData), 'llllllllllllllllllllll')
         // return true
@@ -723,7 +723,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         )
         const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' }, { email: 'sowjanya@ekbazaar.com', name: 'Sowjanya' }, { email: 'kavya@active.agency', name: 'Kavya Gannu' }, { email: 'ravinder@active.agency', name: 'Ravinder' } ]
 
-        // const recipients = [{ email: 'ravinder@active.agency', name: 'Ravinder' } ]
+        // const recipients = [{ email: 'suman@active.agency', name: 'Suman' } ]
 
         let recipientVars = {};
         recipients.forEach((recipient, index) => {

@@ -289,9 +289,11 @@ module.exports.addUser = async (req, res, next) => {
       user,
       _user,
       url,
+      _base
     } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
+    console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
+    const client = _base.includes('onebazaar') || _base.includes('8086') ? 'onebazaar' : 'ekbazaar';
 
     req.body.userId = user._id;
     const buyerData = {
@@ -305,7 +307,8 @@ module.exports.addUser = async (req, res, next) => {
         country: user && user.country || null,
         state: user && user.state || null,
       },
-      isPartialyRegistor: true
+      isPartialyRegistor: true,
+      client
     };
     const sellerData = {
       email: email ? email : user.email,
@@ -317,7 +320,8 @@ module.exports.addUser = async (req, res, next) => {
         country: user && user.country || null,
         state: user && user.state || null,
       },
-      isPartialyRegistor: true
+      isPartialyRegistor: true,
+      client
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -550,7 +554,7 @@ module.exports.updateUser = async (req, res) => {
         countryCode: (mobile && Boolean(mobile.countryCode) && mobile.countryCode) || (Boolean(countryCode) && countryCode) || __usr.countryCode
       }],
       isPartialyRegistor: false,
-      hearingSource,
+      hearingSource: _seller.hearingSource,
       ..._buyer,
     };
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {

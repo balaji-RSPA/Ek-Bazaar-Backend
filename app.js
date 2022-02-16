@@ -160,9 +160,11 @@ app.get("/gujaratSellerData", async function (req, res) {
 
 app.get("/getSellersList", async function (req, res) {
   try {
+    console.log("getSellersList start++++")
     const result = await getSellersList(req, res)
-    res.send(result);
-  } catch (error) { 
+    console.log("getSellersList end++++")
+    res.send("seller list is genrated");
+  } catch (error) {
     console.log(error, "getSellersList error");
     res.send("Some thing went wrong!")
   }
