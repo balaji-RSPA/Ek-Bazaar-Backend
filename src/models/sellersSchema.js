@@ -317,6 +317,10 @@ const sellersSchema = new Schema(
     },
     client: {
       type: String
+    },
+    isSubscription: {
+      type: Boolean,
+      default: false
     }
   },
   {

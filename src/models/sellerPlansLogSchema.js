@@ -29,6 +29,10 @@ const sellerPlanLogSchema = new Schema({
     planDetails: {
         type: Object,
         // required: true
+    },
+    isSubscription: {
+        type: Boolean,
+        default: false
     }
 }, {
     versionKey: false,

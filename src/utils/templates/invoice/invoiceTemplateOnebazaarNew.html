@@ -350,10 +350,12 @@
               <p class="billingAddress">
                 {{details.sellerDetails.address}}
               </p>
-              <!-- <p class="billingAddress">Malleswaram (West)</p>
-              <p class="billingAddress">Bengaluru</p>
-              <p class="billingAddress">560055 Karnataka</p>
-              <p class="billingAddress">India</p> -->
+              <!-- <p class="billingAddress">Malleswaram (West)</p> -->
+              <!-- <p class="billingAddress">Bengaluru</p> -->
+              {{#if details.userDetails.pincode}}
+              <p class="billingAddress">{{details.userDetails.pincode}}</p>
+              {{/if}}
+              <p class="billingAddress">{{details.orderData.country}}</p> 
             </div>
 
             <div class="card" style="margin-top: 15px; margin-bottom: 40px">
