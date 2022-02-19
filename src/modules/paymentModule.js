@@ -20,3 +20,17 @@ exports.updatePayment = (query, data) =>
             })
             .catch(reject)
     })
+
+exports.findPayment = (query) => 
+    new Promise((resolve,reject) => {
+        Payments.findOne(query)
+            // .populate('orderId')
+            .populate({
+                path: 'orderId',
+                model: 'orders'
+            })
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })    

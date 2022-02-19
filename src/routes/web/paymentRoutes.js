@@ -11,4 +11,7 @@ router.post('/cancleSubscription', payment.cancleSubscription)
 router.post('/stripe/charge', payment.createStripePayment)
 router.post('/planActivation/:paymentId', payment.planActivation)
 
+router.post('/subscriptionPending', payment.pendingSubWebHook)
+router.post('/subscriptionHalted', payment.subscriptionHalted)
+router.post('/subscriptionCharged', payment.subscriptionCharged)
 module.exports = router
