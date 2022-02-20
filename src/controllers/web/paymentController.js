@@ -8,7 +8,7 @@ const request = require('request');
 const moment = require('moment')
 const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
-const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber } = require("../../modules");
+const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
 const { MailgunKeys, razorPayCredentials, stripeApiKeys } = require('../../utils/globalConstants')
 const stripe = require("stripe")(stripeApiKeys.secretKey);
@@ -37,6 +37,7 @@ const { getAllSellerTypes } = category
 const { updateSellerProducts } = sellerProducts
 const { updateMasterBulkProducts } = mastercollections
 const { getInvoiceNumber, updateInvoiceNumber, addInvoiceNumber } = InvoiceNumber
+const { addPaymentData } = PaymentData
 const isProd = process.env.NODE_ENV === 'production';
 const toWords = new ToWords();
 const crypto = require("crypto");
@@ -703,7 +704,7 @@ module.exports.createRazorPayOrder = async (req, res) => {
 module.exports.captureRazorPayPayment = async (req, res) => {
 
     try {
-        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, isSubscription } = req.body
+        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, isSubscription, paymentId, verifyId } = req.body
         console.log("🚀 ~ file: paymentController.js ~ line 199 ~ module.exports.captureRazorPayPayment= ~  req.body", req.body)
         const url = req.get('origin');
         const dateNow = new Date();
@@ -775,18 +776,22 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                     url: `https://${razorPayCredentials.key_id}:${razorPayCredentials.key_secret}@api.razorpay.com/v1/payments/${req.params.paymentId}`
                 }
 
-                const requestApi = /* isSubscription ? fetchPayment : */ capturePayment
+                const requestApi = isSubscription ? fetchPayment : capturePayment
 
                 request(requestApi, async function (error, response, body) {
                     try {
                         console.log('Status:', response.statusCode);
                         // console.log('Headers:', JSON.stringify(response.headers));
-                        console.log('Response:', body);
+                        const testbody = JSON.parse(body)
+                        console.log('Response:', testbody);
+                        console.log('Response111111111111:', testbody.status);
                         const userData = {
                             userId: seller.userId,
                             sellerId: seller._id,
                         }
-                        if (response.statusCode === 200) {
+                        // if (response.statusCode === 200) {
+                        if (!isSubscription && response.statusCode === 200 || isSubscription && response.statusCode === 200 && (testbody.status === 'authorized' || testbody.status === 'captured')){
+                        
                             const invoiceNumner = await getInvoiceNumber({ id: 1 })
                             const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
                             let planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
@@ -1051,6 +1056,58 @@ module.exports.captureRazorPayPayment = async (req, res) => {
         console.log(error)
         respError(error)
 
+    }
+}
+
+module.exports.captureRazorPayPaymentTwo = async (req, res) => {
+    try{
+        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, isSubscription, paymentId, verifyId } = req.body;
+        const url = req.get('origin');
+        
+        const data = {
+            sellerId,
+            subscriptionId,
+            orderDetails,
+            userId,
+            paymentResponse,
+            paymentId,
+            isSubscription,
+            originUrl: url,
+            purchagId: verifyId,
+            currency
+        }
+
+        const resVerifyId = isSubscription ? paymentResponse.razorpay_subscription_id : paymentResponse.razorpay_order_id
+
+        let body;
+        if (isSubscription){
+            body = paymentResponse.razorpay_payment_id + "|" + verifyId
+        }else {
+            body = verifyId + "|" + paymentResponse.razorpay_payment_id
+        }
+
+        let crypto = require("crypto");
+        let expectedSignature = crypto.createHmac('sha256', razorPayCredentials.key_secret)
+            .update(body.toString())
+            .digest('hex');
+
+        if (expectedSignature === paymentResponse.razorpay_signature){
+            const responce = await addPaymentData(data);
+            return respSuccess(res, { payment: true }, 'subscription activated successfully!')
+        }
+
+    } catch(error){
+        console.log(error)
+        respError(error)
+    }
+}
+
+module.exports.paymentCapture = async (req, res) => {
+    try{
+        console.log(req.body,"LLLLLLLLLLLLLLLLLLLLLLLLL");
+    }catch (error){
+        console.log(error)
+        respError(error)
     }
 }
 
