@@ -614,6 +614,17 @@ module.exports.subscriptionCharged = async (req, res) => {
     }
 }
 
+module.exports.paymentCaptured = async (req, res) => {
+    try{
+        console.log("🚀 ~ file: paymentController.js ~ line 618 ~ module.exports.paymentCaptured= ~ req", req.body)
+        
+
+        res.status(200).json({status:'ok'})
+    }catch(error){
+        console.log(error);
+    }
+}
+
 module.exports.cancleSubscription = async (req, res) => {
     try {
         const { OrderId } = req.body
