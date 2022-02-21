@@ -90,10 +90,9 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
     // key_secret: 'kxHFfzePUsb5PeaDHP5QxmPO',
 
     // test subramanya
-    // key_id: 'rzp_test_UZ9n6fsg5YF5wE',
-    // key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
-    key_id: 'rzp_live_CTVuq0QYf0mDPH',
-    key_secret: 'KOY2qN10NCtcbgZmtpq87wOW',
+    key_id: 'rzp_test_UZ9n6fsg5YF5wE',
+    key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
+
 
     //tech active
     // key_id: 'rzp_test_7xMhKwGh9PRlRA',

@@ -21,6 +21,7 @@ const News = require('./newsModule');
 const Commodity = require('./commodityModule');
 const LanguageTemplate = require('./languageTemplateModule')
 const CurrencyConvrter = require('./currencyConverterModule')
+const PaymentData = require('./paymentDataModule')
 
 module.exports = {
     location,
@@ -45,5 +46,6 @@ module.exports = {
     News,
     Commodity,
     LanguageTemplate,
-    CurrencyConvrter
+    CurrencyConvrter,
+    PaymentData
 }
