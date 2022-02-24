@@ -614,12 +614,23 @@ module.exports.subscriptionCharged = async (req, res) => {
     }
 }
 
+module.exports.paymentCaptured = async (req, res) => {
+    try{
+        console.log("🚀 ~ file: paymentController.js ~ line 618 ~ module.exports.paymentCaptured= ~ req", req.body)
+        
+
+        res.status(200).json({status:'ok'})
+    }catch(error){
+        console.log(error);
+    }
+}
+
 module.exports.cancleSubscription = async (req, res) => {
     try {
         const { OrderId } = req.body
         const ordersQuery = { _id: OrderId }
         const result = await getOrderById(ordersQuery)
-        const raz_sub_id = result.paymentId.paymentResponse.razorpay_subscription_id;
+        const raz_sub_id = result && result.paymentId && result.paymentId.paymentResponse && result.paymentId.paymentResponse.razorpay_subscription_id;
         const sellerPlanQuery = { _id: result.sellerPlanId }
 
 
@@ -635,7 +646,7 @@ module.exports.cancleSubscription = async (req, res) => {
             const OrderUpdate = await updateOrder(ordersQuery, { canceled: true })
             const sellerPlansUpadte = await updateSellerPlan(sellerPlanQuery, { canceled: true })
 
-            respSuccess(res, req.body, "Subscription cancelled")
+            respSuccess(res, rzrResponce, "Subscription cancelled")
         }
     }catch(error){
         console.log(error)
@@ -683,7 +694,8 @@ module.exports.createRazorPayOrder = async (req, res) => {
                         total_count: parseInt(months),
                         customer_notify: 0,
                         notes: {
-                            key1: "Assiging Plan to user"
+                            source: "trade",
+                            planId
                         }
                     })
                     result.currency = currency;
