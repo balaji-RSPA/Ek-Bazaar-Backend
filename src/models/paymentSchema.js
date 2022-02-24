@@ -26,6 +26,10 @@ const paymentSchema = new Schema({
     paymentSuccess: {
         type: Boolean,
         default: null
+    },
+    isSubscription: {
+        type: Boolean,
+        default: false
     }
 }, {
     versionKey: false,

@@ -314,6 +314,13 @@ const sellersSchema = new Schema(
     },
     isPartialyRegistor: {
       type: Boolean
+    },
+    client: {
+      type: String
+    },
+    isSubscription: {
+      type: Boolean,
+      default: false
     }
   },
   {

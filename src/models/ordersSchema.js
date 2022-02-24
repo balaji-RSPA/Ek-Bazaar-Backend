@@ -171,6 +171,14 @@ const orderSchema = new Schema({
     },
     hearingSourceCode: {
         type: String
+    },
+    isSubscription: {
+        type: Boolean,
+        default: false
+    },
+    canceled: {
+        type: Boolean,
+        default: false
     }
 }, {
     versionKey: false,

@@ -6,7 +6,7 @@ const _ = require('lodash');
 const moment = require("moment");
 const { Sellers } = require('../models')
 const { sellers, mastercollections, sellerProducts, SMSQue, buyers, SellerPlans, QueEmails } = require('../modules')
-const { getAllSellers, getUpdatedSellerDetails, getSellerProductDetails, addProductDetails, getSellerAllDetails } = sellers
+const { getAllSellers, getUpdatedSellerDetails, getSellerProductDetails, addProductDetails, getSellerAllDetails, getSellerSomeData } = sellers
 const { updateMaster } = mastercollections
 const { getSellerProducts, updateSellerProducts } = sellerProducts
 const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue
@@ -14,6 +14,7 @@ const { getRFPData, updateRFP } = buyers
 const { bulkInserQemails, getQueEmail, updateQueEmails } = QueEmails
 const { getExpirePlans, updateSellerPlans, getAboutToexpirePlan } = SellerPlans
 const { sendSMS, sendBulkSMS } = require('../utils/utils')
+const {respSuccess,respError} = require('../utils/respHadler')
 const { planExpiry } = require('../utils/templates/smsTemplate/smsTemplate');
 const { commonTemplate } = require('../utils/templates/emailTemplate/emailTemplate');
 const { planExpired, planExpiring } = require('../utils/templates/emailTemplate/emailTemplateContent');
@@ -103,6 +104,7 @@ exports.getExpirePlansCron = async (req, res) =>
             if (result.length > 0) {
                 for (let index = 0; index < result.length; index++) {
                     const element = result[index];
+                    let isOnebazaar = element && element.currency === 'USD' ? true : false
                     sellerPlanIds.push(element._id)
                     // if (element && element.sellerId && element.sellerId.mobile && element.sellerId.mobile.length && element.sellerId.mobile[0]) {
                     //     const data2 = {
@@ -127,7 +129,7 @@ exports.getExpirePlansCron = async (req, res) =>
                             toEmail: element.sellerId.email,
                             name: element.sellerId.name,
                             subject: "Plan Expired",
-                            body: planExpired({ date: element.exprireDate, isTrial: element.isTrial, url: pricing })
+                            body: planExpired({ date: element.exprireDate, isTrial: element.isTrial, url: pricing,  isOnebazaar})
                         };
 
                         emailData.push(data)
@@ -345,6 +347,7 @@ exports.getAboutToExpirePlan = async (req, res) => {
         const result = await getAboutToexpirePlan();
         for (let index = 0; index < (result && result.length); index++) {
             const element = result[index];
+            let isOnebazaar = element && element.currency === 'USD' ? true : false
             if (element && element.sellerId && element.sellerId.mobile && element.sellerId.mobile.length && element.sellerId.mobile[0]) {
                 const data2 = {
                     sellerId: element._id,
@@ -370,7 +373,7 @@ exports.getAboutToExpirePlan = async (req, res) => {
                     toEmail: element.sellerId.email,
                     name: element.sellerId.name,
                     subject: "Plan About To Expire",
-                    body: planExpiring({ date: element.exprireDate, isTrial: element.isTrial, url: pricing, dayDiff }),
+                    body: planExpiring({ date: element.exprireDate, isTrial: element.isTrial, url: pricing, dayDiff,isOnebazaar }),
                 };
                 emailData.push(data)
             }
