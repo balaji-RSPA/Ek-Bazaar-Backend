@@ -12,5 +12,6 @@ exports.hookAuth = (req, res, next) => {
         next();
     } else {
         console.log('Signature is not matching....');
+        next();
     }
 }

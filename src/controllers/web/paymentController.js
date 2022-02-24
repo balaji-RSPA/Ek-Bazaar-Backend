@@ -10,7 +10,7 @@ const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
-const { MailgunKeys, razorPayCredentials, stripeApiKeys } = require('../../utils/globalConstants')
+const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl } = require('../../utils/globalConstants')
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
 const {
@@ -69,7 +69,7 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
             amount: plan && plan.totalPlanPrice,
             orderTotal: orderDetails && orderDetails.total.toFixed(2),
             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
-            startDate: plan && plan.isFreeTrialIncluded && plan.planValidFrom ? plan && moment(plan.planValidFrom).format('DD/MM/YYYY') : plan.next ? moment(new Date(plan.planValidFrom)).format('DD/MM/YYYY') :moment(new Date()).format('DD/MM/YYYY'),
+            startDate: plan && plan.isFreeTrialIncluded && plan.planValidFrom ? plan && moment(plan.planValidFrom).format('DD/MM/YYYY') : plan.next ? moment(new Date(plan.planValidFrom)).format('DD/MM/YYYY') : moment(new Date()).format('DD/MM/YYYY'),
             expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
             // subscriptionValidety: plan && moment(new Date(plan.subscriptionValidety)).format('DD/MM/YYYY'),
             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
@@ -287,11 +287,7 @@ async function CalculateGst(price, findPinCode, currency) {
     return { gstAmount, cgstAmount, sgstAmount, totalAmount }
 }
 
-/***
-* @Expected req.body From RazorPay for subscription.pending webhook
-
-    req.body = { "entity": "event", "account_id": "acc_BFQ7uQEaa7j2z7", "event": "subscription.pending", "contains": ["subscription"], "payload": { "subscription": { "entity": { "id": "sub_DEX6xcJ1HSW4CR", "entity": "subscription", "plan_id": "plan_BvrFKjSxauOH7N", "customer_id": "cust_C0WlbKhp3aLA7W", "status": "pending", "type": 2, "current_start": 1572892200, "current_end": 1575484200, "ended_at": null, "quantity": 1, "notes": { "Important": "Notes for Internal Reference" }, "charge_at": 1572978600, "start_at": 1570213800, "end_at": 1599244200, "auth_attempts": 1, "total_count": 12, "paid_count": 1, "customer_notify": true, "created_at": 1567689895, "expire_by": 1567881000, "short_url": null, "has_scheduled_changes": false, "change_scheduled_at": null, "source": "api", "offer_id": "offer_JHD834hjbxzhd38d", "remaining_count": 10 } } }, "created_at": 1567691026 }
-* */
+//Fired by Razorpay when the any Payment got failed while subscription duration.
 module.exports.pendingSubWebHook = async (req, res) => {
     try {
         const { payload } = req.body;
@@ -323,61 +319,64 @@ module.exports.pendingSubWebHook = async (req, res) => {
 
         respSuccess(res, { status: 'ok' }, "subscription.pending Recived")
     } catch (error) {
+        respError(error)
+    }
+}
+
+
+module.exports.pendingSubWebHook2 = async (req, res) => {
+    try {
+        const { payload } = req.body;
+        const { subscription } = payload;
+        const { entity } = subscription;
+        const subId = entity.id;
+        const isTrade = entity.notes.client === 'trade';
+        const isTender = entity.notes.client === 'tender';
+
+        if (isTrade) {
+            const paymentQuery = {
+                isSubscription: true,
+                "paymentResponse.razorpay_subscription_id": subId
+            }
+
+            const responce = await findPayment(paymentQuery);
+            console.log("🚀 ~ file: paymentController.js ~ line 302 ~ module.exports.pendingSubWebHook= ~ responce", responce)
+
+            const sellerDetails = responce && responce.orderId && responce.orderId.sellerDetails;
+            if (sellerDetails && sellerDetails.email) {
+                let subscriptionPendingEmail = subscriptionPending({
+                    userName: sellerDetails.name
+                })
+                const message = {
+                    from: MailgunKeys.senderMail,
+                    to: sellerDetails && sellerDetails.email,
+                    subject: 'Subscription payment failed',
+                    html: commonTemplate(subscriptionPendingEmail),
+                }
+                sendSingleMail(message)
+                respSuccess(res, { status: 'ok' }, "subscription.pending Recived")
+            }
+        }
+        if (isTender) {
+            const url = tenderApiBaseUrl + '/subscriptionPending'
+            const response = await axios({
+                url,
+                method: "POST",
+                data: req.body
+            })
+        }
+
+
+
+    } catch (error) {
         console.log(error, "EEEEEEEEEERRRRRRrrrrrrrrrrrrrrrrrr");
         respError(error)
     }
 }
 
-/***
-* @Expected req.body From RazorPay for subscription.halted webhook
-
-    {
-  "entity": "event",
-  "account_id": "acc_BFQ7uQEaa7j2z7",
-  "event": "subscription.halted",
-  "contains": [
-    "subscription"
-  ],
-  "payload": {
-    "subscription": {
-      "entity": {
-        "id": "sub_IwzTgqte7YTV9y",
-        "entity": "subscription",
-        "plan_id": "plan_BvrFKjSxauOH7N",
-        "customer_id": "cust_C0WlbKhp3aLA7W",
-        "status": "halted",
-        "type": 2,
-        "current_start": 1572892200,
-        "current_end": 1575484200,
-        "ended_at": null,
-        "quantity": 1,
-        "notes": {
-          "Important": "Notes for Internal Reference"
-        },
-        "charge_at": 1575484200,
-        "start_at": 1570213800,
-        "end_at": 1599244200,
-        "auth_attempts": 4,
-        "total_count": 12,
-        "paid_count": 1,
-        "customer_notify": true,
-        "created_at": 1567689895,
-        "expire_by": 1567881000,
-        "short_url": null,
-        "has_scheduled_changes": false,
-        "change_scheduled_at": null,
-        "source": "api",
-        "offer_id":"offer_JHD834hjbxzhd38d",
-        "remaining_count": 10
-      }
-    }
-  },
-  "created_at": 1567691269
-}
-* */
-
-module.exports.subscriptionHalted = async (req,res) => {
-    try{
+// After all payment try by razorpay is failed, We are cancleing the subscription.
+module.exports.subscriptionHalted = async (req, res) => {
+    try {
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
@@ -409,7 +408,7 @@ module.exports.subscriptionHalted = async (req,res) => {
             const OrderUpdate = await updateOrder(ordersQuery, { canceled: true })
             const sellerPlansUpadte = await updateSellerPlan(sellerPlanQuery, { canceled: true })
 
-            
+
             if (sellerDetails && sellerDetails.email) {
                 let subscriptionPendingEmail = cancelSubscription({
                     userName: sellerDetails.name
@@ -427,105 +426,89 @@ module.exports.subscriptionHalted = async (req,res) => {
         }
 
         // respSuccess(res, responce.orderId, "Subscription cancelled")
-    } catch(error){
-    console.log("🚀 ~ file: paymentController.js ~ line 334 ~ module.exports.subscriptionHalted= ~ error", error)
-    respError(error)  
+    } catch (error) {
+        console.log("🚀 ~ file: paymentController.js ~ line 334 ~ module.exports.subscriptionHalted= ~ error", error)
+        respError(error)
     }
 }
 
-/*
-@Expected req.body From RazorPay for subscription.charged webhook
-{
-  "entity": "event",
-  "account_id": "acc_BFQ7uQEaa7j2z7",
-  "event": "subscription.charged",
-  "contains": [
-    "subscription",
-    "payment"
-  ],
-  "payload": {
-    "subscription": {
-      "entity": {
-        "id": "sub_DEX6xcJ1HSW4CR",
-        "entity": "subscription",
-        "plan_id": "plan_BvrFKjSxauOH7N",
-        "customer_id": "cust_C0WlbKhp3aLA7W",
-        "status": "active",
-        "type": 2,
-        "current_start": 1570213800,
-        "current_end": 1572892200,
-        "ended_at": null,
-        "quantity": 1,
-        "notes": {
-          "Important": "Notes for Internal Reference"
-        },
-        "charge_at": 1572892200,
-        "start_at": 1570213800,
-        "end_at": 1599244200,
-        "auth_attempts": 0,
-        "total_count": 12,
-        "paid_count": 1,
-        "customer_notify": true,
-        "created_at": 1567689895,
-        "expire_by": 1567881000,
-        "short_url": null,
-        "has_scheduled_changes": false,
-        "change_scheduled_at": null,
-        "source": "api",
-        "offer_id":"offer_JHD834hjbxzhd38d",
-        "remaining_count": 11
-      }
-    },
-    "payment": {
-      "entity": {
-        "id": "pay_DEXFWroJ6LikKT",
-        "entity": "payment",
-        "amount": 100000,
-        "currency": "INR",
-        "status": "captured",
-        "order_id": "order_DEXFWXwO24pDxH",
-        "invoice_id": "inv_DEXFWVuM6rPqlK",
-        "international": false,
-        "method": "card",
-        "amount_refunded": 0,
-        "amount_transferred": 0,
-        "refund_status": null,
-        "captured": "1",
-        "description": "Recurring Payment via Subscription",
-        "card_id": "card_DEXFX0KGtXexrH",
-        "card": {
-          "id": "card_DEXFX0KGtXexrH",
-          "entity": "card",
-          "name": "Gaurav Kumar",
-          "last4": "5558",
-          "network": "MasterCard",
-          "type": "credit",
-          "issuer": "KARB",
-          "international": false,
-          "emi": false,
-          "expiry_month": 2,
-          "expiry_year": 2022
-        },
-        "bank": null,
-        "wallet": null,
-        "vpa": null,
-        "email": "gaurav.kumar@example.com",
-        "contact": "+919876543210",
-        "customer_id": "cust_C0WlbKhp3aLA7W",
-        "token_id": null,
-        "notes": [],
-        "fee": 2900,
-        "tax": 0,
-        "error_code": null,
-        "error_description": null,
-        "created_at": 1567690382
-      }
+module.exports.subscriptionHalted2 = async (req, res) => {
+    try {
+        const { payload } = req.body;
+        const { subscription } = payload;
+        const { entity } = subscription;
+        const isTrade = entity.notes.client === 'trade';
+        const isTender = entity.notes.client === 'tender';
+        const subId = entity.id;
+
+        if (isTrade) {
+            const paymentQuery = {
+                isSubscription: true,
+                "paymentResponse.razorpay_subscription_id": subId
+            }
+
+            const responce = await findPayment(paymentQuery);
+            // console.log("🚀 ~ file: paymentController.js ~ line 391 ~ module.exports.subscriptionHalted= ~ responce", responce.orderId.sellerPlanId)
+            const OrderId = responce && responce.orderId && responce.orderId._id
+            const sellerPlanId = responce && responce.orderId && responce.orderId.sellerPlanId
+            const ordersQuery = { _id: OrderId }
+            const sellerPlanQuery = { _id: sellerPlanId }
+            const sellerDetails = responce && responce.orderId && responce.orderId.sellerDetails;
+
+            var instance = new Razorpay({
+                key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
+                key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
+            });
+
+            //Making Subscription Cancel Request To Razorpay.
+            const rzrResponce = await instance.subscriptions.cancel(subId)
+            console.log("🚀 ~ file: paymentController.js ~ line 405 ~ module.exports.subscriptionHalted= ~ rzrResponce", sellerDetails)
+
+            if (rzrResponce && rzrResponce.status === 'cancelled') {
+                const OrderUpdate = await updateOrder(ordersQuery, { canceled: true })
+                const sellerPlansUpadte = await updateSellerPlan(sellerPlanQuery, { canceled: true })
+
+
+                if (sellerDetails && sellerDetails.email) {
+                    let subscriptionPendingEmail = cancelSubscription({
+                        userName: sellerDetails.name
+                    })
+                    const message = {
+                        from: MailgunKeys.senderMail,
+                        to: sellerDetails && sellerDetails.email,
+                        subject: 'Subscription cancellation',
+                        html: commonTemplate(subscriptionPendingEmail),
+                    }
+                    sendSingleMail(message)
+                }
+                res.status(200).json({ status: 'ok' })
+            }
+        }
+
+        // If hooks is for Tender
+        if (isTender) {
+            const url = tenderApiBaseUrl + '/subscriptionHalted'
+            const response = await axios({
+                url,
+                method: "POST",
+                data: req.body
+            })
+
+            if (response.status === 200) {
+                res.status(200).json({ status: 'ok' })
+            }
+        }
+
+        // respSuccess(res, responce.orderId, "Subscription cancelled")
+    } catch (error) {
+        console.log("🚀 ~ file: paymentController.js ~ line 334 ~ module.exports.subscriptionHalted= ~ error", error)
+        respError(error)
     }
-  },
-  "created_at": 1567690383
-} */
+}
+
+// Every time user get charged we are sending Invoice frome our side.
 module.exports.subscriptionCharged = async (req, res) => {
-    try{
+    try {
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
@@ -536,7 +519,7 @@ module.exports.subscriptionCharged = async (req, res) => {
             isSubscription: true,
             "paymentResponse.razorpay_subscription_id": subId
         }
-        const responce  = await findPayment(paymentQuery);
+        const responce = await findPayment(paymentQuery);
         // console.log("🚀 ~ file: paymentController.js ~ line 539 ~ module.exports.subscriptionCharged= ~ responce", responce)
         const sellerId = responce.sellerId;
         let seller = await getSellerProfile(sellerId);
@@ -544,7 +527,7 @@ module.exports.subscriptionCharged = async (req, res) => {
         const sellerPlanId = responce.orderId.sellerPlanId;
         const paymentResponse = {
             razorpay_payment_id: payment.entity.id,
-            razorpay_subscription_id: subId,  
+            razorpay_subscription_id: subId,
             razorpay_signature: responce && responce.paymentResponse && responce.paymentResponse.razorpay_signature
         }
         const paymentJson = {
@@ -582,7 +565,7 @@ module.exports.subscriptionCharged = async (req, res) => {
 
         const sellerDetails = order_details && order_details.sellerDetails;
 
-        if (sellerDetails && sellerDetails.email){
+        if (sellerDetails && sellerDetails.email) {
             let invoiceEmailMsg = invoiceContent({
                 plan: type,
                 from: planValidFrom,
@@ -608,19 +591,126 @@ module.exports.subscriptionCharged = async (req, res) => {
         }
 
         respSuccess(res, { status: 'ok' }, "subscription.halted Recived")
-    }catch(error){
+    } catch (error) {
+        console.log(error)
+        respError(error)
+    }
+}
+
+module.exports.subscriptionCharged2 = async (req, res) => {
+    try {
+        const { payload } = req.body;
+        const { subscription } = payload;
+        const { entity } = subscription;
+        const subId = entity.id;
+        const isTrade = entity.notes.client === 'trade';
+        const isTender = entity.notes.client === 'tender';
+        const { payment } = payload;
+
+        if (isTrade) {
+            const paymentQuery = {
+                isSubscription: true,
+                "paymentResponse.razorpay_subscription_id": subId
+            }
+            const responce = await findPayment(paymentQuery);
+            // console.log("🚀 ~ file: paymentController.js ~ line 539 ~ module.exports.subscriptionCharged= ~ responce", responce)
+            const sellerId = responce.sellerId;
+            let seller = await getSellerProfile(sellerId);
+            const order_details = responce.orderId;
+            const sellerPlanId = responce.orderId.sellerPlanId;
+            const paymentResponse = {
+                razorpay_payment_id: payment.entity.id,
+                razorpay_subscription_id: subId,
+                razorpay_signature: responce && responce.paymentResponse && responce.paymentResponse.razorpay_signature
+            }
+            const paymentJson = {
+                sellerId: responce.sellerId,
+                userId: responce.userId,
+                paymentDetails: payment.entity,
+                orderId: responce.orderId && responce.orderId._id,
+                paymentResponse,
+                paymentSuccess: true,
+                isSubscription: true
+            }
+
+            const invoiceNumner = await getInvoiceNumber({ id: 1 })
+            const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
+
+            const paymentResponce = await addPayment(paymentJson)
+            console.log("🚀 ~ file: paymentController.js ~ line 560 ~ module.exports.subscriptionCharged= ~ paymentResponce", paymentResponce)
+
+            const sellerPlanDetails = await getSellerPlan({ _id: sellerPlanId });
+            console.log("🚀 ~ file: paymentController.js ~ line 563 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails", sellerPlanDetails)
+
+            const months = sellerPlanDetails && sellerPlanDetails.planType === "Quarterly" ? 3 : sellerPlanDetails.planType === "Half Yearly" ? 6 : sellerPlanDetails.planType === "Yearly" ? 12 : ''
+
+            const type = `${sellerPlanDetails.planType}-subscription`;
+            const totalPlanPrice = sellerPlanDetails.price / months
+            const exprireDate = entity.end_at;
+            const planValidFrom = entity.start_at;
+
+            order_details.invoiceNo = _invoice
+
+            const invoice = await createPdf(seller[0], { ...sellerPlanDetails, totalPlanPrice, type, planValidFrom, exprireDate, next: true }, order_details);
+
+            await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
+
+
+            const sellerDetails = order_details && order_details.sellerDetails;
+
+            if (sellerDetails && sellerDetails.email) {
+                let invoiceEmailMsg = invoiceContent({
+                    plan: type,
+                    from: planValidFrom,
+                    till: exprireDate,
+                    price: order_details.total,
+                    invoiceLink: invoice.Location,
+                    cardNo: payment && payment.entity && payment.entity.card && payment.entity.card.last4,
+                    isOneBazzar: false
+                });
+                const message = {
+                    from: MailgunKeys.senderMail,
+                    to: sellerDetails.email,
+                    subject: 'Ekbazaar Subscription activated successfully',
+                    html: commonTemplate(invoiceEmailMsg),
+                    // attachment: invoice.attachement,
+                    attachments: [{ // stream as an attachment
+                        filename: 'invoice.pdf',
+                        content: fs.createReadStream(invoice.attachement)
+                        // path: invoice.Location,
+                    }]
+                }
+                sendSingleMail(message)
+            }
+
+            respSuccess(res, { status: 'ok' }, "subscription.halted Recived")
+        }
+
+        if (isTender){
+            const url = tenderApiBaseUrl + '/subscriptionHalted'
+            const response = await axios({
+                url,
+                method: "POST",
+                data: req.body
+            })
+
+            if (response.status === 200) {
+                res.status(200).json({ status: 'ok' })
+            }
+        }
+    } catch (error) {
         console.log(error)
         respError(error)
     }
 }
 
 module.exports.paymentCaptured = async (req, res) => {
-    try{
+    try {
         console.log("🚀 ~ file: paymentController.js ~ line 618 ~ module.exports.paymentCaptured= ~ req", req.body)
-        
 
-        res.status(200).json({status:'ok'})
-    }catch(error){
+
+        res.status(200).json({ status: 'ok' })
+    } catch (error) {
         console.log(error);
     }
 }
@@ -648,7 +738,7 @@ module.exports.cancleSubscription = async (req, res) => {
 
             respSuccess(res, req.body, "Subscription cancelled")
         }
-    }catch(error){
+    } catch (error) {
         console.log(error)
         respError(error)
     }
@@ -681,20 +771,21 @@ module.exports.createRazorPayOrder = async (req, res) => {
                 let result;
 
                 // Creating Order ID For Order Type Payment
-                if(!isSubscription){
+                if (!isSubscription) {
                     result = await instance.orders.create({ amount: parseInt((includedGstAmount.totalAmount * 100).toFixed(2)).toString(), currency, receipt: 'order_9A33XWu170gUtm', payment_capture: 0 })
                 }
 
                 // Creating Subscription ID For Subscription Type Payment
-                if(isSubscription){
+                if (isSubscription) {
                     let plan_id = planDetails && planDetails.plan_id;
-    
+
                     result = await instance.subscriptions.create({
                         plan_id,
                         total_count: parseInt(months),
                         customer_notify: 0,
                         notes: {
-                            key1: "Assiging Plan to user"
+                            client: "trade",
+                            planId
                         }
                     })
                     result.currency = currency;
@@ -801,8 +892,8 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             sellerId: seller._id,
                         }
                         // if (response.statusCode === 200) {
-                        if (!isSubscription && response.statusCode === 200 || isSubscription && response.statusCode === 200 && (testbody.status === 'authorized' || testbody.status === 'captured')){
-                        
+                        if (!isSubscription && response.statusCode === 200 || isSubscription && response.statusCode === 200 && (testbody.status === 'authorized' || testbody.status === 'captured')) {
+
                             const invoiceNumner = await getInvoiceNumber({ id: 1 })
                             const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
                             let planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
@@ -1023,7 +1114,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                     price: includedGstAmount.totalAmount,
                                     invoiceLink: invoice.Location,
                                     cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
-                                    isOneBazzar : false
+                                    isOneBazzar: false
                                 });
                                 const message = {
                                     from: MailgunKeys.senderMail,
@@ -1056,7 +1147,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                             return respSuccess(res, { payment: false }, 'Payment failed')
                         }
                     } catch (err) {
-                        console.log(err,'tttttttt');
+                        console.log(err, 'tttttttt');
                     }
                 });
             } else
@@ -1071,10 +1162,10 @@ module.exports.captureRazorPayPayment = async (req, res) => {
 }
 
 module.exports.captureRazorPayPaymentTwo = async (req, res) => {
-    try{
+    try {
         const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, isSubscription, paymentId, verifyId } = req.body;
         const url = req.get('origin');
-        
+
         const data = {
             sellerId,
             subscriptionId,
@@ -1091,9 +1182,9 @@ module.exports.captureRazorPayPaymentTwo = async (req, res) => {
         const resVerifyId = isSubscription ? paymentResponse.razorpay_subscription_id : paymentResponse.razorpay_order_id
 
         let body;
-        if (isSubscription){
+        if (isSubscription) {
             body = paymentResponse.razorpay_payment_id + "|" + verifyId
-        }else {
+        } else {
             body = verifyId + "|" + paymentResponse.razorpay_payment_id
         }
 
@@ -1102,21 +1193,21 @@ module.exports.captureRazorPayPaymentTwo = async (req, res) => {
             .update(body.toString())
             .digest('hex');
 
-        if (expectedSignature === paymentResponse.razorpay_signature){
+        if (expectedSignature === paymentResponse.razorpay_signature) {
             const responce = await addPaymentData(data);
             return respSuccess(res, { payment: true }, 'subscription activated successfully!')
         }
 
-    } catch(error){
+    } catch (error) {
         console.log(error)
         respError(error)
     }
 }
 
 module.exports.paymentCapture = async (req, res) => {
-    try{
-        console.log(req.body,"LLLLLLLLLLLLLLLLLLLLLLLLL");
-    }catch (error){
+    try {
+        console.log(req.body, "LLLLLLLLLLLLLLLLLLLLLLLLL");
+    } catch (error) {
         console.log(error)
         respError(error)
     }
@@ -1437,7 +1528,7 @@ module.exports.paymentCapture = async (req, res) => {
 //         request({
 //             method: 'GET',
 //             url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_IrVW5ut7tWZ5uT`,
-    
+
 //         }, async function (error, response, body) {
 //             bodyReq = body;
 //             console.log(bodyReq,"11111111111111111111111111111");
