@@ -118,6 +118,9 @@ const buyerSchema = new Schema(
       type: Number,
       default: 1,
     },
+    client: {
+      type: String
+    }
   },
   {
     timestamps: true,
