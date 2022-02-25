@@ -168,100 +168,6 @@ const createPdf = async (seller, plan, orderDetails) => new Promise((resolve, re
 
 })
 
-
-// const createOnebazaarPdf = async (seller, plan, orderDetails) => new Promise((resolve, reject) => {
-
-//     try {
-//         const sellerDetails = {
-//             name: orderDetails && orderDetails.sellerDetails && capitalizeFirstLetter(orderDetails.sellerDetails.name) || seller.name,
-//             city: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.city.name) || '',
-//             state: seller && seller.location && seller.location.city && capitalizeFirstLetter(seller.location.state.name) || '',
-//             country: seller && seller.location && seller.location.country && capitalizeFirstLetter(seller.location.country.name) || '',
-//             gstLable: seller && seller.sellerType && seller.sellerType.length && seller.sellerType[0]["name"] === "farmer" ? "Aadhar Number" : "GST Number",
-//             gstNo: orderDetails && orderDetails.gstNo || '',
-//             address: orderDetails && orderDetails.address || '',
-//             pincode: orderDetails && orderDetails.pincode || '',
-//         }
-//         const orderData = {
-//             planType: plan && plan.type || '',
-//             pricePerMonth: plan && plan.price || '',
-//             // months: '3',
-//             features: plan && plan.features,
-//             igstAmount: orderDetails && orderDetails.gstAmount,
-//             cgstAmount: orderDetails && orderDetails.cgstAmount,
-//             sgstAmount: orderDetails && orderDetails.sgstAmount,
-
-//             amount: plan && plan.totalPlanPrice,
-//             orderTotal: orderDetails && orderDetails.total.toFixed(2),
-//             invoiceDate: moment(new Date()).format('DD/MM/YYYY'),
-//             startDate: plan && plan.isFreeTrialIncluded && plan.planValidFrom ? plan && moment(plan.planValidFrom).format('DD/MM/YYYY') : moment(new Date()).format('DD/MM/YYYY'),
-//             expireDate: plan && moment(new Date(plan.exprireDate)).format('DD/MM/YYYY'),
-//             // subscriptionValidety: plan && moment(new Date(plan.subscriptionValidety)).format('DD/MM/YYYY'),
-//             invoiceNumber: orderDetails && orderDetails.invoiceNo || '',
-//             // currency: orderDetails && orderDetails.currency || '',
-//             currency: orderDetails && orderDetails.currency === 'INR' ? "₹" : '$' || '',
-//             currencyInWords: toWords.convert(orderDetails && orderDetails.total/* , { currency: true } */),
-//             country: orderDetails && orderDetails.country || '',
-//             currencyFlag: orderDetails && orderDetails.currency === 'INR' ? true : ''
-
-//         }
-//         const html = fs.readFileSync(path.resolve(__dirname, '../../..', 'src/utils/templates/invoice', 'invoiceTemplateOnebazaar.html'), 'utf8');
-//         const options = {
-//             format: "A4",
-//             // orientation: "portrait",
-//             border: "10mm",
-//             // header: {
-//             //     // height: "45mm",
-//             //     contents: '<div style="text-align: center;">Ekbazaar</div>'
-//             // },
-//             // "footer": {
-//             //     // "height": "28mm",
-//             //     "contents": {
-//             //         // first: 'Cover page',
-//             //         2: 'Second page', // Any page number is working. 1-based index
-//             //         default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
-//             //         // last: 'Last Page'
-//             //     }
-//             // }
-//         }
-
-//         const details = {
-//             orderData: { ...orderData },
-//             sellerDetails: { ...sellerDetails }
-//         }
-//         const invoiceFileName = orderDetails && orderDetails.invoiceNo.toString() + '-invoice.pdf'
-//         const document = {
-//             html: html,
-//             data: {
-//                 details: details
-//             },
-//             path: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName)
-//         };
-//         pdf.create(document, options)
-//             .then(async (res) => {
-//                 console.log(res)
-//                 const output = `invoice-${orderDetails && orderDetails.invoiceNo}.pdf`
-//                 const invoice = fs.readFileSync(res.filename);
-//                 let data = {
-//                     Key: `${seller._id}/${orderDetails && orderDetails.invoiceNo}/${output}`,
-//                     body: invoice
-//                 }
-//                 const multidoc = await uploadToDOSpace(data)
-//                 resolve({ ...multidoc, attachement: path.resolve(__dirname, "../../../", "public/orders", invoiceFileName) })
-
-//             })
-//             .catch(error => {
-//                 console.error(error)
-//             });
-
-//     } catch (error) {
-//         console.log(error)
-//         respError(error)
-
-//     }
-
-// })
-
 async function CalculateGst(price, findPinCode, currency) {
     const gstValue = 18
     const cgst = 9
@@ -359,11 +265,15 @@ module.exports.pendingSubWebHook2 = async (req, res) => {
         }
         if (isTender) {
             const url = tenderApiBaseUrl + '/subscriptionPending'
+            // const url = 'http://localhost:8060/api/v1/subscriptionPending'
             const response = await axios({
                 url,
                 method: "POST",
                 data: req.body
             })
+            if (response.status === 200){
+                res.status(200).json({ status: 'ok' })
+            }
         }
 
 
@@ -434,6 +344,7 @@ module.exports.subscriptionHalted = async (req, res) => {
 
 module.exports.subscriptionHalted2 = async (req, res) => {
     try {
+        console.log(req.body,"111111111111111111111111111111111111111"); 
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
@@ -487,7 +398,11 @@ module.exports.subscriptionHalted2 = async (req, res) => {
 
         // If hooks is for Tender
         if (isTender) {
-            const url = tenderApiBaseUrl + '/subscriptionHalted'
+            console.log(isTender,'222222222222222222222222222222222');
+            // const url = tenderApiBaseUrl + '/subscriptionHalted'
+            // sub_Izve0fPoqz63VL
+            // "client": "trade"
+            const url = 'http://localhost:8060/api/v1/subscriptionHalted'
             const response = await axios({
                 url,
                 method: "POST",
@@ -720,7 +635,7 @@ module.exports.cancleSubscription = async (req, res) => {
         const { OrderId } = req.body
         const ordersQuery = { _id: OrderId }
         const result = await getOrderById(ordersQuery)
-        const raz_sub_id = result.paymentId.paymentResponse.razorpay_subscription_id;
+        const raz_sub_id = result && result.paymentId && result.paymentId.paymentResponse && result.paymentId.paymentResponse.razorpay_subscription_id;
         const sellerPlanQuery = { _id: result.sellerPlanId }
 
 
@@ -736,11 +651,59 @@ module.exports.cancleSubscription = async (req, res) => {
             const OrderUpdate = await updateOrder(ordersQuery, { canceled: true })
             const sellerPlansUpadte = await updateSellerPlan(sellerPlanQuery, { canceled: true })
 
-            respSuccess(res, req.body, "Subscription cancelled")
+            respSuccess(res, rzrResponce, "Subscription cancelled")
         }
     } catch (error) {
         console.log(error)
         respError(error)
+    }
+}
+
+module.exports.createRazorPayLink = async (req, res) => {
+    try {
+        var instance = new Razorpay({
+            key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
+            key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
+        });
+        const { planId, currency, isSubscription, sellerId, userId, orderDetails } = req.body;
+        const { pincode, name, email, mobile } = orderDetails
+
+        let findpincode = currency === 'INR' ? await findPincode({pincode}): '';
+        if(!findpincode && currency === 'INR') {
+            respError(res, "Invalid pincode");
+        }else{
+            const planDetails = await getSubscriptionPlanDetail({ _id: planId });
+
+            if(planDetails){
+                const gstValue = 18
+                const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Half Yearly" ? 6 : planDetails.type === "Yearly" ? 12 : ''
+                const price = planDetails && (currency === 'INR' ? planDetails.price : planDetails.usdPrice)
+                const includedGstAmount = await CalculateGst(price, findpincode, currency);
+                const result = await instance.paymentLink.create({
+                    // upi_link: true,
+                    amount: parseInt((includedGstAmount.totalAmount * 100).toFixed(2)),
+                    currency: currency,
+                    accept_partial: false,
+                    description: planDetails.description,
+                    customer: {
+                        name: name,
+                        email: email,
+                        contact: mobile.mobile
+                    },
+                    notify: {
+                        sms: true,
+                        email: true
+                    },
+                    notes: {
+                        client: "trade"
+                    }
+                })
+            }
+        }
+
+
+    } catch (error) {
+        console.log(error)
     }
 }
 

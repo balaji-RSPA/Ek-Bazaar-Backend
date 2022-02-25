@@ -1,7 +1,8 @@
 const crypto = require('crypto')
+const { MailgunKeys, razorPayCredentials, stripeApiKeys } = require('../utils/globalConstants')
 
 exports.hookAuth = (req, res, next) => {
-    const screat = 'lpMc345sdiucht5';
+    const screat = 'rzr56HlptcCJtlkxzcx';
     const target = crypto.createHmac('sha256', screat);
     target.update(JSON.stringify(req.body));
     const digest = target.digest('hex');

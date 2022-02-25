@@ -386,8 +386,10 @@ module.exports.cancelSubscription = (params) => {
     body: `<p style="text-align: left">Hello User,</p>
        <p style="text-align: left">Something went wrong, and we are unable to process the charges from your card. Unfortunately, your subscription has been cancelled.</p>
        <p style="text-align: left">But don't worry, You can purchase the new subscription at any time from EkBazaar.</p>
-       <p style="text-align: center">Hope to see you back soon</p>`
+       <p style="text-align: center">Hope to see you back soon</p>`,
+    originOneFlag: false
   }
+  return message
 }
 
 module.exports.partialSellerRegistration = (params) => {
