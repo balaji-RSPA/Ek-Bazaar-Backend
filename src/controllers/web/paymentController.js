@@ -8,7 +8,7 @@ const request = require('request');
 const moment = require('moment')
 const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
-const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData } = require("../../modules");
+const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData,Paylinks } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
 const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl } = require('../../utils/globalConstants')
 const stripe = require("stripe")(stripeApiKeys.secretKey);
@@ -32,6 +32,7 @@ const { getSellerProfile, updateSeller, getUserProfile } = sellers
 const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans
 const { addOrders, updateOrder, getOrderById } = Orders
 const { addPayment, updatePayment, findPayment } = Payments
+const { createPayLinks, updatePayLinks} = Paylinks
 const { addSellerPlanLog } = SellerPlanLogs
 const { getAllSellerTypes } = category
 const { updateSellerProducts } = sellerProducts
@@ -679,12 +680,28 @@ module.exports.createRazorPayLink = async (req, res) => {
                 const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Half Yearly" ? 6 : planDetails.type === "Yearly" ? 12 : ''
                 const price = planDetails && (currency === 'INR' ? planDetails.price : planDetails.usdPrice)
                 const includedGstAmount = await CalculateGst(price, findpincode, currency);
+
+                // Create the link-payment Document
+                const data = {
+                    sellerId,
+                    userId,
+                    isSubscription,
+                    currency,
+                    orderDetails,
+                    subscriptionpId: planId,
+                    razorPay: {}
+                }
+
+                const response = await createPayLinks(data);
+                console.log(response,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                const query = { _id: response._id }
                 const result = await instance.paymentLink.create({
                     // upi_link: true,
                     amount: parseInt((includedGstAmount.totalAmount * 100).toFixed(2)),
                     currency: currency,
                     accept_partial: false,
                     description: planDetails.description,
+                    reference_id: response._id,
                     customer: {
                         name: name,
                         email: email,
@@ -698,6 +715,32 @@ module.exports.createRazorPayLink = async (req, res) => {
                         client: "trade"
                     }
                 })
+                const update = await updatePayLinks(query, { razorPay: result})
+                console.log(update && update.orderDetails && update.orderDetails.email)
+                if (update && update.orderDetails && update.orderDetails.email){
+                        let invoiceEmailMsg = invoiceContent({
+                            plan: _p_details.planType,
+                            from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
+                            till: _p_details.exprireDate,
+                            price: includedGstAmount.totalAmount,
+                            invoiceLink: invoice.Location,
+                            cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
+                            isOneBazzar: false
+                        });
+                        const message = {
+                            from: MailgunKeys.senderMail,
+                            to: orderDetails.email || seller.email,
+                            subject: 'Ekbazaar Subscription activated successfully',
+                            html: commonTemplate(invoiceEmailMsg),
+                            // attachment: invoice.attachement,
+                            attachments: [{ // stream as an attachment
+                                filename: 'invoice.pdf',
+                                content: fs.createReadStream(invoice.attachement)
+                                // path: invoice.Location,
+                            }]
+                        }
+                         sendSingleMail(message)
+                }
             }
         }
 

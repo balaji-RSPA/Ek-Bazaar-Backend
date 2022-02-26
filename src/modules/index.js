@@ -14,6 +14,7 @@ const QueEmails = require('./queEmailsModule')
 const SellerPlanLogs = require('./sellerPlanLogModule')
 const Orders = require('./ordersModule')
 const Payments = require('./paymentModule')
+const Paylinks = require('./payLinkModule')
 const InvoiceNumber = require('./invoiceNumberModule')
 const Chat = require('./chatModule')
 const Pincode = require('./pincodeModule')
@@ -40,6 +41,7 @@ module.exports = {
     SellerPlanLogs,
     Orders,
     Payments,
+    Paylinks,
     InvoiceNumber,
     Chat,
     Pincode,
