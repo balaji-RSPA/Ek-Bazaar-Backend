@@ -21,6 +21,7 @@ const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require(
 const { updatePriority, gujaratSellerData, getSellersList } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
+const hookRouter = require('./src/routes/hookRoutes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const { deleteTestData, uploadInternationalCity, getCityList, deleteTestDataRemaining, deleteTestDataChat } = require('./src/controllers/web/testController')
@@ -42,6 +43,7 @@ const app = express();
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.json());
 
+app.use(hookRouter);
 app.use(
   cors({
     origin: [

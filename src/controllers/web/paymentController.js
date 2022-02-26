@@ -614,6 +614,17 @@ module.exports.subscriptionCharged = async (req, res) => {
     }
 }
 
+module.exports.paymentCaptured = async (req, res) => {
+    try{
+        console.log("🚀 ~ file: paymentController.js ~ line 618 ~ module.exports.paymentCaptured= ~ req", req.body)
+        
+
+        res.status(200).json({status:'ok'})
+    }catch(error){
+        console.log(error);
+    }
+}
+
 module.exports.cancleSubscription = async (req, res) => {
     try {
         const { OrderId } = req.body
@@ -630,6 +641,7 @@ module.exports.cancleSubscription = async (req, res) => {
 
         //Making Subscription Cancel Request To Razorpay.
         const rzrResponce = await instance.subscriptions.cancel(raz_sub_id)
+        console.log("🚀 ~ file: paymentController.js ~ line 644 ~ module.exports.cancleSubscription= ~ rzrResponce", rzrResponce,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
         if (rzrResponce && rzrResponce.status === 'cancelled') {
             const OrderUpdate = await updateOrder(ordersQuery, { canceled: true })
@@ -683,7 +695,8 @@ module.exports.createRazorPayOrder = async (req, res) => {
                         total_count: parseInt(months),
                         customer_notify: 0,
                         notes: {
-                            key1: "Assiging Plan to user"
+                            client: "trade",
+                            planId
                         }
                     })
                     result.currency = currency;
