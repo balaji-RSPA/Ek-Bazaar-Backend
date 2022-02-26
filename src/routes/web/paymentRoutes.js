@@ -9,6 +9,7 @@ router.post('/captureRazorPayPayment/:paymentId', payment.captureRazorPayPayment
 router.post('/createRazorPayPaymentLink', payment.createRazorPayLink)
 
 router.post('/cancleSubscription', payment.cancleSubscription)
+router.get('/captureLinkPayment', payment.captureLink)
 
 router.post('/stripe/charge', payment.createStripePayment)
 router.post('/planActivation/:paymentId', payment.planActivation)

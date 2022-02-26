@@ -392,6 +392,18 @@ module.exports.cancelSubscription = (params) => {
   return message
 }
 
+module.exports.paymentLinkGeneration = (params) => {
+  let message = {
+    title: 'Payment link',
+    image: passwordUpdated,
+    body: `<p style="text-align: left">Dear ${params.userName},</p>
+       <p style="text-align: left">Here is your payment link:${params.payLink}</p>
+       <p style="text-align: left">Please click on the link to make the payment & get benefits</p>`,
+    originOneFlag: false
+  }
+  return message
+}
+
 module.exports.partialSellerRegistration = (params) => {
   let message;
   if (params.client === 'ekbazaar') {

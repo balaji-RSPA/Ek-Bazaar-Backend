@@ -10,7 +10,7 @@ const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData,Paylinks } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
-const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl } = require('../../utils/globalConstants')
+const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl, tradeApiBaseUrl } = require('../../utils/globalConstants')
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
 const {
@@ -20,7 +20,7 @@ const {
 const { uploadToDOSpace, sendSMS } = require('../../utils/utils')
 const { addOrdersPlans } = require('../../modules/ordersModule');
 const { planSubscription, planChanged } = require('../../utils/templates/smsTemplate/smsTemplate')
-const { invoiceContent, planChangedEmail, subscriptionPending, cancelSubscription } = require('../../utils/templates/emailTemplate/emailTemplateContent');
+const { invoiceContent, planChangedEmail, subscriptionPending, cancelSubscription, paymentLinkGeneration } = require('../../utils/templates/emailTemplate/emailTemplateContent');
 const { commonTemplate } = require('../../utils/templates/emailTemplate/emailTemplate')
 const { findPincode } = require('../../modules/pincodeModule')
 
@@ -693,7 +693,6 @@ module.exports.createRazorPayLink = async (req, res) => {
                 }
 
                 const response = await createPayLinks(data);
-                console.log(response,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                 const query = { _id: response._id }
                 const result = await instance.paymentLink.create({
                     // upi_link: true,
@@ -712,41 +711,42 @@ module.exports.createRazorPayLink = async (req, res) => {
                         email: true
                     },
                     notes: {
-                        client: "trade"
-                    }
+                        client: "trade",
+                        url: req.get('origin')
+                    },
+                    callback_url: tradeApiBaseUrl + 'captureLinkPayment',
+                    callback_method: "get"
                 })
                 const update = await updatePayLinks(query, { razorPay: result})
-                console.log(update && update.orderDetails && update.orderDetails.email)
                 if (update && update.orderDetails && update.orderDetails.email){
-                        let invoiceEmailMsg = invoiceContent({
-                            plan: _p_details.planType,
-                            from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
-                            till: _p_details.exprireDate,
-                            price: includedGstAmount.totalAmount,
-                            invoiceLink: invoice.Location,
-                            cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
-                            isOneBazzar: false
-                        });
-                        const message = {
+                    let payLinkEmailMsg = paymentLinkGeneration({
+                            userName: name,
+                            payLink: result.short_url
+                    });
+                    const message = {
                             from: MailgunKeys.senderMail,
-                            to: orderDetails.email || seller.email,
-                            subject: 'Ekbazaar Subscription activated successfully',
-                            html: commonTemplate(invoiceEmailMsg),
-                            // attachment: invoice.attachement,
-                            attachments: [{ // stream as an attachment
-                                filename: 'invoice.pdf',
-                                content: fs.createReadStream(invoice.attachement)
-                                // path: invoice.Location,
-                            }]
-                        }
-                         sendSingleMail(message)
+                            to: email,
+                            subject: 'Payment link',
+                            html: commonTemplate(payLinkEmailMsg)
+                    }
+                    sendSingleMail(message)
+
+                    respSuccess(res, { ...result },'Link Send to Your Email')
                 }
             }
         }
-
-
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        respError(error)
+    }
+}
+
+module.exports.captureLink = async (req, res) => {
+    try {
+        console.log(req.params, req.query, 'rrrrrrrrrrrrrrrrrrzzzzzzzzzzzzzzzzzzzzzzrrrrrrrrrr')
+    } catch (error) {
+        console.log(error);
+        respError(error)
     }
 }
 
