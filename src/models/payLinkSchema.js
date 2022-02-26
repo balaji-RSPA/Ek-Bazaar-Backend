@@ -15,7 +15,7 @@ const payLinkGenSchema = new Schema({
         type: Boolean,
         default: false
     },
-    subscriptionpId: {
+    subscriptionId: {
         type: ObjectId,
         required: true
     },
