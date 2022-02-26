@@ -21,11 +21,13 @@ const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require(
 const { updatePriority, gujaratSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
+const hookRouter = require('./src/routes/hookRoutes');
 const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const { deleteTestData, uploadInternationalCity, getCityList, deleteTestDataRemaining, deleteTestDataChat } = require('./src/controllers/web/testController')
 const { uploadOnBoardSeller, moveSellerToNewDB, getSellerMasterProducts, uploadOnBoardBuyers } = require('./src/controllers/web/sellerDataMove')
 const { uploadChatLanguageCategory } = require('./src/controllers/web/languageTempateController')
+const { addPlanManully } = require('./src/controllers/web/paymentController')
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 
 // const { suggestions} = require("./elasticsearch-mapping");
@@ -41,6 +43,7 @@ const app = express();
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.json());
 
+app.use(hookRouter);
 app.use(
   cors({
     origin: [
@@ -53,7 +56,8 @@ app.use(
       "https://trade.onebazaar.com",
       "http://admin.ekbazaar.tech-active.com",
       "https://admin.ekbazaar.tech-active.com",
-      "http://192.168.1.28:8086"
+      "http://192.168.1.28:8086",
+      "http://192.168.1.74:8086"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
@@ -103,6 +107,15 @@ app.get("/send-daily-report", async function (req, res) {
     return respError(res, "Something went wrong try again!");
   }
 });
+
+// app.get("/add-plan", async function (req, res) {
+//   try {
+//     addPlanManully(req,res)
+//     return respSuccess(res, { payment: true }, 'subscription activated successfully!')
+//   } catch (err) {
+//     console.log(error)
+//   }
+// })
 
 
 app.get("/api/logged", async (req, res, next) => {

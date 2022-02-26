@@ -65,6 +65,16 @@ exports.getOrders = (query, range) =>
             .catch(reject)
     })
 
+exports.getOrderById = (query) =>
+    new Promise((resolve,reject) => {
+        Orders.findOne(query)
+            .populate('paymentId')
+            .then((doc)=> {
+                resolve(doc)
+            })
+            .catch(reject)
+    })    
+
 exports.getOrdersCount = (query) =>
     new Promise((resolve, reject) => {
         Orders.count(query)

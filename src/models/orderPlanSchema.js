@@ -82,7 +82,11 @@ const orderPlanSchema = new Schema({
     planValidFrom : {
         type: Date,
         default: null
-    }
+    },
+    isSubscription: {
+        type: Boolean,
+        default: false
+    },
 }, {
     versionKey: false,
     timestamps: true

@@ -19,6 +19,7 @@ listAll
 module.exports.createRemoveListing = async (req, res) => {
   try {
     const removeListing = await create(req.body);
+    const url = req.get("origin");
     if(removeListing && removeListing.mobile && removeListing.mobile.mobile){
       const {message, templateId} = removeListingMsg()
       let countryCode = removeListing.mobile && removeListing.mobile.countryCode ? removeListing.mobile.countryCode : '+91'
@@ -28,7 +29,7 @@ module.exports.createRemoveListing = async (req, res) => {
       console.log("=============Invalid mobile================");
     }
     if (removeListing && removeListing.email) {
-      let removeMessage = listingRemovalReq();
+      let removeMessage = listingRemovalReq({url});
       const message = {
         from: MailgunKeys.senderMail,
         to:removeListing.email,

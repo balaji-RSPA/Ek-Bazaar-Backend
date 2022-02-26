@@ -25,7 +25,7 @@ const {
 const { getProductByName } = category
 const { sellerSearch, searchFromElastic, getSuggestions } = elastic
 const { checkUserExistOrNot, updateUser, addUser, handleUserSession, addSeller, getSellerProfile, checkSellerExist, updateSeller } = sellers
-const { getCity } = location
+const { getCity, getCountry } = location
 const { createToken, messageContent, sendSMS } = require("../../utils/utils");
 const { queSMSBulkInsert, getQueSMS } = SMSQue
 const { bulkInserQemails } = QueEmails;
@@ -160,7 +160,7 @@ module.exports.createRFP = async (req, res, next) => {
     console.log("1111111111 ------------- ", url_, req.get("host"))
     let oneBazaar = false;
     let siteURL;
-    if (currency === 'GBP') {
+    if (currency === 'USD') {
       console.log('one bazaar --------')
       oneBazaar = true
       siteURL = NODE_ENV === "production" ? "https://trade.onebazaar.com" : "https://tradeonebazaar.tech-active.com"
@@ -221,8 +221,20 @@ module.exports.createRFP = async (req, res, next) => {
         sellerId: sellerId || null
       }
       const rfp = await postRFP(rfpData)
-      const locationDetails = await getCity({ _id: location.city })
-      const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
+      let locationDetails;
+      let _loc;
+      if (currency === 'USD' && oneBazaar && location && location.country !== '5e312f978acbee60ab54de08'){
+        if(!location.city){
+          locationDetails = await getCountry({ _id: location.country  })
+          _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}` : ''
+        }else {
+          locationDetails = await getCity({ _id: location.city })
+          _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.country && capitalizeFirstLetter(locationDetails.country.name)}` : ''
+        }
+      }else{
+        locationDetails = await getCity({ _id: location.city })
+        _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
+      }
       const sellerDtl = await getSellerProfile(sellerId);
       if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
 
@@ -235,10 +247,10 @@ module.exports.createRFP = async (req, res, next) => {
           productDetails,
           name
         })
-        await sendEmailBuyer(email)
+        await sendEmailBuyer(email, url)
       }
       console.log(requestType , sellerDtl, ' rames h----------------')
-      if (sellerDtl && sellerDtl.length && requestType === 1 /* && global.environment == "production" */ && !oneBazaar) {
+      if (sellerDtl && sellerDtl.length && requestType === 1 /* && global.environment == "production"  && !oneBazaar*/) {
         console.log(' ramesh messag started -------')
         const sellerData = await getSellerProfile(sellerId)
         const constsellerContactNo = sellerData[0].mobile.length ? sellerData[0].mobile[0] : ''
@@ -264,8 +276,8 @@ module.exports.createRFP = async (req, res, next) => {
         }
       } else if (!sellerId && requestType === 2) {
 
-        !oneBazaar && this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
-        await sendEmailBuyer(email)
+        /* !oneBazaar && */ this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
+        await sendEmailBuyer(email,url)
         // const message = {
         //   from: MailgunKeys.senderMail,
         //   to: email,
@@ -275,7 +287,7 @@ module.exports.createRFP = async (req, res, next) => {
         // await sendSingleMail(message)
         // await sendSMS(mobile, RFQOneToOneBuyer())
 
-        if (global.environment == "production" && !oneBazaar) {
+        if (global.environment == "production" /* && !oneBazaar */) {
           let ContactNo = sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
           let countrycode = sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] && sellerDtl[0].mobile[0].countryCode : '+91'
           let { message, templateId } = RFQOneToOneBuyer({buyerName:buyerData && buyerData.name,sellerName:sellerDtl && sellerDtl.length && sellerDtl[0].name,sellerPhone :`${countrycode}${ContactNo.mobile}`})
@@ -365,8 +377,22 @@ module.exports.createRFP = async (req, res, next) => {
         const result1 = await handleUserSession(user._id, finalData)
         const rfp = await postRFP(rfpData)
 
-        const locationDetails = await getCity({ _id: location.city })
-        const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
+        // const locationDetails = await getCity({ _id: location.city })
+        // const _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
+        let locationDetails;
+        let _loc;
+        if (currency === 'USD' && oneBazaar && location && location.country !== '5e312f978acbee60ab54de08') {
+          if (!location.city) {
+            locationDetails = await getCountry({ _id: location.country })
+            _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}` : ''
+          } else {
+            locationDetails = await getCity({ _id: location.city })
+            _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.country && capitalizeFirstLetter(locationDetails.country.name)}` : ''
+          }
+        } else {
+          locationDetails = await getCity({ _id: location.city })
+          _loc = locationDetails ? `${capitalizeFirstLetter(locationDetails.name)}, ${locationDetails.state && capitalizeFirstLetter(locationDetails.state.name)}` : ''
+        }
         const sellerDtl = await getSellerProfile(sellerId)
         if (sellerDtl && sellerDtl.length && sellerDtl[0].email && requestType === 1 && email) {
 
@@ -379,9 +405,9 @@ module.exports.createRFP = async (req, res, next) => {
             productDetails,
             name
           })
-          await sendEmailBuyer(email)
+          await sendEmailBuyer(email,url)
         }
-        if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment == "production" && !oneBazaar) {
+        if (sellerDtl && sellerDtl.length && requestType === 1 && global.environment == "production" /* && !oneBazaar */) {
           // const sellerData = await getSellerProfile(sellerId)
           const constsellerContactNo = sellerDtl && sellerDtl.length && sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
           if (constsellerContactNo && constsellerContactNo.mobile) {
@@ -406,12 +432,12 @@ module.exports.createRFP = async (req, res, next) => {
 
         } else if (!sellerId && requestType === 2) {
 
-          !oneBazaar && this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
-          await sendEmailBuyer(email)
+          /* !oneBazaar && */ this.queSmsData(productDetails, _loc, user, name, mobile, rfp, url)
+          await sendEmailBuyer(email,url)
           // await sendSingleMail(message)
           // await sendSMS(mobile, RFQOneToOneBuyer())
           // this.queSmsData(productDetails, _loc, user, name, mobile, rfp)
-          if (global.environment == "production" && !oneBazaar) {
+          if (global.environment == "production" /* && !oneBazaar */) {
             let ContactNo = sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] : ''
             let countrycode = sellerDtl[0].mobile.length ? sellerDtl[0].mobile[0] && sellerDtl[0].mobile[0].countryCode : '+91'
             let { message, templateId } = RFQOneToOneBuyer({buyerName:buyerData && buyerData.name,sellerName:sellerDtl && sellerDtl.length && sellerDtl[0].name,sellerPhone :`${countrycode}${ContactNo.mobile}`})
@@ -553,8 +579,8 @@ module.exports.getRFPS = async (req, res) => {
   }
 };
 
-async function sendEmailBuyer(email) {
-  let messagecontent = RfpEnquirySend();
+async function sendEmailBuyer(email,url) {
+  let messagecontent = RfpEnquirySend({url});
   const message = {
     from: MailgunKeys.senderMail,
     to: email,

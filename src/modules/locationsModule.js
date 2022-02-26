@@ -127,6 +127,7 @@ module.exports.getCity = (query, id) =>
     // console.log(query, 'sdfsd')
     Cities.findOne(query)
       .populate('state', 'name')
+      .populate('country', 'name')
       // .select("name state country")
       .then((doc) => {
         resolve(doc && id ? doc._id : doc);
