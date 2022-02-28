@@ -935,20 +935,20 @@ module.exports.addPlanManully = async (req, res) => {
     try {
 
         // Seller ID
-        const sellerId = '61d803e9f4e1ec63b596a92b';
+        const sellerId = '6214b17e974c695a19cd8bc9';
         //Subscription Type
         const subscriptionId = '601d2cbb88a56c05672ebe27';
         const orderDetails = {
-            name: 'All Civil Construction Work',
-            email: 'ankurcoalservice@gmail.com',
-            mobile: { countryCode: '+91', mobile: '8096474763' },
+            name: 'Dileep Kumar',
+            email: '12345kumarparashar@gmail.com',
+            mobile: { countryCode: '+91', mobile: '7017037870' },
             gst: '',
             address: '',
-            pincode: '500001',
+            pincode: '283204',
             planName: 'Quarterly',
             groupType: 'Manufacturers/Traders',
-            validityFrom: '08/05/2022',
-            validityTill: '06/08/2022',
+            validityFrom: '24/05/2022',
+            validityTill: '22/08/2022',
             price: 750,
             gstAmount: 135,
             total: '',
@@ -958,12 +958,12 @@ module.exports.addPlanManully = async (req, res) => {
             submitted: true,
             paymentStatus: false,
             country: '',
-            ipAddress: '193.176.84.139'
+            ipAddress: '49.37.241.161'
           }
 
         const paymentResponse = {
-            razorpay_payment_id: 'pay_IrUXMPffdMvbB8',
-            razorpay_order_id: 'order_IrUWJ4mAEZwhF6',
+            razorpay_payment_id: 'pay_Iz1EUxQoKYU7aS',
+            razorpay_order_id: 'order_Iz1CsONwJE6sb5',
             razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012'
         }
 
@@ -971,7 +971,7 @@ module.exports.addPlanManully = async (req, res) => {
 
         request({
             method: 'GET',
-            url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_IrUXMPffdMvbB8`,
+            url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_Iz1EUxQoKYU7aS`,
     
         }, async function (error, response, body) {
             bodyReq = body;
