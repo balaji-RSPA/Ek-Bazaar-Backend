@@ -343,7 +343,7 @@ module.exports.subscriptionHalted = async (req, res) => {
 
 module.exports.subscriptionHalted2 = async (req, res) => {
     try {
-        console.log(req.body,"111111111111111111111111111111111111111"); 
+
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
@@ -397,11 +397,7 @@ module.exports.subscriptionHalted2 = async (req, res) => {
 
         // If hooks is for Tender
         if (isTender) {
-            console.log(isTender,'222222222222222222222222222222222');
-            // const url = tenderApiBaseUrl + '/subscriptionHalted'
-            // sub_Izve0fPoqz63VL
-            // "client": "trade"
-            const url = 'http://localhost:8060/api/v1/subscriptionHalted'
+            const url = tenderApiBaseUrl + '/subscriptionHalted'
             const response = await axios({
                 url,
                 method: "POST",
@@ -467,8 +463,8 @@ module.exports.subscriptionCharged = async (req, res) => {
 
         const type = `${sellerPlanDetails.planType}-subscription`;
         const totalPlanPrice = sellerPlanDetails.price / months
-        const exprireDate = entity.end_at;
-        const planValidFrom = entity.start_at;
+        const exprireDate = new Date(sellerPlanDetails.exprireDate).getTime()
+        const planValidFrom = new Date(sellerPlanDetails.planValidFrom).getTime()
 
         order_details.invoiceNo = _invoice
 
@@ -560,8 +556,8 @@ module.exports.subscriptionCharged2 = async (req, res) => {
 
             const type = `${sellerPlanDetails.planType}-subscription`;
             const totalPlanPrice = sellerPlanDetails.price / months
-            const exprireDate = entity.end_at;
-            const planValidFrom = entity.start_at;
+            const exprireDate = new Date(sellerPlanDetails.exprireDate).getTime()
+            const planValidFrom = new Date(sellerPlanDetails.planValidFrom).getTime()
 
             order_details.invoiceNo = _invoice
 
@@ -601,7 +597,7 @@ module.exports.subscriptionCharged2 = async (req, res) => {
         }
 
         if (isTender){
-            const url = tenderApiBaseUrl + '/subscriptionHalted'
+            const url = tenderApiBaseUrl + '/subscriptionCharged'
             const response = await axios({
                 url,
                 method: "POST",
