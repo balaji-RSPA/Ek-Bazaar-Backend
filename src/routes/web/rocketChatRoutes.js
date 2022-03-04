@@ -27,6 +27,7 @@ router.post("/chat/support", chat.contactSupport)
 // router.post("/chat/delete", chat.deleteChatAccount)
 
 router.post('/uploadChatLanguageCategory', chatTemplates.uploadChatLanguageCategory);
+router.post('/uploadChatLanguageCategoryOne', chatTemplates.uploadChatLanguageCategoryOne);
 router.post('/uploadChatLanguageQuestions', chatTemplates.uploadChatLanguageQuestions);
 
 router.get('/chatAllTemplates', chatTemplates.getAllChatTemplates);

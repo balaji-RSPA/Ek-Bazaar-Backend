@@ -21,6 +21,7 @@ const Pincode = require('./pincodeModule')
 const News = require('./newsModule');
 const Commodity = require('./commodityModule');
 const LanguageTemplate = require('./languageTemplateModule')
+const LanguageTemplateOne = require('./languageTemplateOneModule')
 const CurrencyConvrter = require('./currencyConverterModule')
 const PaymentData = require('./paymentDataModule')
 
@@ -48,6 +49,7 @@ module.exports = {
     News,
     Commodity,
     LanguageTemplate,
+    LanguageTemplateOne,
     CurrencyConvrter,
     PaymentData
 }

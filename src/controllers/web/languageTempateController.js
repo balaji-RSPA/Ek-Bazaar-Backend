@@ -1,7 +1,8 @@
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { LanguageTemplate, category } = require("../../modules");
+const { LanguageTemplate, category, LanguageTemplateOne } = require("../../modules");
 const { getlevel3Cat, updateSecondaryCategory } = category
 const { createLanguageTemplate, getChatAllTemplates, getChatTemplate, updateLanguageTemplate } = LanguageTemplate
+const { createLanguageTemplateOne, getChatAllTemplatesOne, getChatTemplateOne, updateLanguageTemplateOne } = LanguageTemplateOne
 
 module.exports.uploadChatLanguageCategory = async (req, res) => {
     try {
@@ -53,6 +54,66 @@ module.exports.uploadChatLanguageCategory = async (req, res) => {
         } else {
             console.log(' NO data')
         }
+
+        respSuccess(res, ' data uploaded ')
+
+    } catch (error) {
+        console.log(error, ' rrrrrrrrrrrrrrrrrrrrrrrrrr')
+        respError(res, error)
+    }
+}
+
+module.exports.uploadChatLanguageCategoryOne = async (req, res) => {
+    try {
+        const data = req.body
+        console.log("######################3",data.length,"@@@@@@@@@@@@@")
+        // if (data && data.length) {
+        //     for (let i = 0; i < data.length; i++) {
+        //         const cat = data[i]
+        //         console.log("🚀 ~ file: languageTempateController.js ~ line 12 ~ module.exports.uploadChatLanguageCategory= ~ cat", cat)
+        //         const catDetails = await getlevel3Cat({ name: { $regex: cat.Category, $options: 'i' } })
+        //         if (catDetails) {
+        //             const que = {
+        //                 name: cat.Category,
+        //                 l1: catDetails && catDetails.primaryCatId && catDetails.primaryCatId.parentCatId && catDetails.primaryCatId.parentCatId._id || '',
+        //                 l2: catDetails && catDetails.primaryCatId && catDetails.primaryCatId && catDetails.primaryCatId._id || "",
+        //                 l3: catDetails && catDetails._id || '',
+
+        //                 categoryNames: {
+        //                     "en": cat.English.trim() || "",
+        //                     "mr": cat.Marathi.trim() || "",
+        //                     "gu": cat.Gujarati.trim() || "",
+        //                     "bn": cat.Bengali.trim() || "",
+        //                     "kn": cat.Kannada.trim() || "",
+        //                     "te": cat.Telugu.trim() || "",
+        //                     "as": cat.Assamese && cat.Assamese.trim() || "",
+        //                     "ta": cat.Tamil.trim() || "",
+        //                     "ml": cat.Malayalam.trim() || "",
+        //                     "hi": cat.Hindi.trim() || "",
+        //                 },
+        //                 questions: {
+        //                     "en": [],
+        //                     "mr": [],
+        //                     "gu": [],
+        //                     "bn": [],
+        //                     "kn": [],
+        //                     "te": [],
+        //                     "as": [],
+        //                     "ta": [],
+        //                     "ml": [],
+        //                     "hi": [],
+        //                 }
+
+        //             }
+        //             const temp = await createLanguageTemplateOne(que)
+        //             if (temp) {
+        //                 const l3 = await updateSecondaryCategory(catDetails._id, { chatTempateOneId: temp._id })
+        //             }
+        //         }
+        //     }
+        // } else {
+        //     console.log(' NO data')
+        // }
 
         respSuccess(res, ' data uploaded ')
 
