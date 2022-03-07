@@ -98,6 +98,10 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
     // key_id: 'rzp_test_7xMhKwGh9PRlRA',
     // key_secret: 'e2bNdsdat2NeW73aYEICwjvc'
   }
+
+exports.tenderApiBaseUrl = NODE_ENV === 'production' ? 'https://api.ekbazaar.com/api/v1' : 'https://tenderapi.tech-active.com/api/v1'
+
+exports.tradeApiBaseUrl = NODE_ENV === 'production' ? 'https://tradeapi.ekbazaar.com/api/' : 'https://tradebazaarapi.tech-active.com/api/'
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
   logo: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",

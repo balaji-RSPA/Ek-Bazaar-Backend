@@ -42,8 +42,8 @@ const moment = require('moment');
 const app = express();
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.json());
-
 app.use(hookRouter);
+
 app.use(
   cors({
     origin: [
