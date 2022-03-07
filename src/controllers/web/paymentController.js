@@ -261,7 +261,7 @@ module.exports.pendingSubWebHook2 = async (req, res) => {
                     html: commonTemplate(subscriptionPendingEmail),
                 }
                 sendSingleMail(message)
-                respSuccess(res, { status: 'ok' }, "subscription.pending Recived")
+                res.status(200).json({ status: 'ok' })
             }
         }
         if (isTender) {
@@ -276,8 +276,6 @@ module.exports.pendingSubWebHook2 = async (req, res) => {
                 res.status(200).json({ status: 'ok' })
             }
         }
-
-
 
     } catch (error) {
         console.log(error, "EEEEEEEEEERRRRRRrrrrrrrrrrrrrrrrrr");
@@ -344,7 +342,8 @@ module.exports.subscriptionHalted = async (req, res) => {
 }
 
 module.exports.subscriptionHalted2 = async (req, res) => {
-    try { 
+    try {
+
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
@@ -465,8 +464,8 @@ module.exports.subscriptionCharged = async (req, res) => {
 
         const type = `${sellerPlanDetails.planType}-subscription`;
         const totalPlanPrice = sellerPlanDetails.price / months
-        const exprireDate = entity.end_at;
-        const planValidFrom = entity.start_at;
+        const exprireDate = new Date(sellerPlanDetails.exprireDate).getTime()
+        const planValidFrom = new Date(sellerPlanDetails.planValidFrom).getTime()
 
         order_details.invoiceNo = _invoice
 
@@ -591,9 +590,9 @@ module.exports.subscriptionCharged2 = async (req, res) => {
                     }]
                 }
                 sendSingleMail(message)
+                res.status(200).json({ status: 'ok' })
             }
 
-            respSuccess(res, { status: 'ok' }, "subscription.halted Recived")
         }
 
         if (isTender){
@@ -757,7 +756,7 @@ module.exports.captureLink = async (req, res) => {
             .update(bodyTest.toString())
             .digest('hex');
 
-        if (expectedSignature === razorpay_signature){
+        if (expectedSignature === razorpay_signature) {
             const paymentResponse = req.query;
             const { sellerId, subscriptionId, orderDetails, userId, currency, isSubscription, razorPay } = resive;
             const { url } = razorPay.notes;
@@ -773,7 +772,7 @@ module.exports.captureLink = async (req, res) => {
                 let seller = await getSellerProfile(sellerId)
                 const planDetails = await getSubscriptionPlanDetail({ _id: subscriptionId })
 
-                if (planDetails && seller && seller.length){
+                if (planDetails && seller && seller.length) {
                     seller = seller[0];
                     const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
                     const existingGroup = seller.sellerType[0].group
@@ -812,7 +811,7 @@ module.exports.captureLink = async (req, res) => {
                                 userId: seller.userId,
                                 sellerId: seller._id,
                             }
-                            if ( response.statusCode === 200 ||  response.statusCode === 200 && (testbody.status === 'authorized' || testbody.status === 'captured')) {
+                            if (response.statusCode === 200 || response.statusCode === 200 && (testbody.status === 'authorized' || testbody.status === 'captured')) {
                                 const invoiceNumner = await getInvoiceNumber({ id: 1 })
                                 const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
                                 let planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
@@ -1053,7 +1052,7 @@ module.exports.captureLink = async (req, res) => {
                                 await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
                                 console.log('------------------ Payment done ---------')
                                 return respSuccess(res, { payment: true }, 'subscription activated successfully!')
-                            }else{
+                            } else {
                                 console.log('-------  Payment Failled -------------')
                                 const paymentJson = {
                                     ...userData,
@@ -1068,8 +1067,8 @@ module.exports.captureLink = async (req, res) => {
                             console.log(err, 'tttttttt');
                         }
                     })
-                } else{
-                    console.log(planDetails,"TTTTTTTTTTTTTTTTT")
+                } else {
+                    console.log(planDetails, "TTTTTTTTTTTTTTTTT")
                     return respSuccess(res, { payment: false }, 'Payment failed')
                 }
             }

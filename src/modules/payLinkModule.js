@@ -18,9 +18,8 @@ exports.updatePayLinks = (query, data) =>
                 resolve(doc)
             })
             .catch(reject)
-    })    
-
-
+    }) 
+    
 exports.findPayLink = (query) =>
     new Promise((resolve, reject) => {
         Paylinks.findOne(query)
