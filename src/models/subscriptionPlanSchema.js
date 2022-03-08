@@ -56,7 +56,10 @@ const subscriptionPlanSchema = new Schema({
   },
   numberOfExtends: {
     type: Number
-  }
+  },
+  plan_id:{
+    type: String
+  },
 }, {
   timestamps: true,
   versionKey: false

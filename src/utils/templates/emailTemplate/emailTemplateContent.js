@@ -361,6 +361,49 @@ module.exports.listingRemovalReq = (params) => {
   }
   return message;
 }
+
+module.exports.subscriptionPending = (params) => {
+  let message = {
+    title: ' Subscription payment failed',
+    image: planExpired,
+    body: `<p style="text-align: left">Hello ${params.userName},</p>
+       <p style="text-align: left">Your payment for the upcoming month has been failed, below might be the possible reasons for the payment failure</p>
+       <ul style="text-align: left">
+       <li>The card has expired.</li>
+       <li>The bank has blocked the card.<li>
+       <li>The customer's account has insufficient balance.<li>
+       </ul>
+      <p style="text-align: left">We recommend you to check the issue with your card to continue using our services for the next month</p>`,
+    originOneFlag: false
+  }
+  return message
+}
+
+module.exports.cancelSubscription = (params) => {
+  let message = {
+    title: 'Subscription cancellation',
+    image: planExpired,
+    body: `<p style="text-align: left">Hello User,</p>
+       <p style="text-align: left">Something went wrong, and we are unable to process the charges from your card. Unfortunately, your subscription has been cancelled.</p>
+       <p style="text-align: left">But don't worry, You can purchase the new subscription at any time from EkBazaar.</p>
+       <p style="text-align: center">Hope to see you back soon</p>`,
+    originOneFlag: false
+  }
+  return message
+}
+
+module.exports.paymentLinkGeneration = (params) => {
+  let message = {
+    title: 'Payment link',
+    image: passwordUpdated,
+    body: `<p style="text-align: left">Dear ${params.userName},</p>
+       <p style="text-align: left">Here is your payment link:${params.payLink}</p>
+       <p style="text-align: left">Please click on the link to make the payment & get benefits</p>`,
+    originOneFlag: false
+  }
+  return message
+}
+
 module.exports.partialSellerRegistration = (params) => {
   let message;
   if (params.client === 'ekbazaar') {

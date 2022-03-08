@@ -24,6 +24,7 @@ const SellerPlans = require('./sellerPlanSchema')
 const QueEmails = require('./queEmailSchema')
 const SellerPlanLog = require('./sellerPlansLogSchema')
 const Payments = require('./paymentSchema')
+const Paylinks = require('./payLinkSchema')
 const Orders = require('./ordersSchema')
 const OrdersPlans = require('./orderPlanSchema')
 const InvoiceNumber = require('./invoiceNumberSchema')
@@ -36,6 +37,7 @@ const News = require("./newsSchema");
 const Commodity = require("./commoditySchema");
 const LanguageTemplate = require('./languageTemplateSchema')
 const CurrencyConvters = require('./currencyConverterSchema')
+const PaymentData = require('./paymentDataSchema');
 
 module.exports = {
     Cities,
@@ -74,5 +76,7 @@ module.exports = {
     News,
     Commodity,
     LanguageTemplate,
-    CurrencyConvters
+    CurrencyConvters,
+    PaymentData,
+    Paylinks
 }
