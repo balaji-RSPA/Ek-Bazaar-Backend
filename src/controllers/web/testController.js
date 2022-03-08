@@ -1953,7 +1953,7 @@ module.exports.getSellersList = async (req, res) => new Promise(async (resolve, 
         // const totalSellerCount = await getSeller('', '', { $and: [{ userId: { $ne: null } }/* , { name: { $regex: "rameshLive", $options: 'i' }} */], createdAt: { $gte: registerdate, $lt: date } })
         const totalSellerCount = await getSellersListData('', '', { $and: [{ userId: { $ne: null } }/* , { name: { $regex: "rameshLive", $options: 'i' }} */], createdAt: { $gte: registerdate, $lt: date } })
 
-        // console.log(totalSellerCount, "totalSeller Data");
+        console.log(totalSellerCount, "totalSeller Data");
         console.log("🚀 ~ file: testController.js ~ line 1769 ~ module.exports.gujaratSellerData= ~ totalSellerCount", totalSellerCount.length)
 
         let produts = []

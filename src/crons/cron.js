@@ -482,7 +482,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                         "range": {
                             "offers.validity.toDate": {
                                 // "gte": new Date().toISOString()
-                                "gte": new Date(moment.subtract(7, 'day').utc().startOf('day'))
+                                "gte": new Date(moment.utc().startOf('day'))
                             }
                         }
                     }
@@ -505,7 +505,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                             //     "gte": new Date(moment.utc().startOf('day'))
                             // }
                             "offers.createdAt": {
-                                "gte": new Date(moment.utc().subtract(8, 'day').startOf('day'))
+                                "gte": new Date(moment.utc().subtract(1, 'day').startOf('day'))
                             }
                         }
                     }
@@ -551,19 +551,19 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
             }
         }
 
-        // const totalOffers = await searchFromElastic(query, { skip: 0, limit: 1 }, aggs);
-        // let totalOfferCount = totalOffers && totalOffers.length && totalOffers[1] || 0;
+        const totalOffers = await searchFromElastic(query, { skip: 0, limit: 1 }, aggs);
+        let totalOfferCount = totalOffers && totalOffers.length && totalOffers[1] || 0;
 
-        // const dailyOffers = await searchFromElastic(query_daily_offers, { skip: 0, limit: 10 }, aggs);
-        // let dailyOffersCoount = dailyOffers && dailyOffers.length && dailyOffers[1] || 0
+        const dailyOffers = await searchFromElastic(query_daily_offers, { skip: 0, limit: 10 }, aggs);
+        let dailyOffersCoount = dailyOffers && dailyOffers.length && dailyOffers[1] || 0
 
-        // console.log("🚀 offers count: ", totalOfferCount, dailyOffersCoount)
+        console.log("🚀 offers count: ", totalOfferCount, dailyOffersCoount)
 
         let sellerrawData = []
         const registerdate = new Date(moment('2021-07-16').startOf('day')).toISOString()
-        const date = new Date(moment().subtract(7, 'day').startOf('day')).toISOString()
+        const date = new Date(moment().startOf('day')).toISOString()
 
-        const dateyesterday = new Date(moment.utc().subtract(8, 'day').startOf('day')).toISOString()
+        const dateyesterday = new Date(moment.utc().subtract(1, 'day').startOf('day')).toISOString()
         const _dateyesterday = dateyesterday.substring(0, dateyesterday.indexOf('T'))
         // return true
         const totalSellerCount = await Sellers.find({ $and: [/* { sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, */ { userId: { $ne: null } }], createdAt: { $gte: registerdate, $lt: date } }).count().exec()
@@ -731,9 +731,9 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                 <td>${src.value}</td>
             </tr>`
         )
-        // const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, /* { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, */ { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, /* { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, */ { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' }, { email: 'sowjanya@ekbazaar.com', name: 'Sowjanya' }, { email: 'kavya@active.agency', name: 'Kavya Gannu' }, { email: 'ravinder@active.agency', name: 'Ravinder' }, { email: 'suman@active.agency', name: 'Suman' } ]
+        const recipients = [{ email: 'shrey@active.agency', name: 'Shrey Kankaria' }, { email: 'akshay@active.agency', name: 'Akshay Agarwal' }, { email: 'ameen@active.agency', name: 'Ameen' }, /* { email: 'nagesh@ekbazaar.com', name: 'Nagesh' }, */ { email: 'sandeep@ekbazaar.com', name: 'Sandeep' }, /* { email: 'nk@ekbazaar.com', name: 'Nandakumar' }, */ { email: 'ramesh@active.agency', name: 'Ramesh Shettanoor' }, { email: 'darshan@active.agency', name: 'Darshan' }, { email: 'santosh@ekbazaar.com', name: 'Santosh' }, { email: 'sowjanya@ekbazaar.com', name: 'Sowjanya' }, { email: 'kavya@active.agency', name: 'Kavya Gannu' }, { email: 'ravinder@active.agency', name: 'Ravinder' }, { email: 'suman@active.agency', name: 'Suman' } ]
 
-        const recipients = [{ email: 'suman@active.agency', name: 'Suman' }, { email: 'kavya@active.agency', name: 'Kavya Gannu' } ]
+        // const recipients = [{ email: 'suman@active.agency', name: 'Suman' } ]
 
         let recipientVars = {};
         recipients.forEach((recipient, index) => {
@@ -1022,7 +1022,8 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
                                     <h4>Total Subscribers from ${moment('2021-07-16').startOf('day').format('MMMM Do YYYY')} till ${moment.utc().subtract(1, 'day').startOf('day').format('MMMM Do YYYY')} = ${/* yesterdayTotalCount.length */ totalSellerCount}</h4>
                                     <h4>Incomplete Sellers: <span>${/* yesterdayTotalCount.length */ incompletSellerCount}</span></h4>
                                     <h4>Registered Sellers: <span>${/* totalSellerCount.length */ totalRegisteredSellers}</span></h4>
-                                    
+                                    <h4>Total Offers: <span>${totalOfferCount}</span></h4>
+                                    <h4>Todays Offers: <span>${dailyOffersCoount}</span></h4>
                                     <h4>Thank you. </h4>
                                 </div>
                             </div>

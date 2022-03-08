@@ -49,6 +49,9 @@ const secondaryCatSchema = new Schema(
     chatTempateId: {
       type: ObjectId
     },
+    chatTempateOneId:{
+      type: ObjectId
+    },
 
   },
   {
