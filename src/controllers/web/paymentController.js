@@ -311,7 +311,7 @@ module.exports.subscriptionHalted = async (req, res) => {
 
         //Making Subscription Cancel Request To Razorpay.
         const rzrResponce = await instance.subscriptions.cancel(subId)
-        console.log("🚀 ~ file: paymentController.js ~ line 405 ~ module.exports.subscriptionHalted= ~ rzrResponce", sellerDetails)
+
 
         if (rzrResponce && rzrResponce.status === 'cancelled') {
             const OrderUpdate = await updateOrder(ordersQuery, { canceled: true })
@@ -419,6 +419,7 @@ module.exports.subscriptionHalted2 = async (req, res) => {
 // Every time user get charged we are sending Invoice frome our side.
 module.exports.subscriptionCharged = async (req, res) => {
     try {
+        
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
@@ -547,7 +548,6 @@ module.exports.subscriptionCharged2 = async (req, res) => {
             const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
 
             const paymentResponce = await addPayment(paymentJson)
-            console.log("🚀 ~ file: paymentController.js ~ line 560 ~ module.exports.subscriptionCharged= ~ paymentResponce", paymentResponce)
 
             const sellerPlanDetails = await getSellerPlan({ _id: sellerPlanId });
             console.log("🚀 ~ file: paymentController.js ~ line 563 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails", sellerPlanDetails)
@@ -558,7 +558,6 @@ module.exports.subscriptionCharged2 = async (req, res) => {
             const totalPlanPrice = sellerPlanDetails.price / months
             const exprireDate = new Date(sellerPlanDetails.exprireDate).getTime()
             const planValidFrom = new Date(sellerPlanDetails.planValidFrom).getTime()
-
             order_details.invoiceNo = _invoice
 
             const invoice = await createPdf(seller[0], { ...sellerPlanDetails, totalPlanPrice, type, planValidFrom, exprireDate, next: true }, order_details);
@@ -603,7 +602,6 @@ module.exports.subscriptionCharged2 = async (req, res) => {
                 method: "POST",
                 data: req.body
             })
-
             if (response.status === 200) {
                 res.status(200).json({ status: 'ok' })
             }
@@ -641,6 +639,7 @@ module.exports.cancleSubscription = async (req, res) => {
 
         //Making Subscription Cancel Request To Razorpay.
         const rzrResponce = await instance.subscriptions.cancel(raz_sub_id)
+        console.log("🚀 ~ file: paymentController.js ~ line 644 ~ module.exports.cancleSubscription= ~ rzrResponce", rzrResponce,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
         if (rzrResponce && rzrResponce.status === 'cancelled') {
             const OrderUpdate = await updateOrder(ordersQuery, { canceled: true })
@@ -660,6 +659,7 @@ module.exports.createRazorPayLink = async (req, res) => {
             key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
             key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
         });
+        console.log(instance, "&&&&&&&&&&&&&&&&&&&&&&&&&&");
         const { planId, currency, isSubscription, sellerId, userId, orderDetails } = req.body;
         const { pincode, name, email, mobile } = orderDetails
 
@@ -668,6 +668,8 @@ module.exports.createRazorPayLink = async (req, res) => {
             respError(res, "Invalid pincode");
         }else{
             const planDetails = await getSubscriptionPlanDetail({ _id: planId });
+            console.log("🚀 ~ file: paymentController.js ~ line 678 ~ module.exports.createRazorPayLink= ~ planDetails", planDetails)
+            console.log("🚀 ~ file: paymentController.js ~ line 678 ~ module.exports.createRazorPayLink= ~ planId", planId)
 
             if(planDetails){
                 const gstValue = 18
@@ -688,6 +690,7 @@ module.exports.createRazorPayLink = async (req, res) => {
 
                 const response = await createPayLinks(data);
                 const query = { _id: response._id }
+                
                 const result = await instance.paymentLink.create({
                     // upi_link: true,
                     amount: parseInt((includedGstAmount.totalAmount * 100).toFixed(2)),
@@ -702,7 +705,7 @@ module.exports.createRazorPayLink = async (req, res) => {
                     },
                     notify: {
                         sms: true,
-                        email: true
+                        email: false
                     },
                     notes: {
                         client: "trade",
@@ -1242,7 +1245,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                                     const today = moment();
                                     const daysFromRegistration = today.diff(moment(trialCreatedAt, 'DD-MM-YYYY'), 'days');
                                     const todayDate = new Date();
-                                    if (daysFromRegistration <= 7) {
+                                    if (daysFromRegistration <= 2) {
                                         planExpireDate = todayDate.setDate(todayDate.getDate() + parseInt(planDetails.days) + parseInt(seller.planId.days) - daysFromRegistration)
 
                                         planDetails.days = `${parseInt(planDetails.days) + parseInt(seller.planId.days) - daysFromRegistration}`
@@ -1538,9 +1541,10 @@ module.exports.captureRazorPayPaymentTwo = async (req, res) => {
 }
 
 module.exports.paymentCapture = async (req, res) => {
-    try {
-        console.log(req.body, "LLLLLLLLLLLLLLLLLLLLLLLLL");
-    } catch (error) {
+    try{
+        console.log(req.body,"LLLLLLLLLLLLLLLLLLLLLLLLL");
+        return respSuccess(res, { status: 200 }, 'payment Captured')
+    }catch (error){
         console.log(error)
         respError(error)
     }
@@ -1878,20 +1882,20 @@ module.exports.paymentCapture = async (req, res) => {
 module.exports.createStripePayment = async (req, res) => {
     let { amount, id, description, currency } = req.body;
     try {
-        const payment = await stripe.paymentIntents.create({
-            amount: amount,
-            currency: "USD",
-            description: id,
-            payment_method: id,
-            confirm: true,
-        });
+      const payment = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: "USD",
+        description: id,
+        payment_method: id,
+        confirm: true
+      });
 
-        console.log("Stripe Response :", payment);
-        res.json({
-            response: payment,
-            message: "Payment Successful",
-            success: true,
-        });
+      console.log("Stripe Response :", payment);
+      res.json({
+        response: payment,
+        message: "Payment Successful",
+        success: true,
+      });
     } catch (error) {
         console.log("Stripe Error: ", error);
         res.json({
@@ -1904,7 +1908,14 @@ module.exports.createStripePayment = async (req, res) => {
 module.exports.planActivation = async (req, res) => {
 
     try {
-        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, paymentMethod } = req.body
+        const { sellerId, subscriptionId, orderDetails, userId, paymentResponse, currency, cardData,paymentMethod } = req.body
+
+        console.log(req.body, "req.bodyreq.body");
+
+        const cardLastDigits = cardData.last4;
+
+        console.log(cardLastDigits, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",paymentMethod);
+
         console.log("🚀 ~ file: paymentController.js ~ line 199 ~ module.exports.stripe= ~  req.body", req.body)
         const url = req.get('origin');
         const dateNow = new Date();
@@ -2153,31 +2164,32 @@ module.exports.planActivation = async (req, res) => {
                             subject: 'Plan changed',
                             html: commonTemplate(planChangedEmailMsg),
                         }
-                        await sendSingleMail(message)
-                    } else {
-                        console.log("==============Plan Changed Email Not Send====================")
-                    }
-                    if (orderDetails && orderDetails.email) {
-                        let invoiceEmailMsg = invoiceContent({
-                            plan: _p_details.planType,
-                            from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
-                            till: _p_details.exprireDate,
-                            price: includedGstAmount.totalAmount,
-                            invoiceLink: invoice.Location,
-                            cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
-                            isOneBazzar: true,
-                        });
-                        const message = {
-                            from: MailgunKeys.senderMail,
-                            to: orderDetails.email || seller.email,
-                            subject: 'Onebazaar Subscription activated successfully',
-                            html: commonTemplate(invoiceEmailMsg),
-                            // attachment: invoice.attachement,
-                            attachments: [{ // stream as an attachment
-                                filename: 'invoice.pdf',
-                                content: fs.createReadStream(invoice.attachement)
-                                // path: invoice.Location,
-                            }]
+                        if (orderDetails && orderDetails.email) {
+                            let invoiceEmailMsg = invoiceContent({
+                                plan: _p_details.planType,
+                                from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
+                                till: _p_details.exprireDate,
+                                price: includedGstAmount.totalAmount,
+                                invoiceLink: invoice.Location,
+                                // cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
+                                cardNo:cardLastDigits,
+                                isOneBazzar : true,
+                            });
+                            const message = {
+                                from: MailgunKeys.senderMail,
+                                to: orderDetails.email || seller.email,
+                                subject: 'Onebazaar Subscription activated successfully',
+                                html: commonTemplate(invoiceEmailMsg),
+                                // attachment: invoice.attachement,
+                                attachments: [{ // stream as an attachment
+                                    filename: 'invoice.pdf',
+                                    content: fs.createReadStream(invoice.attachement)
+                                    // path: invoice.Location,
+                                }]
+                            }
+                         await  sendSingleMail(message)
+                        } else {
+                            console.log("==============Invoice Not Send====================")
                         }
                         await sendSingleMail(message)
                     } else {

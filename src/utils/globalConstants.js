@@ -93,6 +93,7 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
     key_id: 'rzp_test_UZ9n6fsg5YF5wE',
     key_secret: 'CrvydcP70c1LppJnGXgSu1b1',
 
+
     //tech active
     // key_id: 'rzp_test_7xMhKwGh9PRlRA',
     // key_secret: 'e2bNdsdat2NeW73aYEICwjvc'
@@ -134,3 +135,5 @@ exports.rocketChatAdminLogin = NODE_ENV === 'production' ? {
 exports.stripeApiKeys = NODE_ENV === 'production' ? {clientKey: "", secretKey: ""} : {
   clientKey: "pk_test_51JhBmfSIrsAhsOaISFcd4J61fweaSlL7AwqYxZPzrNZXR1NfwPp3U6cF9CkYu68JE8rzksfo8dUMWhuLMbuazqru00XRhHRY7j", secretKey: "sk_test_51JhBmfSIrsAhsOaIafy9CUJ5SVhFBA2XtRXxdFLV5SvZFHuwIW52KbgtyZLz9BANufK3HYI1KGV94vaHCwzMcWrJ00q9gtQz7n"
 };
+
+exports.oneBazaarRequestOrigin = NODE_ENV === 'production' ? ["https://trade.onebazaar.com"] : ["http://localhost:8086", "https://tradeonebazaar.tech-active.com"];

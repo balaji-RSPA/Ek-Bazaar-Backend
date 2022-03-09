@@ -291,7 +291,7 @@ module.exports.addUser = async (req, res, next) => {
       url,
       _base
     } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
+    console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
     const client = _base.includes('onebazaar') || _base.includes('8086') ? 'onebazaar' : 'ekbazaar';
 
