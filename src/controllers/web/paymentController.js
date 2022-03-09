@@ -199,7 +199,7 @@ async function CalculateGst(price, findPinCode, currency) {
 
 module.exports.pendingSubWebHook = async (req, res) => {
     try {
-        const save = await saveSubPendingHookRes(req.body);
+        const save = await saveSubPendingHookRes({subPendingHookResponse : req.body});
         console.log("🚀 ~ file: paymentController.js ~ line 203 ~ module.exports.pendingSubWebHook= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
@@ -255,7 +255,8 @@ module.exports.pendingSubWebHook = async (req, res) => {
 
 module.exports.subscriptionHalted = async (req, res) => {
     try {
-        const save = await saveSubHaltedHookRes(req.body);
+        console.log(req.body,"####################################");
+        const save = await saveSubHaltedHookRes({subHaltedHookResponse: req.body});
         console.log("🚀 ~ file: paymentController.js ~ line 258 ~ module.exports.subscriptionHalted= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
@@ -333,10 +334,12 @@ module.exports.subscriptionHalted = async (req, res) => {
 
 module.exports.subscriptionCharged = async (req, res) => {
     try {
-        const save = await saveSubChargedHookRes(req.body)
+        const save = await saveSubChargedHookRes({ subChargedHookResponse
+            : req.body})
         console.log("🚀 ~ file: paymentController.js ~ line 336 ~ module.exports.subscriptionCharged= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
+        console.log("🚀 ~ file: paymentController.js ~ line 342 ~ module.exports.subscriptionCharged= ~ subscription", subscription)
         const { entity } = subscription;
         const subId = entity.id;
         const isTrade = entity.notes.client === 'trade';
