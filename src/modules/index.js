@@ -15,6 +15,7 @@ const SellerPlanLogs = require('./sellerPlanLogModule')
 const Orders = require('./ordersModule')
 const Payments = require('./paymentModule')
 const Paylinks = require('./payLinkModule')
+const subChargedHook = require('./subChargedHookModule')
 const InvoiceNumber = require('./invoiceNumberModule')
 const Chat = require('./chatModule')
 const Pincode = require('./pincodeModule')
@@ -51,5 +52,6 @@ module.exports = {
     LanguageTemplate,
     LanguageTemplateOne,
     CurrencyConvrter,
-    PaymentData
+    PaymentData,
+    subChargedHook
 }

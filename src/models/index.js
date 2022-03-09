@@ -38,6 +38,9 @@ const Commodity = require("./commoditySchema");
 const LanguageTemplate = require('./languageTemplateSchema')
 const LanguageTemplateOne = require('./languageTemplateOneSchema')
 const CurrencyConvters = require('./currencyConverterSchema')
+const SubChargedRes = require('./subChargedHookSchema')
+const SubPendingRes = require('./subPendingHookSchema')
+const SubHaltedRes = require('./subHaltedHookSchema')
 const PaymentData = require('./paymentDataSchema');
 
 module.exports = {
@@ -80,5 +83,8 @@ module.exports = {
     LanguageTemplateOne,
     CurrencyConvters,
     PaymentData,
-    Paylinks
+    Paylinks,
+    SubChargedRes,
+    SubPendingRes,
+    SubHaltedRes
 }

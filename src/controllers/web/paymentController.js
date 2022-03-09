@@ -8,7 +8,7 @@ const request = require('request');
 const moment = require('moment')
 const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
-const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData,Paylinks } = require("../../modules");
+const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData, Paylinks, subChargedHook } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
 const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl, tradeApiBaseUrl } = require('../../utils/globalConstants')
 const stripe = require("stripe")(stripeApiKeys.secretKey);
@@ -33,6 +33,7 @@ const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans
 const { addOrders, updateOrder, getOrderById } = Orders
 const { addPayment, updatePayment, findPayment } = Payments
 const { createPayLinks, updatePayLinks, findPayLink} = Paylinks
+const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes } = subChargedHook
 const { addSellerPlanLog } = SellerPlanLogs
 const { getAllSellerTypes } = category
 const { updateSellerProducts } = sellerProducts
@@ -195,44 +196,11 @@ async function CalculateGst(price, findPinCode, currency) {
 }
 
 //Fired by Razorpay when the any Payment got failed while subscription duration.
+
 module.exports.pendingSubWebHook = async (req, res) => {
     try {
-        const { payload } = req.body;
-        const { subscription } = payload;
-        const { entity } = subscription;
-        const subId = entity.id;
-        const paymentQuery = {
-            isSubscription: true,
-            "paymentResponse.razorpay_subscription_id": subId
-        }
-
-        const responce = await findPayment(paymentQuery);
-        console.log("🚀 ~ file: paymentController.js ~ line 302 ~ module.exports.pendingSubWebHook= ~ responce", responce)
-
-        const sellerDetails = responce && responce.orderId && responce.orderId.sellerDetails;
-        if (sellerDetails && sellerDetails.email) {
-            let subscriptionPendingEmail = subscriptionPending({
-                userName: sellerDetails.name
-            })
-            const message = {
-                from: MailgunKeys.senderMail,
-                to: sellerDetails && sellerDetails.email,
-                subject: 'Subscription payment failed',
-                html: commonTemplate(subscriptionPendingEmail),
-            }
-            sendSingleMail(message)
-        }
-
-
-        respSuccess(res, { status: 'ok' }, "subscription.pending Recived")
-    } catch (error) {
-        respError(error)
-    }
-}
-
-
-module.exports.pendingSubWebHook2 = async (req, res) => {
-    try {
+        const save = await saveSubPendingHookRes(req.body);
+        console.log("🚀 ~ file: paymentController.js ~ line 203 ~ module.exports.pendingSubWebHook= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
@@ -284,66 +252,11 @@ module.exports.pendingSubWebHook2 = async (req, res) => {
 }
 
 // After all payment try by razorpay is failed, We are cancleing the subscription.
+
 module.exports.subscriptionHalted = async (req, res) => {
     try {
-        const { payload } = req.body;
-        const { subscription } = payload;
-        const { entity } = subscription;
-        const subId = entity.id;
-
-        const paymentQuery = {
-            isSubscription: true,
-            "paymentResponse.razorpay_subscription_id": subId
-        }
-
-        const responce = await findPayment(paymentQuery);
-        // console.log("🚀 ~ file: paymentController.js ~ line 391 ~ module.exports.subscriptionHalted= ~ responce", responce.orderId.sellerPlanId)
-        const OrderId = responce && responce.orderId && responce.orderId._id
-        const sellerPlanId = responce && responce.orderId && responce.orderId.sellerPlanId
-        const ordersQuery = { _id: OrderId }
-        const sellerPlanQuery = { _id: sellerPlanId }
-        const sellerDetails = responce && responce.orderId && responce.orderId.sellerDetails;
-
-        var instance = new Razorpay({
-            key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
-            key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
-        });
-
-        //Making Subscription Cancel Request To Razorpay.
-        const rzrResponce = await instance.subscriptions.cancel(subId)
-        console.log("🚀 ~ file: paymentController.js ~ line 405 ~ module.exports.subscriptionHalted= ~ rzrResponce", sellerDetails)
-
-        if (rzrResponce && rzrResponce.status === 'cancelled') {
-            const OrderUpdate = await updateOrder(ordersQuery, { canceled: true })
-            const sellerPlansUpadte = await updateSellerPlan(sellerPlanQuery, { canceled: true })
-
-
-            if (sellerDetails && sellerDetails.email) {
-                let subscriptionPendingEmail = cancelSubscription({
-                    userName: sellerDetails.name
-                })
-                const message = {
-                    from: MailgunKeys.senderMail,
-                    to: sellerDetails && sellerDetails.email,
-                    subject: 'Subscription cancellation',
-                    html: commonTemplate(subscriptionPendingEmail),
-                }
-                sendSingleMail(message)
-            }
-
-            respSuccess(res, { status: 'ok' }, "subscription.halted Recived")
-        }
-
-        // respSuccess(res, responce.orderId, "Subscription cancelled")
-    } catch (error) {
-        console.log("🚀 ~ file: paymentController.js ~ line 334 ~ module.exports.subscriptionHalted= ~ error", error)
-        respError(error)
-    }
-}
-
-module.exports.subscriptionHalted2 = async (req, res) => {
-    try {
-
+        const save = await saveSubHaltedHookRes(req.body);
+        console.log("🚀 ~ file: paymentController.js ~ line 258 ~ module.exports.subscriptionHalted= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
@@ -417,98 +330,11 @@ module.exports.subscriptionHalted2 = async (req, res) => {
 }
 
 // Every time user get charged we are sending Invoice frome our side.
+
 module.exports.subscriptionCharged = async (req, res) => {
     try {
-        const { payload } = req.body;
-        const { subscription } = payload;
-        const { entity } = subscription;
-        const subId = entity.id;
-        const { payment } = payload;
-
-        const paymentQuery = {
-            isSubscription: true,
-            "paymentResponse.razorpay_subscription_id": subId
-        }
-        const responce = await findPayment(paymentQuery);
-        // console.log("🚀 ~ file: paymentController.js ~ line 539 ~ module.exports.subscriptionCharged= ~ responce", responce)
-        const sellerId = responce.sellerId;
-        let seller = await getSellerProfile(sellerId);
-        const order_details = responce.orderId;
-        const sellerPlanId = responce.orderId.sellerPlanId;
-        const paymentResponse = {
-            razorpay_payment_id: payment.entity.id,
-            razorpay_subscription_id: subId,
-            razorpay_signature: responce && responce.paymentResponse && responce.paymentResponse.razorpay_signature
-        }
-        const paymentJson = {
-            sellerId: responce.sellerId,
-            userId: responce.userId,
-            paymentDetails: payment.entity,
-            orderId: responce.orderId && responce.orderId._id,
-            paymentResponse,
-            paymentSuccess: true,
-            isSubscription: true
-        }
-
-        const invoiceNumner = await getInvoiceNumber({ id: 1 })
-        const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
-
-        const paymentResponce = await addPayment(paymentJson)
-        console.log("🚀 ~ file: paymentController.js ~ line 560 ~ module.exports.subscriptionCharged= ~ paymentResponce", paymentResponce)
-
-        const sellerPlanDetails = await getSellerPlan({ _id: sellerPlanId });
-        console.log("🚀 ~ file: paymentController.js ~ line 563 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails", sellerPlanDetails)
-
-        const months = sellerPlanDetails && sellerPlanDetails.planType === "Quarterly" ? 3 : sellerPlanDetails.planType === "Half Yearly" ? 6 : sellerPlanDetails.planType === "Yearly" ? 12 : ''
-
-        const type = `${sellerPlanDetails.planType}-subscription`;
-        const totalPlanPrice = sellerPlanDetails.price / months
-        const exprireDate = new Date(sellerPlanDetails.exprireDate).getTime()
-        const planValidFrom = new Date(sellerPlanDetails.planValidFrom).getTime()
-
-        order_details.invoiceNo = _invoice
-
-        const invoice = await createPdf(seller[0], { ...sellerPlanDetails, totalPlanPrice, type, planValidFrom, exprireDate, next: true }, order_details);
-
-        await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
-
-
-        const sellerDetails = order_details && order_details.sellerDetails;
-
-        if (sellerDetails && sellerDetails.email) {
-            let invoiceEmailMsg = invoiceContent({
-                plan: type,
-                from: planValidFrom,
-                till: exprireDate,
-                price: order_details.total,
-                invoiceLink: invoice.Location,
-                cardNo: payment && payment.entity && payment.entity.card && payment.entity.card.last4,
-                isOneBazzar: false
-            });
-            const message = {
-                from: MailgunKeys.senderMail,
-                to: sellerDetails.email,
-                subject: 'Ekbazaar Subscription activated successfully',
-                html: commonTemplate(invoiceEmailMsg),
-                // attachment: invoice.attachement,
-                attachments: [{ // stream as an attachment
-                    filename: 'invoice.pdf',
-                    content: fs.createReadStream(invoice.attachement)
-                    // path: invoice.Location,
-                }]
-            }
-            sendSingleMail(message)
-        }
-
-        respSuccess(res, { status: 'ok' }, "subscription.halted Recived")
-    } catch (error) {
-        console.log(error)
-        respError(error)
-    }
-}
-
-module.exports.subscriptionCharged2 = async (req, res) => {
-    try {
+        const save = await saveSubChargedHookRes(req.body)
+        console.log("🚀 ~ file: paymentController.js ~ line 336 ~ module.exports.subscriptionCharged= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
         const { entity } = subscription;
