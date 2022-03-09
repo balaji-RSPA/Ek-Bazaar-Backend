@@ -340,7 +340,9 @@ module.exports.subscriptionCharged = async (req, res) => {
         const { entity } = subscription;
         const subId = entity.id;
         const isTrade = entity.notes.client === 'trade';
+        console.log("🚀 ~ file: paymentController.js ~ line 343 ~ module.exports.subscriptionCharged= ~ isTrade", isTrade)
         const isTender = entity.notes.client === 'tender';
+        console.log("🚀 ~ file: paymentController.js ~ line 345 ~ module.exports.subscriptionCharged= ~ isTender", isTender)
         const { payment } = payload;
 
         if (isTrade) {
@@ -349,9 +351,10 @@ module.exports.subscriptionCharged = async (req, res) => {
                 "paymentResponse.razorpay_subscription_id": subId
             }
             const responce = await findPayment(paymentQuery);
-            // console.log("🚀 ~ file: paymentController.js ~ line 539 ~ module.exports.subscriptionCharged= ~ responce", responce)
+            console.log("🚀 ~ file: paymentController.js ~ line 354 ~ module.exports.subscriptionCharged= ~ responce", responce)
             const sellerId = responce.sellerId;
             let seller = await getSellerProfile(sellerId);
+            console.log("🚀 ~ file: paymentController.js ~ line 357 ~ module.exports.subscriptionCharged= ~ seller", seller)
             const order_details = responce.orderId;
             const sellerPlanId = responce.orderId.sellerPlanId;
             const paymentResponse = {
@@ -373,10 +376,11 @@ module.exports.subscriptionCharged = async (req, res) => {
             const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
 
             const paymentResponce = await addPayment(paymentJson)
-            console.log("🚀 ~ file: paymentController.js ~ line 560 ~ module.exports.subscriptionCharged= ~ paymentResponce", paymentResponce)
+            console.log("🚀 ~ file: paymentController.js ~ line 379 ~ module.exports.subscriptionCharged= ~ paymentResponce", paymentResponce)
 
             const sellerPlanDetails = await getSellerPlan({ _id: sellerPlanId });
-            console.log("🚀 ~ file: paymentController.js ~ line 563 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails", sellerPlanDetails)
+            console.log("🚀 ~ file: paymentController.js ~ line 382 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails", sellerPlanDetails)
+
 
             const months = sellerPlanDetails && sellerPlanDetails.planType === "Quarterly" ? 3 : sellerPlanDetails.planType === "Half Yearly" ? 6 : sellerPlanDetails.planType === "Yearly" ? 12 : ''
 
@@ -388,6 +392,7 @@ module.exports.subscriptionCharged = async (req, res) => {
             order_details.invoiceNo = _invoice
 
             const invoice = await createPdf(seller[0], { ...sellerPlanDetails, totalPlanPrice, type, planValidFrom, exprireDate, next: true }, order_details);
+            console.log("🚀 ~ file: paymentController.js ~ line 395 ~ module.exports.subscriptionCharged= ~ invoice", invoice)
 
             await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
 
