@@ -28,6 +28,10 @@ const payLinkGenSchema = new Schema({
         type: Object,
         required: true
     },
+    isSubLink: {
+        type: Object,
+        required: true
+    },
     razorPay: {
         type: Object,
         default: {},
