@@ -6,6 +6,6 @@ hookRouter.post('/webhooks/paymentCaptured', hookAuth, payment.paymentCaptured)
 
 hookRouter.post('/webhooks/subscriptionPending', payment.pendingSubWebHook)
 hookRouter.post('/webhooks/subscriptionHalted', payment.subscriptionHalted)
-hookRouter.post('/webhooks/subscriptionCharged', payment.subscriptionCharged) 
+hookRouter.post('/webhooks/subscriptionCharged', payment.subscriptionCharged)
 
 module.exports = hookRouter

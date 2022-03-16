@@ -32,7 +32,7 @@ const { getSellerProfile, updateSeller, getUserProfile } = sellers
 const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans
 const { addOrders, updateOrder, getOrderById } = Orders
 const { addPayment, updatePayment, findPayment } = Payments
-const { createPayLinks, updatePayLinks, findPayLink} = Paylinks
+const { createPayLinks, updatePayLinks, findPayLink } = Paylinks
 const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes } = subChargedHook
 const { addSellerPlanLog } = SellerPlanLogs
 const { getAllSellerTypes } = category
@@ -199,7 +199,7 @@ async function CalculateGst(price, findPinCode, currency) {
 
 module.exports.pendingSubWebHook = async (req, res) => {
     try {
-        const save = await saveSubPendingHookRes({subPendingHookResponse : req.body});
+        const save = await saveSubPendingHookRes({ subPendingHookResponse: req.body });
         console.log("🚀 ~ file: paymentController.js ~ line 203 ~ module.exports.pendingSubWebHook= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
@@ -240,7 +240,7 @@ module.exports.pendingSubWebHook = async (req, res) => {
                 method: "POST",
                 data: req.body
             })
-            if (response.status === 200){
+            if (response.status === 200) {
                 res.status(200).json({ status: 'ok' })
             }
         }
@@ -255,8 +255,8 @@ module.exports.pendingSubWebHook = async (req, res) => {
 
 module.exports.subscriptionHalted = async (req, res) => {
     try {
-        console.log(req.body,"####################################"); 
-        const save = await saveSubHaltedHookRes({subHaltedHookResponse: req.body});
+        console.log(req.body, "####################################");
+        const save = await saveSubHaltedHookRes({ subHaltedHookResponse: req.body });
         console.log("🚀 ~ file: paymentController.js ~ line 258 ~ module.exports.subscriptionHalted= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
@@ -334,15 +334,17 @@ module.exports.subscriptionHalted = async (req, res) => {
 
 module.exports.subscriptionCharged = async (req, res) => {
     try {
-        console.log("------------subscriptionCharged--subscriptionCharged--------------------")
-        const save = await saveSubChargedHookRes({ subChargedHookResponse
-            : req.body})
+        const save = await saveSubChargedHookRes({
+            subChargedHookResponse
+                : req.body
+        })
         console.log("🚀 ~ file: paymentController.js ~ line 336 ~ module.exports.subscriptionCharged= ~ save", save)
         const { payload } = req.body;
         const { subscription } = payload;
         console.log("🚀 ~ file: paymentController.js ~ line 342 ~ module.exports.subscriptionCharged= ~ subscription", subscription)
         const { entity } = subscription;
         const subId = entity.id;
+        const isNextPayTerms = entity.paid_count > 1
         const isTrade = entity.notes.client === 'trade';
         console.log("🚀 ~ file: paymentController.js ~ line 343 ~ module.exports.subscriptionCharged= ~ isTrade", isTrade)
         const isTender = entity.notes.client === 'tender';
@@ -350,87 +352,94 @@ module.exports.subscriptionCharged = async (req, res) => {
         const { payment } = payload;
 
         if (isTrade) {
-            const paymentQuery = {
-                isSubscription: true,
-                "paymentResponse.razorpay_subscription_id": subId
-            }
-            const responce = await findPayment(paymentQuery);
-            console.log("🚀 ~ file: paymentController.js ~ line 354 ~ module.exports.subscriptionCharged= ~ responce", responce)
-            const sellerId = responce.sellerId;
-            let seller = await getSellerProfile(sellerId);
-            console.log("🚀 ~ file: paymentController.js ~ line 357 ~ module.exports.subscriptionCharged= ~ seller", seller)
-            const order_details = responce.orderId;
-            const sellerPlanId = responce.orderId.sellerPlanId;
-            const paymentResponse = {
-                razorpay_payment_id: payment.entity.id,
-                razorpay_subscription_id: subId,
-                razorpay_signature: responce && responce.paymentResponse && responce.paymentResponse.razorpay_signature
-            }
-            const paymentJson = {
-                sellerId: responce.sellerId,
-                userId: responce.userId,
-                paymentDetails: payment.entity,
-                orderId: responce.orderId && responce.orderId._id,
-                paymentResponse,
-                paymentSuccess: true,
-                isSubscription: true
-            }
-
-            const invoiceNumner = await getInvoiceNumber({ id: 1 })
-            const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
-
-            const paymentResponce = await addPayment(paymentJson)
-            console.log("🚀 ~ file: paymentController.js ~ line 379 ~ module.exports.subscriptionCharged= ~ paymentResponce", paymentResponce)
-
-            const sellerPlanDetails = await getSellerPlan({ _id: sellerPlanId });
-            console.log("🚀 ~ file: paymentController.js ~ line 382 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails", sellerPlanDetails)
-
-
-            const months = sellerPlanDetails && sellerPlanDetails.planType === "Quarterly" ? 3 : sellerPlanDetails.planType === "Half Yearly" ? 6 : sellerPlanDetails.planType === "Yearly" ? 12 : ''
-
-            const type = `${sellerPlanDetails.planType}-subscription`;
-            const totalPlanPrice = sellerPlanDetails.price / months
-            const exprireDate = new Date(sellerPlanDetails.exprireDate).getTime()
-            const planValidFrom = new Date(sellerPlanDetails.planValidFrom).getTime()
-            order_details.invoiceNo = _invoice
-
-            const invoice = await createPdf(seller[0], { ...sellerPlanDetails, totalPlanPrice, type, planValidFrom, exprireDate, next: true }, order_details);
-            console.log("🚀 ~ file: paymentController.js ~ line 395 ~ module.exports.subscriptionCharged= ~ invoice", invoice)
-
-            await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
-
-
-            const sellerDetails = order_details && order_details.sellerDetails;
-
-            if (sellerDetails && sellerDetails.email) {
-                let invoiceEmailMsg = invoiceContent({
-                    plan: type,
-                    from: planValidFrom,
-                    till: exprireDate,
-                    price: order_details.total,
-                    invoiceLink: invoice.Location,
-                    cardNo: payment && payment.entity && payment.entity.card && payment.entity.card.last4,
-                    isOneBazzar: false
-                });
-                const message = {
-                    from: MailgunKeys.senderMail,
-                    to: sellerDetails.email,
-                    subject: 'Ekbazaar Subscription activated successfully',
-                    html: commonTemplate(invoiceEmailMsg),
-                    // attachment: invoice.attachement,
-                    attachments: [{ // stream as an attachment
-                        filename: 'invoice.pdf',
-                        content: fs.createReadStream(invoice.attachement)
-                        // path: invoice.Location,
-                    }]
+            if (isNextPayTerms) {
+                const paymentQuery = {
+                    isSubscription: true,
+                    "paymentResponse.razorpay_subscription_id": subId
                 }
-                sendSingleMail(message)
-                res.status(200).json({ status: 'ok' })
+                const responce = await findPayment(paymentQuery);
+                console.log("🚀 ~ file: paymentController.js ~ line 354 ~ module.exports.subscriptionCharged= ~ responce", responce)
+                const sellerId = responce.sellerId;
+                let seller = await getSellerProfile(sellerId);
+                console.log("🚀 ~ file: paymentController.js ~ line 357 ~ module.exports.subscriptionCharged= ~ seller", seller)
+                const order_details = responce.orderId;
+                const sellerPlanId = responce.orderId.sellerPlanId;
+                const paymentResponse = {
+                    razorpay_payment_id: payment.entity.id,
+                    razorpay_subscription_id: subId,
+                    razorpay_signature: responce && responce.paymentResponse && responce.paymentResponse.razorpay_signature
+                }
+                const paymentJson = {
+                    sellerId: responce.sellerId,
+                    userId: responce.userId,
+                    paymentDetails: payment.entity,
+                    orderId: responce.orderId && responce.orderId._id,
+                    paymentResponse,
+                    paymentSuccess: true,
+                    isSubscription: true
+                }
+
+                const invoiceNumner = await getInvoiceNumber({ id: 1 })
+                const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
+
+                const paymentResponce = await addPayment(paymentJson)
+                console.log("🚀 ~ file: paymentController.js ~ line 379 ~ module.exports.subscriptionCharged= ~ paymentResponce", paymentResponce)
+
+                const sellerPlanDetails = await getSellerPlan({ _id: sellerPlanId });
+                console.log("🚀 ~ file: paymentController.js ~ line 382 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails", sellerPlanDetails)
+
+
+                const months = sellerPlanDetails && sellerPlanDetails.planType === "Quarterly" ? 3 : sellerPlanDetails.planType === "Half Yearly" ? 6 : sellerPlanDetails.planType === "Yearly" ? 12 : ''
+
+                const type = `${sellerPlanDetails.planType}-subscription`;
+                const totalPlanPrice = sellerPlanDetails.price / months
+                const exprireDate = new Date(sellerPlanDetails.exprireDate).getTime()
+                const planValidFrom = new Date(sellerPlanDetails.planValidFrom).getTime()
+
+                order_details.invoiceNo = _invoice
+
+                const invoice = await createPdf(seller[0], { ...sellerPlanDetails, totalPlanPrice, type, planValidFrom, exprireDate, next: true }, order_details);
+                console.log("🚀 ~ file: paymentController.js ~ line 395 ~ module.exports.subscriptionCharged= ~ invoice", invoice)
+
+                await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
+
+
+                const sellerDetails = order_details && order_details.sellerDetails;
+
+                if (sellerDetails && sellerDetails.email) {
+                    let invoiceEmailMsg = invoiceContent({
+                        plan: type,
+                        from: planValidFrom,
+                        till: exprireDate,
+                        price: order_details.total,
+                        invoiceLink: invoice.Location,
+                        cardNo: payment && payment.entity && payment.entity.card && payment.entity.card.last4,
+                        isOneBazzar: false
+                    });
+                    const message = {
+                        from: MailgunKeys.senderMail,
+                        to: sellerDetails.email,
+                        subject: 'Ekbazaar Subscription activated successfully',
+                        html: commonTemplate(invoiceEmailMsg),
+                        // attachment: invoice.attachement,
+                        attachments: [{ // stream as an attachment
+                            filename: 'invoice.pdf',
+                            content: fs.createReadStream(invoice.attachement)
+                            // path: invoice.Location,
+                        }]
+                    }
+                    console.log("---------------Next Payment------------------------")
+                    sendSingleMail(message)
+                    res.status(200).json({ status: 'ok' })
+                }
+            }else{
+                console.log("-----------------First Payment--------------------")
+                res.status(200).json({ status: 'ok' }) 
             }
 
         }
 
-        if (isTender){
+        if (isTender) {
             const url = tenderApiBaseUrl + '/subscriptionCharged'
             const response = await axios({
                 url,
@@ -498,15 +507,15 @@ module.exports.createRazorPayLink = async (req, res) => {
         const { planId, currency, isSubscription, sellerId, userId, orderDetails } = req.body;
         const { pincode, name, email, mobile } = orderDetails
 
-        let findpincode = currency === 'INR' ? await findPincode({pincode}): '';
-        if(!findpincode && currency === 'INR') {
+        let findpincode = currency === 'INR' ? await findPincode({ pincode }) : '';
+        if (!findpincode && currency === 'INR') {
             respError(res, "Invalid pincode");
-        }else{
+        } else {
             const planDetails = await getSubscriptionPlanDetail({ _id: planId });
             console.log("🚀 ~ file: paymentController.js ~ line 678 ~ module.exports.createRazorPayLink= ~ planDetails", planDetails)
             console.log("🚀 ~ file: paymentController.js ~ line 678 ~ module.exports.createRazorPayLink= ~ planId", planId)
 
-            if(planDetails){
+            if (planDetails) {
                 const gstValue = 18
                 const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Half Yearly" ? 6 : planDetails.type === "Yearly" ? 12 : ''
                 const price = planDetails && (currency === 'INR' ? planDetails.price : planDetails.usdPrice)
@@ -549,21 +558,21 @@ module.exports.createRazorPayLink = async (req, res) => {
                     callback_url: tradeApiBaseUrl + 'captureLinkPayment',
                     callback_method: "get"
                 })
-                const update = await updatePayLinks(query, { razorPay: result})
-                if (update && update.orderDetails && update.orderDetails.email){
+                const update = await updatePayLinks(query, { razorPay: result })
+                if (update && update.orderDetails && update.orderDetails.email) {
                     let payLinkEmailMsg = paymentLinkGeneration({
-                            userName: name,
-                            payLink: result.short_url
+                        userName: name,
+                        payLink: result.short_url
                     });
                     const message = {
-                            from: MailgunKeys.senderMail,
-                            to: email,
-                            subject: 'Payment link',
-                            html: commonTemplate(payLinkEmailMsg)
+                        from: MailgunKeys.senderMail,
+                        to: email,
+                        subject: 'Payment link',
+                        html: commonTemplate(payLinkEmailMsg)
                     }
                     sendSingleMail(message)
 
-                    respSuccess(res, { ...result },'Link Send to Your Email')
+                    respSuccess(res, { ...result }, 'Link Send to Your Email')
                 }
             }
         }
