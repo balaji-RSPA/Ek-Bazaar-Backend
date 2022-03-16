@@ -503,7 +503,8 @@ module.exports.createRazorPayLink = async (req, res) => {
             key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
             key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
         });
-        const { planId, currency, isSubscription, sellerId, userId, orderDetails } = req.body;
+        const { planId, currency, isSubscription, sellerId, userId, orderDetails, isSubLink } = req.body;
+        console.log("🚀 ~ file: paymentController.js ~ line 507 ~ module.exports.createRazorPayLink= ~ isSubLink", isSubLink, "rrrrr", isSubscription);
         const { pincode, name, email, mobile } = orderDetails
 
         let findpincode = currency === 'INR' ? await findPincode({ pincode }) : '';
@@ -525,13 +526,33 @@ module.exports.createRazorPayLink = async (req, res) => {
                     isSubscription,
                     currency,
                     orderDetails,
+                    isSubLink,
                     subscriptionId: planId,
                     razorPay: {}
                 }
-
+                const mob = orderDetails && orderDetails.mobile && orderDetails.mobile.mobile,
+                    mail = orderDetails && orderDetails.email
                 const response = await createPayLinks(data);
                 const query = { _id: response._id }
-                const result = await instance.paymentLink.create({
+                let result;
+                if (isSubscription && isSubLink){
+                    let plan_id = planDetails && planDetails.plan_id;
+                    result = await instance.subscriptions.create({
+                        plan_id,
+                        total_count: parseInt(months),
+                        customer_notify: 1,
+                        notes: {
+                            client: "trade",
+                            planId
+                        },
+                        notify_info: {
+                            notify_phone: `${mob}`,
+                            notify_email: mail
+                        }
+                    })
+                    console.log(result,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+                }else{
+                result = await instance.paymentLink.create({
                     // upi_link: true,
                     amount: parseInt((includedGstAmount.totalAmount * 100).toFixed(2)),
                     currency: currency,
@@ -554,6 +575,7 @@ module.exports.createRazorPayLink = async (req, res) => {
                     callback_url: tradeApiBaseUrl + 'captureLinkPayment',
                     callback_method: "get"
                 })
+            }
                 const update = await updatePayLinks(query, { razorPay: result })
                 if (update && update.orderDetails && update.orderDetails.email) {
                     let payLinkEmailMsg = paymentLinkGeneration({
