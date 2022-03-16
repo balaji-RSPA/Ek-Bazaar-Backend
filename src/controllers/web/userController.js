@@ -1073,6 +1073,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 
     const { userID, token } = req;
     const result = await updateUser({ _id: userId }, { deleteTrade, reresigistered: true })
+    if (permanentDelete) updateUser({ _id: userId }, { deleteTendor: deleteTrade })
 
 
     if (result) {
