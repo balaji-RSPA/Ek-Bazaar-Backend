@@ -484,7 +484,8 @@ module.exports.updateUser = async (req, res) => {
       type,
       sellerType,
       userType,
-      hearingSource
+      hearingSource,
+      preferredLanguage
     } = req.body;
     console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body,"llllllllllll");
     // return false
@@ -571,6 +572,12 @@ module.exports.updateUser = async (req, res) => {
     }
     if (userData && userData.email) {
       userData.userHash = encrypt(userData.email);
+    }
+    if (Object.keys(preferredLanguage).length !== 0){
+      userData.preferredLanguage = {
+        lang: preferredLanguage.label,
+        langCode: preferredLanguage.value,
+      }
     }
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode;
