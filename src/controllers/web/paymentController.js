@@ -428,12 +428,12 @@ module.exports.subscriptionCharged = async (req, res) => {
                             // path: invoice.Location,
                         }]
                     }
-                    console.log("---------------Next Payment------------------------")
+                    console.log("---------------Next Payment------------------------", subId)
                     sendSingleMail(message)
                     res.status(200).json({ status: 'ok' })
                 }
             }else{
-                console.log("-----------------First Payment--------------------")
+                console.log("-----------------First Payment--------------------", subId)
                 res.status(200).json({ status: 'ok' }) 
             }
 
@@ -1399,7 +1399,7 @@ module.exports.paymentCapture = async (req, res) => {
 
 // For Manully Assign Plan.
 
-// const insertPlaneInDb = async (sellerId, subscriptionId, orderDetails, paymentResponse, body) => {
+// const insertPlaneInDb = async (sellerId, subscriptionId, orderDetails, paymentResponse, body, isSubscription) => {
 //     try {
 //         const currency = 'INR';
 //         const url = 'https://trade.ekbazaar.com/';
@@ -1413,6 +1413,7 @@ module.exports.paymentCapture = async (req, res) => {
 //         const checkMobile = seller && seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile
 //         const existingGroup = seller.sellerType[0].group
 //         const currentGroup = planDetails.groupType
+//         let findpincode = currency === 'INR' ? await findPincode({ pincode }) : '';
 
 //         let sellerPlanDetails = seller && seller.planId ? await getSellerPlan({ _id: seller.planId }) : null;
 //         const planTo = sellerPlanDetails && sellerPlanDetails.exprireDate;
@@ -1422,8 +1423,13 @@ module.exports.paymentCapture = async (req, res) => {
 //         let newPlanType = '';
 
 //         const months = planDetails && planDetails.type === "Quarterly" ? 3 : planDetails.type === "Half Yearly" ? 6 : planDetails.type === "Yearly" ? 12 : ''
-//         const pricePerMonth = planDetails && (currency === 'INR' ? planDetails.price : planDetails.usdPrice)
-//         const price = pricePerMonth/*  * parseInt(months) */
+//         const totalPrice = planDetails && (currency === 'INR' ? planDetails.price : planDetails.usdPrice)
+//         let price;
+//         if (isSubscription) {
+//             price = totalPrice / months
+//         } else {
+//             price = totalPrice
+//         }
 //         const includedGstAmount = await CalculateGst(price, findpincode, currency);
 
 
@@ -1473,7 +1479,8 @@ module.exports.paymentCapture = async (req, res) => {
 //             ...userData,
 //             paymentResponse: paymentResponse,
 //             paymentDetails: JSON.parse(body),
-//             paymentSuccess: true
+//             paymentSuccess: true,
+//             isSubscription
 //         }
 //         const _p_details = {
 //             subscriptionId: planDetails._id,
@@ -1498,11 +1505,14 @@ module.exports.paymentCapture = async (req, res) => {
 //             currency
 //         }
 //         const payment = await addPayment(paymentJson)
+//         console.log("🚀111111111111111111111111111111111111111111111111payment", payment)
 //         const planData = {
 //             ...userData,
 //             ..._p_details,
 //             isFreeTrialIncluded,
 //             planValidFrom,
+//             isSubscription,
+//             canceled: false,
 //             createdAt: new Date(),
 //             createdOn: new Date()
 //         }
@@ -1532,10 +1542,12 @@ module.exports.paymentCapture = async (req, res) => {
 //             // paymentId: '', // payment collection id
 //             // paymentStatus: '',
 //             ipAddress: orderDetails && orderDetails.ipAddress || null,
-//             currency: currency
+//             currency: currency,
+//             isSubscription
 //             // isEmailSent: ''
 //         }
 //         const OrdersData = await addOrders(order_details)
+//         console.log("2222222222222222222222222222222222222222222222222222OrdersData", OrdersData)
 
 //         const orderItem = {
 //             ...userData,
@@ -1543,13 +1555,15 @@ module.exports.paymentCapture = async (req, res) => {
 //             subscriptionId: planDetails._id,
 //             ..._p_details,
 //             isFreeTrialIncluded,
-//             planValidFrom
-
+//             planValidFrom,
+//             isSubscription
 //         }
 //         const orderItemData = await addOrdersPlans(orderItem)
+//         console.log("3333333333333333333333333333333333333333333orderItemData", orderItemData)
 //         let sellerUpdate = {
 //             paidSeller: true,
 //             sellerVerified: true,
+//             isSubscription
 //         }
 //         console.log(existingGroup, '!==', currentGroup, ' Group equality check------')
 //         if (existingGroup !== currentGroup) {
@@ -1568,6 +1582,7 @@ module.exports.paymentCapture = async (req, res) => {
 //             sellerPlanDetails = await createPlan(planData)
 //             sellerUpdate.planId = sellerPlanDetails._id
 //         }
+//         console.log("4444444444444444444444444444444444444444sellerPlanDetails", sellerPlanDetails)
 //         const sellerUpdateData = await updateSeller({ _id: seller._id }, sellerUpdate)
 
 //         const planLog = {
@@ -1578,11 +1593,13 @@ module.exports.paymentCapture = async (req, res) => {
 //             planDetails: {
 //                 ..._p_details,
 //                 exprireDate: new Date(_p_details.exprireDate)
-//             }
+//             },
+//             isSubscription
 //         }
 //         const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
 //         // Generate invoice
-//         const invoice = await createPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth, isFreeTrialIncluded, planValidFrom }, order_details)
+//         const invoice = await createPdf(seller, { ..._p_details, totalPlanPrice: price, totalPrice, isFreeTrialIncluded, planValidFrom }, order_details)
+//         console.log("55555555555555555555555555invoice", invoice)
 
 
 //         await addSellerPlanLog(planLog)
@@ -1667,6 +1684,7 @@ module.exports.paymentCapture = async (req, res) => {
 //         }
 //         await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
 //         console.log('------------------ Payment done ---------')
+//         console.log("######################################################################################################################################################################################################################################################################################")
 
 //     } catch (error) {
 //         console.log(error);
@@ -1675,34 +1693,44 @@ module.exports.paymentCapture = async (req, res) => {
 
 // module.exports.addPlanManully = async (req, res) => {
 //     try {
-//         const sellerId = '61fba51c47b8ed1de5844ba5';
-//         const subscriptionId = '601d2cbb88a56c05672ebe27';
+//         const sellerId = '61f4e33e9e16b11e20376fb4';
+//         const isSubscription = true
+//         const subscriptionId = '601d2cbb88a56c05672ebe29';
 //         const orderDetails = {
-//             name: 'balwinder singh',
-//             email: 'balwindersingh1504@gmail.com',
-//             mobile: { countryCode: '+91', mobile: '9876657987' },
+//             name: 'Pooja Agrawal',
+//             email: 'poojamehandiart@gmail.com',
+//             mobile: { countryCode: '+91', mobile: '7770993057' },
 //             gst: '',
-//             address: '',
-//             pincode: '160020',
-//             planName: 'Quarterly',
+//             address: 'Mangal City Mall, A B Road, Vijay Nagar, Indore',
+//             pincode: '452010',
+//             planName: 'Yearly',
 //             groupType: 'Manufacturers/Traders',
-//             validityFrom: '08/05/2022',
-//             validityTill: '06/08/2022',
-//             price: 750,
-//             gstAmount: 135,
+//             validityFrom: '21/06/2022',
+//             validityTill: '21/06/2023',
+//             price: 3000,
+//             gstAmount: 540,
 //             total: '',
 //             loader: true,
 //             refresh: false,
-//             active: true,
+//             active: false,
 //             submitted: true,
 //             paymentStatus: false,
 //             country: '',
-//             ipAddress: '193.176.84.139'
-//           }
+//             isSubscription: true,
+//             isLinkGen: false,
+//             isSubLink: false,
+//             ipAddress: '49.37.241.205'
+//         }
+
+//         // const paymentResponse = {
+//         //     razorpay_payment_id: 'pay_IrVW5ut7tWZ5uT',
+//         //     razorpay_order_id: 'order_IrVVRHo78SkAWP',
+//         //     razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012'
+//         // }
 
 //         const paymentResponse = {
-//             razorpay_payment_id: 'pay_IrVW5ut7tWZ5uT',
-//             razorpay_order_id: 'order_IrVVRHo78SkAWP',
+//             razorpay_payment_id: 'pay_JA1vaPMo7CNfWj',
+//             razorpay_subscription_id: 'sub_JA1uAnPu0w8iKK',
 //             razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012'
 //         }
 
@@ -1710,15 +1738,16 @@ module.exports.paymentCapture = async (req, res) => {
 
 //         request({
 //             method: 'GET',
-//             url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_IrVW5ut7tWZ5uT`,
+//             url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JA1vaPMo7CNfWj`,
 
 //         }, async function (error, response, body) {
 //             bodyReq = body;
-//             console.log(bodyReq,"11111111111111111111111111111");
+//             console.log(bodyReq, "11111111111111111111111111111");
+//             insertPlaneInDb(sellerId, subscriptionId, orderDetails, paymentResponse, bodyReq, isSubscription);
+//             return {status: "ok"}
 //         })
 
 
-//         insertPlaneInDb(sellerId, subscriptionId, orderDetails, paymentResponse, bodyReq);
 //         // return respSuccess(res, { payment: true }, 'subscription activated successfully!')
 //     } catch (error) {
 //         console.log(error);

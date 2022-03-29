@@ -638,7 +638,7 @@ exports.sendDailyCount = async (req, res) => new Promise(async (resolve, reject)
         const uttarakhand_count = await getSellerAllDetails({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { "hearingSource.source": "Uttarakhand" }], createdAt: { $gte: dateyesterday, $lt: date } })
         uttarakhand_count && uttarakhand_count.length && sellerrawData.push(...uttarakhand_count)
 
-        const hearingSourseNull = await getSellerAllDetails({ $and: [{ "hearingSource.referralCode": null }, { "hearingSource.source": null }/* ,{ $where: "this.sellerType.length > 0" } */], createdAt: { $gte: dateyesterday, $lt: date } })
+        const hearingSourseNull = await getSellerAllDetails({ $and: [{ "hearingSource.referralCode": { $exists: true }}, { "hearingSource.source": null }/* ,{ $where: "this.sellerType.length > 0" } */], createdAt: { $gte: dateyesterday, $lt: date } })
         hearingSourseNull && hearingSourseNull.length && sellerrawData.push(...hearingSourseNull)
         // console.log(JSON.stringify(sellerrawData), 'llllllllllllllllllllll')
         // return true

@@ -110,8 +110,8 @@ app.get("/send-daily-report", async function (req, res) {
 
 // app.get("/add-plan", async function (req, res) {
 //   try {
-//     addPlanManully(req,res)
-//     return respSuccess(res, { payment: true }, 'subscription activated successfully!')
+//     await addPlanManully(req,res)
+//     return respSuccess(res, { payment: true },'subscription activated successfully!')
 //   } catch (err) {
 //     console.log(error)
 //   }
