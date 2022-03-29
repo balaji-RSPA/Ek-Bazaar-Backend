@@ -4,15 +4,13 @@ const _IS_PROD_ = global.environment === "production"
 // const signInLink = _IS_PROD_ ? 'https://trade.ekbazaar.com/signin' : 'https://tradebazaar.tech-active.com/signin'
 
 module.exports.successfulRegistration = (params) => {
+  // Your account has been activated with ${params.promoCode ? "90" : "30"} days free trial.
   const successfulMessage = params.userType === 'buyer' ?
     `Dear Customer,
     Thank you for signing up.
     We have successfully registered your account on Ekbazaar.com.` :
     `Dear ${params.name},
-
-    Your account has been activated with ${params.promoCode ? "90" : "30"} days free trial.
-
-    Thank you for choosing Ekbazaar.com`
+    Thank you for choosing our platform for growing your business`
   return {
     successfulMessage, templateId: params.userType === "buyer" ? "1707161760855637940" : "1707161760972078390"
   };
