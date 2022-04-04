@@ -8,11 +8,11 @@ module.exports.successfulRegistration = (params) => {
   const successfulMessage = params.userType === 'buyer' ?
     `Dear Customer,
     Thank you for signing up.
-    We have successfully registered your account on Ekbazaar.com.` :
-    `Dear ${params.name},
-    Thank you for choosing our platform for growing your business`
+    We have successfully registered your account on Ekbazaar.com.` 
+    :
+    `Dear ${params.name}, Your account has been activated with Ekbazaar.com. Thank you for choosing our platform for growing your business`
   return {
-    successfulMessage, templateId: params.userType === "buyer" ? "1707161760855637940" : "1707161760972078390"
+    successfulMessage, templateId: params.userType === "buyer" ? "1707161760855637940" : /* "1707161760972078390" */"1707164724891341855"
   };
 }
 module.exports.sendOtp = (params) => {
