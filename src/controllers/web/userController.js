@@ -579,10 +579,10 @@ module.exports.updateUser = async (req, res) => {
       buyerData.countryCode = _buyer.mobile[0].countryCode;
     }
     delete buyerData && buyerData._id;
-    // if (_seller && sellerType && (!_seller.sellerType || (_seller.sellerType && !_seller.sellerType.length)) && isProd) {
-    //   const { successfulMessage, templateId } = successfulRegistration({ userType, name });
-    //   let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
-    // }
+    if (_seller && sellerType && (!_seller.sellerType || (_seller.sellerType && !_seller.sellerType.length)) && isProd) {
+      const { successfulMessage, templateId } = successfulRegistration({ userType, name });
+      let resp = await sendSMS(`${user.countryCode || '+91'}${user.mobile}`, successfulMessage, templateId);
+    }
     if (business) {
       const bsnsDtls = await addbusinessDetails(_seller._id, {
         name: business,
@@ -1072,6 +1072,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 
     const { userID, token } = req;
     const result = await updateUser({ _id: userId }, { deleteTrade, reresigistered: true })
+    if (permanentDelete) updateUser({ _id: userId }, { deleteTendor: deleteTrade })
 
 
     if (result) {

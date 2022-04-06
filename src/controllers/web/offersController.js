@@ -205,8 +205,8 @@ module.exports.getAllOffers = async (req, res) => {
 
             obj = {
                 ...obj,
-                title: `${cat.name} (${documentCount})`,
-                // title: `${cat.name}`,
+                // title: `${cat.name} (${documentCount})`,
+                title: `${cat.name}`,
                 products
             }
             arrayObj.push(obj)
@@ -293,8 +293,8 @@ module.exports.getAllOffers = async (req, res) => {
                     })
                     let obj = {
                         _id: req.productDetails.name.level1.id,
-                        title: `${req.productDetails.name.level1.name} (${buyerRequest.filter(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level1 && item.productDetails.name.level1.id) && item.productDetails.name.level1.id === (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id) && req.productDetails.name.level1.id).length})`,
-                        // title: `${req.productDetails.name.level1.name}`,
+                        // title: `${req.productDetails.name.level1.name} (${buyerRequest.filter(item => (item.productDetails && item.productDetails.name && item.productDetails.name.level1 && item.productDetails.name.level1.id) && item.productDetails.name.level1.id === (req.productDetails && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.id) && req.productDetails.name.level1.id).length})`,
+                        title: `${req.productDetails.name.level1.name}`,
                         products: _products,
                         vendorId: (req.productDetails && req.productDetails.name && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.vendorId) || req.productDetails.name.vendorId
                     }
