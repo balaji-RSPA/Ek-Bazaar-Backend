@@ -57,7 +57,8 @@ app.use(
       "http://admin.ekbazaar.tech-active.com",
       "https://admin.ekbazaar.tech-active.com",
       "http://192.168.1.28:8086",
-      "http://192.168.1.74:8086"
+      "http://192.168.1.74:8086",
+      "http://192.168.1.199:8086"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
