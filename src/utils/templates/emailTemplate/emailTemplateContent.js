@@ -10,7 +10,8 @@ module.exports.emailSuccessfulRegistration = (params) => { //userType
       // For Ekbazaar
       title: 'Ekbazaar Trade- Successful Registration',
       image: registrationthanks,
-      body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'Thank you for registering.',
+      // body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated with a 30 days free trial for Trade Bazaar.' : 'Thank you for registering.',
+      body: params.userType === 'seller' ? 'You have successfully registered and your account has been activated on Trade Bazaar' : 'Thank you for registering.',
       greeting: `Hello ${params.name},`,
       buttonName: 'LOGIN TO YOUR ACCOUNT',
       buttonLink: `${params.url}/signin`,

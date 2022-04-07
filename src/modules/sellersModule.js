@@ -1829,3 +1829,134 @@ module.exports.getSellerAllDetails = (query) =>
       .catch((error) => reject(error))
   })
 
+  module.exports.getSellersListData = (id, chkStock, query) =>
+  new Promise((resolve, reject) => {
+    let matchVal = null
+    if (chkStock === true || chkStock === false) {
+      matchVal = {
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+          match: {
+            'productDetails.inStock': true
+          },
+        },
+        match: {
+          // 'productDetails.inStock': {
+          //   $eq: chkStock
+          // }
+          status: {
+            $eq: chkStock
+          }
+        }
+      }
+    } else {
+      matchVal = {
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        }
+      }
+    }
+    let _query = query || { userId: id }
+    // console.log("🚀 ~ file: sellersModule.js ~ line 447 ~ newPromise ~ _query", _query)
+    Sellers.find(_query)
+      .populate('sellerProductId')
+      .populate('sellerType')
+      .populate('busenessId')
+      .populate('statutoryId')
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.city location.state location.country",
+          // model: Cities
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.state",
+          model: States,
+        }
+      })
+      .populate({
+        path: 'sellerContactId',
+        model: SellersContact,
+        populate: {
+          path: "location.country",
+          model: Countries,
+        }
+      })
+      .populate('sellerCompanyId')
+      .populate('establishmentId')
+
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "parentCategoryId",
+          model: ParentCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "primaryCategoryId",
+          model: PrimaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "secondaryCategoryId",
+          model: SecondaryCategory.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "poductId",
+          model: Products.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: "productSubcategoryId",
+          model: ProductsSubCategories.collection.name
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.regionOfOrigin',
+        },
+      })
+      .populate({
+        path: 'sellerProductId',
+        model: 'sellerproducts',
+        populate: {
+          path: 'productDetails.countryOfOrigin',
+        },
+      })
+      .populate(matchVal)
+      .populate('location.city', 'name')
+      .populate('location.state', 'name')
+      .populate('location.country', 'name')
+      .populate('planId')
+      // .populate('sellerType', 'name')
+      .lean()
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch((error) => reject(error))
+  })

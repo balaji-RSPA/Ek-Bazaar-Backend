@@ -291,7 +291,7 @@ module.exports.addUser = async (req, res, next) => {
       url,
       _base
     } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
+    console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
     const client = _base.includes('onebazaar') || _base.includes('8086') ? 'onebazaar' : 'ekbazaar';
 
@@ -484,7 +484,8 @@ module.exports.updateUser = async (req, res) => {
       type,
       sellerType,
       userType,
-      hearingSource
+      hearingSource,
+      preferredLanguage
     } = req.body;
     console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body,"llllllllllll");
     // return false
@@ -571,6 +572,12 @@ module.exports.updateUser = async (req, res) => {
     }
     if (userData && userData.email) {
       userData.userHash = encrypt(userData.email);
+    }
+    if (preferredLanguage && Object.keys(preferredLanguage).length !== 0){
+      userData.preferredLanguage = {
+        lang: preferredLanguage.label,
+        langCode: preferredLanguage.value,
+      }
     }
     const user = await updateUser({ _id: userID }, userData);
     delete sellerData.countryCode;
@@ -1073,6 +1080,7 @@ module.exports.deleteCurrentAccount = async (req, res) => {
 
     const { userID, token } = req;
     const result = await updateUser({ _id: userId }, { deleteTrade, reresigistered: true })
+    if (permanentDelete) updateUser({ _id: userId }, { deleteTendor: deleteTrade })
 
 
     if (result) {

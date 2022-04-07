@@ -19,7 +19,7 @@ const { getMasterRecords, updateMasterBulkProducts, updateMaster, getMaster, bul
 const { getSellerPlan, deleteSellerPlans } = require('../../modules/sellerPlanModule')
 const { getUserList, deleteBuyer, deleteUser, deleteBuyers } = require('../../modules/buyersModule')
 const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
-const { getAllSellerData, deleteSellerRecord, getSeller } = require('../../modules/sellersModule');
+const { getAllSellerData, deleteSellerRecord, getSeller, getSellersListData } = require('../../modules/sellersModule');
 const { getCountryData, addCity, getCity, getCityList } = require('../../modules/locationsModule')
 const { deleteChatAccount, userLogin, userChatLogin } = require('./rocketChatController')
 const { rocketChatAdminLogin } = require('../../utils/globalConstants')
@@ -1934,3 +1934,122 @@ module.exports.csvFile = async (produts, FilePath) => {
     }
 
 }
+
+module.exports.getSellersList = async (req, res) => new Promise(async (resolve, reject) => {
+
+    try {
+
+        console.log('all sellers list from 2021-07-16 to today')
+        // const data = await getAllSellerData({ "location.city": ObjectId("6058831286dcf826a46bf4ad") })
+        // console.log("🚀 ~ file: testController.js ~ line 229 ~ module.exports.gujaratSellerData= ~ data", data)
+
+        const registerdate = new Date(moment('2021-07-16').startOf('day')).toISOString()
+        const date = new Date(moment().startOf('day')).toISOString()
+
+        // const totalSellerCount = await SellerSchema.find({ $and: [/* { sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, { $where: "this.sellerProductId.length > 0" }, */ { userId: { $ne: null } }], createdAt: { $gte: registerdate, $lt: date } }).populate('sellerProductId').select('name email mobile website sellerProductId hearingSource').exec()
+
+        // const totalSellerCount = await SellerSchema.find({ name: { $regex: "rameshLive", $options: 'i' } }).populate('sellerProductId').select('name email mobile website sellerProductId createdAt').exec()
+        // const totalSellerCount = await getSeller('', '', { $and: [{ userId: { $ne: null } }/* , { name: { $regex: "rameshLive", $options: 'i' }} */], createdAt: { $gte: registerdate, $lt: date } })
+        const totalSellerCount = await getSellersListData('', '', { $and: [{ userId: { $ne: null } }/* , { name: { $regex: "rameshLive", $options: 'i' }} */], createdAt: { $gte: registerdate, $lt: date } })
+
+        console.log(totalSellerCount, "totalSeller Data");
+        console.log("🚀 ~ file: testController.js ~ line 1769 ~ module.exports.gujaratSellerData= ~ totalSellerCount", totalSellerCount.length)
+
+        let produts = []
+        if (totalSellerCount && totalSellerCount.length) {
+            for (let index = 0; index < totalSellerCount.length; index++) {
+                let l1 = [], l1Id = [], l2 = [], l2Id = [], l3 = [], l3Id = [], l4 = [], l4Id = [], l5 = [], l5Id = [], pro_names = []
+                const seller = totalSellerCount[index];
+
+                console.log(seller.sellerProductId && seller.sellerProductId.length, 'aaaaaaaaaaaaaa')
+                console.log(seller && seller.sellerType && seller.sellerType[0] && seller.sellerType[0].name, 'Seller Data');
+
+                const details = seller.sellerProductId && seller.sellerProductId.length && seller.sellerProductId.map((pro) => {
+
+                    pro.parentCategoryId && pro.parentCategoryId.length && l1.push(...pro.parentCategoryId.map((v) => v.name))
+                    pro.parentCategoryId && pro.parentCategoryId.length && l1Id.push(...pro.parentCategoryId.map((v) => v.vendorId))
+
+                    pro.primaryCategoryId && pro.primaryCategoryId.length && l2.push(...pro.primaryCategoryId.map((v) => v.name))
+                    pro.primaryCategoryId && pro.primaryCategoryId.length && l2Id.push(...pro.primaryCategoryId.map((v) => v.vendorId))
+
+                    pro.secondaryCategoryId && pro.secondaryCategoryId.length && l3.push(...pro.secondaryCategoryId.map((v) => v.name))
+                    pro.secondaryCategoryId && pro.secondaryCategoryId.length && l3Id.push(...pro.secondaryCategoryId.map((v) => v.vendorId))
+
+                    pro.poductId && pro.poductId.length && l4.push(...pro.poductId.map((v) => v.name))
+                    pro.poductId && pro.poductId.length && l4Id.push(...pro.poductId.map((v) => v.vendorId))
+
+                    pro.productSubcategoryId && pro.productSubcategoryId.length && l5.push(...pro.productSubcategoryId.map((v) => v.name))
+                    pro.productSubcategoryId && pro.productSubcategoryId.length && l5Id.push(...pro.productSubcategoryId.map((v) => v.vendorId))
+
+                    pro.productDetails && pro.productDetails.name && pro_names.push(pro.productDetails.name)
+
+
+                }) || ''
+
+                // console.log(l1, l1Id, l4, l4Id, ' ggggggggggggg')
+
+                const qqq = {
+                    name: seller.name,
+                    email: seller.email,
+                    hearingSource: seller.hearingSource && seller.hearingSource.source || '',
+                    mobile: seller.mobile && seller.mobile.length && seller.mobile[0] && seller.mobile[0].mobile,
+                    productCount: seller.sellerProductId && seller.sellerProductId.length || 0,
+                    sellerType: seller && seller.sellerType && seller.sellerType[0] && seller.sellerType[0].name,
+
+                    city: seller && seller.location && seller.location.city && seller.location.city.name,
+                    state: seller && seller.location && seller.location.state && seller.location.state.name,
+                    // sellerType: seller.sellerType && seller.sellerType[0] && seller.sellerType[0].name || '',
+
+                    // sellerProducts: seller.sellerProductId && seller.sellerProductId.length && seller.sellerProductId.map((pro) => pro.productDetails && pro.productDetails.name || '').toString() || '',
+                    sellerProductsName: _.uniq(pro_names).toString() || '',
+
+                    level1: _.uniq(l1).toString(),
+                    level1_ids: _.uniq(l1Id).toString(),
+
+                    level2: _.uniq(l2).toString(),
+                    level2_ids: _.uniq(l2Id).toString(),
+
+                    level3: _.uniq(l3).toString(),
+                    level3_ids: _.uniq(l3Id).toString(),
+
+                    level4: _.uniq(l4).toString(),
+                    level4_ids: _.uniq(l4Id).toString(),
+
+                    level5: _.uniq(l5).toString(),
+                    level5_ids: _.uniq(l5Id).toString(),
+
+                    createdDate: seller.createdAt || '',
+                }
+                // console.log(JSON.stringify(qqq), ' ttttttttttttttt')
+                produts.push(qqq)
+
+
+            }
+        }
+
+        // const FilePath = `sellerDetails-${new Date()}.csv`
+        const FilePath = `sellerDetails-list-${new Date()}.csv`
+        const FileSource = 'public/sellerDetailFiles/' + FilePath
+
+        console.log(produts.length, "produts.length");
+        if (produts.length) {
+
+            const csv = Papa.unparse(produts, {
+                quotes: false, //or array of booleans
+                quoteChar: '"',
+                escapeChar: '"',
+                delimiter: ",",
+                header: true,
+                newline: "\r\n",
+                skipEmptyLines: false, //other option is 'greedy', meaning skip delimiters, quotes, and whitespace.
+                columns: null, //or array of strings
+            });
+            fs.writeFile(path.resolve(__dirname, '../../../public/sellerDetailFiles', FilePath), csv, (err, data) => {
+                console.log(err, "Completed data", data)
+            })
+        }
+
+    } catch (error) {
+        console.log(error, ' gggggggggggggg')
+    }
+  })
