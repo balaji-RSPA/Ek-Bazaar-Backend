@@ -7,3 +7,7 @@
 {"level":"info","message":"Listening:8070","timestamp":"2022-04-07T09:03:59.453Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2022-04-07T09:05:08.078Z"}
 {"level":"info","message":"Listening:8070","timestamp":"2022-04-11T04:59:52.728Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-04-11T12:23:20.237Z"}
+{"address":"::","code":"EADDRINUSE","errno":"EADDRINUSE","level":"error","port":8070,"syscall":"listen","timestamp":"2022-04-11T12:24:31.816Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-04-11T12:25:20.376Z"}
+{"level":"info","message":"Listening:8070","timestamp":"2022-04-11T12:40:08.028Z"}
