@@ -2,32 +2,60 @@ require("dotenv").config();
 const { env } = process;
 global.environment = env.NODE_ENV || "production";
 
-const path = require('path');
-const express = require('express')
-const useragent = require('express-useragent');
-const fileUpload = require('express-fileupload');
-const cookieParser = require('cookie-parser')
+const path = require("path");
+const express = require("express");
+const useragent = require("express-useragent");
+const fileUpload = require("express-fileupload");
+const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cron = require("node-cron");
 
-require('./config/db').dbConnection();
-require('./config/tenderdb').conn
-const Logger = require('./src/utils/logger');
-const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
-const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
-const { updatePriority, gujaratSellerData, getSellersList } = require('./src/controllers/web/testController')
-const { respSuccess, respError } = require("./src/utils/respHadler")
-const router = require('./src/routes');
-const hookRouter = require('./src/routes/hookRoutes');
-const { request } = require("./src/utils/request")
-const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
-const { deleteTestData, uploadInternationalCity, getCityList, deleteTestDataRemaining, deleteTestDataChat } = require('./src/controllers/web/testController')
-const { uploadOnBoardSeller, moveSellerToNewDB, getSellerMasterProducts, uploadOnBoardBuyers } = require('./src/controllers/web/sellerDataMove')
-const { uploadChatLanguageCategory } = require('./src/controllers/web/languageTempateController')
-const { addPlanManully } = require('./src/controllers/web/paymentController')
+require("./config/db").dbConnection();
+require("./config/tenderdb").conn;
+const Logger = require("./src/utils/logger");
+const config = require("./config/config");
+const {
+  sendQueSms,
+  getExpirePlansCron,
+  sendQueEmails,
+  getAboutToExpirePlan,
+  sendDailyCount,
+} = require("./src/crons/cron");
+const {
+  fetchPartiallyRegistredSeller,
+  fetchPartiallyRegistredBuyer,
+} = require("./src/modules/sellersModule");
+const {
+  updatePriority,
+  gujaratSellerData,
+  getSellersList,
+  getSellersListCount,
+} = require("./src/controllers/web/testController");
+const { respSuccess, respError } = require("./src/utils/respHadler");
+const router = require("./src/routes");
+const hookRouter = require("./src/routes/hookRoutes");
+const { request } = require("./src/utils/request");
+const { authServiceURL, ssoLoginUrl } =
+  require("./src/utils/utils").globalVaraibles;
+const {
+  deleteTestData,
+  uploadInternationalCity,
+  getCityList,
+  deleteTestDataRemaining,
+  deleteTestDataChat,
+} = require("./src/controllers/web/testController");
+const {
+  uploadOnBoardSeller,
+  moveSellerToNewDB,
+  getSellerMasterProducts,
+  uploadOnBoardBuyers,
+} = require("./src/controllers/web/sellerDataMove");
+const {
+  uploadChatLanguageCategory,
+} = require("./src/controllers/web/languageTempateController");
+const { addPlanManully } = require("./src/controllers/web/paymentController");
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 
 // const { suggestions} = require("./elasticsearch-mapping");
@@ -35,12 +63,12 @@ const { addPlanManully } = require('./src/controllers/web/paymentController')
 // const { suggestionsMapping } = suggestions
 // checkIndicesMaster()
 
-const { serviceURL } = authServiceURL()
-const { tradeDb } = config
-const moment = require('moment');
+const { serviceURL } = authServiceURL();
+const { tradeDb } = config;
+const moment = require("moment");
 
 const app = express();
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.json());
 app.use(hookRouter);
 
@@ -57,17 +85,19 @@ app.use(
       "http://admin.ekbazaar.tech-active.com",
       "https://admin.ekbazaar.tech-active.com",
       "http://192.168.1.28:8086",
-      "http://192.168.1.74:8086"
+      "http://192.168.1.74:8086",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
   })
 );
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({
-  limit: '50mb',
-  extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+  })
+);
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Credentials", true);
@@ -108,6 +138,19 @@ app.get("/send-daily-report", async function (req, res) {
   }
 });
 
+app.get("/genrate-report-manually", async function (req, res) {
+  try {
+    console.log("genrate-report-manually api called");
+    let response = await sendDailyCount();
+    // console.log(response, "send-daily-report response");
+    // return respSuccess(res, response);
+  } catch (error) {
+    // console.log(error, "send-daily-report error");
+    // return respError(res, error);
+    return respError(res, "Something went wrong try again!");
+  }
+});
+
 // app.get("/add-plan", async function (req, res) {
 //   try {
 //     addPlanManully(req,res)
@@ -116,7 +159,6 @@ app.get("/send-daily-report", async function (req, res) {
 //     console.log(error)
 //   }
 // })
-
 
 app.get("/api/logged", async (req, res, next) => {
   const response = await request({
@@ -134,7 +176,7 @@ app.get("/api/logged", async (req, res, next) => {
 app.post("/capture/:paymentId", async function (req, res) {
   try {
     const result = await captureRazorPayPayment(req, res);
-  } catch (error) { }
+  } catch (error) {}
   // res.send('Its delete records  live')
 });
 
@@ -165,53 +207,51 @@ app.post("/capture/:paymentId", async function (req, res) {
 // });
 app.get("/gujaratSellerData", async function (req, res) {
   try {
-    const result = await gujaratSellerData(req, res)
-  } catch (error) { }
+    const result = await gujaratSellerData(req, res);
+  } catch (error) {}
   // res.send('Its delete records  live')
 });
 
 app.get("/getSellersList", async function (req, res) {
   try {
-    console.log("getSellersList start++++")
-    const result = await getSellersList(req, res)
-    console.log("getSellersList end++++")
+    console.log("getSellersList start++++");
+    const result = await getSellersListCount(req, res);
+    // const result = await getSellersList(req, res);
+    console.log("getSellersList end++++");
     res.send("seller list is genrated");
   } catch (error) {
     console.log(error, "getSellersList error");
-    res.send("Some thing went wrong!")
+    res.send("Some thing went wrong!");
   }
   // res.send('Its delete records  live')
 });
 
 app.get("/uploadOnBoardSeller", async function (req, res) {
   try {
-    const result = await uploadOnBoardSeller(req, res)
-  } catch (error) { }
+    const result = await uploadOnBoardSeller(req, res);
+  } catch (error) {}
   // res.send('Its delete records  live')
 });
 app.get("/getSellerMasterProducts", async function (req, res) {
   try {
-    const result = await getSellerMasterProducts(req, res)
-  } catch (error) { }
+    const result = await getSellerMasterProducts(req, res);
+  } catch (error) {}
   // res.send('Its delete records  live')
 });
 app.get("/moveSellerToNewDB", async function (req, res) {
   try {
-    const result = await moveSellerToNewDB(req, res)
-  } catch (error) { }
+    const result = await moveSellerToNewDB(req, res);
+  } catch (error) {}
   // res.send('Its delete records  live')
 });
 
 // Buyer dara move
 app.get("/uploadOnBoardBuyers", async function (req, res) {
   try {
-    const result = await uploadOnBoardBuyers(req, res)
-  } catch (error) { }
+    const result = await uploadOnBoardBuyers(req, res);
+  } catch (error) {}
   // res.send('Its delete records  live')
 });
-
-
-
 
 async function indexing() {
   await checkIndices();
@@ -259,28 +299,26 @@ server.on("error", (e) => {
 //   }
 // })
 
-
 app.post("/uploadInternationalCity", async function (req, res) {
   try {
     const result = await uploadInternationalCity(req, res);
-    console.log('city---')
-  } catch (error) { }
-  res.send('Its delete records  live')
+    console.log("city---");
+  } catch (error) {}
+  res.send("Its delete records  live");
 });
 app.get("/getCityList", async function (req, res) {
   try {
     const result = await getCityList(req, res);
-  } catch (error) { }
-  res.send('Its delete records  live')
+  } catch (error) {}
+  res.send("Its delete records  live");
 });
-
 
 server.on("listening", () => {
   console.log(`Listening:${server.address().port}`);
   Logger.info(`Listening:${server.address().port}`);
 });
 
-if (env.NODE_ENV === 'production') {
+if (env.NODE_ENV === "production1") {
   const dailyCount = cron.schedule("30 2 * * *", async () => {
     dailyCount.stop();
     console.log(
@@ -297,7 +335,7 @@ if (env.NODE_ENV === 'production') {
   dailyCount.start();
 }
 
-if (env.NODE_ENV === "production") {
+if (env.NODE_ENV === "production1") {
   const queSms = cron.schedule("* * * * *", async () => {
     queSms.stop();
     console.log(
@@ -314,7 +352,7 @@ if (env.NODE_ENV === "production") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
   const planExpire = cron.schedule(
     "50 23 * * *",
     async () => {
@@ -369,13 +407,12 @@ if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   // });
   // priority.start();
   const emailSmsToPartiallyRegistered = cron.schedule("* * * * *", async () => {
-    console.log(' Incomplete registration cron started ------ ')
+    console.log(" Incomplete registration cron started ------ ");
     emailSmsToPartiallyRegistered.stop();
     await fetchPartiallyRegistredBuyer();
     await fetchPartiallyRegistredSeller();
     emailSmsToPartiallyRegistered.start();
-    console.log('Incomplete registration cron end ------------------')
+    console.log("Incomplete registration cron end ------------------");
   });
   emailSmsToPartiallyRegistered.start();
-
 }
