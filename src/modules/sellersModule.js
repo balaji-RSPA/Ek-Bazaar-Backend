@@ -2095,7 +2095,7 @@ module.exports.getSellersListData = (id, chkStock, query) =>
       .populate("location.country", "name")
       .populate("planId")
       // .populate('sellerType', 'name')
-      // .limit(2)
+      .limit(100)
       .lean()
       .then((doc) => {
         resolve(doc);

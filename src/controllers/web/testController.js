@@ -1684,11 +1684,11 @@ module.exports.getSellersListCount = async (req, res) =>
         // planId: { $exists: true },
       });
 
-      console.log(totalSellerCount, "totalSeller Data");
-      console.log(
-        "🚀 ~ file: testController.js ~ line 1769 ~ module.exports.gujaratSellerData= ~ totalSellerCount",
-        totalSellerCount.length
-      );
+      // console.log(totalSellerCount, "totalSeller Data");
+      // console.log(
+      //   "🚀 ~ file: testController.js ~ line 1769 ~ module.exports.gujaratSellerData= ~ totalSellerCount",
+      //   totalSellerCount.length
+      // );
 
       let produts = [];
       const finalData = [];
@@ -1770,41 +1770,105 @@ module.exports.getSellersListCount = async (req, res) =>
 
           const planType = seller && seller.planId && seller.planId.planType;
 
-          for (let i = 0; i < l1.length; i++) {
-            console.log(l1[i]);
-            let dataIndex = finalData.findIndex(function (catData) {
-              return catData.category == l1[i];
+          const sellerState =
+            seller &&
+            seller.location &&
+            seller.location.state &&
+            seller.location.state.name;
+
+          // let stateIndex = finalData.findIndex(function (stateData) {
+          //   return stateData.State == sellerState;
+          // });
+          // console.log("🚀 ~ file: testController.js ~ line 1782 ~ stateIndex ~ stateIndex", stateIndex)
+
+          // console.log(sellerState, "sellerState");
+          if (sellerState === "gujarat") {
+            let stateIndex = finalData.findIndex(function (stateData) {
+              return stateData.State == "gujarat";
             });
 
-            console.log(dataIndex, "dataIndex");
+            console.log(stateIndex, "stateIndex");
+            if (stateIndex !== -1) {
+              let recordData = finalData[stateIndex];
+              let categoryData = recordData.category;
 
-            if (dataIndex !== -1) {
-              let countData = finalData[dataIndex];
-              countData.trialUserCount =
-                planType !== "" && planType === "Trail"
-                  ? parseInt(countData.trialUserCount) + parseInt(1)
-                  : countData.trialUserCount;
-
-              countData.paidUserCount =
-                planType !== "" && planType !== "Trail"
-                  ? parseInt(countData.paidUserCount) + parseInt(1)
-                  : countData.paidUserCount;
-
-              countData.totalUserCount =
-                parseInt(countData.trialUserCount) +
-                parseInt(countData.paidUserCount);
-
-              finalData[dataIndex] = countData;
+              console.log(categoryData.length, "categoryData.length ");
+              let catArray =
+                categoryData.length > 0 ? categoryData.split(",") : [];
+              let d = catArray.concat(l1);
+              console.log(d, "d");
+              let uniqueCat = [...new Set(catArray)];
+              console.log(catArray, "categoryData");
             } else {
-              let countData = {
-                category: l1[i],
-                trialUserCount: planType !== "" && planType === "Trail" ? 1 : 0,
-                paidUserCount: planType !== "" && planType !== "Trail" ? 1 : 0,
-                totalUserCount: 1,
+              console.log("AAAAAA");
+              let gujratData = {
+                State: "gujarat",
+                category: l1.toString(),
               };
-              finalData.push(countData);
+
+              finalData.push(gujratData);
             }
           }
+
+          // if (stateIndex !== -1) {
+          //   let recordData = finalData[stateIndex];
+          //   let categoryData = recordData.category;
+
+          //   console.log(l1, "l1l1");
+          //   let catArray =
+          //     categoryData.length > 0 ? categoryData.split(",") : l1;
+
+          //   // console.log(catArray, "catArray");
+          //   // console.log("🚀 ~ file: testController.js ~ line 1793 ~ newPromise ~ catArray", catArray)
+          //   // catArray.push(l1);
+          //   let uniqueCat = [...new Set(catArray)];
+          //   recordData.category = uniqueCat.toString();
+          //   finalData[stateIndex] = recordData;
+          // } else {
+          //   let stateData = {
+          //     State: sellerState,
+          //     category: l1.toString(),
+          //   };
+          //   // console.log(stateData, "stateData");
+          //   finalData.push(stateData);
+          // }
+
+          // for (let i = 0; i < l1.length; i++) {
+          //   console.log(l1[i]);
+          //   let dataIndex = finalData.findIndex(function (catData) {
+          //     return catData.category == l1[i];
+          //   });
+
+          //   console.log(dataIndex, "dataIndex");
+
+          //   if (dataIndex !== -1) {
+          //     let countData = finalData[dataIndex];
+          //     countData.trialUserCount =
+          //       planType !== "" && planType === "Trail"
+          //         ? parseInt(countData.trialUserCount) + parseInt(1)
+          //         : countData.trialUserCount;
+
+          //     countData.paidUserCount =
+          //       planType !== "" && planType !== "Trail"
+          //         ? parseInt(countData.paidUserCount) + parseInt(1)
+          //         : countData.paidUserCount;
+
+          //     countData.totalUserCount =
+          //       parseInt(countData.trialUserCount) +
+          //       parseInt(countData.paidUserCount);
+
+          //     finalData[dataIndex] = countData;
+          //   } else {
+          //     let countData = {
+          //       category: l1[i],
+          //       trialUserCount: planType !== "" && planType === "Trail" ? 1 : 0,
+          //       paidUserCount: planType !== "" && planType !== "Trail" ? 1 : 0,
+          //       totalUserCount: 1,
+          //     };
+          //     finalData.push(countData);
+          //   }
+          // }
+
           // const qqq = {
           //   // name: seller.name,
           //   // email: seller.email,
@@ -1862,9 +1926,10 @@ module.exports.getSellersListCount = async (req, res) =>
           // produts.push(qqq);
         }
 
-        console.log(finalData, "inalData");
+        console.log(finalData, "finalData");
       }
 
+      return false;
       // const FilePath = `sellerDetails-${new Date()}.csv`
       const FilePath = `sellerDetails-list-${new Date()}-based-on-l1-category.csv`;
       const FileSource = "public/sellerDetailFiles/" + FilePath;
