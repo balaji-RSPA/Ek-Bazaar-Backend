@@ -4,7 +4,7 @@ package-lock.json
 
 yarn-lock.json
 ref
-logs
+/logs
 .env
 
 /public/orders
