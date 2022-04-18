@@ -102,6 +102,9 @@ exports.razorPayCredentials = NODE_ENV === 'production' ?
 exports.tenderApiBaseUrl = NODE_ENV === 'production' ? 'https://api.ekbazaar.com/api/v1' : 'https://tenderapi.tech-active.com/api/v1'
 
 exports.tradeApiBaseUrl = NODE_ENV === 'production' ? 'https://tradeapi.ekbazaar.com/api/' : 'https://tradebazaarapi.tech-active.com/api/'
+
+exports.tradeSiteUrl = NODE_ENV === 'production' ? 'https://trade.ekbazaar.com/' : 'https://tradebazaar.tech-active.com/'
+
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
   logo: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",

@@ -10,7 +10,7 @@ const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData, Paylinks, subChargedHook } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
-const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl, tradeApiBaseUrl } = require('../../utils/globalConstants')
+const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl, tradeApiBaseUrl, tradeSiteUrl } = require('../../utils/globalConstants')
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
 const {
