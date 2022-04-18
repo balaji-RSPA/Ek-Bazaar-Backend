@@ -10,7 +10,7 @@ const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData, Paylinks, subChargedHook } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
-const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl, tradeApiBaseUrl } = require('../../utils/globalConstants')
+const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl, tradeApiBaseUrl, tradeSiteUrl } = require('../../utils/globalConstants')
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
 const {
@@ -1242,7 +1242,8 @@ module.exports.captureLink = async (req, res) => {
                                 }
                                 await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
                                 console.log('------------------ Payment done ---------')
-                                return respSuccess(res, { payment: true }, 'subscription activated successfully!')
+                                // return respSuccess(res, { payment: true }, 'subscription activated successfully!')
+                                return res.redirect(301, tradeSiteUrl)
                             } else {
                                 console.log('-------  Payment Failled -------------')
                                 const paymentJson = {
@@ -2040,20 +2041,20 @@ const insertPlaneInDb = async (sellerId, subscriptionId, orderDetails, paymentRe
 
 module.exports.addPlanManully = async (req, res) => {
     try {
-        const sellerId = '623d9a75b5a86f73f6a125a3';
+        const sellerId = '6246c493ef0d355b049654aa';
         const isSubscription = false;
         const subscriptionId = '601d2cbb88a56c05672ebe27';
         const orderDetails = {
-            name: 'kulit',
-            email: 'kuiltkumar@gmail.com',
-            mobile: { countryCode: '+91', mobile: '9219738443' },
+            name: 'Deepak',
+            email: 'deepakmehndiarts558@gmail.com',
+            mobile: { countryCode: '+91', mobile: '9996905343' },
             gst: '',
-            address: 'Dhanoli Jagner Road, Agra - 282001, Vidhaya Nagar, Old Azizpur Post',
-            pincode: '282001',
+            address: 'Sonipat',
+            pincode: '131101',
             planName: 'Quarterly',
             groupType: 'Manufacturers/Traders',
-            validityFrom: '29/06/2022',
-            validityTill: '27/09/2022',
+            validityFrom: '10/07/2022',
+            validityTill: '08/10/2022',
             price: 750,
             gstAmount: 135,
             total: '',
@@ -2070,8 +2071,8 @@ module.exports.addPlanManully = async (req, res) => {
         }
 
         const paymentResponse = {
-            razorpay_payment_id: 'pay_JCRuOXZ3VLfW2A',
-            razorpay_order_id: 'order_JCRtwkrQmwaPq3',
+            razorpay_payment_id: 'pay_JG3mxJwi9a9s7X',
+            razorpay_order_id: 'order_JG3mcZfNARxZPF',
             razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012',
             isManual: true
         }
@@ -2087,7 +2088,7 @@ module.exports.addPlanManully = async (req, res) => {
 
         request({
             method: 'GET',
-            url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JCRuOXZ3VLfW2A`,
+            url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JG3mxJwi9a9s7X`,
 
         }, async function (error, response, body) {
             bodyReq = body;
