@@ -573,7 +573,7 @@ module.exports.updateUser = async (req, res) => {
     if (userData && userData.email) {
       userData.userHash = encrypt(userData.email);
     }
-    if (Object.keys(preferredLanguage).length !== 0){
+    if (preferredLanguage && Object.keys(preferredLanguage).length !== 0){
       userData.preferredLanguage = {
         lang: preferredLanguage.label,
         langCode: preferredLanguage.value,
