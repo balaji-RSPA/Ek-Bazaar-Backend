@@ -22,7 +22,7 @@ const {
   getSellerAllDetails,
   getSellerSomeData,
 } = sellers;
-const { updateMaster } = mastercollections;
+const { updateMaster, updateMasterBulkProducts } = mastercollections;
 const { getSellerProducts, updateSellerProducts } = sellerProducts;
 const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue;
 const { getRFPData, updateRFP } = buyers;
@@ -155,13 +155,23 @@ exports.getExpirePlansCron = async (req, res) =>
             };
 
             emailData.push(data);
-            console.log(emailData, " email");
-            console.log(sellerPlanIds, " ids");
+            // console.log(emailData, " email");
+            // console.log(sellerPlanIds, " ids");
           }
 
+          // console.log(
+          //   element.sellerId.sellerProductId.length,
+          //   "element.sellerId.sellerProductId.length"
+          // );
           //   if user added products after that if plan is expired update the products also
           if (element.sellerId.sellerProductId.length) {
-            await updateMaster(
+            console.log(
+              element._id,
+              element.sellerId.sellerProductId,
+              "element.sellerId.sellerProductId.length"
+            );
+
+            const masResult = await updateMasterBulkProducts(
               {
                 _id: {
                   $in: element.sellerId.sellerProductId,
@@ -169,6 +179,8 @@ exports.getExpirePlansCron = async (req, res) =>
               },
               { priority: 3 }
             );
+
+            // console.log(masResult, "masResult");
           }
         }
         // await queSMSBulkInsert(smsData)
