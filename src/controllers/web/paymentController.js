@@ -30,6 +30,7 @@ const {
   stripeApiKeys,
   tenderApiBaseUrl,
   tradeApiBaseUrl,
+  tradeSiteUrl
 } = require("../../utils/globalConstants");
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
@@ -1477,11 +1478,13 @@ module.exports.captureLink = async (req, res) => {
                   dateNow
                 );
                 if (result && result.status === "ok") {
-                  return respSuccess(
-                    res,
-                    { payment: true },
-                    "subscription activated successfully!"
-                  );
+                  // return respSuccess(
+                  //   res,
+                  //   { payment: true },
+                  //   "subscription activated successfully!"
+                  // );
+                  return res.redirect(301, tradeSiteUrl)
+                  // return res.location(301, 'https://tradebazaar.tech-active.com/')
                 }
                 //         const invoiceNumner = await getInvoiceNumber({ id: 1 })
                 //         const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''

@@ -213,6 +213,13 @@ app.get("/uploadOnBoardBuyers", async function (req, res) {
 });
 
 
+app.get("/functionTest", async function (req, res) {
+  try {
+    await getExpirePlansCron();
+    res.send("Ok")
+  } catch (error) {}
+  // res.send('Its delete records  live')
+});
 
 
 async function indexing() {
