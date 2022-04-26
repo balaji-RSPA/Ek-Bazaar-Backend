@@ -77,6 +77,7 @@ const { createHmac, Hmac } = crypto;
 const createPdf = async (seller, plan, orderDetails) =>
   new Promise((resolve, reject) => {
     try {
+      console.log(seller, plan, orderDetails,"$$$$$$$$$$$$$$$$$$$$$$$$$$$")
       const sellerDetails = {
         name:
           (orderDetails &&
@@ -203,7 +204,7 @@ const createPdf = async (seller, plan, orderDetails) =>
         sellerDetails: { ...sellerDetails },
       };
 
-      console.log(orderDetails, "orderDetailsorderDetails");
+      console.log(orderDetails, "orderDetailsorderDetails1111111111111");
 
       const invoiceFileName =
         orderDetails && orderDetails.invoiceNo.toString() + "-invoice.pdf";
@@ -237,6 +238,7 @@ const createPdf = async (seller, plan, orderDetails) =>
             body: invoice,
           };
           const multidoc = await uploadToDOSpace(data);
+          console.log(multidoc,"((((((((((((((((((((((((((((((((((((((((((")
           resolve({
             ...multidoc,
             attachement: path.resolve(
@@ -937,6 +939,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                       },
                       order_details
                     );
+                    console.log(invoice,"))))))))))))))))))))))))))))))0")
                     await addSellerPlanLog(planLog);
                     if (
                       deleteProduct === true &&
@@ -1263,6 +1266,7 @@ module.exports.createRazorPayLink = async (req, res) => {
             notes: {
               client: "trade",
               planId,
+              url: req.get("origin"),
             },
             notify_info: {
               notify_phone: `${mob}`,
