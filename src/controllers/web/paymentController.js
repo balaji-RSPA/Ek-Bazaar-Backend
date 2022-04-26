@@ -10,7 +10,7 @@ const { ToWords } = require('to-words');
 const { capitalizeFirstLetter } = require('../../utils/helpers')
 const { subscriptionPlan, sellers, Orders, Payments, SellerPlans, SellerPlanLogs, category, sellerProducts, mastercollections, InvoiceNumber, PaymentData, Paylinks, subChargedHook } = require("../../modules");
 const { sendSingleMail } = require('../../utils/mailgunService')
-const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl, tradeApiBaseUrl } = require('../../utils/globalConstants')
+const { MailgunKeys, razorPayCredentials, stripeApiKeys, tenderApiBaseUrl, tradeApiBaseUrl, tradeSiteUrl } = require('../../utils/globalConstants')
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
 const {
@@ -678,7 +678,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                                                 to: planTo,
                                                 from: planFrom
                                             }
-                        /* await */ sendSMS(checkMobile, planChanged(msgData))
+                                            /* await */ sendSMS(checkMobile, planChanged(msgData))
                                         } else if (currency === 'INR' && checkMobile && isProd) {
                                             const msgData = {
                                                 plan: _p_details.planType,
@@ -688,7 +688,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                                                 name: order_details.invoiceNo.toString() + '-invoice.pdf',
                                                 till: _p_details.exprireDate
                                             }
-                        /* await */ sendSMS(checkMobile, planSubscription(msgData))
+                                            /* await */ sendSMS(checkMobile, planSubscription(msgData))
                                         } else {
                                             console.log("================sms not send===========")
                                         }
@@ -707,7 +707,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                                                 subject: 'Plan changed',
                                                 html: commonTemplate(planChangedEmailMsg),
                                             }
-                         /* await */ sendSingleMail(message)
+                                             /* await */ sendSingleMail(message)
                                         } else {
                                             console.log("==============Plan Changed Email Not Send====================")
                                         }
@@ -733,7 +733,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                                                     // path: invoice.Location,
                                                 }]
                                             }
-                            /* await */ sendSingleMail(message)
+                                            /* await */ sendSingleMail(message)
                                         } else {
                                             console.log("==============Invoice Not Send====================")
                                         }
@@ -1006,7 +1006,8 @@ module.exports.captureLink = async (req, res) => {
 
                                 const result = await assignPlantoUser(planDetails, seller, orderDetails, userData, paymentResponse, body, isSubscription, currency, subscriptionId, gstValue, price, includedGstAmount, existingGroup, currentGroup, sellerPlanDetails, totalPrice, deleteProduct, checkMobile, planTo, planFrom, checkPaidSeller, oldPlanType, url, dateNow)
                                 if (result && result.status === 'ok') {
-                                    return respSuccess(res, { payment: true }, 'subscription activated successfully!')
+                                    // return respSuccess(res, { payment: true }, 'subscription activated successfully!')
+                                    return res.redirect(301, tradeSiteUrl)
                                 }
                         //         const invoiceNumner = await getInvoiceNumber({ id: 1 })
                         //         const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
