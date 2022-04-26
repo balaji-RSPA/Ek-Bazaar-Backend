@@ -1,10 +1,10 @@
 data
-/node_modules*
+node_modules/
 package-lock.json
 
 yarn-lock.json
 ref
-logs
+/logs
 .env
 
 /public/orders

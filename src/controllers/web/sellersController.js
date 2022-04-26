@@ -502,7 +502,7 @@ const mapPriority = (plan) => new Promise((resolve, reject) => {
   if (plan && plan.sellerId) {
     const currentDate = moment().format('YYYY-MM-DD')
     const expireDate = moment(plan.exprireDate).format('YYYY-MM-DD')
-    // console.log(moment(currentDate).isSameOrAfter(expireDate), ' ggggggggggggggg')
+    console.log(moment(currentDate).isSameOrAfter(expireDate), ' ggggggggggggggg')
 
     if (plan.isTrial) {
       priority = 2
