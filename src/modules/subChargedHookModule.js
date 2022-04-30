@@ -9,6 +9,15 @@ exports.saveSubChargedHookRes = (data) =>
             .catch(reject)
     })
 
+exports.getSubChargedHookCount = (query) =>
+    new Promise((resolve, reject) => {
+        SubChargedRes.count(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })    
+
 exports.saveSubPendingHookRes = (data) =>
     new Promise((resolve, reject) => {
         SubPendingRes.create(data)

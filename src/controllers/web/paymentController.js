@@ -592,9 +592,11 @@ module.exports.subscriptionCharged = async (req, res) => {
             ],
           };
           console.log("---------------Next Payment------------------------");
-          sendSingleMail(message);
-          res.status(200).json({ status: "ok" });
+          const mailSend = sendSingleMail(message);
+          console.log("-------------Mail Send To User For Next Payment------------", mailSend)
+          
         }
+        res.status(200).json({ status: "ok" });
       } else {
         console.log("-----------------First Payment--------------------");
         let query = { "razorPay.id": subId };
