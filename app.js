@@ -26,6 +26,8 @@ const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const { deleteTestData, uploadInternationalCity, getCityList, deleteTestDataRemaining, deleteTestDataChat } = require('./src/controllers/web/testController')
 const { uploadOnBoardSeller, moveSellerToNewDB, getSellerMasterProducts, uploadOnBoardBuyers } = require('./src/controllers/web/sellerDataMove')
+
+const { getCancledSubscriptionUsers } = require('./src/controllers/admin/paymentReportController')
 const { uploadChatLanguageCategory } = require('./src/controllers/web/languageTempateController')
 const { addPlanManully } = require('./src/controllers/web/paymentController')
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
@@ -117,6 +119,15 @@ app.get("/send-daily-report", async function (req, res) {
 //     console.log(error)
 //   }
 // })
+
+app.get("/paymentSubscriptionReport", async (req,res) => {
+  try {
+    console.log('---------paymentSubscriptionReport Started-------')
+    const responce = await getCancledSubscriptionUsers()
+  } catch (error) {
+    console.log(error,"@@@@@@@@@@")
+  }
+})
 
 
 app.get("/api/logged", async (req, res, next) => {
