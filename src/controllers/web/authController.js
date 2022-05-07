@@ -150,7 +150,7 @@ exports.login = async (req, res, next) => {
         userAgent,
         userId: _user._id,
         token,
-        deviceId: user.deviceId,
+        deviceId: user && user.deviceId,
         ipAddress
       }
       // const result1 = await sellers.handleUserSession(_user._id, finalData);

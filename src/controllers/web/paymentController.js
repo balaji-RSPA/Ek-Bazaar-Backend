@@ -1095,6 +1095,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                       paymentResponse: paymentResponse,
                       paymentDetails: JSON.parse(body),
                       paymentSuccess: false,
+                      isSubscription
                     };
                     const payment = await addPayment(paymentJson);
                     // return respSuccess(res, { payment: false }, 'Payment failed')
@@ -1733,6 +1734,7 @@ module.exports.captureLink = async (req, res) => {
                   paymentResponse: paymentResponse,
                   paymentDetails: JSON.parse(body),
                   paymentSuccess: false,
+                  isSubscription
                 };
                 const payment = await addPayment(paymentJson);
                 return respSuccess(res, { payment: false }, "Payment failed");
@@ -2236,6 +2238,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                 paymentResponse: paymentResponse,
                 paymentDetails: JSON.parse(body),
                 paymentSuccess: false,
+                isSubscription,
               };
               const payment = await addPayment(paymentJson);
               return respSuccess(res, { payment: false }, "Payment failed");
