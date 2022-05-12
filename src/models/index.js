@@ -26,6 +26,8 @@ const SellerPlanLog = require('./sellerPlansLogSchema')
 const Payments = require('./paymentSchema')
 const Paylinks = require('./payLinkSchema')
 const Orders = require('./ordersSchema')
+const subOrderslogs = require('./subscriptionOrderLogSchema')
+const pendingSubOrders = require('./pendingSubscriptionSchema')
 const OrdersPlans = require('./orderPlanSchema')
 const InvoiceNumber = require('./invoiceNumberSchema')
 const Suggestions = require('./suggestionsSchema')
@@ -71,8 +73,10 @@ module.exports = {
     SellerPlanLog,
     Payments,
     Orders,
+    subOrderslogs,
     OrdersPlans,
     InvoiceNumber,
+    pendingSubOrders,
     Suggestions,
     Chat,
     Pincodes,

@@ -13,6 +13,7 @@ const SellerPlans = require('./sellerPlanModule')
 const QueEmails = require('./queEmailsModule')
 const SellerPlanLogs = require('./sellerPlanLogModule')
 const Orders = require('./ordersModule')
+const OrdersLog = require('./ordersLogModule')
 const Payments = require('./paymentModule')
 const Paylinks = require('./payLinkModule')
 const subChargedHook = require('./subChargedHookModule')
@@ -42,6 +43,7 @@ module.exports = {
     QueEmails,
     SellerPlanLogs,
     Orders,
+    OrdersLog,
     Payments,
     Paylinks,
     InvoiceNumber,
