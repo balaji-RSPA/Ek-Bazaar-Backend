@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const {subOrderslogs,pendingSubOrders} = require('../models')
+const { subOrderslogs, pendingSubOrders, Recurring} = require('../models')
 
 // For Orders Log
 exports.addOrdersLog = (data) =>
@@ -38,6 +38,27 @@ exports.addPendingSubscriptionOrders = (data) =>
 exports.updatePendingSubscriptionOrders = (query, data) =>
     new Promise((resolve, reject) => {
         pendingSubOrders.findOneAndUpdate(query, data, {
+            new: true
+        })
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })  
+    
+// For Recurring Model    
+exports.addRecurringOrder = (data) =>
+    new Promise((resolve, reject) => {
+        Recurring.create(data)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })  
+    
+exports.updateRecurringOrder = (query, data) =>
+    new Promise((resolve, reject) => {
+        Recurring.findOneAndUpdate(query, data, {
             new: true
         })
             .then((doc) => {

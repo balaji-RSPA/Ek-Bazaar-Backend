@@ -59,7 +59,7 @@ const { getSubscriptionPlanDetail } = subscriptionPlan;
 const { getSellerProfile, updateSeller, getUserProfile, getSeller } = sellers;
 const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans;
 const { addOrders, updateOrder, getOrderById } = Orders;
-const { addOrdersLog,updateOrderLog } = OrdersLog;
+const { addOrdersLog,updateOrderLog,addRecurringOrder,updateRecurringOrder } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
 const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes } =
@@ -314,7 +314,13 @@ const assignOurPlan = async (data, body, url) => new Promise(async (resolve,reje
       const totalPrice =
         planDetails &&
         (currency === "INR" ? planDetails.price : planDetails.usdPrice);
-      let price = totalPrice / months;;
+
+        let price;
+        if (isSubscription) {
+            price = totalPrice / months;
+        } else {
+            price = totalPrice;
+        }
       
       const includedGstAmount = await CalculateGst(
         price,
@@ -552,7 +558,22 @@ const assignOurPlan = async (data, body, url) => new Promise(async (resolve,reje
         },
         order_details
       );
-      console.log("🚀 ~ file: paymentController.js ~ line 555 ~ assignOurPlan ~ invoice66666666666666666", invoice)
+      console.log("🚀 ~ file: paymentController.js ~ line 555 ~ assignOurPlan ~ invoice", invoice)
+    let recurringResponce;
+      if(isSubscription){
+          const fromDate = moment();
+          let next_date = moment(fromDate, "YYYY-MM-DD").add(1, 'months');
+          const recurringDate= {
+              userId,
+              sellerId,
+              sellerPlanId: sellerPlanDetails._id,
+              invoiceNo: [_invoice],
+              invoicePath: [(invoice && invoice.Location) || ""],
+              nextPaymentDate: next_date
+          }
+          recurringResponce = await addRecurringOrder(recurringDate)
+          console.log(recurringResponce,"######################$$$$$$$$$$$$$$$$$");
+      }
 
       await addSellerPlanLog(planLog);
       if (
@@ -679,7 +700,7 @@ const assignOurPlan = async (data, body, url) => new Promise(async (resolve,reje
       }
       await updateOrder(
         { _id: OrdersData._id },
-        { isEmailSent: true, invoicePath: (invoice && invoice.Location) || "", orderStatus:'success' }
+          { isEmailSent: true, invoicePath: (invoice && invoice.Location) || "", orderStatus: 'success', recurringId: recurringResponce._id }
       );
       console.log("------------------ Payment done ---------");
       resolve({ status: "ok" });

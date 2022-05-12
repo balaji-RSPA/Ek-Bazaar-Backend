@@ -1,7 +1,7 @@
 const { razorPayCredentials } = require("../utils/globalConstants");
 const { OrdersLog, Payments, sellers, subscriptionPlan, Orders } = require("../modules");
 const { findPincode } = require("../modules/pincodeModule");
-const { addOrdersLog, addPendingSubscriptionOrders } = OrdersLog;
+const { addOrdersLog, addPendingSubscriptionOrders, updatePendingSubscriptionOrders } = OrdersLog;
 const { addOrders } = Orders
 const { addPayment } = Payments;
 const { getSellerProfile } = sellers
@@ -121,11 +121,15 @@ const createPendingOrder = async (userId, sellerId, paymentId, subscriptionId, o
                 // isEmailSent: ''
             };
             const payment = await addPayment(paymentJson);
-            console.log("🚀 ~ file: paymentAuth.js ~ line 122 ~ payment", payment)
+            // console.log("🚀 ~ file: paymentAuth.js ~ line 122 ~ payment", payment)
             const OrdersData = await addOrders(order_details);
-            console.log("🚀 ~ file: paymentAuth.js ~ line 124 ~ OrdersData", OrdersData)
+            // console.log("🚀 ~ file: paymentAuth.js ~ line 124 ~ OrdersData", OrdersData)
             if (payment && OrdersData) {
-                 resolve({ pendingOrderCreated: true })
+                let data = {
+                    OrderId: OrdersData._id,
+                    PaymentId: payment._id
+                }
+                resolve({ pendingOrderCreated: true, data })
             }   
         })
     }
@@ -164,7 +168,7 @@ exports.subscriptionPaymentAuth = async (req, res, next) => {
         .createHmac("sha256", razorPayCredentials.key_secret)
         .update(verify.toString())
         .digest("hex");
-    if (expectedSignature !== paymentResponse.razorpay_signature) {
+    if (expectedSignature === paymentResponse.razorpay_signature) {
         next()
     } else {
         const pendingSubData = {
@@ -181,11 +185,16 @@ exports.subscriptionPaymentAuth = async (req, res, next) => {
         }
         const savedPending = await addPendingSubscriptionOrders(pendingSubData);
         console.log("🚀 ~ file: paymentAuth.js ~ line 179 ~ exports.subscriptionPaymentAuth= ~ savedPending", savedPending)
-
+        
         if (savedPending) {
-            const createdPending = await createPendingOrder(userId, sellerId, paymentId, subscriptionId, orderDetails, currency, isSubscription)
-            console.log("🚀 ~ file: paymentAuth.js ~ line 182 ~ exports.subscriptionPaymentAuth= ~ createdPending", createdPending)
+            const createdPending = await createPendingOrder(userId, sellerId, paymentId, subscriptionId, orderDetails, currency, isSubscription, paymentResponse)
+
             if (createdPending && createdPending.pendingOrderCreated) {
+                const { data } = createdPending,
+                query = { _id: savedPending._id}
+
+                const pendingTable = await updatePendingSubscriptionOrders(query, data);
+
                 return respSuccess(
                     res,
                     { payment: false, recall: true },

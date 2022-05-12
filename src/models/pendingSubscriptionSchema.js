@@ -47,7 +47,16 @@ const pendingSubscriptionOrder = new Schema({
     pending: {
         type: Boolean,
         required: true
+    },
+    OrderId:{
+        type: ObjectId,
+        default: null
+    },
+    PaymentId:{
+        type: ObjectId,
+        default: null
     }
+
 
 }, {
     versionKey: false,
