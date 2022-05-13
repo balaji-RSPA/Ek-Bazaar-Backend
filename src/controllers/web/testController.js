@@ -1,8 +1,9 @@
 const moment = require('moment')
 const Papa = require('papaparse')
 const mongoose = require('mongoose');
+const pdf = require("pdf-creator-node");
 const path = require("path");
-const fs = require('fs').promises
+const fs = require('fs')
 const {
     getAllPrimaryCategory,
     updatePrimaryCategory,
@@ -2362,3 +2363,5 @@ module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise (
         console.log(error,"################")
     }
 })
+
+
