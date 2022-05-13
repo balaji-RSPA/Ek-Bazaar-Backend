@@ -59,7 +59,8 @@ app.use(
       "http://192.168.1.28:8086",
       "http://192.168.1.74:8086",
       "http://192.168.1.199:8086",
-      "http://192.168.1.199:8085"
+      "http://192.168.1.199:8085",
+      "http://192.168.1.74:8085"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,

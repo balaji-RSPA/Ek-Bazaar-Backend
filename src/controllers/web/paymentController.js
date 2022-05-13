@@ -1097,6 +1097,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                       paymentResponse: paymentResponse,
                       paymentDetails: JSON.parse(body),
                       paymentSuccess: false,
+                      isSubscription
                     };
                     const payment = await addPayment(paymentJson);
                     // return respSuccess(res, { payment: false }, 'Payment failed')
@@ -1737,6 +1738,7 @@ module.exports.captureLink = async (req, res) => {
                   paymentResponse: paymentResponse,
                   paymentDetails: JSON.parse(body),
                   paymentSuccess: false,
+                  isSubscription
                 };
                 const payment = await addPayment(paymentJson);
                 return respSuccess(res, { payment: false }, "Payment failed");
@@ -1856,6 +1858,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
       "🚀 ~ file: paymentController.js ~ line 199 ~ module.exports.captureRazorPayPayment= ~  req.body",
       req.body
     );
+    console.log(orderDetails,"$$$$$$$$$$$$$$$$$$$$$$$$$");
     const url = req.get("origin");
     const dateNow = new Date();
     const gstValue = currency === "INR" ? 18 : 0;
@@ -2240,6 +2243,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                 paymentResponse: paymentResponse,
                 paymentDetails: JSON.parse(body),
                 paymentSuccess: false,
+                isSubscription
               };
               const payment = await addPayment(paymentJson);
               return respSuccess(res, { payment: false }, "Payment failed");
@@ -2977,56 +2981,57 @@ const assignPlantoUser = async (
 
 // module.exports.addPlanManully = async (req, res) => {
 //     try {
-//         const sellerId = '61f4e33e9e16b11e20376fb4';
-//         const isSubscription = true
+//         const sellerId = '6246c493ef0d355b049654aa';
+//         const isSubscription = false;
 //         const subscriptionId = '601d2cbb88a56c05672ebe29';
 //         const orderDetails = {
-//             name: 'Pooja Agrawal',
-//             email: 'poojamehandiart@gmail.com',
-//             mobile: { countryCode: '+91', mobile: '7770993057' },
+//             name: 'Deepak',
+//             email: 'deepakmehndiarts558@gmail.com',
+//             mobile: { countryCode: '+91', mobile: '9996905343' },
 //             gst: '',
-//             address: 'Mangal City Mall, A B Road, Vijay Nagar, Indore',
-//             pincode: '452010',
-//             planName: 'Yearly',
+//             address: 'Sonipat',
+//             pincode: '131101',
+//             planName: 'Quarterly',
 //             groupType: 'Manufacturers/Traders',
-//             validityFrom: '21/06/2022',
-//             validityTill: '21/06/2023',
-//             price: 3000,
-//             gstAmount: 540,
+//             validityFrom: '10/07/2022',
+//             validityTill: '08/10/2022',
+//             price: 750,
+//             gstAmount: 135,
 //             total: '',
 //             loader: true,
 //             refresh: false,
-//             active: false,
+//             active: true,
 //             submitted: true,
 //             paymentStatus: false,
 //             country: '',
-//             isSubscription: true,
+//             isSubscription: false,
 //             isLinkGen: false,
 //             isSubLink: false,
 //             ipAddress: '49.37.241.205'
 //         }
 
-//         // const paymentResponse = {
-//         //     razorpay_payment_id: 'pay_IrVW5ut7tWZ5uT',
-//         //     razorpay_order_id: 'order_IrVVRHo78SkAWP',
-//         //     razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012'
-//         // }
-
 //         const paymentResponse = {
-//             razorpay_payment_id: 'pay_JA1vaPMo7CNfWj',
-//             razorpay_subscription_id: 'sub_JA1uAnPu0w8iKK',
+//             razorpay_payment_id: 'pay_IrVW5ut7tWZ5uT',
+//             razorpay_order_id: 'order_IrVVRHo78SkAWP',
 //             razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012'
 //         }
+
+//         // const paymentResponse = {
+//         //     razorpay_payment_id: 'pay_JG3mxJwi9a9s7X',
+//         //     razorpay_subscription_id: 'order_JG3mcZfNARxZPF',
+//         //     razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012'
+//         // }
 
 //         let bodyReq = {}
 
 //         request({
 //             method: 'GET',
-//             url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JA1vaPMo7CNfWj`,
+//             url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JG3mxJwi9a9s7X`,
 
 //         }, async function (error, response, body) {
 //             bodyReq = body;
 //             console.log(bodyReq,"11111111111111111111111111111");
+//             insertPlaneInDb(sellerId, subscriptionId, orderDetails, paymentResponse, bodyReq, isSubscription);
 //         })
 
 //         insertPlaneInDb(sellerId, subscriptionId, orderDetails, paymentResponse, bodyReq, isSubscription);
