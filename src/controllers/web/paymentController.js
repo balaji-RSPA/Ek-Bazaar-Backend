@@ -62,7 +62,7 @@ const { addOrders, updateOrder, getOrderById } = Orders;
 const { addOrdersLog,updateOrderLog,addRecurringOrder,updateRecurringOrder } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
-const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes } =
+const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, getSubHaltedHook} =
   subChargedHook;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { getAllSellerTypes } = category;
@@ -739,14 +739,26 @@ async function CalculateGst(price, findPinCode, currency) {
 
 module.exports.pendingSubWebHook = async (req, res) => {
   try {
-    const save = await saveSubPendingHookRes({
-      subPendingHookResponse: req.body,
-    });
+    const check = await getSubPendingHook({ uniqueEventId: req.headers['x-razorpay-event-id']})
+    let save;
+    if (check && check.length){
+      res.status(200).json({ status: "ok" });
+    }else{
+      save = await saveSubPendingHookRes({
+        subPendingHookResponse: req.body,
+        uniqueEventId: req.headers['x-razorpay-event-id'],
+        oprated: false
+      });
+      if(save){
+        res.status(200).json({ status: "ok" });
+      }
+    }
+    
     console.log(
       "🚀 ~ file: paymentController.js ~ line 203 ~ module.exports.pendingSubWebHook= ~ save",
       save
     );
-    const { payload } = req.body;
+    const { payload } = save.subPendingHookResponse;
     const { subscription } = payload;
     const { entity } = subscription;
     const subId = entity.id;
@@ -778,7 +790,7 @@ module.exports.pendingSubWebHook = async (req, res) => {
           html: commonTemplate(subscriptionPendingEmail),
         };
         sendSingleMail(message);
-        res.status(200).json({ status: "ok" });
+        // res.status(200).json({ status: "ok" });
       }
     }
     if (isTender) {
@@ -790,7 +802,8 @@ module.exports.pendingSubWebHook = async (req, res) => {
         data: req.body,
       });
       if (response.status === 200) {
-        res.status(200).json({ status: "ok" });
+        // res.status(200).json({ status: "ok" });
+        console.log("Responce Came From Tender For pending_Subscription_webhook")
       }
     }
   } catch (error) {
@@ -803,15 +816,26 @@ module.exports.pendingSubWebHook = async (req, res) => {
 
 module.exports.subscriptionHalted = async (req, res) => {
   try {
-    console.log(req.body, "####################################");
-    const save = await saveSubHaltedHookRes({
-      subHaltedHookResponse: req.body,
-    });
+    const check = await getSubHaltedHook({ uniqueEventId: req.headers['x-razorpay-event-id']})
+    let save;
+    if (check && check.length) {
+      res.status(200).json({ status: "ok" });
+    }else{
+      save = await saveSubHaltedHookRes({
+        subHaltedHookResponse: req.body,
+        uniqueEventId: req.headers['x-razorpay-event-id'],
+        oprated: false
+      });
+      if (save) {
+        res.status(200).json({ status: "ok" });
+      }
+    }
+    
     console.log(
       "🚀 ~ file: paymentController.js ~ line 258 ~ module.exports.subscriptionHalted= ~ save",
       save
     );
-    const { payload } = req.body;
+    const { payload } = save.subHaltedHookResponse;
     const { subscription } = payload;
     const { entity } = subscription;
     const isTrade = entity.notes.client === "trade";
@@ -864,7 +888,7 @@ module.exports.subscriptionHalted = async (req, res) => {
           };
           sendSingleMail(message);
         }
-        res.status(200).json({ status: "ok" });
+        // res.status(200).json({ status: "ok" });
       }
     }
 
@@ -878,7 +902,8 @@ module.exports.subscriptionHalted = async (req, res) => {
       });
 
       if (response.status === 200) {
-        res.status(200).json({ status: "ok" });
+        // res.status(200).json({ status: "ok" });
+        console.log("Responce Came From Tender For halted_Subscription_webhook") 
       }
     }
 
@@ -896,14 +921,22 @@ module.exports.subscriptionHalted = async (req, res) => {
 
 module.exports.subscriptionCharged = async (req, res) => {
   try {
-    const save = await saveSubChargedHookRes({
-      subChargedHookResponse: req.body,
-    });
-    console.log(
-      "🚀 ~ file: paymentController.js ~ line 336 ~ module.exports.subscriptionCharged= ~ save",
-      save
-    );
-    const { payload } = req.body;
+    const check = await getSubChargedHook({ uniqueEventId: req.headers['x-razorpay-event-id']})
+    let save;
+    if(check && check.length){
+      res.status(200).json({ status: "ok" });
+    }else{
+      save = await saveSubChargedHookRes({
+        subChargedHookResponse: req.body,
+        uniqueEventId: req.headers['x-razorpay-event-id'],
+        oprated: false
+      });
+      if(save){
+        res.status(200).json({ status: "ok" });
+      }
+    }
+
+    const { payload } = save.subChargedHookResponse;
     const { subscription } = payload;
     console.log(
       "🚀 ~ file: paymentController.js ~ line 342 ~ module.exports.subscriptionCharged= ~ subscription",
@@ -1052,7 +1085,7 @@ module.exports.subscriptionCharged = async (req, res) => {
           console.log("-------------Mail Send To User For Next Payment------------", mailSend)
 
         }
-        res.status(200).json({ status: "ok" });
+        // res.status(200).json({ status: "ok" });
       } else {
         console.log("-----------------First Payment--------------------");
         let query = { "razorPay.id": subId };
@@ -1065,7 +1098,7 @@ module.exports.subscriptionCharged = async (req, res) => {
           console.log(
             "--------------Subscription Through Checkout-----------------"
           );
-          res.status(200).json({ status: "ok" });
+          // res.status(200).json({ status: "ok" });
         } else {
           console.log(
             "--------------Subscription Through Link-----------------"
@@ -1093,7 +1126,8 @@ module.exports.subscriptionCharged = async (req, res) => {
           let findpincode =
             currency === "INR" ? await findPincode({ pincode }) : "";
           if (!findpincode && currency === "INR") {
-            respError(res, "Invalid pincode");
+            // respError(res, "Invalid pincode");
+            console.log("Invalid pincode")
           } else {
             let seller = await getSellerProfile(sellerId);
             const planDetails = await getSubscriptionPlanDetail({
@@ -1145,11 +1179,11 @@ module.exports.subscriptionCharged = async (req, res) => {
                 findpincode,
                 currency
               );
-              console.log(
-                "🚀 ~ gggggggggggggggggggg  -------",
-                includedGstAmount,
-                req.params.paymentId
-              );
+              // console.log(
+              //   "🚀 ~ gggggggggggggggggggg  -------",
+              //   includedGstAmount,
+              //   req.params.paymentId
+              // );
 
               const fetchPayment = {
                 method: "GET",
@@ -1565,7 +1599,7 @@ module.exports.subscriptionCharged = async (req, res) => {
             }
           }
         }
-        res.status(200).json({ status: "ok" });
+        // res.status(200).json({ status: "ok" });
       }
     }
 
