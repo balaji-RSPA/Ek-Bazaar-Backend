@@ -8,6 +8,15 @@ const subCharged = new Schema(
         subChargedHookResponse: {
             type: Object,
             default: null
+        },
+        uniqueEventId: {
+            type: String,
+            unique: true,
+            required: true
+        },
+        oprated: {
+            type: Boolean,
+            default:false
         }
     }, {
     timestamps: true,

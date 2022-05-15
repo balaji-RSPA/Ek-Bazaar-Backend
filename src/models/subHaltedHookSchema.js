@@ -8,6 +8,15 @@ const subHalted = new Schema(
         subHaltedHookResponse: {
             type: Object,
             default: null
+        },
+        uniqueEventId: {
+            type: String,
+            unique: true,
+            required: true
+        },
+        oprated: {
+            type: Boolean,
+            default: false
         }
     }, {
     timestamps: true,

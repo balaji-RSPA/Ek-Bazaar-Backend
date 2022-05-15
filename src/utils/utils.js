@@ -2,10 +2,11 @@ const moment = require("moment");
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const request = require("request");
 const fs = require("fs");
 const AWS = require("aws-sdk");
 const { bcryptSalt } = require("./globalConstants");
-const { JWTTOKEN, awsKeys } = require("./globalConstants");
+const { JWTTOKEN, awsKeys, razorPayCredentials } = require("./globalConstants");
 
 const axios = require("axios");
 const { capitalizeFirstLetter } = require("./helpers");
@@ -293,3 +294,25 @@ module.exports.deleteDigitalOceanDocs = async (query) => {
     });
   });
 };
+
+module.exports.fetchRazorpayPayment =  async (paymentId) => {
+  try {
+    const fetchPayment = {
+      method: "GET",
+      url: `https://${razorPayCredentials.key_id}:${razorPayCredentials.key_secret}@api.razorpay.com/v1/payments/${paymentId}`,
+    };
+    return new Promise((resolve,reject) => {
+      request(fetchPayment, function (error, response, body) {
+        if(error) reject(error);
+        else{
+          const paymentBody = JSON.parse(body);
+          resolve(body)
+          console.log("🚀 ~ file: utils.js ~ line 307 ~ paymentBody", paymentBody)
+        }
+      })
+    })
+    
+  } catch (error) {
+  console.log("🚀 ~ file: utils.js ~ line 301 ~ module.exports.fetchRazorpayPayment= ~ error", error)
+  }
+}

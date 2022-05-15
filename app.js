@@ -18,7 +18,7 @@ const Logger = require('./src/utils/logger');
 const config = require('./config/config')
 const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
-const { updatePriority, gujaratSellerData, getSellersList } = require('./src/controllers/web/testController')
+const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const hookRouter = require('./src/routes/hookRoutes');
@@ -26,6 +26,8 @@ const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const { deleteTestData, uploadInternationalCity, getCityList, deleteTestDataRemaining, deleteTestDataChat } = require('./src/controllers/web/testController')
 const { uploadOnBoardSeller, moveSellerToNewDB, getSellerMasterProducts, uploadOnBoardBuyers } = require('./src/controllers/web/sellerDataMove')
+
+const { getCancledSubscriptionUsers } = require('./src/controllers/admin/paymentReportController')
 const { uploadChatLanguageCategory } = require('./src/controllers/web/languageTempateController')
 const { addPlanManully } = require('./src/controllers/web/paymentController')
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
@@ -59,7 +61,6 @@ app.use(
       "http://192.168.1.28:8086",
       "http://192.168.1.74:8086",
       "http://192.168.1.199:8086",
-      "http://192.168.1.199:8085",
       "http://192.168.1.74:8085"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
@@ -119,6 +120,15 @@ app.get("/send-daily-report", async function (req, res) {
 //     console.log(error)
 //   }
 // })
+
+app.get("/paymentSubscriptionReport", async (req,res) => {
+  try {
+    console.log('---------paymentSubscriptionReport Started-------')
+    const responce = await getCancledSubscriptionUsers()
+  } catch (error) {
+    console.log(error,"@@@@@@@@@@")
+  }
+})
 
 
 app.get("/api/logged", async (req, res, next) => {
@@ -185,6 +195,22 @@ app.get("/getSellersList", async function (req, res) {
   }
   // res.send('Its delete records  live')
 });
+
+app.get("/getPaymentList", async function (req, res) {
+  try {
+    console.log("getSellersPaymentList start++++")
+    const result = await getPaymentList(req, res)
+    console.log("getSellersPaymentList end++++")
+
+    // const result = await getTrialPlanExpiredSellerData(req, res)
+
+
+    res.send("seller Payment list is genrated");
+  } catch (error) {
+    console.log(error, "getSellersList error");
+    res.send("Some thing went wrong!")
+  }
+})
 
 app.get("/uploadOnBoardSeller", async function (req, res) {
   try {

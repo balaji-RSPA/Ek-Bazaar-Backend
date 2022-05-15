@@ -179,6 +179,14 @@ const orderSchema = new Schema({
     canceled: {
         type: Boolean,
         default: false
+    },
+    orderStatus: {
+        type:String,
+        default: null
+    },
+    recurringId:{
+        type:ObjectId,
+        default:null
     }
 }, {
     versionKey: false,
