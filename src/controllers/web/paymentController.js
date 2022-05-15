@@ -62,7 +62,7 @@ const { addOrders, updateOrder, getOrderById } = Orders;
 const { addOrdersLog,updateOrderLog,addRecurringOrder,updateRecurringOrder } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
-const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, getSubHaltedHook, saveSubCancledHookRes, getSubCancledHook} = subChargedHook;
+const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook} = subChargedHook;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { getAllSellerTypes } = category;
 const { updateSellerProducts } = sellerProducts;
@@ -791,6 +791,7 @@ module.exports.pendingSubWebHook = async (req, res) => {
         sendSingleMail(message);
         // res.status(200).json({ status: "ok" });
       }
+      const update = await updateSubPendingHook({ _id: save._id }, { oprated: true })
     }
     if (isTender) {
       const url = tenderApiBaseUrl + "/subscriptionPending";
@@ -807,7 +808,7 @@ module.exports.pendingSubWebHook = async (req, res) => {
     }
   } catch (error) {
     console.log(error, "EEEEEEEEEERRRRRRrrrrrrrrrrrrrrrrrr");
-    respError(error);
+    // respError(error);
   }
 };
 
@@ -875,19 +876,21 @@ module.exports.subscriptionHalted = async (req, res) => {
           canceled: true,
         });
 
-        if (sellerDetails && sellerDetails.email) {
-          let subscriptionPendingEmail = cancelSubscription({
-            userName: sellerDetails.name,
-          });
-          const message = {
-            from: MailgunKeys.senderMail,
-            to: sellerDetails && sellerDetails.email,
-            subject: "Subscription cancellation",
-            html: commonTemplate(subscriptionPendingEmail),
-          };
-          sendSingleMail(message);
-        }
+        // if (sellerDetails && sellerDetails.email) {
+        //   let subscriptionPendingEmail = cancelSubscription({
+        //     userName: sellerDetails.name,
+        //   });
+        //   const message = {
+        //     from: MailgunKeys.senderMail,
+        //     to: sellerDetails && sellerDetails.email,
+        //     subject: "Subscription cancellation",
+        //     html: commonTemplate(subscriptionPendingEmail),
+        //   };
+        //   sendSingleMail(message);
+        // }
         // res.status(200).json({ status: "ok" });
+
+        const update = await updateSubHaltedHook({ _id: save._id }, { oprated: true })
       }
     }
 
@@ -1634,9 +1637,64 @@ module.exports.subscriptionCancleHook = async (req, res) => {
       if (save) {
         res.status(200).json({ status: "ok" });
       }
+
+      const { payload } = save.subCancledHookResponse;
+      const { subscription } = payload;
+      const { entity } = subscription;
+      const isTrade = entity.notes.client === "trade";
+      const isTender = entity.notes.client === "tender";
+      const subId = entity.id;
+
+      const paidCount = entity && entity.paid_count;
+      if (isTrade) {
+        const paymentQuery = {
+          isSubscription: true,
+          "paymentResponse.razorpay_subscription_id": subId,
+        };
+
+        const responce = await findPayment(paymentQuery);
+
+        const OrderId = responce && responce.orderId && responce.orderId._id;
+        const sellerPlanId =
+          responce && responce.orderId && responce.orderId.sellerPlanId;
+        const ordersQuery = { _id: OrderId };
+        const sellerPlanQuery = { _id: sellerPlanId };
+        const sellerDetails =
+          responce && responce.orderId && responce.orderId.sellerDetails;
+
+        const sellerPlanDetails = await getSellerPlan(sellerPlanQuery);
+
+        const planFrom = sellerPlanDetails && sellerPlanDetails.planValidFrom;
+        const exprireDate = sellerPlanDetails && sellerPlanDetails.exprireDate;
+
+        let new_expery_date = moment(planFrom, "YYYY-MM-DD").add(paidCount, 'months');
+
+        const OrderUpdate = await updateOrder(ordersQuery, { canceled: true });
+        const sellerPlansUpadte = await updateSellerPlan(sellerPlanQuery, {
+          canceled: true,
+          exprireDate: new_expery_date
+        });
+
+        if (sellerDetails && sellerDetails.email) {
+          let subscriptionPendingEmail = cancelSubscription({
+            userName: sellerDetails.name,
+          });
+          const message = {
+            from: MailgunKeys.senderMail,
+            to: sellerDetails && sellerDetails.email,
+            subject: "Subscription cancellation",
+            html: commonTemplate(subscriptionPendingEmail),
+          };
+          sendSingleMail(message);
+        }
+
+        const update = await updateSubCancledHook({ _id: save._id }, { oprated: true})
+        console.log("🚀 ~ file: paymentController.js ~ line 1689 ~ module.exports.subscriptionCancleHook= ~ update", update)
+      }
+
     }
   } catch (error) {
-
+    console.log("🚀 ~ file: paymentController.js ~ line 1650 ~ module.exports.subscriptionCancleHook= ~ error", error)
   }
 }
 
