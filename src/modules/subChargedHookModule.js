@@ -1,4 +1,4 @@
-const { SubChargedRes, SubPendingRes, SubHaltedRes } = require('../models');
+const { SubChargedRes, SubPendingRes, SubHaltedRes, cancleHookRes } = require('../models');
 
 exports.saveSubChargedHookRes = (data) =>
     new Promise((resolve, reject) => {
@@ -61,4 +61,22 @@ exports.getSubHaltedHook = (query) =>
                 resolve(doc)
             })
             .catch(reject)
-    })    
+    })   
+    
+exports.saveSubCancledHookRes = (data) =>
+    new Promise((resolve, reject) => {
+        cancleHookRes.create(data)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })
+
+exports.getSubCancledHook = (query) =>
+    new Promise((resolve, reject) => {
+        cancleHookRes.find(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })     

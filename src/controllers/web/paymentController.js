@@ -62,8 +62,7 @@ const { addOrders, updateOrder, getOrderById } = Orders;
 const { addOrdersLog,updateOrderLog,addRecurringOrder,updateRecurringOrder } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
-const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, getSubHaltedHook} =
-  subChargedHook;
+const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, getSubHaltedHook, saveSubCancledHookRes, getSubCancledHook} = subChargedHook;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { getAllSellerTypes } = category;
 const { updateSellerProducts } = sellerProducts;
@@ -1620,18 +1619,26 @@ module.exports.subscriptionCharged = async (req, res) => {
   }
 };
 
-module.exports.paymentCaptured = async (req, res) => {
+module.exports.subscriptionCancleHook = async (req, res) => {
   try {
-    console.log(
-      "🚀 ~ file: paymentController.js ~ line 618 ~ module.exports.paymentCaptured= ~ req",
-      req.body
-    );
-
-    res.status(200).json({ status: "ok" });
+    const check = await getSubCancledHook({ uniqueEventId: req.headers['x-razorpay-event-id'] })
+    let save;
+    if (check && check.length) {
+      res.status(200).json({ status: "ok" });
+    } else {
+      save = await saveSubCancledHookRes({
+        subCancledHookResponse: req.body,
+        uniqueEventId: req.headers['x-razorpay-event-id'],
+        oprated: false
+      });
+      if (save) {
+        res.status(200).json({ status: "ok" });
+      }
+    }
   } catch (error) {
-    console.log(error);
+
   }
-};
+}
 
 module.exports.cancleSubscription = async (req, res) => {
   try {
@@ -1669,6 +1676,19 @@ module.exports.cancleSubscription = async (req, res) => {
   } catch (error) {
     console.log(error);
     respError(error);
+  }
+};
+
+module.exports.paymentCaptured = async (req, res) => {
+  try {
+    console.log(
+      "🚀 ~ file: paymentController.js ~ line 618 ~ module.exports.paymentCaptured= ~ req",
+      req.body
+    );
+
+    res.status(200).json({ status: "ok" });
+  } catch (error) {
+    console.log(error);
   }
 };
 
