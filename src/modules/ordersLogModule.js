@@ -65,4 +65,13 @@ exports.updateRecurringOrder = (query, data) =>
                 resolve(doc)
             })
             .catch(reject)
-    })    
+    }) 
+    
+exports.getRecurringOrder = (query) => 
+new Promise((resolve, reject)=> {
+    Recurring.findOne(query)
+        .then((doc)=>{
+            resolve(doc)
+        })
+        .catch(reject)
+})    

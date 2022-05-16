@@ -59,7 +59,7 @@ const { getSubscriptionPlanDetail } = subscriptionPlan;
 const { getSellerProfile, updateSeller, getUserProfile, getSeller } = sellers;
 const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans;
 const { addOrders, updateOrder, getOrderById } = Orders;
-const { addOrdersLog,updateOrderLog,addRecurringOrder,updateRecurringOrder } = OrdersLog;
+const { addOrdersLog,updateOrderLog,addRecurringOrder,updateRecurringOrder,getRecurringOrder } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
 const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook} = subChargedHook;
@@ -972,10 +972,16 @@ module.exports.subscriptionCharged = async (req, res) => {
         );
         const sellerId = responce.sellerId;
         let seller = await getSellerProfile(sellerId);
-        console.log(
-          "🚀 ~ file: paymentController.js ~ line 357 ~ module.exports.subscriptionCharged= ~ seller",
-          seller
-        );
+        // console.log(
+        //   "🚀 ~ file: paymentController.js ~ line 357 ~ module.exports.subscriptionCharged= ~ seller",
+        //   seller
+        // );
+        const recurringId = responce && responce.orderId && responce.orderId.recurringId;
+        let recurringData;
+        if (recurringId){
+          recurringData = await getRecurringOrder({ _id: recurringId})
+          console.log("🚀 ~ file: paymentController.js ~ line 983 ~ module.exports.subscriptionCharged= ~ recurringData", recurringData)
+        }
         const order_details = responce.orderId;
         const sellerPlanId = responce.orderId.sellerPlanId;
         const paymentResponse = {
@@ -1000,10 +1006,10 @@ module.exports.subscriptionCharged = async (req, res) => {
         const _invoice = (invoiceNumner && invoiceNumner.invoiceNumber) || "";
 
         const paymentResponce = await addPayment(paymentJson);
-        console.log(
-          "🚀 ~ file: paymentController.js ~ line 379 ~ module.exports.subscriptionCharged= ~ paymentResponce",
-          paymentResponce
-        );
+        // console.log(
+        //   "🚀 ~ file: paymentController.js ~ line 379 ~ module.exports.subscriptionCharged= ~ paymentResponce",
+        //   paymentResponce
+        // );
 
         const sellerPlanDetails = await getSellerPlan({ _id: sellerPlanId });
         console.log(
@@ -2878,8 +2884,6 @@ module.exports.checkPaymentStatus = async (req,res)=> {
     console.log(err,"@@@@@@@@@")
   }
 }
-
-
 
 module.exports.fetchSubscriptionPayment = async(req, res) => {
   try {
