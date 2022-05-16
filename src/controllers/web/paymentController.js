@@ -1743,6 +1743,10 @@ module.exports.paymentFailedHook = async (req,res) => {
       }
     }
 
+    const { payload } = save.paymentFailedHookResponse;
+    const { payment } = payload;
+    const { entity } = payment;
+
     
   } catch (error) {
   console.log("🚀 ~ file: paymentController.js ~ line 1733 ~ module.exports.paymentFailedHook= ~ error", error)
@@ -2541,6 +2545,7 @@ module.exports.createRazorPayOrder = async (req, res) => {
           result.currency = currency;
         }
         // console.log(result, 'create Order')
+        console.log(result,"@@@@@@@@@@@@@@@@@@@");
 
         respSuccess(res, { ...result, key_id: razorPayCredentials.key_id });
       }

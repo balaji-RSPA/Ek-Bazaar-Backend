@@ -1,4 +1,4 @@
-const { razorPayCredentials } = require("../utils/globalConstants");
+const Razorpay = require("razorpay");
 const { OrdersLog, Payments, sellers, subscriptionPlan, Orders } = require("../modules");
 const { findPincode } = require("../modules/pincodeModule");
 const { addOrdersLog, addPendingSubscriptionOrders, updatePendingSubscriptionOrders } = OrdersLog;
@@ -8,6 +8,7 @@ const { getSellerProfile } = sellers
 const { getSubscriptionPlanDetail } = subscriptionPlan;
 const request = require("request");
 const { respSuccess, respError } = require("../utils/respHadler");
+const { razorPayCredentials } = require('../utils/globalConstants')
 
 async function CalculateGst(price, findPinCode, currency) {
     const gstValue = 18;
@@ -162,6 +163,19 @@ exports.subscriptionPaymentAuth = async (req, res, next) => {
     }
 
     const responce = await addOrdersLog(data)
+
+    var instance = new Razorpay({
+        key_id: razorPayCredentials.key_id, 
+        key_secret: razorPayCredentials.key_secret, 
+    })
+
+    instance.payments.edit(paymentId, {
+        "notes": {
+            client: "trade",
+            url: req.get("origin")
+        }
+    })
+
     let verify = paymentResponse.razorpay_payment_id + "|" + verifyId;
     let crypto = require("crypto");
     let expectedSignature = crypto
