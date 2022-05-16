@@ -1717,7 +1717,7 @@ module.exports.subscriptionCharged = async (req, res) => {
         data: req.body,
       });
       if (response.status === 200) {
-        res.status(200).json({ status: "ok" });
+        // res.status(200).json({ status: "ok" });
       }
     }
   } catch (error) {
@@ -1738,12 +1738,47 @@ module.exports.paymentFailedHook = async (req,res) => {
         uniqueEventId: req.headers['x-razorpay-event-id'],
         oprated: false
       });
-      console.log("🚀 ~ file: paymentController.js ~ line 1741 ~ module.exports.paymentFailedHook= ~ save", save)
       if (save) {
         res.status(200).json({ status: "ok" });
       }
     }
+    console.log("🚀 ~ file: paymentController.js ~ line 1741 ~ module.exports.paymentFailedHook= ~ save", save)
 
+    const { payload } = save.paymentFailedHookResponse;
+    const { payment} = payload;
+    const { entity } = payment;
+
+    const payId = entity && entity.id;
+
+    let pendingQuery = { pending: true, rzrPaymentId: payId }
+
+    let pendingSub = await getPendingSubscriptionOrders(pendingQuery)
+
+    if (pendingSub && pendingSub.length) {
+      const { userId, subscriptionId, orderDetails, currency, isSubscription, OrderId, PaymentId, sellerId, paymentResponse } = pendingSub[0];
+
+      const ordersQuery = { _id: OrderId }
+
+      let result = await updateOrder(ordersQuery, { orderStatus: "failed" })
+
+      if(result){
+        const updatePending = await updatePendingSubscriptionOrders(pendingQuery, { pending: false })
+        console.log("---------Payment Failed Now Order Status is Failed -----------------")
+      } 
+
+    }else{
+
+      // Request will Go to tender.
+      const url = tenderApiBaseUrl + "/subscriptionCharged";
+      const response = await axios({
+        url,
+        method: "POST",
+        data: req.body,
+      });
+      if (response.status === 200) {
+        // res.status(200).json({ status: "ok" });
+      }
+    }
     
   } catch (error) {
   console.log("🚀 ~ file: paymentController.js ~ line 1733 ~ module.exports.paymentFailedHook= ~ error", error)
