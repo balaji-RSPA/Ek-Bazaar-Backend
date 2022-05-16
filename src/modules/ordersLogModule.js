@@ -56,15 +56,6 @@ exports.getPendingSubscriptionOrders = (query) =>
     })
     
     
-exports.getPendingSubscriptionOrders = (query) =>
-    new Promise((resolve, reject) => {
-        pendingSubOrders.find(query)
-            .then((doc) => {
-                resolve(doc)
-            })
-            .catch(reject)
-    })
-    
 // For Recurring Model    
 exports.addRecurringOrder = (data) =>
     new Promise((resolve, reject) => {

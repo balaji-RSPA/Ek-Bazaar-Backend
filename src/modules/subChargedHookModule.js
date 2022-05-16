@@ -1,4 +1,4 @@
-const { SubChargedRes, SubPendingRes, SubHaltedRes, cancleHookRes } = require('../models');
+const { SubChargedRes, SubPendingRes, SubHaltedRes, cancleHookRes, PaymentFailedHook } = require('../models');
 
 exports.saveSubChargedHookRes = (data) =>
     new Promise((resolve, reject) => {
@@ -112,4 +112,34 @@ exports.updateSubCancledHook = (query, data) =>
                 resolve(doc)
             })
             .catch(reject)
+    }) 
+    
+exports.saveCancledPaymentHookRes = (data) =>
+    new Promise((resolve, reject) => {
+        PaymentFailedHook.create(data)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
     })    
+
+exports.getCancledPaymentHook = (query) =>
+    new Promise((resolve, reject) => {
+        PaymentFailedHook.find(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    }) 
+    
+    
+exports.updateCancledPaymentHook = (query, data) =>
+    new Promise((resolve, reject) => {
+        PaymentFailedHook.findOneAndUpdate(query, data, {
+            new: true
+        })
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })     
