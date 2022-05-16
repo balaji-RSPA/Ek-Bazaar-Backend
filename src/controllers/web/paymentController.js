@@ -60,10 +60,10 @@ const { getSubscriptionPlanDetail } = subscriptionPlan;
 const { getSellerProfile, updateSeller, getUserProfile, getSeller } = sellers;
 const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans;
 const { addOrders, updateOrder, getOrderById, updateOrderPlan } = Orders;
-const { addOrdersLog, updateOrderLog, addRecurringOrder, updateRecurringOrder, getRecurringOrder, getPendingSubscriptionOrders } = OrdersLog;
+const { addOrdersLog, updateOrderLog, addRecurringOrder, updateRecurringOrder, getRecurringOrder, getPendingSubscriptionOrders, updatePendingSubscriptionOrders } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
-const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook } = subChargedHook;
+const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook, saveCancledPaymentHookRes,getCancledPaymentHook,updateCancledPaymentHook } = subChargedHook;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { getAllSellerTypes } = category;
 const { updateSellerProducts } = sellerProducts;
@@ -1191,15 +1191,11 @@ module.exports.subscriptionCharged = async (req, res) => {
               currency,
               isSubscription,
             }
-
-            console.log(data,"222222222222222")
-
-
             const { url } = entity.notes;
-
             const isAssigned = await assignOurPlan(data, JSON.stringify(payment && payment.entity), url, { update: true, OrderId, PaymentId });
 
             if (isAssigned && isAssigned.status === "ok") {
+              const updatePending = await updatePendingSubscriptionOrders(pendingQuery, { pending: false})
               console.log("---------Pending Subscription Assingned Successfully-----------------")
             }
           }else{
@@ -1725,10 +1721,34 @@ module.exports.subscriptionCharged = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
-    respError(error);
+    console.log("🚀 ~ file: paymentController.js ~ line 1725 ~ module.exports.subscriptionCharged= ~ error", error)
+    // respError(error);
   }
 };
+
+module.exports.paymentFailedHook = async (req,res) => {
+  try {
+    const check = await getCancledPaymentHook({ uniqueEventId: req.headers['x-razorpay-event-id'] })
+    let save;
+    if (check && check.length) {
+      res.status(200).json({ status: "ok" });
+    } else {
+      save = await saveCancledPaymentHookRes({
+        paymentFailedHookResponse: req.body,
+        uniqueEventId: req.headers['x-razorpay-event-id'],
+        oprated: false
+      });
+      if (save) {
+        res.status(200).json({ status: "ok" });
+      }
+    }
+
+    
+  } catch (error) {
+  console.log("🚀 ~ file: paymentController.js ~ line 1733 ~ module.exports.paymentFailedHook= ~ error", error)
+    
+  }
+}
 
 module.exports.subscriptionCancleHook = async (req, res) => {
   try {
