@@ -45,6 +45,16 @@ exports.updatePendingSubscriptionOrders = (query, data) =>
             })
             .catch(reject)
     })  
+
+exports.getPendingSubscriptionOrders = (query) =>
+    new Promise((resolve, reject) => {
+        pendingSubOrders.find(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })
+    
     
 exports.getPendingSubscriptionOrders = (query) =>
     new Promise((resolve, reject) => {

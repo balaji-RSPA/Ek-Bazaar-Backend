@@ -32,6 +32,7 @@ const {
   stripeApiKeys,
   tenderApiBaseUrl,
   tradeApiBaseUrl,
+  tradeSiteUrl
 } = require("../../utils/globalConstants");
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
@@ -78,6 +79,7 @@ const { createHmac, Hmac } = crypto;
 const createPdf = async (seller, plan, orderDetails) =>
   new Promise((resolve, reject) => {
     try {
+      console.log(seller, plan, orderDetails, "$$$$$$$$$$$$$$$$$$$$$$$$$$$")
       const sellerDetails = {
         name:
           (orderDetails &&
@@ -204,7 +206,7 @@ const createPdf = async (seller, plan, orderDetails) =>
         sellerDetails: { ...sellerDetails },
       };
 
-      console.log(orderDetails, "orderDetailsorderDetails");
+      console.log(orderDetails, "orderDetailsorderDetails1111111111111");
 
       const invoiceFileName =
         orderDetails && orderDetails.invoiceNo.toString() + "-invoice.pdf";
@@ -236,6 +238,7 @@ const createPdf = async (seller, plan, orderDetails) =>
             body: invoice,
           };
           const multidoc = await uploadToDOSpace(data);
+          console.log(multidoc, "((((((((((((((((((((((((((((((((((((((((((")
           resolve({
             ...multidoc,
             attachement: path.resolve(
@@ -268,6 +271,7 @@ const assignOurPlan = async (data, body, url, updatePending) => new Promise(asyn
     } = data;
 
     if (updatePending) {
+      console.log(sellerId,"#########$$$$$$$$$$$$$$%%%%%%%%%%%%%%%!!!!!!!!!!!!!!!!")
       var { update, OrderId, PaymentId } = updatePending;
     }
     const dateNow = new Date();
@@ -457,7 +461,7 @@ const assignOurPlan = async (data, body, url, updatePending) => new Promise(asyn
       if (updatePending && update){
         const ordersQuery = { _id: OrderId}
         let result = await getOrderById(ordersQuery);
-        result = await updateOrder(ordersQuery, { invoiceNo: _invoice})
+        result = await updateOrder(ordersQuery, { invoiceNo: _invoice })
         order_details = result;
         OrdersData = result;
       }
@@ -1049,10 +1053,10 @@ module.exports.subscriptionCharged = async (req, res) => {
         // );
 
         const sellerPlanDetails = await getSellerPlan({ _id: sellerPlanId });
-        console.log(
-          "🚀 ~ file: paymentController.js ~ line 382 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails",
-          sellerPlanDetails
-        );
+        // console.log(
+        //   "🚀 ~ file: paymentController.js ~ line 382 ~ module.exports.subscriptionCharged= ~ sellerPlanDetails",
+        //   sellerPlanDetails
+        // );
 
         const months =
           sellerPlanDetails && sellerPlanDetails.planType === "Quarterly"
@@ -1084,11 +1088,10 @@ module.exports.subscriptionCharged = async (req, res) => {
           },
           order_details
         );
-        console.log(
-          "🚀 ~ file: paymentController.js ~ line 395 ~ module.exports.subscriptionCharged= ~ invoice",
-          invoice
-        );
-
+        // console.log(
+        //   "🚀 ~ file: paymentController.js ~ line 395 ~ module.exports.subscriptionCharged= ~ invoice",
+        //   invoice
+        // );
         invoiceNoArr.push(_invoice);
         invoicePathArr.push(invoice.Location)
         let nextPaymentLogDate = moment(new Date()).format("DD/MM/YYYY")
@@ -1100,6 +1103,20 @@ module.exports.subscriptionCharged = async (req, res) => {
           paymentDateLog: paymentDateLogArr,
           nextPaymentDate: newDate
         })
+
+
+
+        // invoiceNoArr.push(_invoice);
+        // invoicePathArr.push(invoice.Location)
+        // let nextPaymentLogDate = moment(new Date()).format("DD/MM/YYYY")
+        // paymentDateLogArr.push(nextPaymentLogDate)
+
+        // await updateRecurringOrder({ _id: recurringId }, {
+        //   invoiceNo: invoiceNoArr,
+        //   invoicePath: invoicePathArr,
+        //   paymentDateLog: paymentDateLogArr,
+        //   nextPaymentDate: newDate
+        // })
 
         await updateInvoiceNumber(
           { id: 1 },
@@ -1158,23 +1175,38 @@ module.exports.subscriptionCharged = async (req, res) => {
           let pendingQuery = { pending: true, rzrSubscriptionId: subId }
 
           let pendingSub = await getPendingSubscriptionOrders(pendingQuery)
+          
+          if (pendingSub && pendingSub.length){
+            console.log(
+              pendingSub,"pendingSub-------------- Pending Subscription Through Checkout-----------------"
+            );
+            const { userId, subscriptionId, orderDetails, currency, isSubscription, OrderId, PaymentId, sellerId, paymentResponse } = pendingSub[0];
 
-          const { userId, subscriptionId, orderDetails, currency, isSubscription, OrderId, PaymentId, sellerId, paymentResponse } = pendingSub;
+            const data = {
+              sellerId,
+              subscriptionId,
+              orderDetails,
+              userId,
+              paymentResponse,
+              currency,
+              isSubscription,
+            }
 
-          const data = {
-            sellerId,
-            subscriptionId,
-            orderDetails,
-            userId,
-            paymentResponse,
-            currency,
-            isSubscription,
+            console.log(data,"222222222222222")
+
+
+            const { url } = entity.notes;
+
+            const isAssigned = await assignOurPlan(data, JSON.stringify(payment && payment.entity), url, { update: true, OrderId, PaymentId });
+
+            if (isAssigned && isAssigned.status === "ok") {
+              console.log("---------Pending Subscription Assingned Successfully-----------------")
+            }
+          }else{
+            console.log(
+              "--------------SucessFull Subscription Through Checkout-----------------"
+            );
           }
-
-          const { url } = razorPay.notes;
-
-          const isAssigned = await assignOurPlan(data, payment && payment.entity, url, { update: true, OrderId, PaymentId })
-
           // res.status(200).json({ status: "ok" });
         } else {
           console.log(
@@ -1504,6 +1536,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                       },
                       order_details
                     );
+                    console.log(invoice, "))))))))))))))))))))))))))))))0")
                     await addSellerPlanLog(planLog);
                     if (
                       deleteProduct === true &&
@@ -2126,11 +2159,13 @@ module.exports.captureLink = async (req, res) => {
                   dateNow
                 );
                 if (result && result.status === "ok") {
-                  return respSuccess(
-                    res,
-                    { payment: true },
-                    "subscription activated successfully!"
-                  );
+                  // return respSuccess(
+                  //   res,
+                  //   { payment: true },
+                  //   "subscription activated successfully!"
+                  // );
+                  return res.redirect(301, tradeSiteUrl)
+                  // return res.location(301, 'https://tradebazaar.tech-active.com/')
                 }
                 //         const invoiceNumner = await getInvoiceNumber({ id: 1 })
                 //         const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
