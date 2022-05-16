@@ -58,7 +58,7 @@ const { getSubscriptionPlanDetail } = subscriptionPlan;
 
 const { getSellerProfile, updateSeller, getUserProfile, getSeller } = sellers;
 const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans;
-const { addOrders, updateOrder, getOrderById } = Orders;
+const { addOrders, updateOrder, getOrderById, updateOrderPlan } = Orders;
 const { addOrdersLog, updateOrderLog, addRecurringOrder, updateRecurringOrder, getRecurringOrder, getPendingSubscriptionOrders } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
@@ -456,7 +456,8 @@ const assignOurPlan = async (data, body, url, updatePending) => new Promise(asyn
       let OrdersData;
       if (updatePending && update){
         const ordersQuery = { _id: OrderId}
-        const result = await getOrderById(ordersQuery);
+        let result = await getOrderById(ordersQuery);
+        result = await updateOrder(ordersQuery, { invoiceNo: _invoice})
         order_details = result;
         OrdersData = result;
       }
