@@ -29,6 +29,7 @@ const Orders = require('./ordersSchema')
 const Recurring = require('./recurringOrderSchema')
 const subOrderslogs = require('./subscriptionOrderLogSchema')
 const pendingSubOrders = require('./pendingSubscriptionSchema')
+const cancleHookRes = require('./sub_Cancled_Hook_Schema')
 const OrdersPlans = require('./orderPlanSchema')
 const InvoiceNumber = require('./invoiceNumberSchema')
 const Suggestions = require('./suggestionsSchema')
@@ -92,5 +93,6 @@ module.exports = {
     Paylinks,
     SubChargedRes,
     SubPendingRes,
-    SubHaltedRes
+    SubHaltedRes,
+    cancleHookRes
 }

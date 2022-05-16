@@ -30,6 +30,7 @@ const { uploadOnBoardSeller, moveSellerToNewDB, getSellerMasterProducts, uploadO
 const { getCancledSubscriptionUsers } = require('./src/controllers/admin/paymentReportController')
 const { uploadChatLanguageCategory } = require('./src/controllers/web/languageTempateController')
 const { addPlanManully } = require('./src/controllers/web/paymentController')
+const { createPdf } = require('./src/controllers/web/testController')
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 
 // const { suggestions} = require("./elasticsearch-mapping");
@@ -127,6 +128,17 @@ app.get("/paymentSubscriptionReport", async (req,res) => {
     const responce = await getCancledSubscriptionUsers()
   } catch (error) {
     console.log(error,"@@@@@@@@@@")
+  }
+})
+
+app.get("/createPdf",async (req,res)=> {
+  try {
+    const result = await createPdf(req,res)
+    console.log("🚀 ~ file: app.js ~ line 137 ~ app.get ~ result", result)
+    // res.status(200).json(result);
+  } catch (error) {
+  console.log("🚀 ~ file: app.js ~ line 138 ~ app.get ~ error", error)
+    
   }
 })
 

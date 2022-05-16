@@ -168,7 +168,7 @@ exports.subscriptionPaymentAuth = async (req, res, next) => {
         .createHmac("sha256", razorPayCredentials.key_secret)
         .update(verify.toString())
         .digest("hex");
-    if (expectedSignature === paymentResponse.razorpay_signature) {
+    if (expectedSignature !== paymentResponse.razorpay_signature) {
         next()
     } else {
         const pendingSubData = {
