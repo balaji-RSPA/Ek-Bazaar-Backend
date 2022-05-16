@@ -60,10 +60,10 @@ const { getSubscriptionPlanDetail } = subscriptionPlan;
 const { getSellerProfile, updateSeller, getUserProfile, getSeller } = sellers;
 const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans;
 const { addOrders, updateOrder, getOrderById } = Orders;
-const { addOrdersLog, updateOrderLog, addRecurringOrder, updateRecurringOrder, getRecurringOrder } = OrdersLog;
+const { addOrdersLog, updateOrderLog, addRecurringOrder, updateRecurringOrder, getRecurringOrder, getPendingSubscriptionOrders } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
-const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, getSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook } = subChargedHook;
+const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook } = subChargedHook;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { getAllSellerTypes } = category;
 const { updateSellerProducts } = sellerProducts;
@@ -258,7 +258,7 @@ const createPdf = async (seller, plan, orderDetails) =>
     }
   });
 
-const assignOurPlan = async (data, body, url) => new Promise(async (resolve, reject) => {
+const assignOurPlan = async (data, body, url, updatePending) => new Promise(async (resolve, reject) => {
   try {
     const {
       sellerId,
@@ -268,9 +268,12 @@ const assignOurPlan = async (data, body, url) => new Promise(async (resolve, rej
       paymentResponse,
       currency,
       isSubscription,
-      paymentId,
-      verifyId
     } = data;
+
+    if (updatePending) {
+      console.log(sellerId,"#########$$$$$$$$$$$$$$%%%%%%%%%%%%%%%!!!!!!!!!!!!!!!!")
+      var { update, OrderId, PaymentId } = updatePending;
+    }
     const dateNow = new Date();
     const gstValue = currency === "INR" ? 18 : 0;
     //  currency = 'INR'
@@ -329,11 +332,11 @@ const assignOurPlan = async (data, body, url) => new Promise(async (resolve, rej
         findpincode,
         currency
       );
-      console.log(
-        "🚀 ~ gggggggggggggggggggg  -------",
-        includedGstAmount,
-        paymentId
-      );
+      // console.log(
+      //   "🚀 ~ gggggggggggggggggggg  -------",
+      //   includedGstAmount,
+      //   paymentId
+      // );
 
       const userData = {
         userId: seller.userId,
@@ -401,13 +404,24 @@ const assignOurPlan = async (data, body, url) => new Promise(async (resolve, rej
         location: seller.location,
         mobile: seller.mobile,
       };
-      const paymentJson = {
-        ...userData,
-        paymentResponse: paymentResponse,
-        paymentDetails: JSON.parse(body),
-        paymentSuccess: true,
-        isSubscription,
-      };
+      let paymentJson;
+      let payment;
+
+      if (updatePending && update){
+        const paymentQuery = { _id: PaymentId}
+        payment = await updatePayment(paymentQuery, { paymentSuccess: true});
+        paymentJson = payment;
+      }else{
+        paymentJson = {
+          ...userData,
+          paymentResponse: paymentResponse,
+          paymentDetails: JSON.parse(body),
+          paymentSuccess: true,
+          isSubscription,
+        };
+        payment = await addPayment(paymentJson);
+      }
+      
       const _p_details = {
         subscriptionId: planDetails._id,
         expireStatus: false,
@@ -430,7 +444,7 @@ const assignOurPlan = async (data, body, url) => new Promise(async (resolve, rej
         type: planDetails.type,
         currency,
       };
-      const payment = await addPayment(paymentJson);
+
       console.log("🚀 ~ file: paymentController.js ~ line 426 ~ assignOurPlan ~ payment111111111111111", payment)
       const planData = {
         ...userData,
@@ -442,37 +456,47 @@ const assignOurPlan = async (data, body, url) => new Promise(async (resolve, rej
         createdAt: new Date(),
         createdOn: new Date(),
       };
-
-      const order_details = {
-        ...userData,
-        invoiceNo: _invoice,
-        invoicePath: "",
-        gstNo: (orderDetails && orderDetails.gst) || null,
-        address: (orderDetails && orderDetails.address) || null,
-        pincode: (orderDetails && orderDetails.pincode) || null,
-        country: (orderDetails && orderDetails.country) || null,
-        sellerDetails: {
-          ...sellerDetails,
-        },
-        // sellerPlanId: '', // seller plan collectio id
-        subscriptionId: subscriptionId,
-        // orderPlanId: '', // order items/plans id
-        gst: gstValue,
-        price: price,
-        gstAmount: includedGstAmount.gstAmount,
-        cgstAmount: includedGstAmount.cgstAmount,
-        sgstAmount: includedGstAmount.sgstAmount,
-        total: includedGstAmount.totalAmount,
-        orderedOn: new Date(),
-        hearingSourceCode: SourceCode,
-        // paymentId: '', // payment collection id
-        // paymentStatus: '',
-        ipAddress: (orderDetails && orderDetails.ipAddress) || null,
-        currency: currency,
-        isSubscription,
-        // isEmailSent: ''
-      };
-      const OrdersData = await addOrders(order_details);
+      let order_details;
+      let OrdersData;
+      if (updatePending && update){
+        const ordersQuery = { _id: OrderId}
+        let result = await getOrderById(ordersQuery);
+        result = await updateOrder(ordersQuery, { invoiceNo: _invoice })
+        order_details = result;
+        OrdersData = result;
+      }
+      else {
+        order_details = {
+          ...userData,
+          invoiceNo: _invoice,
+          invoicePath: "",
+          gstNo: (orderDetails && orderDetails.gst) || null,
+          address: (orderDetails && orderDetails.address) || null,
+          pincode: (orderDetails && orderDetails.pincode) || null,
+          country: (orderDetails && orderDetails.country) || null,
+          sellerDetails: {
+            ...sellerDetails,
+          },
+          // sellerPlanId: '', // seller plan collectio id
+          subscriptionId: subscriptionId,
+          // orderPlanId: '', // order items/plans id
+          gst: gstValue,
+          price: price,
+          gstAmount: includedGstAmount.gstAmount,
+          cgstAmount: includedGstAmount.cgstAmount,
+          sgstAmount: includedGstAmount.sgstAmount,
+          total: includedGstAmount.totalAmount,
+          orderedOn: new Date(),
+          hearingSourceCode: SourceCode,
+          // paymentId: '', // payment collection id
+          // paymentStatus: '',
+          ipAddress: (orderDetails && orderDetails.ipAddress) || null,
+          currency: currency,
+          isSubscription,
+          // isEmailSent: ''
+        };
+        OrdersData = await addOrders(order_details);
+      }
       console.log("🚀 ~ file: paymentController.js ~ line 468 ~ assignOurPlan ~ OrdersData222222222222222222", OrdersData)
 
       const orderItem = {
@@ -796,6 +820,7 @@ module.exports.pendingSubWebHook = async (req, res) => {
         sendSingleMail(message);
         // res.status(200).json({ status: "ok" });
       }
+      const update = await updateSubPendingHook({ _id: save._id }, { oprated: true })
     }
     if (isTender) {
       const url = tenderApiBaseUrl + "/subscriptionPending";
@@ -812,7 +837,7 @@ module.exports.pendingSubWebHook = async (req, res) => {
     }
   } catch (error) {
     console.log(error, "EEEEEEEEEERRRRRRrrrrrrrrrrrrrrrrrr");
-    respError(error);
+    // respError(error);
   }
 };
 
@@ -893,6 +918,8 @@ module.exports.subscriptionHalted = async (req, res) => {
         //   sendSingleMail(message);
         // }
         // res.status(200).json({ status: "ok" });
+
+        const update = await updateSubHaltedHook({ _id: save._id }, { oprated: true })
       }
     }
 
@@ -974,6 +1001,10 @@ module.exports.subscriptionCharged = async (req, res) => {
         );
         const sellerId = responce.sellerId;
         let seller = await getSellerProfile(sellerId);
+        // console.log(
+        //   "🚀 ~ file: paymentController.js ~ line 357 ~ module.exports.subscriptionCharged= ~ seller",
+        //   seller
+        // );
         const recurringId = responce && responce.orderId && responce.orderId.recurringId;
         let recurringData;
         let invoiceNoArr;
@@ -992,10 +1023,6 @@ module.exports.subscriptionCharged = async (req, res) => {
           newDate = moment(nextPaymentDate, "YYYY-MM-DD").add(1, 'months');
           paymentDateLogArr = recurringData && recurringData.paymentDateLog
         }
-        // console.log(
-        //   "🚀 ~ file: paymentController.js ~ line 357 ~ module.exports.subscriptionCharged= ~ seller",
-        //   seller
-        // );
         const order_details = responce.orderId;
         const sellerPlanId = responce.orderId.sellerPlanId;
         const paymentResponse = {
@@ -1079,6 +1106,18 @@ module.exports.subscriptionCharged = async (req, res) => {
 
 
 
+        // invoiceNoArr.push(_invoice);
+        // invoicePathArr.push(invoice.Location)
+        // let nextPaymentLogDate = moment(new Date()).format("DD/MM/YYYY")
+        // paymentDateLogArr.push(nextPaymentLogDate)
+
+        // await updateRecurringOrder({ _id: recurringId }, {
+        //   invoiceNo: invoiceNoArr,
+        //   invoicePath: invoicePathArr,
+        //   paymentDateLog: paymentDateLogArr,
+        //   nextPaymentDate: newDate
+        // })
+
         await updateInvoiceNumber(
           { id: 1 },
           { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 }
@@ -1133,6 +1172,41 @@ module.exports.subscriptionCharged = async (req, res) => {
           console.log(
             "--------------Subscription Through Checkout-----------------"
           );
+          let pendingQuery = { pending: true, rzrSubscriptionId: subId }
+
+          let pendingSub = await getPendingSubscriptionOrders(pendingQuery)
+          
+          if (pendingSub && pendingSub.length){
+            console.log(
+              pendingSub,"pendingSub-------------- Pending Subscription Through Checkout-----------------"
+            );
+            const { userId, subscriptionId, orderDetails, currency, isSubscription, OrderId, PaymentId, sellerId, paymentResponse } = pendingSub[0];
+
+            const data = {
+              sellerId,
+              subscriptionId,
+              orderDetails,
+              userId,
+              paymentResponse,
+              currency,
+              isSubscription,
+            }
+
+            console.log(data,"222222222222222")
+
+
+            const { url } = entity.notes;
+
+            const isAssigned = await assignOurPlan(data, JSON.stringify(payment && payment.entity), url, { update: true, OrderId, PaymentId });
+
+            if (isAssigned && isAssigned.status === "ok") {
+              console.log("---------Pending Subscription Assingned Successfully-----------------")
+            }
+          }else{
+            console.log(
+              "--------------SucessFull Subscription Through Checkout-----------------"
+            );
+          }
           // res.status(200).json({ status: "ok" });
         } else {
           console.log(
@@ -1723,7 +1797,7 @@ module.exports.subscriptionCancleHook = async (req, res) => {
         }
 
         const update = await updateSubCancledHook({ _id: save._id }, { oprated: true })
-        console.log("🚀 ~ file: paymentController.js ~ line 1693 ~ module.exports.subscriptionCancleHook= ~ update", update)
+        console.log("🚀 ~ file: paymentController.js ~ line 1689 ~ module.exports.subscriptionCancleHook= ~ update", update)
       }
 
     }
@@ -1867,6 +1941,9 @@ module.exports.createRazorPayLink = async (req, res) => {
               client: "trade",
               planId,
               url: req.get("origin"),
+              sellerId,
+              userId,
+              isSubLink
             },
             notify_info: {
               notify_phone: `${mob}`,
@@ -2433,7 +2510,8 @@ module.exports.createRazorPayOrder = async (req, res) => {
                 : city && !state
                   ? `${city}`
                   : state && !city
-                    ? `${state}` : ''
+                    ? `${state}` : '',
+              url: req.get("origin")
             },
             notify_info: {
               notify_phone: `${mobile.mobile}`,
@@ -2931,7 +3009,7 @@ module.exports.fetchSubscriptionPayment = async (req, res) => {
     const url = req.get("origin");
     const body = await fetchRazorpayPayment(paymentId)
     console.log("🚀 ~ file: paymentController.js ~ line 2766 ~ module.exports.fetchSubscriptionPayment=async ~ body", body)
-    const isAssigned = await assignOurPlan(req.body, body, url)
+    const isAssigned = await assignOurPlan(req.body, body, url, null);
     console.log("🚀 ~ file: paymentController.js ~ line 2767 ~ module.exports.fetchSubscriptionPayment=async ~ isAssigned", isAssigned)
 
     if (isAssigned && isAssigned.status === "ok") {

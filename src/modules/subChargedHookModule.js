@@ -43,7 +43,18 @@ exports.getSubPendingHook = (query) =>
                 resolve(doc)
             })
             .catch(reject)
-    })    
+    }) 
+    
+exports.updateSubPendingHook = (query, data) =>
+    new Promise((resolve, reject) => {
+        SubPendingRes.findOneAndUpdate(query, data, {
+            new: true
+        })
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })         
 
 exports.saveSubHaltedHookRes = (data) =>
     new Promise((resolve, reject) => {
@@ -61,7 +72,18 @@ exports.getSubHaltedHook = (query) =>
                 resolve(doc)
             })
             .catch(reject)
-    })   
+    }) 
+    
+exports.updateSubHaltedHook = (query, data) =>
+    new Promise((resolve, reject) => {
+        SubHaltedRes.findOneAndUpdate(query, data, {
+            new: true
+        })
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })     
     
 exports.saveSubCancledHookRes = (data) =>
     new Promise((resolve, reject) => {
@@ -90,4 +112,4 @@ exports.updateSubCancledHook = (query, data) =>
                 resolve(doc)
             })
             .catch(reject)
-    })      
+    })    

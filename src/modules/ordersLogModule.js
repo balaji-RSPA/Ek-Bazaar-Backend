@@ -56,6 +56,15 @@ exports.getPendingSubscriptionOrders = (query) =>
     })
     
     
+exports.getPendingSubscriptionOrders = (query) =>
+    new Promise((resolve, reject) => {
+        pendingSubOrders.find(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })
+    
 // For Recurring Model    
 exports.addRecurringOrder = (data) =>
     new Promise((resolve, reject) => {
@@ -75,14 +84,13 @@ exports.updateRecurringOrder = (query, data) =>
                 resolve(doc)
             })
             .catch(reject)
-    })  
+    }) 
     
-    
-exports.getRecurringOrder = (query) =>
-    new Promise((resolve, reject) => {
-        Recurring.findOne(query)
-            .then((doc) => {
-                resolve(doc)
-            })
-            .catch(reject)
-    })     
+exports.getRecurringOrder = (query) => 
+new Promise((resolve, reject)=> {
+    Recurring.findOne(query)
+        .then((doc)=>{
+            resolve(doc)
+        })
+        .catch(reject)
+})    

@@ -33,8 +33,8 @@ const recurringSchema = new Schema({
         default: []
     },
     paymentDateLog: {
-        type: [String],
-        default: []
+        type:[String],
+        default:[]
     },
     nextPaymentDate: {
         type: Date,
