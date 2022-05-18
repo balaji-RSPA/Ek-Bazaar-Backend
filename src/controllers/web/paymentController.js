@@ -849,6 +849,7 @@ module.exports.subscriptionHalted = async (req, res) => {
     let save;
     if (check && check.length) {
       res.status(200).json({ status: "ok" });
+      return
     } else {
       save = await saveSubHaltedHookRes({
         subHaltedHookResponse: req.body,
@@ -956,6 +957,7 @@ module.exports.subscriptionCharged = async (req, res) => {
     let save;
     if (check && check.length) {
       res.status(200).json({ status: "ok" });
+      return
     } else {
       save = await saveSubChargedHookRes({
         subChargedHookResponse: req.body,
@@ -1732,6 +1734,7 @@ module.exports.paymentFailedHook = async (req,res) => {
     let save;
     if (check && check.length) {
       res.status(200).json({ status: "ok" });
+      return
     } else {
       save = await saveCancledPaymentHookRes({
         paymentFailedHookResponse: req.body,
@@ -1769,7 +1772,7 @@ module.exports.paymentFailedHook = async (req,res) => {
     }else{
 
       // Request will Go to tender.
-      const url = tenderApiBaseUrl + "/subscriptionCharged";
+      const url = tenderApiBaseUrl + "/paymentFailedHook";
       const response = await axios({
         url,
         method: "POST",
@@ -1792,6 +1795,7 @@ module.exports.subscriptionCancleHook = async (req, res) => {
     let save;
     if (check && check.length) {
       res.status(200).json({ status: "ok" });
+      return
     } else {
       save = await saveSubCancledHookRes({
         subCancledHookResponse: req.body,
@@ -1854,6 +1858,19 @@ module.exports.subscriptionCancleHook = async (req, res) => {
 
         const update = await updateSubCancledHook({ _id: save._id }, { oprated: true })
         console.log("🚀 ~ file: paymentController.js ~ line 1689 ~ module.exports.subscriptionCancleHook= ~ update", update)
+      }
+
+      if (isTender){
+        // Request will Go to tender.
+        const url = tenderApiBaseUrl + "/subscriptionCancled";
+        const response = await axios({
+          url,
+          method: "POST",
+          data: req.body,
+        });
+        if (response.status === 200) {
+          // res.status(200).json({ status: "ok" });
+        }
       }
 
     }
