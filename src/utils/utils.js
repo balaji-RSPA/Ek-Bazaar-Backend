@@ -166,7 +166,7 @@ exports.sendSMS = async (mobile, message, templateId) => new Promise(async(resol
 
  exports.sendExotelSms = (to, msgBody) => new Promise(async (resolve, reject) => {
    const from = exotelSms.senderID;
-   const dataString = `From=${from}&To=${to}&Body=${msgBody}`;
+   const dataString = `From=${from}&To=${to}&Body=${msgBody}&Priority=High`;
    const apiUrl = `${exotelSms.apiURL}/Sms/send.json`;
    axios({
      method: 'post',

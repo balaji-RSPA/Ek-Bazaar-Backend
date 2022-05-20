@@ -290,16 +290,16 @@ module.exports.uploadChatLanguageQuestionsOne = async (req, res) => {
           if (catDetails) {
             const oldQue = catDetails.questions;
 
-            English.push(cat.English.trim());
-            Dutch.push(cat.Dutch.trim());
-            Arabic.push(cat.Arabic.trim());
-            Korean.push(cat.Korean.trim());
-            Vietnamese.push(cat.Vietnamese.trim());
-            Turkish.push(cat.Turkish.trim());
-            Javanese.push(cat.Javanese.trim());
-            Persian.push(cat.Persian.trim());
-            Malay.push(cat.Malay.trim());
-            Thai.push(cat.Thai.trim());
+            // English.push(cat.English.trim());
+            // Dutch.push(cat.Dutch.trim());
+            // Arabic.push(cat.Arabic.trim());
+            // Korean.push(cat.Korean.trim());
+            // Vietnamese.push(cat.Vietnamese.trim());
+            // Turkish.push(cat.Turkish.trim());
+            // Javanese.push(cat.Javanese.trim());
+            // Persian.push(cat.Persian.trim());
+            // Malay.push(cat.Malay.trim());
+            // Thai.push(cat.Thai.trim());
 
             German.push(cat.German.trim());
             Polish.push(cat.Polish.trim());
@@ -310,16 +310,16 @@ module.exports.uploadChatLanguageQuestionsOne = async (req, res) => {
             Italian.push(cat.Italian.trim());
 
             const question = {
-              en: [...oldQue["en"], ...English],
-              nl: [...oldQue["nl"], ...Dutch],
-              ar: [...oldQue["ar"], ...Arabic],
-              ko: [...oldQue["ko"], ...Korean],
-              vi: [...oldQue["vi"], ...Vietnamese],
-              tr: [...oldQue["tr"], ...Turkish],
-              jv: [...oldQue["jv"], ...Javanese],
-              fa: [...oldQue["fa"], ...Persian],
-              ms: [...oldQue["ms"], ...Malay],
-              th: [...oldQue["th"], ...Thai],
+              en: oldQue["en"],
+              nl: oldQue["nl"],
+              ar: oldQue["ar"],
+              ko: oldQue["ko"],
+              vi: oldQue["vi"],
+              tr: oldQue["tr"],
+              jv: oldQue["jv"],
+              fa: oldQue["fa"],
+              ms: oldQue["ms"],
+              th: oldQue["th"],
 
               de: [...oldQue["de"], ...German],
               pl: [...oldQue["pl"], ...Polish],
@@ -330,6 +330,7 @@ module.exports.uploadChatLanguageQuestionsOne = async (req, res) => {
               it: [...oldQue["it"], ...Italian],
             };
 
+            console.log(question, "questionquestion")
             const data = {
               // ...catDetails,
               questions: question,
@@ -339,7 +340,7 @@ module.exports.uploadChatLanguageQuestionsOne = async (req, res) => {
               { _id: catDetails._id },
               data
             );
-            console.log(data, temp, " gggggggggggggggggggggg");
+            console.log(temp, " gggggggggggggggggggggg");
           }
         }
       }

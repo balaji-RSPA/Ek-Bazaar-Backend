@@ -593,9 +593,11 @@ module.exports.subscriptionCharged = async (req, res) => {
             ],
           };
           console.log("---------------Next Payment------------------------");
-          sendSingleMail(message);
-          res.status(200).json({ status: "ok" });
+          const mailSend = sendSingleMail(message);
+          console.log("-------------Mail Send To User For Next Payment------------", mailSend)
+
         }
+        res.status(200).json({ status: "ok" });
       } else {
         console.log("-----------------First Payment--------------------");
         let query = { "razorPay.id": subId };
@@ -1094,6 +1096,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                       paymentResponse: paymentResponse,
                       paymentDetails: JSON.parse(body),
                       paymentSuccess: false,
+                      isSubscription
                     };
                     const payment = await addPayment(paymentJson);
                     // return respSuccess(res, { payment: false }, 'Payment failed')
@@ -1263,6 +1266,7 @@ module.exports.createRazorPayLink = async (req, res) => {
             notes: {
               client: "trade",
               planId,
+              url: req.get("origin"),
             },
             notify_info: {
               notify_phone: `${mob}`,
@@ -1732,6 +1736,7 @@ module.exports.captureLink = async (req, res) => {
                   paymentResponse: paymentResponse,
                   paymentDetails: JSON.parse(body),
                   paymentSuccess: false,
+                  isSubscription
                 };
                 const payment = await addPayment(paymentJson);
                 return respSuccess(res, { payment: false }, "Payment failed");
@@ -2235,6 +2240,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                 paymentResponse: paymentResponse,
                 paymentDetails: JSON.parse(body),
                 paymentSuccess: false,
+                isSubscription
               };
               const payment = await addPayment(paymentJson);
               return respSuccess(res, { payment: false }, "Payment failed");
@@ -2973,34 +2979,34 @@ const insertPlaneInDb = async (sellerId, subscriptionId, orderDetails, paymentRe
 
 module.exports.addPlanManully = async (req, res) => {
     try {
-        const sellerId = '625d05cd0ffb4625d4d703f1';
+        const sellerId = '6225a5e6eacf5216a75c08b5';
         const isSubscription = true
-        const subscriptionId = '601d2cbb88a56c05672ebe27';
-      const orderDetails = {
-        name: 'ashish kumar',
-        email: 'arkpkskangenwater@gmail.com',
-        mobile: { countryCode: '+91', mobile: '7895641564' },
-        gst: '',
-        address: 'hyderbad',
-        pincode: '500089',
-        planName: 'Quarterly',
-        groupType: 'Manufacturers/Traders',
-        validityFrom: '18/07/2022',
-        validityTill: '16/10/2022',
-        price: 750,
-        gstAmount: 135,
-        total: '',
-        loader: true,
-        refresh: false,
-        active: false,
-        submitted: true,
-        paymentStatus: false,
-        country: '',
-        isSubscription: true,
-        isLinkGen: false,
-        isSubLink: false,
-        ipAddress: '49.37.241.205'
-      }
+        const subscriptionId = '601d2c7388a56c05672ebe26';
+        const orderDetails = {
+          name: 'vikas babu',
+          email: 'vikaskumar876@gmai.com',
+          mobile: { countryCode: '+91', mobile: '8794123234' },
+          gst: '',
+          address: 'noida',
+          pincode: '201307',
+          planName: 'Yearly',
+          groupType: 'Service',
+          validityFrom: '03/08/2022',
+          validityTill: '03/08/2023',
+          price: 1800,
+          gstAmount: 324,
+          total: '',
+          loader: true,
+          refresh: false,
+          active: false,
+          submitted: true,
+          paymentStatus: false,
+          country: '',
+          isSubscription: true,
+          isLinkGen: false,
+          isSubLink: false,
+          ipAddress: '49.37.241.205'
+        }
 
         // const paymentResponse = {
         //     razorpay_payment_id: 'pay_IrVW5ut7tWZ5uT',
@@ -3009,8 +3015,8 @@ module.exports.addPlanManully = async (req, res) => {
         // }
 
         const paymentResponse = {
-            razorpay_payment_id: 'pay_JLAa2Hz8s2Q7Zn',
-          razorpay_subscription_id: 'sub_JLAVaIMMfveEaJ',
+            razorpay_payment_id: 'pay_JQfAMUDdH6gmNr',
+            razorpay_subscription_id: 'sub_JQf9K1oVaTrmUK',
             razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012'
         }
 
@@ -3018,7 +3024,7 @@ module.exports.addPlanManully = async (req, res) => {
 
         request({
             method: 'GET',
-            url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JLAa2Hz8s2Q7Zn`,
+            url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JQfAMUDdH6gmNr`,
 
         }, async function (error, response, body) {
             bodyReq = body;

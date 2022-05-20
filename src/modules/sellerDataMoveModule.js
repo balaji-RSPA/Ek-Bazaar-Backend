@@ -185,6 +185,15 @@ module.exports.addSellerBusiness = (data) => new Promise((resolve, reject) => {
         .catch(error => reject(error))
 })
 
+module.exports.getSellerBusiness = (query) =>
+    new Promise((resolve, reject) => {
+        SellerBusiness.findOne(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch((error) => reject(error))
+    })
+
 module.exports.addSellerStatutory = (data) => new Promise((resolve, reject) => {
     SellerStatutory.create(data)
         .then(doc => {
@@ -208,6 +217,15 @@ module.exports.addSellerContact = (data) => new Promise((resolve, reject) => {
         })
         .catch(error => reject(error))
 })
+
+module.exports.getSellerContact = (query) =>
+    new Promise((resolve, reject) => {
+        SellerContact.findOne(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch((error) => reject(error))
+    })
 
 module.exports.addSellerEstablishment = (data) => new Promise((resolve, reject) => {
     SellerEstablishment.create(data)

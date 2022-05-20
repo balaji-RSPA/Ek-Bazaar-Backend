@@ -18,7 +18,7 @@ const Logger = require('./src/utils/logger');
 const config = require('./config/config')
 const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
-const { updatePriority, gujaratSellerData, getSellersList } = require('./src/controllers/web/testController')
+const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
 const router = require('./src/routes');
 const hookRouter = require('./src/routes/hookRoutes');
@@ -182,6 +182,22 @@ app.get("/getSellersList", async function (req, res) {
   }
   // res.send('Its delete records  live')
 });
+
+app.get("/getPaymentList", async function (req, res) {
+  try {
+    console.log("getSellersPaymentList start++++")
+    const result = await getPaymentList(req, res)
+    console.log("getSellersPaymentList end++++")
+
+    // const result = await getTrialPlanExpiredSellerData(req, res)
+
+
+    res.send("seller Payment list is genrated");
+  } catch (error) {
+    console.log(error, "getSellersList error");
+    res.send("Some thing went wrong!")
+  }
+})
 
 app.get("/uploadOnBoardSeller", async function (req, res) {
   try {

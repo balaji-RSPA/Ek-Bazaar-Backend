@@ -83,3 +83,13 @@ exports.getOrdersCount = (query) =>
             })
             .catch(reject)
     })
+
+exports.getOrdersReport = (query) =>
+    new Promise((resolve, reject) => {
+        Orders.find(query)
+            .populate('orderPlanId')
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(reject)
+    })     
