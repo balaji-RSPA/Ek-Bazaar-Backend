@@ -40,10 +40,10 @@ const {
     respSuccess,
     respError
 } = require('../../utils/respHadler');
-const {
-    query,
-    createLogger
-} = require('winston');
+// const {
+//     query,
+//     createLogger
+// } = require('winston');
 
 module.exports.addSellerType = async (req, res) => {
     try {

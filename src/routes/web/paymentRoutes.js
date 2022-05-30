@@ -2,9 +2,12 @@ const express = require('express')
 const { Router } = express
 const router = Router()
 const payment = require('../../controllers/web/paymentController')
+const { subscriptionPaymentAuth} = require('../../middleware/paymentAuth')
 
 router.post('/createRazorPayOrder', payment.createRazorPayOrder)
 router.post('/captureRazorPayPayment/:paymentId', payment.captureRazorPayPayment)
+router.post('/fetchSubscriptionPayment',subscriptionPaymentAuth,payment.fetchSubscriptionPayment)
+router.post('/checkPaymentStatus/:paymentId', payment.checkPaymentStatus)
 // router.post('/captureRazorPayPayment/:paymentId', payment.captureRazorPayPaymentTwo)
 router.post('/createRazorPayPaymentLink', payment.createRazorPayLink)
 

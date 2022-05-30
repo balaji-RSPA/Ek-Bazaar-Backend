@@ -26,8 +26,11 @@ const { request } = require("./src/utils/request")
 const { authServiceURL, ssoLoginUrl } = require("./src/utils/utils").globalVaraibles
 const { deleteTestData, uploadInternationalCity, getCityList, deleteTestDataRemaining, deleteTestDataChat } = require('./src/controllers/web/testController')
 const { uploadOnBoardSeller, moveSellerToNewDB, getSellerMasterProducts, uploadOnBoardBuyers } = require('./src/controllers/web/sellerDataMove')
+
+const { getCancledSubscriptionUsers } = require('./src/controllers/admin/paymentReportController')
 const { uploadChatLanguageCategory } = require('./src/controllers/web/languageTempateController')
 const { addPlanManully } = require('./src/controllers/web/paymentController')
+const { createPdf } = require('./src/controllers/web/testController')
 // const {checkIndicesMaster} = require("./elasticsearch-mapping/tradebazaar")
 
 // const { suggestions} = require("./elasticsearch-mapping");
@@ -114,6 +117,26 @@ app.get("/add-plan", async function (req, res) {
     return respSuccess(res, { payment: true },'subscription activated successfully!')
   } catch (err) {
     console.log(error)
+  }
+})
+
+app.get("/paymentSubscriptionReport", async (req,res) => {
+  try {
+    console.log('---------paymentSubscriptionReport Started-------')
+    const responce = await getCancledSubscriptionUsers()
+  } catch (error) {
+    console.log(error,"@@@@@@@@@@")
+  }
+})
+
+app.get("/createPdf",async (req,res)=> {
+  try {
+    const result = await createPdf(req,res)
+    console.log("🚀 ~ file: app.js ~ line 137 ~ app.get ~ result", result)
+    // res.status(200).json(result);
+  } catch (error) {
+  console.log("🚀 ~ file: app.js ~ line 138 ~ app.get ~ error", error)
+    
   }
 })
 

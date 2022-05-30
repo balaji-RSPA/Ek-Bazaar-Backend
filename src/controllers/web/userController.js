@@ -215,14 +215,14 @@ module.exports.sendOtp = async (req, res) => {
         };
         await sendSingleMail(message);
 
-        return respSuccess(res, { otp }, checkUser || (email && !reset) ? "Your OTP has been send successfully, check your email or sms" : "");
+        return respSuccess(res, { otp }, checkUser || (email && !reset) ? "Your OTP  has been sent successfully to the mobile number .Check your SMS " : "");
       } else {
         console.log("=======Email is not verified yet================");
       }
       return respSuccess(res, { otp });
     } else {
       if (mobile) {
-        return respSuccess(res, { otp }, "Your OTP has been send successfully, check your email or sms");
+        return respSuccess(res, { otp }, "Your OTP  has been sent successfully to the mobile number .Check your SMS ");
       } else if (checkUser || (email && !reset)) {
         //send email
         const message = {
@@ -232,7 +232,7 @@ module.exports.sendOtp = async (req, res) => {
           html: commonTemplate(otpMessage),
         };
         await sendSingleMail(message);
-        return respSuccess(res, { otp }, checkUser || email ? "Your OTP has been send successfully, check your email or sms" : "");
+        return respSuccess(res, { otp }, checkUser || email ? "Your OTP  has been sent successfully to the mobile number .Check your SMS " : "");
       } else {
         console.log("=======Email is not verified yet================");
       }

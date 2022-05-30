@@ -59,7 +59,6 @@ module.exports.getSellerPlanWithSellerData = (query) =>
             .catch((error) => reject(error))
     })  
 
-
 module.exports.updateSellerPlans = (query, data) =>
     new Promise((resolve, reject) => {
         SellerPlans.updateMany(query, {

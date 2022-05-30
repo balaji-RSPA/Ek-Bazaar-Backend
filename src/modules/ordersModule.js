@@ -92,4 +92,4 @@ exports.getOrdersReport = (query) =>
                 resolve(doc)
             })
             .catch(reject)
-    })     
+})    

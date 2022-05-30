@@ -26,6 +26,10 @@ const SellerPlanLog = require('./sellerPlansLogSchema')
 const Payments = require('./paymentSchema')
 const Paylinks = require('./payLinkSchema')
 const Orders = require('./ordersSchema')
+const Recurring = require('./recurringOrderSchema')
+const subOrderslogs = require('./subscriptionOrderLogSchema')
+const pendingSubOrders = require('./pendingSubscriptionSchema')
+const cancleHookRes = require('./sub_Cancled_Hook_Schema')
 const OrdersPlans = require('./orderPlanSchema')
 const InvoiceNumber = require('./invoiceNumberSchema')
 const Suggestions = require('./suggestionsSchema')
@@ -41,6 +45,7 @@ const CurrencyConvters = require('./currencyConverterSchema')
 const SubChargedRes = require('./subChargedHookSchema')
 const SubPendingRes = require('./subPendingHookSchema')
 const SubHaltedRes = require('./subHaltedHookSchema')
+const PaymentFailedHook = require('./paymentFailedHookSchema')
 const PaymentData = require('./paymentDataSchema');
 
 module.exports = {
@@ -71,8 +76,11 @@ module.exports = {
     SellerPlanLog,
     Payments,
     Orders,
+    Recurring,
+    subOrderslogs,
     OrdersPlans,
     InvoiceNumber,
+    pendingSubOrders,
     Suggestions,
     Chat,
     Pincodes,
@@ -86,5 +94,7 @@ module.exports = {
     Paylinks,
     SubChargedRes,
     SubPendingRes,
-    SubHaltedRes
+    SubHaltedRes,
+    cancleHookRes,
+    PaymentFailedHook
 }

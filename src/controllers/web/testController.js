@@ -1,8 +1,9 @@
 const moment = require('moment')
 const Papa = require('papaparse')
 const mongoose = require('mongoose');
+const pdf = require("pdf-creator-node");
 const path = require("path");
-const fs = require('fs').promises
+const fs = require('fs')
 const {
     getAllPrimaryCategory,
     updatePrimaryCategory,
@@ -22,8 +23,8 @@ const { getUserList, deleteBuyer, deleteUser, deleteBuyers } = require('../../mo
 const { searchProducts, deleteSellerProducts } = require('../../modules/sellerProductModule')
 const { getAllSellerData, deleteSellerRecord, getSeller, getSellersListData } = require('../../modules/sellersModule');
 const { getOrders, getOrdersCount, getOrdersReport } = require('../../modules/ordersModule')
-const { getSubChargedHookCount } = require('../../modules/subChargedHookModule')
-const { getSellerBusiness, getSellerContact } = require('../../modules/sellerDataMoveModule')
+const { getSubChargedHookCount} = require('../../modules/subChargedHookModule')
+const { getSellerBusiness, getSellerContact} = require('../../modules/sellerDataMoveModule')
 const { getCountryData, addCity, getCity, getCityList } = require('../../modules/locationsModule')
 const { deleteChatAccount, userLogin, userChatLogin } = require('./rocketChatController')
 const { rocketChatAdminLogin } = require('../../utils/globalConstants')
@@ -2695,7 +2696,8 @@ module.exports.getSellersList = async (req, res) => new Promise(async (resolve, 
     } catch (error) {
         console.log(error, ' gggggggggggggg')
     }
-  })
+})
+
 
 module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, reject) => {
     try {
@@ -2707,7 +2709,7 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
         let currentDate;
         // let diffrence = today.diff(fromDate,'days')
         let diffrence = moment().diff(moment('2021-12-01'), 'months')
-        console.log(diffrence, "########################")
+        // console.log(diffrence,"########################")
 
         for (let i = 0; i <= diffrence; i++) {
             // let new_date = moment(fromDate, "YYYY-MM-DD").add(i, 'days');
@@ -2719,12 +2721,12 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
             const startDate = queryDate.substring(
                 0,
                 queryDate.indexOf("T")
-            );
+            ); 
 
             const toDate = queryDate.substring(
                 0,
                 queryDate.indexOf("T")
-            );
+            ); 
             // console.log(date,"%%%%%%%%%%%%%%%%%%%%%%%%%");
 
             let query1 = {
@@ -2734,26 +2736,26 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
                     $lt: ltQueryDate
                 },
                 // $or: [{ isSubscription: false }, { isSubscription: { $exists: false } }]
-                isSubscription: true
+                isSubscription:true
             }
 
-            console.log(query1, "111111")
+            console.log(query1,"111111")
 
-            let subscriptionYearly, subscriptionQuterly, subscriptionHalfYearly, planYearly, planQuterly, PlanHalfYearly;
-
+            let subscriptionYearly,subscriptionQuterly,subscriptionHalfYearly,planYearly,planQuterly,PlanHalfYearly;
+            
 
             const tradeSubscriptionPayment = await getOrdersReport(query1)
-            console.log("🚀 ~ file: testController.js ~ line 2111 ~ module.exports.getPaymentList= ~ tradePlanPayment", tradeSubscriptionPayment.length, i)
+            console.log("🚀 ~ file: testController.js ~ line 2111 ~ module.exports.getPaymentList= ~ tradePlanPayment", tradeSubscriptionPayment.length,i)
             const subscriptionYearlyArr = tradeSubscriptionPayment.filter((odr) => odr.orderPlanId[0].planType === 'Yearly')
-            console.log(subscriptionYearlyArr.length, i);
+            console.log(subscriptionYearlyArr.length,i);
             subscriptionYearly = subscriptionYearlyArr.length;
 
             const subscriptionHalfyearlyArr = tradeSubscriptionPayment.filter((odr) => odr.orderPlanId[0].planType === 'Half Yearly')
-            console.log(subscriptionHalfyearlyArr.length, i);
+            console.log(subscriptionHalfyearlyArr.length,i);
             subscriptionHalfYearly = subscriptionHalfyearlyArr.length;
 
             const subscriptionQuarterlyArr = tradeSubscriptionPayment.filter((odr) => odr.orderPlanId[0].planType === 'Quarterly')
-            console.log(subscriptionQuarterlyArr.length, i)
+            console.log(subscriptionQuarterlyArr.length,i)
             subscriptionQuterly = subscriptionQuarterlyArr.length;
 
             console.log("Totel---", subscriptionYearlyArr.length + subscriptionHalfyearlyArr.length + subscriptionQuarterlyArr.length)
@@ -2776,7 +2778,7 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
             const planHalfyearlyArr = tradePlanPayment.filter((odr) => odr.orderPlanId[0].planType === 'Half Yearly')
             console.log(planHalfyearlyArr.length, i);
             PlanHalfYearly = planHalfyearlyArr.length;
-
+            
 
             const planQuarterlyArr = tradePlanPayment.filter((odr) => odr.orderPlanId[0].planType === 'Quarterly')
             console.log(planQuarterlyArr.length, i)
@@ -2784,17 +2786,17 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
 
             console.log("Totel---", planYearlyArr.length + planHalfyearlyArr.length + planQuarterlyArr.length)
 
-
+            
             const ppp = {
                 Date: `${startDate} to ${toDate}`,
                 subscriptionYearly,
-                subscriptionQuterly,
-                subscriptionHalfYearly,
-                planYearly,
-                planQuterly,
+                subscriptionQuterly, 
+                subscriptionHalfYearly, 
+                planYearly, 
+                planQuterly, 
                 PlanHalfYearly
-            }
-            paymentOnDate.push(ppp)
+            } 
+            paymentOnDate.push(ppp)   
             // let query2 = {
             //     isSubscription: true,
             //     createdAt: {
@@ -2802,9 +2804,9 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
             //         $lt: ltQueryDate
             //     }
             // }
-
+            
             // const tradeSubscriptionPayment = await getOrdersCount(query2)
-
+            
             // let query3 = {
             //     createdAt: {
             //         $gt: queryDate,
@@ -2813,7 +2815,7 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
             //     "subChargedHookResponse.payload.subscription.entity.paid_count": { $gt: 1 },
             //     "subChargedHookResponse.payload.payment.entity.amount": { $gt: 10000 }
             // }
-
+            
             // const subscriptionRePayment = await getSubChargedHookCount(query3)
 
             // let query4 = {
@@ -2840,9 +2842,9 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
 
             // const subscriptionTenderRePayment = await getSubChargedHookCount(query5)
 
-
+            
             // const totel = tradePlanPayment + tradeSubscriptionPayment;
-
+            
             // console.log(date, tradePlanPayment, tradeSubscriptionPayment, subscriptionRePayment,totel)
             // const ppp = {
             //     Date: date,
@@ -2884,7 +2886,8 @@ module.exports.getPaymentList = async (req, res) => new Promise(async (resolve, 
     }
 })  
 
-module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise(async (resolve, reject) => {
+
+module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise (async (resolve, reject) => {
     try {
         const query = {
             planType: "Trail",
@@ -2895,27 +2898,27 @@ module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise(a
         const result = await getSellerPlanWithSellerData(query)
 
         // console.log(result,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        if (result && result.length) {
+        if(result && result.length){
             const expiredTrialSeller = [];
             for (let i = 0; i < result.length; i++) {
                 const expiredSeller = result[i];
-                if (expiredSeller && expiredSeller.sellerId !== null) {
+                if (expiredSeller && expiredSeller.sellerId !== null ){
 
-                    
+                    console.log(expiredSeller.sellerId.mobile,i,i,i,i,i)
+
                     const name = expiredSeller.sellerId && expiredSeller.sellerId.name || null;
-                    console.log(name,  i,  i,  i,  i,  i)
                     const email = expiredSeller.sellerId && expiredSeller.sellerId.email || null;
                     const mobile = expiredSeller.sellerId && expiredSeller.sellerId.mobile[0].mobile || null;
                     const trialAssignedAt = expiredSeller.createdOn;
-                    let companyName;
+                    let companyName; 
 
                     const busenessid = expiredSeller && expiredSeller.sellerId && expiredSeller.sellerId.busenessId;
-                    if (!busenessid) {
+                    if(!busenessid){
                         companyName = null
-                    } else {
+                    }else{
                         let objVal = mongoose.Types.ObjectId(busenessid);
 
-                        const query2 = { _id: objVal }
+                        const query2 = {_id: objVal}
 
                         const busenessDetails = await getSellerBusiness(query2);
                         // console.log(busenessDetails,"@@@@@@@@@@@@@@@@@@@@@@@@@@")
@@ -2926,12 +2929,11 @@ module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise(a
 
                     const productids = expiredSeller && expiredSeller.sellerId && expiredSeller.sellerId.sellerProductId;
 
-                    if (productids.length === 0) {
+                    if(productids.length === 0){
                         productsNames = 'No Products'
-                    } else {
-                        const query3 = {
-                            _id:
-                            {
+                    }else{
+                        const query3 = { _id: 
+                            { 
                                 $in: productids
                             }
                         }
@@ -2947,9 +2949,9 @@ module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise(a
                     let pin;
                     const contactid = expiredSeller && expiredSeller.sellerId && expiredSeller.sellerId.sellerContactId
                     // console.log(productsNames,"%%%%%%%%%%%%%%%%%%")
-                    if (!contactid) {
+                    if (!contactid){
                         sellerAddress = "No Address"
-                    } else {
+                    }else{
                         let objVal1 = mongoose.Types.ObjectId(contactid);
 
                         const query4 = { _id: objVal1 }
@@ -2973,7 +2975,7 @@ module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise(a
 
                     expiredTrialSeller.push(ttt);
                 }
-
+                
             }
             const FilePath = `sellerPlanData-list-${new Date()}.csv`
             const FileSource = 'public/sellerDetailFiles/' + FilePath
@@ -2997,6 +2999,8 @@ module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise(a
             }
         }
     } catch (error) {
-        console.log(error, "################")
+        console.log(error,"################")
     }
 })
+
+
