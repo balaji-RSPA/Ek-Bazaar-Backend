@@ -1047,6 +1047,10 @@ module.exports.subscriptionCharged = async (req, res) => {
 
         const invoiceNumner = await getInvoiceNumber({ id: 1 });
         const _invoice = (invoiceNumner && invoiceNumner.invoiceNumber) || "";
+        await updateInvoiceNumber(
+          { id: 1 },
+          { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 }
+        );
 
         const paymentResponce = await addPayment(paymentJson);
         // console.log(
@@ -1094,17 +1098,23 @@ module.exports.subscriptionCharged = async (req, res) => {
         //   "🚀 ~ file: paymentController.js ~ line 395 ~ module.exports.subscriptionCharged= ~ invoice",
         //   invoice
         // );
-        invoiceNoArr.push(_invoice);
-        invoicePathArr.push(invoice.Location)
-        let nextPaymentLogDate = moment(new Date()).format("DD/MM/YYYY")
-        paymentDateLogArr.push(nextPaymentLogDate)
+        
 
-        await updateRecurringOrder({ _id: recurringId }, {
-          invoiceNo: invoiceNoArr,
-          invoicePath: invoicePathArr,
-          paymentDateLog: paymentDateLogArr,
-          nextPaymentDate: newDate
-        })
+
+        if (recurringId){
+          invoiceNoArr.push(_invoice);
+          invoicePathArr.push(invoice.Location)
+          let nextPaymentLogDate = moment(new Date()).format("DD/MM/YYYY")
+          paymentDateLogArr.push(nextPaymentLogDate)
+
+          await updateRecurringOrder({ _id: recurringId }, {
+            invoiceNo: invoiceNoArr,
+            invoicePath: invoicePathArr,
+            paymentDateLog: paymentDateLogArr,
+            nextPaymentDate: newDate
+          })
+        }
+        
 
 
 
@@ -1120,10 +1130,7 @@ module.exports.subscriptionCharged = async (req, res) => {
         //   nextPaymentDate: newDate
         // })
 
-        await updateInvoiceNumber(
-          { id: 1 },
-          { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 }
-        );
+        
 
         const sellerDetails = order_details && order_details.sellerDetails;
 
@@ -1534,7 +1541,23 @@ module.exports.subscriptionCharged = async (req, res) => {
                       },
                       order_details
                     );
-                    console.log(invoice, "))))))))))))))))))))))))))))))0")
+                    console.log(invoice, "))))))))))))))))))))))))))))))0") 
+                    let recurringResponce;
+                    if (isSubscription) {
+                      const fromDate = moment();
+                      let next_date = moment(fromDate, "YYYY-MM-DD").add(1, 'months');
+                      let firstPaymentDate = moment(new Date()).format("DD/MM/YYYY")
+                      const recurringDate = {
+                        userId,
+                        sellerId,
+                        sellerPlanId: sellerPlanDetails._id,
+                        invoiceNo: [_invoice],
+                        invoicePath: [(invoice && invoice.Location) || ""],
+                        paymentDateLog: [firstPaymentDate],
+                        nextPaymentDate: next_date
+                      }
+                      recurringResponce = await addRecurringOrder(recurringDate)
+                    }
                     await addSellerPlanLog(planLog);
                     if (
                       deleteProduct === true &&
@@ -1681,6 +1704,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                       {
                         isEmailSent: true,
                         invoicePath: (invoice && invoice.Location) || "",
+                        orderStatus: 'success', recurringId: recurringResponce._id
                       }
                     );
                     console.log("------------------ Payment done ---------");
