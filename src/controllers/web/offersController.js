@@ -209,6 +209,7 @@ module.exports.getAllOffers = async (req, res) => {
                 title: `${cat.name}`,
                 products
             }
+            console.log(obj," 1111111111111111111111111111111")
             arrayObj.push(obj)
 
         }
@@ -298,6 +299,7 @@ module.exports.getAllOffers = async (req, res) => {
                         products: _products,
                         vendorId: (req.productDetails && req.productDetails.name && req.productDetails.name && req.productDetails.name.level1 && req.productDetails.name.level1.vendorId) || req.productDetails.name.vendorId
                     }
+                    console.log(obj," 22222222222222222222222222")
                     arrayObj.push(obj)
                 }
 
@@ -453,7 +455,44 @@ module.exports.getAllSellerOffers = async (req, res) => {
                 }
             ]
         }
-        const seller = await searchFromElastic(query, { skip: 0, limit: 1000 }, {});
+        const aggs = {
+            "aggs": {
+                "level1": {
+                    "terms": {
+                        "field": "parentCategoryId._id.keyword"
+                    },
+                    "aggs": {
+                        "level2": {
+                            "terms": {
+                                "field": "primaryCategoryId._id.keyword"
+                            },
+                            "aggs": {
+                                "level3": {
+                                    "terms": {
+                                        "field": "secondaryCategoryId._id.keyword"
+                                    },
+                                    "aggs": {
+                                        "level4": {
+                                            "terms": {
+                                                "field": "poductId._id.keyword"
+                                            },
+                                            "aggs": {
+                                                "level5": {
+                                                    "terms": {
+                                                        "field": "productSubcategoryId._id.keyword"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        const seller = await searchFromElastic(query, { skip: 0, limit: 1000 }, aggs);
         let _seller = seller.length && seller[0]
         let sellerOffers = []
         let buyerRequests = []
