@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const ProductsSubCategories = require("./productsSubCategoriesSchema");
+const PriceUnit = require("./priceUnitSchema")
 const SecondaryCategory = require('./secondaryCategorySchema')
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
@@ -42,6 +43,11 @@ const productsSchema = new Schema(
     subCategoryId: [{
       type: ObjectId,
       ref: ProductsSubCategories,
+      default: []
+    }],
+    priceUnits: [{
+      type: ObjectId,
+      ref: PriceUnit,
       default: []
     }],
     l1: {

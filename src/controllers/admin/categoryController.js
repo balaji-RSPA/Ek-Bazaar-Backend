@@ -1,5 +1,5 @@
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { category } = require("../../modules");
+const { category,PriceUnit } = require("../../modules");
 const{
   getAllCategories,
   getAllPrimaryCategory,
@@ -10,8 +10,10 @@ const{
   getPrimaryCat,
   getSecondaryCat,
   getProductCat,
-  getProductSubcategory
+  getProductSubcategory,
+  findAndUpdate
 } = category;
+const { getPriceUnits } = PriceUnit
 
 /**
  * List all level 1 category
@@ -168,3 +170,53 @@ module.exports.listAllproducts = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+module.exports.addPriceUnits = async (req, res) => {
+  try {
+    // console.log(req.body," ZZZZZZZZZZZZZZZZZZZ");\
+    let responce = [];
+    req.body.map(async (l4,i) => {
+      // console.log(l4,"XXXXXXXXXXXXXXXX", i)
+      let unitsNames = [];
+      let units = [];
+      if (l4 && l4.Units1){
+        unitsNames.push(l4.Units1)
+      }
+      if (l4 && l4.Units2){
+        unitsNames.push(l4.Units2)
+      }
+      if (l4 && l4.Units3) {
+        unitsNames.push(l4.Units3)
+      }
+      if (l4 && l4.Units4) {
+        unitsNames.push(l4.Units4)
+      }
+      // console.log(unitsNames," YYYYYYYYYY")
+      let query = {
+        label: {
+          $in: unitsNames
+        }
+      }
+
+      const priceUnits = await getPriceUnits(query)
+
+      
+      units = priceUnits.map((pu) => pu._id)
+      // console.log(priceUnits, " ZZZZZZZZZZZZZZZZZZZZ", units)
+
+      let query2 = {
+        vendorId: l4.vendorId
+      }
+      let data = {
+        priceUnits: units
+      }
+      const l4Cat = await findAndUpdate(query2, data)
+      console.log(l4Cat," CCCCCCCCCCCCCCCCCC",i)
+      responce.push(l4Cat)
+    })
+
+    respSuccess(res, responce);
+  } catch (error) {
+    respError(res, error.message);
+  }
+}

@@ -26,6 +26,7 @@ const LanguageTemplate = require('./languageTemplateModule')
 const LanguageTemplateOne = require('./languageTemplateOneModule')
 const CurrencyConvrter = require('./currencyConverterModule')
 const PaymentData = require('./paymentDataModule')
+const PriceUnit = require('./priceUnitModule')
 
 module.exports = {
     location,
@@ -55,5 +56,6 @@ module.exports = {
     LanguageTemplateOne,
     CurrencyConvrter,
     PaymentData,
-    subChargedHook
+    subChargedHook,
+    PriceUnit
 }

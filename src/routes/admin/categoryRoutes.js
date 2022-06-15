@@ -40,6 +40,11 @@ router.get("/categories/l3",authenticate,category.listAllLevel3Categories)
  * List all level four category
 */
 router.get("/categories/l4",authenticate,category.listAllLevel4Categories)
+
+/** 
+ * Update level four category 
+*/
+router.put("/categories/l4/addPriceUnit",category.addPriceUnits)
 /** 
  * List all level five category
 */
