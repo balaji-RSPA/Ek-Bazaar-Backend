@@ -3945,9 +3945,9 @@ module.exports.planActivation = async (req, res) => {
       paymentMethod,
     } = req.body;
 
-    console.log(req.body, "req.bodyreq.body");
-
-    const cardLastDigits = cardData.last4;
+    
+    const cardLastDigits = paymentMethod && paymentMethod.cardData && paymentMethod.cardData.last4;
+    console.log(req.body, "req.bodyreq.body", cardLastDigits);
 
     console.log(
       cardLastDigits,

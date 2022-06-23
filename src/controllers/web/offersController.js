@@ -467,7 +467,7 @@ module.exports.getAllSellerOffers = async (req, res) => {
 
             let obj = {
                 title: product,
-                location: _prod.offers.location.city.label,
+                location: _prod.offers.location.city.label || _prod.offers.location && _prod.offers.location.country && _prod.offers.location.country.label,
                 price: `Rs.${_prod.offers.price.price}/${_prod.offers.price.unit}`,
                 amountInRs: _prod.offers.price.price,
                 productUnit: _prod.offers.price.unit,

@@ -11,7 +11,8 @@ const{
   getSecondaryCat,
   getProductCat,
   getProductSubcategory,
-  findAndUpdate
+  findAndUpdate,
+  findAndUpdatel5
 } = category;
 const { getPriceUnits } = PriceUnit
 
@@ -171,12 +172,14 @@ module.exports.listAllproducts = async (req, res) => {
   }
 };
 
-module.exports.addPriceUnits = async (req, res) => {
+module.exports.addPriceUnitsl4 = async (req, res) => {
   try {
-    // console.log(req.body," ZZZZZZZZZZZZZZZZZZZ");\
+    // console.log(req.body," ZZZZZZZZZZZZZZZZZZZ");
     let responce = [];
-    req.body.map(async (l4,i) => {
+    // req.body.map(async (l4,i) => 
+    for (let i = 0; i < req.body.length; i++) {
       // console.log(l4,"XXXXXXXXXXXXXXXX", i)
+      let l4 = req.body[i]
       let unitsNames = [];
       let units = [];
       if (l4 && l4.Units1){
@@ -210,11 +213,68 @@ module.exports.addPriceUnits = async (req, res) => {
       let data = {
         priceUnits: units
       }
-      const l4Cat = await findAndUpdate(query2, data)
-      console.log(l4Cat," CCCCCCCCCCCCCCCCCC",i)
-      responce.push(l4Cat)
-    })
 
+      console.log(query2,i,i,data)
+      const l4Cat = await findAndUpdate(query2, data)
+      // console.log(l4Cat," CCCCCCCCCCCCCCCCCC",i)
+      responce.push(l4Cat)
+      console.log(responce.length, "FFFFFFFFFFF", req.body.length)
+    }
+    if (responce.length) respSuccess(res, responce);
+  } catch (error) {
+    respError(res, error.message);
+  }
+}
+
+module.exports.addPriceUnitsl5 = async (req, res) => {
+  try {
+    console.log(req.body," ZZZZZZZZZZZZZZZZZZZ");
+    let responce = [];
+    // return false
+    // req.body.map(async (l4, i) => 
+    for(let i = 0; i < req.body.length; i++){
+      // console.log(l4,"XXXXXXXXXXXXXXXX", i)
+      let l4 = req.body[i]
+      let unitsNames = [];
+      let units = [];
+      if (l4 && l4.Units1) {
+        unitsNames.push(l4.Units1)
+      }
+      if (l4 && l4.Units2) {
+        unitsNames.push(l4.Units2)
+      }
+      if (l4 && l4.Units3) {
+        unitsNames.push(l4.Units3)
+      }
+      if (l4 && l4.Units4) {
+        unitsNames.push(l4.Units4)
+      }
+      // console.log(unitsNames," YYYYYYYYYY")
+      let query = {
+        label: {
+          $in: unitsNames
+        }
+      }
+
+      const priceUnits = await getPriceUnits(query)
+
+
+      units = priceUnits.map((pu) => pu._id)
+      // console.log(priceUnits, " ZZZZZZZZZZZZZZZZZZZZ", units)
+
+      let query2 = {
+        vendorId: l4.vendorId
+      }
+      let data = {
+        priceUnits: units
+      }
+
+      // console.log(query2, i, i, data)
+      const l4Cat = await findAndUpdatel5(query2, data)
+      // console.log(l4Cat," CCCCCCCCCCCCCCCCCC",i)
+      responce.push(l4Cat)
+    }
+    console.log(responce.length, "FFFFFFFFFFF", req.body.length)
     respSuccess(res, responce);
   } catch (error) {
     respError(res, error.message);

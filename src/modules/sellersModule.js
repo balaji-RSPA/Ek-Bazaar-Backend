@@ -1521,7 +1521,11 @@ module.exports.getSellerProduct = (query) =>
         path: "poductId",
         populate: { path: 'priceUnits' }
       })
-      .populate("productSubcategoryId")
+      .populate({
+        path: "productSubcategoryId",
+        populate: { path: 'priceUnits' }
+      })
+      // .populate("productSubcategoryId")
       // .populate({
       //   path: 'serviceCity.country'
       // })
