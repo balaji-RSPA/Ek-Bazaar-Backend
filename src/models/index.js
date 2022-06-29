@@ -48,6 +48,7 @@ const SubHaltedRes = require('./subHaltedHookSchema')
 const PaymentFailedHook = require('./paymentFailedHookSchema')
 const PriceUnit = require('./priceUnitSchema')
 const PaymentData = require('./paymentDataSchema');
+const Contact = require('./contactSchema')
 
 module.exports = {
     Cities,
@@ -98,5 +99,6 @@ module.exports = {
     SubHaltedRes,
     cancleHookRes,
     PaymentFailedHook,
-    PriceUnit
+    PriceUnit,
+    Contact
 }
