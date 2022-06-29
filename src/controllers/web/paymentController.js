@@ -3852,53 +3852,56 @@ const insertPlaneInDb = async (sellerId, subscriptionId, orderDetails, paymentRe
 
 module.exports.addPlanManully = async (req, res) => {
     try {
-        const sellerId = '62ac1fcd6efe2b45bb2326af';
+      const sellerId = '62b6960bfc77eb35f08e0b64';
         const isSubscription = false;
-        const subscriptionId = '601d2c7388a56c05672ebe24';
-        const orderDetails = {
-            name: 'Raju',
-            email: 'Rk399070@gmail.com',
-            mobile: { countryCode: '+91', mobile: '9643665226' },
-            gst: '',
-            address: 'G-Floor, Shop No. 5, Opp. DTU. Shahbad Daulatpur, Sector-17, Rohini Delhi',
-            pincode: '110042',
-            planName: 'Quarterly',
-            groupType: 'Craftsman',
-            validityFrom: '10/07/2022',
-            validityTill: '08/10/2022',
-            price: 450,
-            gstAmount: 81,
-            total: '',
-            loader: true,
-            refresh: false,
-            active: true,
-            submitted: true,
-            paymentStatus: false,
-            country: '',
-            isSubscription: false,
-            isLinkGen: false,
-            isSubLink: false,
-            ipAddress: '49.37.241.205'
-        }
+      const subscriptionId = '601d2c7388a56c05672ebe24';
+      const orderDetails = {
+        name: 'Mohd Faisal',
+        email: 'mohdfaisal26081994@gmail.com',
+        mobile: { countryCode: '+91', mobile: '9646968330' },
+        gst: '',
+        address: 'chandigarh',
+        pincode: '160102',
+        planName: 'Quarterly',
+        groupType: 'Service',
+        validityFrom: '26/09/2022',
+        validityTill: '25/12/2022',
+        price: 450,
+        gstAmount: 81,
+        total: '',
+        loader: true,
+        refresh: false,
+        active: false,
+        submitted: true,
+        paymentStatus: false,
+        country: '',
+        isSubscription: true,
+        disable: false,
+        isLinkGen: false,
+        isSubLink: false,
+        isPending: false,
+        ipAddress: '49.37.245.129'
+      }
 
         const paymentResponse = {
-            razorpay_payment_id: 'pay_JiVl8GMQFolmfU',
-            razorpay_order_id: 'order_JiVkgMeZUJxKG0',
+          razorpay_payment_id: 'pay_JlcdvdqcECozqb',
+          razorpay_order_id: 'order_JlcdmhOY8cC99F',
             razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012',
             manully: true
         }
 
         // const paymentResponse = {
-        //     razorpay_payment_id: 'pay_JG3mxJwi9a9s7X',
-        //     razorpay_subscription_id: 'order_JG3mcZfNARxZPF',
-        //     razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012'
+        //   razorpay_payment_id: 'pay_JlJmcvTAXrCnsr',
+        //   razorpay_subscription_id: 'sub_JlJl7YlSUCe76t',
+        //     razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012',
+        //     manully: true
         // }
 
         let bodyReq = {}
 
         request({
             method: 'GET',
-            url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JiVl8GMQFolmfU`,
+          url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JlcdvdqcECozqb`,
 
         }, async function (error, response, body) {
             bodyReq = body;
@@ -3952,9 +3955,9 @@ module.exports.planActivation = async (req, res) => {
       paymentMethod,
     } = req.body;
 
-    console.log(req.body, "req.bodyreq.body");
-
-    const cardLastDigits = cardData.last4;
+    
+    const cardLastDigits = paymentMethod && paymentMethod.cardData && paymentMethod.cardData.last4;
+    console.log(req.body, "req.bodyreq.body", cardLastDigits);
 
     console.log(
       cardLastDigits,

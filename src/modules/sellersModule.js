@@ -1517,8 +1517,15 @@ module.exports.getSellerProduct = (query) =>
           // }
         }
       })
-      .populate("poductId")
-      .populate("productSubcategoryId")
+      .populate({
+        path: "poductId",
+        populate: { path: 'priceUnits' }
+      })
+      .populate({
+        path: "productSubcategoryId",
+        populate: { path: 'priceUnits' }
+      })
+      // .populate("productSubcategoryId")
       // .populate({
       //   path: 'serviceCity.country'
       // })

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const SecondaryCategory = require('./secondaryCategorySchema')
+const PriceUnit = require("./priceUnitSchema")
 // const Products = require("./productsSchema");
 const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
@@ -44,6 +45,11 @@ const productsSubCategoriesSchema = new Schema(
             ref: "level4",
             default: null
         },
+        priceUnits: [{
+            type: ObjectId,
+            ref: PriceUnit,
+            default: []
+        }],
         l1: {
             type: String,
             default: true

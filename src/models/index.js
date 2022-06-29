@@ -46,6 +46,7 @@ const SubChargedRes = require('./subChargedHookSchema')
 const SubPendingRes = require('./subPendingHookSchema')
 const SubHaltedRes = require('./subHaltedHookSchema')
 const PaymentFailedHook = require('./paymentFailedHookSchema')
+const PriceUnit = require('./priceUnitSchema')
 const PaymentData = require('./paymentDataSchema');
 
 module.exports = {
@@ -96,5 +97,6 @@ module.exports = {
     SubPendingRes,
     SubHaltedRes,
     cancleHookRes,
-    PaymentFailedHook
+    PaymentFailedHook,
+    PriceUnit
 }

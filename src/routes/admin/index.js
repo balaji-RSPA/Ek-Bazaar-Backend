@@ -3,6 +3,7 @@ const buyer = require('./buyerRoutes')
 const seller = require('./sellerRoutes')
 const location = require('./locationRoutes')
 const category = require('./categoryRoutes')
+const priceUnit = require('./priceUnitRoutes')
 const rfp = require('./rfpRoutes')
 const subscriptionPlan = require('./subscriptionPlanRoutes')
 const news = require('./newsRoutes')
@@ -16,5 +17,6 @@ router.use(rfp)
 router.use(subscriptionPlan)
 router.use(news);
 router.use(commodity);
+router.use(priceUnit)
 
 module.exports = router

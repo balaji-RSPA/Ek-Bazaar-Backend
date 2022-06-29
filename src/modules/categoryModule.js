@@ -378,6 +378,26 @@ module.exports.getProductCat = (query) =>
       .catch(reject);
   });
 
+module.exports.findAndUpdate = (query,data) => new Promise((resolve,reject) => {
+  Products.findOneAndUpdate(query,data,{
+    new: true
+  })
+  .then((doc) => {
+    resolve(doc)
+  })
+  .catch(reject)
+})
+
+module.exports.findAndUpdatel5 = (query, data) => new Promise((resolve, reject) => {
+  ProductsSubCategories.findOneAndUpdate(query, data, {
+    new: true
+  })
+    .then((doc) => {
+      resolve(doc)
+    })
+    .catch(reject)
+})
+
 module.exports.getProductSubcategory = (query) =>
   new Promise((resolve, reject) => {
     ProductsSubCategories.findOne(query)
