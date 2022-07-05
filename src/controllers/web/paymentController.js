@@ -3852,18 +3852,18 @@ const insertPlaneInDb = async (sellerId, subscriptionId, orderDetails, paymentRe
 
 module.exports.addPlanManully = async (req, res) => {
     try {
-      const sellerId = '62b6960bfc77eb35f08e0b64';
-        const isSubscription = false;
+      const sellerId = '620de3fc877026051e63346b';
+      const isSubscription = false;
       const subscriptionId = '601d2c7388a56c05672ebe24';
       const orderDetails = {
-        name: 'Mohd Faisal',
-        email: 'mohdfaisal26081994@gmail.com',
-        mobile: { countryCode: '+91', mobile: '9646968330' },
+        name: 'Shamsher Singh',
+        email: 'Hariompackersnoida@gmail.com',
+        mobile: { countryCode: '+91', mobile: '9911005003' },
         gst: '',
-        address: 'chandigarh',
-        pincode: '160102',
+        address: 'Corp. Office: Shop No.8,Near All Play Badminton Academy Sarfabad Village Sec.73 Noida-201301',
+        pincode: '201301',
         planName: 'Quarterly',
-        groupType: 'Service',
+        groupType: 'Craftsman',
         validityFrom: '26/09/2022',
         validityTill: '25/12/2022',
         price: 450,
@@ -3884,8 +3884,8 @@ module.exports.addPlanManully = async (req, res) => {
       }
 
         const paymentResponse = {
-          razorpay_payment_id: 'pay_JlcdvdqcECozqb',
-          razorpay_order_id: 'order_JlcdmhOY8cC99F',
+          razorpay_payment_id: 'pay_JpGW8ZBZNSaW28',
+          razorpay_order_id: 'order_JpGVxBOF1L3VIC',
             razorpay_signature: '0365887893b028a4eddc1687f365ef62b0b2e3598babed2d2adca7515fc82012',
             manully: true
         }
@@ -3901,7 +3901,7 @@ module.exports.addPlanManully = async (req, res) => {
 
         request({
             method: 'GET',
-          url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JlcdvdqcECozqb`,
+          url: `https://rzp_live_CTVuq0QYf0mDPH:KOY2qN10NCtcbgZmtpq87wOW@api.razorpay.com/v1/payments/pay_JpGW8ZBZNSaW28`,
 
         }, async function (error, response, body) {
             bodyReq = body;
