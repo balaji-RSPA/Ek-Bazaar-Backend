@@ -2363,5 +2363,3 @@ module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise (
         console.log(error,"################")
     }
 })
-
-
