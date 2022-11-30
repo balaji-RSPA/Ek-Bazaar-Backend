@@ -282,32 +282,32 @@ const masterMapData = (val, type) =>
     keywords.push(val.serviceType && val.serviceType.name.toLowerCase());
     keywords.push(
       val.parentCategoryId &&
-        val.parentCategoryId.length &&
-        val.parentCategoryId[0].name.toLowerCase()
+      val.parentCategoryId.length &&
+      val.parentCategoryId[0].name.toLowerCase()
     );
     keywords.push(
       val.primaryCategoryId &&
-        val.primaryCategoryId.length &&
-        val.primaryCategoryId[0].name.toLowerCase()
+      val.primaryCategoryId.length &&
+      val.primaryCategoryId[0].name.toLowerCase()
     );
     keywords.push(
       val.secondaryCategoryId &&
-        val.secondaryCategoryId.length &&
-        val.secondaryCategoryId[0].name.toLowerCase()
+      val.secondaryCategoryId.length &&
+      val.secondaryCategoryId[0].name.toLowerCase()
     );
     keywords.push(
       val.poductId && val.poductId.length && val.poductId[0].name.toLowerCase()
     );
     keywords.push(
       val.productSubcategoryId &&
-        val.productSubcategoryId.length &&
-        val.productSubcategoryId[0].name.toLowerCase()
+      val.productSubcategoryId.length &&
+      val.productSubcategoryId[0].name.toLowerCase()
     );
     keywords.push(val.productDetails && val.productDetails.name.toLowerCase());
     keywords.push(
       val.productDetails &&
-        val.productDetails.productDescription &&
-        val.productDetails.productDescription.toLowerCase()
+      val.productDetails.productDescription &&
+      val.productDetails.productDescription.toLowerCase()
     );
     keywords.push(..._Scity);
 
@@ -335,9 +335,9 @@ const masterMapData = (val, type) =>
               (val.sellerId &&
                 val.sellerId.sellerType &&
                 val.sellerId.sellerType.length && {
-                  _id: val.sellerId.sellerType[0]._id,
-                  name: val.sellerId.sellerType[0].name,
-                }) ||
+                _id: val.sellerId.sellerType[0]._id,
+                name: val.sellerId.sellerType[0].name,
+              }) ||
               null,
 
             _id: (val.sellerId && val.sellerId._id) || null,
@@ -359,9 +359,9 @@ const masterMapData = (val, type) =>
         userId:
           (val.sellerId &&
             val.sellerId.userId && {
-              name: val.sellerId.name || null,
-              _id: val.sellerId.userId,
-            }) ||
+            name: val.sellerId.name || null,
+            _id: val.sellerId.userId,
+          }) ||
           null,
         productDetails: (val.productDetails && val.productDetails) || null,
         status: val.status || true,
@@ -1052,20 +1052,20 @@ exports.sendDailyCount = async (req, res) =>
           i == 0
             ? gcc_count.length
             : i == 1
-            ? smec_ount.length
-            : i == 2
-            ? paper_ads_count.length
-            : i == 3
-            ? online_ads_count.length
-            : i == 4
-            ? social_media_count.length
-            : i == 5
-            ? from_a_friend_count.length
-            : i == 6
-            ? desh_or_vyapar_count.length
-            : i == 7
-            ? tamil_nadu_count.length
-            : uttar_pradesh_count.length,
+              ? smec_ount.length
+              : i == 2
+                ? paper_ads_count.length
+                : i == 3
+                  ? online_ads_count.length
+                  : i == 4
+                    ? social_media_count.length
+                    : i == 5
+                      ? from_a_friend_count.length
+                      : i == 6
+                        ? desh_or_vyapar_count.length
+                        : i == 7
+                          ? tamil_nadu_count.length
+                          : uttar_pradesh_count.length,
       }));
 
       let elem = source.map(
@@ -1373,9 +1373,9 @@ exports.sendDailyCount = async (req, res) =>
                                                 </thead>
                                                 <tbody>
                                                 ${elem
-                                                  .toString()
-                                                  .split(",")
-                                                  .join("")}
+            .toString()
+            .split(",")
+            .join("")}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -1383,22 +1383,22 @@ exports.sendDailyCount = async (req, res) =>
                                 </div>
                                 <div style="margin-top: 15px;">
                                     <h4>Total Subscribers from ${moment(
-                                      "2021-07-16"
-                                    )
-                                      .startOf("day")
-                                      .format("MMMM Do YYYY")} till ${moment
-          .utc()
-          .subtract(1, "day")
-          .startOf("day")
-          .format("MMMM Do YYYY")} = ${
+              "2021-07-16"
+            )
+            .startOf("day")
+            .format("MMMM Do YYYY")} till ${moment
+              .utc()
+              .subtract(1, "day")
+              .startOf("day")
+              .format("MMMM Do YYYY")} = ${
           /* yesterdayTotalCount.length */ totalSellerCount
-        }</h4>
+          }</h4>
                                     <h4>Incomplete Sellers: <span>${
                                       /* yesterdayTotalCount.length */ incompletSellerCount
-                                    }</span></h4>
+          }</span></h4>
                                     <h4>Registered Sellers: <span>${
                                       /* totalSellerCount.length */ totalRegisteredSellers
-                                    }</span></h4>
+          }</span></h4>
                                     <h4>Total Offers: <span>${totalOfferCount}</span></h4>
                                     <h4>Todays Offers: <span>${dailyOffersCoount}</span></h4>
                                     <h4>Thank you. </h4>

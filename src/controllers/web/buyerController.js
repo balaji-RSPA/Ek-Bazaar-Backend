@@ -513,8 +513,8 @@ module.exports.addBuyer = async (req, res) => {
 
 module.exports.getBuyer = async (req, res) => {
   try {
-    const { buyerID } = req;
-    const buyer = await getBuyer(buyerID);
+    const { buyerID, userID } = req;
+    const buyer = await getBuyer(buyerID || userID);
     respSuccess(res, buyer);
   } catch (error) {
     respError(res, error.message);

@@ -527,9 +527,7 @@ module.exports.buyerRequestOffers = async (req, res) => {
         return respSuccess(res, "Offer request done successfully")
 
     } catch (error) {
-
-        return respError(res, errors.messsage)
-
+        return respError(res, error.message)
     }
 
 }

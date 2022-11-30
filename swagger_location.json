@@ -1,0 +1,333 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Ekbazaar API Docs's",
+        "version": "1.0.0",
+        "title": "Ekbazaar Trade Location API",
+        "contact": {
+            "email": "suman@active.agency"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/api",
+    "paths": {
+        "/cities": {
+            "get": {
+                "summary": "Get cities",
+                "description": "Get all cities (For EKB all Indian Cities will Come Else All cities Will Come",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "skip",
+                        "description": "Number of cities if want to skip (Optional)",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "Number of cities want to Fetch (Optional)",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "description": "City name keyword search(Optional)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "description": "Required State Id's. This can be single String or array of String",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "stateId",
+                        "description": "Required State Id's. This can be single String or array of String",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "countryId",
+                        "description": "Required country Id's. This can be single String or array of String",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "data": {
+                                "$ref": "#/definitions/todosResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/states": {
+            "get": {
+                "summary": "Get States",
+                "description": "Get All Indian States",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "skip",
+                        "description": "Skip State Count",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "Limit State Count",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sellingStates",
+                        "description": "Using While Adding The Products (Any JS True Value)",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/todosResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/countries": {
+            "get": {
+                "summary": "Get All Countries",
+                "description": "Get All Countries",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "country",
+                        "description": "Search with name (Optional)",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/todosResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "todosResponse": {
+            "type": "object",
+            "properties": {
+                "event": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "journal_sub": {
+                    "type": "string"
+                },
+                "type_id": {
+                    "type": "object"
+                },
+                "cli_con_can_vac_other_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                },
+                "ip_address": {
+                    "type": "string"
+                },
+                "email_cv_send_count": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "Task": {
+            "type": "object",
+            "properties": {
+                "event": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "journal_sub": {
+                    "type": "string"
+                },
+                "type_id": {
+                    "type": "object"
+                },
+                "cli_con_can_vac_other_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                },
+                "ip_address": {
+                    "type": "string"
+                },
+                "email_cv_send_count": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "InvalidResponse": {
+            "type": "object",
+            "properties": {
+                "statusCode": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "createSingleJournals": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "typeId": {
+                    "type": "integer"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "medium": {
+                    "type": "string"
+                },
+                "consultantId": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "timeHours": {
+                    "type": "integer"
+                },
+                "timeMinuts": {
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "addedBy": {
+                    "type": "integer"
+                },
+                "addedOn": {
+                    "type": "string"
+                },
+                "modifiedBy": {
+                    "type": "integer"
+                },
+                "modifiedOn": {
+                    "type": "string"
+                },
+                "uniqueId": {
+                    "type": "integer"
+                },
+                "autogen": {
+                    "type": "integer"
+                },
+                "important": {
+                    "type": "integer"
+                },
+                "fromEmailId": {
+                    "type": "integer"
+                },
+                "assigned": {
+                    "type": "object"
+                }
+            }
+        }
+    }
+}

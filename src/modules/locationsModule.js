@@ -216,9 +216,9 @@ exports.getAllCities = (reqQuery) =>
       // {
       //   $skip: 0
       // },
-      // {
-      //   $limit: limit
-      // },
+      {
+        $limit: limit
+      },
       {
         $lookup: {
           from: "states",

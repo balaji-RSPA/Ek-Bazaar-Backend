@@ -12,7 +12,7 @@ module.exports.createChat = (query, newData) =>
                 resolve(doc);
             })
             .catch((error) => reject(error.message));
-    });
+    }); 
 
 module.exports.getChat = (query) =>
     new Promise((resolve, reject) => {

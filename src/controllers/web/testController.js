@@ -2337,7 +2337,7 @@ module.exports.getTrialPlanExpiredSellerData = async (req, res) => new Promise (
                     expiredTrialSeller.push(ttt);
                 }
                 
-            }
+            } 
             const FilePath = `sellerPlanData-list-${new Date()}.csv`
             const FileSource = 'public/sellerDetailFiles/' + FilePath
 

@@ -12,6 +12,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cron = require("node-cron");
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerLocation = require('./swagger_location.json');
+const swaggerUser = require('./swagger_user.json')
+
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
@@ -121,6 +125,22 @@ app.get("/send-daily-report", async function (req, res) {
 //     console.log(error)
 //   }
 // })
+
+// app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+var options = {}
+
+app.use('/api-docs/location', function (req, res, next) {
+  swaggerLocation.host = req.get('host');
+  req.swaggerDoc = swaggerLocation;
+  next();
+}, swaggerUi.serveFiles(swaggerLocation, options), swaggerUi.setup());
+
+app.use('/api-docs/users', function (req, res, next) {
+  swaggerUser.host = req.get('host');
+  req.swaggerDoc = swaggerUser;
+  next();
+}, swaggerUi.serveFiles(swaggerUser, options), swaggerUi.setup());
 
 app.get("/paymentSubscriptionReport", async (req,res) => {
   try {

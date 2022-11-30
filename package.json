@@ -55,6 +55,7 @@
         "rocketchat-api": "^1.0.5",
         "socket.io": "^3.1.2",
         "stripe": "^8.194.0",
+        "swagger-ui-express": "^4.6.0",
         "to-words": "^2.3.1",
         "translate-google-api": "^1.0.4",
         "twilio": "^3.66.0",
