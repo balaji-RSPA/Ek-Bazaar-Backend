@@ -14,7 +14,8 @@ const cron = require("node-cron");
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerLocation = require('./swagger_location.json');
-const swaggerUser = require('./swagger_user.json')
+const swaggerUser = require('./swagger_user.json');
+const swaggerChat = require('./swagger_chat.json')
 
 require('./config/db').dbConnection();
 require('./config/tenderdb').conn
@@ -141,6 +142,12 @@ app.use('/api-docs/users', function (req, res, next) {
   req.swaggerDoc = swaggerUser;
   next();
 }, swaggerUi.serveFiles(swaggerUser, options), swaggerUi.setup());
+
+app.use('/api-docs/chat', function (req, res, next) {
+  swaggerChat.host = req.get('host');
+  req.swaggerDoc = swaggerChat;
+  next();
+}, swaggerUi.serveFiles(swaggerChat, options), swaggerUi.setup());
 
 app.get("/paymentSubscriptionReport", async (req,res) => {
   try {

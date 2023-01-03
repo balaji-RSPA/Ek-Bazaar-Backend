@@ -28,4 +28,11 @@ router.put("/commodity/:id", commodity.updateCommodity);
  */
 router.post("/deleteCommodity", commodity.deleteCommodity);
 
+
+/**
+ * Reset commodity
+ */
+router.post("/resetCommodity", commodity.resetCommodity);
+
+
 module.exports = router;

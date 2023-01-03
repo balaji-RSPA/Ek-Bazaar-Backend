@@ -8,7 +8,8 @@ module.exports.getAllNews = async (req, res) => {
   try {
     const { search, skip, limit } = req.query;
     let todayDate = moment().format('YYYY-MM-DD');
-    const query  = { search : {'$where': 'this.updatedAt.toJSON().slice(0, 10) == "' + todayDate + '"' }}
+    // const query  = { search : {'$where': 'this.updatedAt.toJSON().slice(0, 10) == "' + todayDate + '"' }}
+    const query = {active:true}
     const allNews = await getAllNews(query);
     respSuccess(res, allNews);
   } catch (error) {

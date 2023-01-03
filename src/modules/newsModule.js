@@ -15,7 +15,7 @@ module.exports.getAllNews = (searchQuery) =>
   new Promise((resolve, reject) => {
     let searchQry = searchQuery.search
       ? searchQuery.search
-      : {};
+      : searchQuery;
     News.find(searchQry)
       // .skip(skip)
       // .limit(limit)
@@ -57,3 +57,13 @@ module.exports.deleteNews = query =>
       })
       .catch(error => reject(error));
   });
+
+module.exports.resetNews = (query, value) => {
+  return new Promise((resolve, reject) => {
+    News.updateMany(query, { active: value })
+      .then(updated => {
+        resolve(updated)
+      })
+      .catch((error) => reject(error))
+  })
+}

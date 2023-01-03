@@ -3,7 +3,7 @@
     "info": {
         "description": "Ekbazaar API Docs's",
         "version": "1.0.0",
-        "title": "Ekbazaar Trade Location API",
+        "title": "Ekbazaar Trade API",
         "contact": {
             "email": "suman@active.agency"
         },
@@ -13,14 +13,14 @@
         }
     },
     "schemes": [
-        "http"
+        "http","https"
     ],
     "basePath": "/api",
     "paths": {
         "/user/access-token": {
             "get": {
                 "summary": "Get cities",
-                "description": "Used By Auth Server Mainly",
+                "description": "Used mainly by Authentication Server ",
                 "produces": [
                     "application/json"
                 ],
@@ -28,24 +28,29 @@
                     {
                         "in": "query",
                         "name": "ipAddress",
-                        "description": "Ip of User as Per Session Store",
+                        "description": "IP address of User the as per the Session",
                         "schema": {
                             "type": "integer"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -56,7 +61,7 @@
         "/user/check-user-exist": {
             "post": {
                 "summary": "Check User Exist",
-                "description": "Check Via Email or Mobile Number",
+                "description": "Check using Email ID or Mobile Number",
                 "produces": [
                     "application/json"
                 ],
@@ -67,7 +72,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Check Via Email or Mobile Number( Default Country code +91 )",
+                        "description": "Check using Email or Mobile Number( Default Country code is: +91 )",
                         "required": true,
                         "schema": {
                             "type": "object",
@@ -86,17 +91,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -118,7 +128,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "API is geeting Used for Sending OTP ( Default Country code +91 ). reset Option only Geeting Used When User is requesting To reset Password.",
+                        "description": "This API is used for Sending OTP ( Default Country code +91 ). Reset Option is used When the User requests to reset the Password.",
                         "required": true,
                         "schema": {
                             "type": "object",
@@ -137,17 +147,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -158,7 +173,7 @@
         "/user/verify-mobile": {
             "post": {
                 "summary": "Verify  Mobile",
-                "description": "Verify Mobile with JWT in Header",
+                "description": "Verify Mobile with the JWT in Header",
                 "produces": [
                     "application/json"
                 ],
@@ -177,7 +192,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Enter Mobile Number",
+                        "description": "Enter Mobile number",
                         "required": true,
                         "schema": {
                             "type": "object",
@@ -190,17 +205,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -210,8 +230,8 @@
         },
         "/user/profile": {
             "post": {
-                "summary": "Verify  Mobile",
-                "description": "Verify Mobile with JWT in Header",
+                "summary": "Verify  Mobile Number",
+                "description": "Verify Mobile number with the JWT in Header",
                 "produces": [
                     "application/json"
                 ],
@@ -222,7 +242,7 @@
                     {
                         "in": "header",
                         "name": "authorization",
-                        "description": "JWT Token",
+                        "description": "Use JWT",
                         "schema": {
                             "type": "string"
                         }
@@ -242,17 +262,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -262,8 +287,8 @@
         },
         "/user": {
             "put": {
-                "summary": "Update User",
-                "description": "Update User",
+                "summary": "Update User details",
+                "description": "Update User details",
                 "produces": [
                     "application/json"
                 ],
@@ -274,7 +299,7 @@
                     {
                         "in": "header",
                         "name": "authorization",
-                        "description": "JWT Token",
+                        "description": "Use JWT",
                         "require": true,
                         "schema": {
                             "type": "string"
@@ -283,24 +308,29 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "For Update the User Profile Please Enter the Field and new Value which want to update.",
+                        "description": "This API is used to update the User Profile details. Please enter a value for the field which you would like to update/replace.",
                         "schema": {
                             "type": "object"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -311,7 +341,7 @@
         "/user-update-language": {
             "put": {
                 "summary": "Update User Language",
-                "description": "Update User Language",
+                "description": "This API is used to change the User Language",
                 "produces": [
                     "application/json"
                 ],
@@ -322,7 +352,7 @@
                     {
                         "in": "header",
                         "name": "authorization",
-                        "description": "JWT Token",
+                        "description": "Use JWT",
                         "require": true,
                         "schema": {
                             "type": "string"
@@ -331,7 +361,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "For Update the User Profile Please Enter the Field and new Value which want to update.",
+                        "description": "This API is used to update the User preferred language.",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -351,17 +381,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -372,7 +407,7 @@
         "/user/forget-password": {
             "post": {
                 "summary": "Forget Password",
-                "description": "Forget Password",
+                "description": "API to reset password",
                 "produces": [
                     "application/json"
                 ],
@@ -383,7 +418,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Forget Password)",
+                        "description": "This API is used to reset the password",
                         "required": true,
                         "schema": {
                             "type": "object",
@@ -399,17 +434,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -420,7 +460,7 @@
         "/user/update-password": {
             "post": {
                 "summary": "Update Password",
-                "description": "Update Password",
+                "description": "API to Update Password",
                 "produces": [
                     "application/json"
                 ],
@@ -431,7 +471,7 @@
                     {
                         "in": "header",
                         "name": "authorization",
-                        "description": "JWT Token",
+                        "description": "Use JWT",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -440,7 +480,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Update Password)",
+                        "description": "This API is used to update the existing password with a new password",
                         "required": true,
                         "schema": {
                             "type": "object",
@@ -456,17 +496,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -476,8 +521,8 @@
         },
         "/user/verify-email": {
             "post": {
-                "summary": "verify Email",
-                "description": "verify Email",
+                "summary": "Verify Email",
+                "description": "API to Verify Email",
                 "produces": [
                     "application/json"
                 ],
@@ -488,7 +533,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "For Update the User Profile Please Enter the Field and new Value which want to update.",
+                        "description": "This API is used to verify the email ID entered by the user during registration",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -500,17 +545,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -520,8 +570,8 @@
         },
         "/user/deleteCurrentAccount": {
             "post": {
-                "summary": "Delete Currecnt Account",
-                "description": "Delete Currecnt Account",
+                "summary": "Delete Current Account",
+                "description": "API to delete Current Account",
                 "produces": [
                     "application/json"
                 ],
@@ -532,7 +582,7 @@
                     {
                         "in": "header",
                         "name": "authorization",
-                        "description": "JWT Token",
+                        "description": "Use JWT",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -541,7 +591,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Delete Currecnt Account",
+                        "description": "This API is used to delete the Current Account by the user",
                         "required": true,
                         "schema": {
                             "type": "object",
@@ -566,17 +616,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -587,7 +642,7 @@
         "/buyer": {
             "get": {
                 "summary": "Get Buyer Profile",
-                "description": "Auth Token Required For This Route",
+                "description": "Authentication token is required for this API",
                 "produces": [
                     "application/json"
                 ],
@@ -595,24 +650,29 @@
                     {
                         "in": "header",
                         "name": "authorization",
-                        "description": "JWT Token",
+                        "description": "Use JWT",
                         "schema": {
                             "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -620,8 +680,8 @@
                 }
             },
             "put": {
-                "summary": "Update Buyer",
-                "description": "Auth Token Required For This Route",
+                "summary": "Update Buyer details",
+                "description": "Authentication token is required for this API",
                 "produces": [
                     "application/json"
                 ],
@@ -629,7 +689,7 @@
                     {
                         "in": "header",
                         "name": "authorization",
-                        "description": "JWT Token",
+                        "description": "Use JWT",
                         "schema": {
                             "type": "string"
                         }
@@ -637,7 +697,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "API is geeting Used for Sending OTP ( Default Country code +91 ). reset Option only Geeting Used When User is requesting To reset Password.",
+                        "description": "This API is used for sending OTP ( Default Country code +91 ). Reset option is used when the user is requesting for a password reset.",
                         "required": true,
                         "schema": {
                             "type": "object"
@@ -645,17 +705,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -666,22 +731,27 @@
         "/getCategories": {
             "get": {
                 "summary": "Get Parent Categories",
-                "description": "Get Specific Parent Categories",
+                "description": "API to get specific parent categories",
                 "produces": [
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -692,22 +762,27 @@
         "/getAllCategories": {
             "get": {
                 "summary": "Get Parent Categories",
-                "description": "Get all parent Categories",
+                "description": "API to get all parent Categories",
                 "produces": [
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -718,7 +793,7 @@
         "/getParentCategory/{id}": {
             "get": {
                 "summary": "Get Parent Categories",
-                "description": "Get Single parent Categories",
+                "description": "API to get a single parent category",
                 "produces": [
                     "application/json"
                 ],
@@ -726,24 +801,29 @@
                     {
                         "in": "path",
                         "name": "id",
-                        "description": "Parent Categoriy Param",
+                        "description": "Parent Category Param",
                         "schema": {
                             "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -754,7 +834,7 @@
         "/sellerTypes": {
             "get": {
                 "summary": "Get Seller Types",
-                "description": "Get all Seller Types",
+                "description": "API to get all the Seller types",
                 "produces": [
                     "application/json"
                 ],
@@ -762,24 +842,29 @@
                     {
                         "in": "query",
                         "name": "search",
-                        "description": "Only Pass When You Want dealer / distributor & importer / exporter to Mearge (Optional)",
+                        "description": "Pass this data only when you want to view details regarding dealer / distributor & importer / exporter in a merged format (Optional)",
                         "schema": {
                             "typer": "integer"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -790,7 +875,7 @@
         "/getAllProducts": {
             "get": {
                 "summary": "Get All Products",
-                "description": "Get all Products",
+                "description": "API to get all products",
                 "produces": [
                     "application/json"
                 ],
@@ -798,7 +883,7 @@
                     {
                         "in": "query",
                         "name": "search",
-                        "description": "Search with name (Optional)",
+                        "description": "Product name can be used as search term (Optional)",
                         "schema": {
                             "typer": "string"
                         }
@@ -806,24 +891,29 @@
                     {
                         "in": "query",
                         "name": "limit",
-                        "description": "Limit the number of Docs (Optional)",
+                        "description": "Limit the number of products listed (Optional)",
                         "schema": {
                             "typer": "integer"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -833,23 +923,28 @@
         },
         "/secondary-categories": {
             "get": {
-                "summary": "secondary-categories",
-                "description": "Get all secondary-categories",
+                "summary": "Secondary-categories",
+                "description": "API to get all secondary-categories",
                 "produces": [
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -860,7 +955,7 @@
         "/products": {
             "get": {
                 "summary": "Get product",
-                "description": "Get product",
+                "description": "API to get a product",
                 "produces": [
                     "application/json"
                 ],
@@ -868,7 +963,7 @@
                     {
                         "in": "query",
                         "name": "search",
-                        "description": "Search With Name (Optional)",
+                        "description": "Search with a product name (Optional)",
                         "schema": {
                             "typer": "string"
                         }
@@ -876,24 +971,29 @@
                     {
                         "in": "query",
                         "name": "limit",
-                        "description": "Search With Name (Optional)",
+                        "description": "Limit the number of products listed (Optional)",
                         "schema": {
                             "typer": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -904,7 +1004,7 @@
         "/primary-category": {
             "get": {
                 "summary": "Get Primary Catogery",
-                "description": "Get Single Primary Catogery",
+                "description": "API to get a Single primary catogery",
                 "produces": [
                     "application/json"
                 ],
@@ -912,24 +1012,29 @@
                     {
                         "in": "query",
                         "name": "primaryId",
-                        "description": "Search With Name (Optional)",
+                        "description": "Search with a product category name (Optional)",
                         "schema": {
                             "typer": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -939,8 +1044,8 @@
         },
         "/getLevelFive/{id}": {
             "get": {
-                "summary": "Get Level Five ProductCategory",
-                "description": "Get Level ProductCategory",
+                "summary": "Get Level Five Product category",
+                "description": "API to get level five Product category",
                 "produces": [
                     "application/json"
                 ],
@@ -948,24 +1053,29 @@
                     {
                         "in": "path",
                         "name": "id",
-                        "description": "Parent Categoriy Param",
+                        "description": "Parent Category Param",
                         "schema": {
                             "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -976,22 +1086,27 @@
         "/commodity": {
             "get": {
                 "summary": "Get Commodity",
-                "description": "Get all Current Commodity",
+                "description": "API to get all Current commodity",
                 "produces": [
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1002,22 +1117,27 @@
         "/news": {
             "get": {
                 "summary": "Get Commodity",
-                "description": "Get all Current Commodity",
+                "description": "API to get all Current commodity",
                 "produces": [
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1028,22 +1148,27 @@
         "/subscriptionplan": {
             "get": {
                 "summary": "Get Commodity",
-                "description": "Get all Current Commodity",
+                "description": " API to get all Current Commodity",
                 "produces": [
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1054,7 +1179,7 @@
         "/contact": {
             "post": {
                 "summary": "Contact Us",
-                "description": "Contact Us form",
+                "description": "API for the Contact Us form",
                 "produces": [
                     "application/json"
                 ],
@@ -1065,24 +1190,29 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "For Contact Us Form",
+                        "description": "Enter the details here",
                         "schema": {
                             "type": "object"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1093,7 +1223,7 @@
         "/offers": {
             "get": {
                 "summary": "Get All Offers",
-                "description": "Get All Offers",
+                "description": "API to get all Offers",
                 "produces": [
                     "application/json"
                 ],
@@ -1101,17 +1231,22 @@
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1122,7 +1257,7 @@
         "/sellerOffers": {
             "get": {
                 "summary": "Get Seller Offers",
-                "description": "Get Seller Offers",
+                "description": "API to get Seller Offers",
                 "produces": [
                     "application/json"
                 ],
@@ -1141,7 +1276,7 @@
                     {
                         "in": "query",
                         "name": "level1",
-                        "description": "level1 Id",
+                        "description": "Level 1 ID",
                         "schema": {
                             "type": "string"
                         }
@@ -1149,24 +1284,29 @@
                     {
                         "in": "query",
                         "name": "level2",
-                        "description": "level2 Id",
+                        "description": "Level 2 ID",
                         "schema": {
                             "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1177,7 +1317,7 @@
         "/buyerRquest": {
             "post": {
                 "summary": "Buyer Request",
-                "description": "Buyer Request",
+                "description": "API for buyer request",
                 "produces": [
                     "application/json"
                 ],
@@ -1188,7 +1328,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Buyer Request",
+                        "description": "This API is used for the buyer request functionality",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -1200,17 +1340,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1221,7 +1366,7 @@
         "/deleteBuyerRequest/{id}": {
             "post": {
                 "summary": "Delete Buyer Request",
-                "description": "Buyer Request",
+                "description": "API to delete the buyer request",
                 "produces": [
                     "application/json"
                 ],
@@ -1232,24 +1377,29 @@
                     {
                         "in": "path",
                         "name": "id",
-                        "description": "Buyer Request ID",
+                        "description": "Enter the Buyer Request ID",
                         "schema": {
                             "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1259,8 +1409,8 @@
         },
         "/sellerContactOffers": {
             "post": {
-                "summary": "Delete Buyer Request",
-                "description": "Buyer Request",
+                "summary": "Seller Contact",
+                "description": "API to contact the seller",
                 "produces": [
                     "application/json"
                 ],
@@ -1271,7 +1421,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Buyer Request",
+                        "description": "Contact seller",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -1283,17 +1433,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1303,8 +1458,8 @@
         },
         "/acticateTrialPlan": {
             "post": {
-                "summary": "Assigne Trial Plan",
-                "description": "Assigne Trial Plan",
+                "summary": "Assign Trial Plan",
+                "description": "API for assigning Trial Plan",
                 "produces": [
                     "application/json"
                 ],
@@ -1315,7 +1470,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Backend Request",
+                        "description": "Backend request",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -1327,32 +1482,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "success": {
                                     "type": "boolean"
                                 },
-                                "message": {
-                                    "type": "string"
+                                "data": {
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
@@ -1361,7 +1508,7 @@
         "/createRazorPayOrder": {
             "post": {
                 "summary": "Create Razorpay Order",
-                "description": "Create Razorpay order and Subscription Both",
+                "description": "API to create Razorpay order and subscription",
                 "produces": [
                     "application/json"
                 ],
@@ -1405,8 +1552,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -1419,18 +1566,10 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
@@ -1439,7 +1578,7 @@
         "/createRazorPayPaymentLink": {
             "post": {
                 "summary": "Create Razorpay Payment Link",
-                "description": "Create Razorpay order and Subscription Payment Link",
+                "description": "API to create Razorpay order and subscription payment link",
                 "produces": [
                     "application/json"
                 ],
@@ -1480,32 +1619,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "success": {
                                     "type": "boolean"
                                 },
-                                "message": {
-                                    "type": "string"
+                                "data": {
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
@@ -1513,8 +1644,8 @@
         },
         "/captureRazorPayPayment/{paymentId}": {
             "post": {
-                "summary": "Capture Razorpay Payment",
-                "description": "Capture Razorpay Payment and Assigne The Plan",
+                "summary": "Capture Orders Payment",
+                "description": "API to capture Razorpay payment and assign the plan",
                 "produces": [
                     "application/json"
                 ],
@@ -1566,32 +1697,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "success": {
                                     "type": "boolean"
                                 },
-                                "message": {
-                                    "type": "string"
+                                "data": {
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
@@ -1599,8 +1722,8 @@
         },
         "/fetchSubscriptionPayment": {
             "post": {
-                "summary": "Capture Razorpay Payment",
-                "description": "Capture Razorpay Payment and Assigne The Plan",
+                "summary": "Fetching  Subscription Payment",
+                "description": "API to fetch Razorpay Subscription payment and assign the plan",
                 "produces": [
                     "application/json"
                 ],
@@ -1652,32 +1775,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "success": {
                                     "type": "boolean"
                                 },
-                                "message": {
-                                    "type": "string"
+                                "data": {
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
@@ -1686,7 +1801,7 @@
         "/getSellerOrders": {
             "get": {
                 "summary": "Get Seller Orders",
-                "description": "Get Seller Orders",
+                "description": "API to get seller orders",
                 "produces": [
                     "application/json"
                 ],
@@ -1697,7 +1812,7 @@
                     {
                         "in": "query",
                         "name": "userId",
-                        "description": "Enter User Id",
+                        "description": "Enter the User ID",
                         "schema": {
                             "type": "string"
                         }
@@ -1705,7 +1820,7 @@
                     {
                         "in": "query",
                         "name": "limit",
-                        "description": "Limit of Docs",
+                        "description": "Limit number of docs",
                         "schema": {
                             "type": "integer"
                         }
@@ -1713,24 +1828,29 @@
                     {
                         "in": "query",
                         "name": "skip",
-                        "description": "Skip Docs",
+                        "description": "Skip docs",
                         "schema": {
                             "type": "integer"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1741,7 +1861,7 @@
         "/cancleSubscription": {
             "post": {
                 "summary": "Cancle Razorpay Subscription",
-                "description": "Cancle Razorpay Subscription",
+                "description": "API to cancle Razorpay subscription",
                 "produces": [
                     "application/json"
                 ],
@@ -1764,32 +1884,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "success": {
                                     "type": "boolean"
                                 },
-                                "message": {
-                                    "type": "string"
+                                "data": {
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
@@ -1798,7 +1910,7 @@
         "/removelisting": {
             "post": {
                 "summary": "Remove Listing",
-                "description": "Remove Listing ",
+                "description": "API to remove listing ",
                 "produces": [
                     "application/json"
                 ],
@@ -1809,48 +1921,40 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Data as Per Remove Listing Form",
+                        "description": "Request to remove listing",
                         "schema": {
                             "type": "object"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "success": {
                                     "type": "boolean"
                                 },
-                                "message": {
-                                    "type": "string"
+                                "data": {
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
             }
         },
-        "/elastic/search":{
+        "/elastic/search": {
             "get": {
-                "summary": "Elastic Search Suggestion",
-                "description": "Elastic Search Suggestion",
+                "summary": "Search Suggestion",
+                "description": "API for search suggestion",
                 "produces": [
                     "application/json"
                 ],
@@ -1901,7 +2005,7 @@
                     {
                         "in": "query",
                         "name": "limit",
-                        "description": "Limit of Docs",
+                        "description": "Limit number of Docs",
                         "schema": {
                             "type": "integer"
                         }
@@ -1916,17 +2020,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1934,10 +2043,10 @@
                 }
             }
         },
-        "/seller":{
+        "/seller": {
             "get": {
-                "summary": "Elastic Search Suggestion",
-                "description": "Elastic Search Suggestion",
+                "summary": "Get Seller",
+                "description": "APi to get Seller",
                 "produces": [
                     "application/json"
                 ],
@@ -1948,7 +2057,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "Seller Id",
+                        "description": " Enter seller ID here",
                         "schema": {
                             "type": "string"
                         }
@@ -1961,20 +2070,24 @@
                             "type": "boolean"
                         }
                     }
-                   
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -1982,16 +2095,16 @@
                 }
             },
             "put": {
-                "summary": "Update Buyer",
-                "description": "Auth Token Required For This Route",
+                "summary": "Update seller",
+                "description": "Authentication token is required for this API",
                 "produces": [
                     "application/json"
                 ],
                 "parameters": [
                     {
                         "in": "header",
-                        "name": "authorization",
-                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "description": "Use JWT",
                         "schema": {
                             "type": "string"
                         }
@@ -1999,7 +2112,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Add Details Which to Update.",
+                        "description": "Add Details Which has to be update.",
                         "required": true,
                         "schema": {
                             "type": "object"
@@ -2007,17 +2120,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -2025,10 +2143,10 @@
                 }
             }
         },
-        "/sellerproduct/delete":{
+        "/sellerproduct/delete": {
             "post": {
                 "summary": "Delete Seller Product",
-                "description": "Delete Seller Product",
+                "description": "API to delete seller product",
                 "produces": [
                     "application/json"
                 ],
@@ -2039,7 +2157,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Seller Product Id",
+                        "description": "Seller Product ID",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -2051,8 +2169,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -2065,27 +2183,19 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
             }
         },
-        "/sellerproduct/add":{
+        "/sellerproduct/add": {
             "post": {
-                "summary": "Add Seller Product",
-                "description": "Add Seller Product",
+                "summary": "Add Product",
+                "description": "API to add product",
                 "produces": [
                     "application/json"
                 ],
@@ -2096,15 +2206,15 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "Added Products",
+                        "description": "",
                         "schema": {
                             "type": "object"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -2117,32 +2227,25 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
             }
         },
-        "/sellerproduct/update":{
+        "/sellerproduct/update": {
             "put": {
-                "summary": "Seller Product Update",
-                "description": "Seller Product Update",
+                "summary": "Product Update",
+                "description": "API to update product",
                 "produces": [
                     "application/json"
                 ],
                 "consumes": [
-                    "multipart/form-data","application/json"
+                    "multipart/form-data",
+                    "application/json"
                 ],
                 "parameters": [
                     {
@@ -2156,52 +2259,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid status value",
-                        "schema": {
-                            "$ref": "#/definitions/InvalidResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/getsellerproduct":{
-            "post": {
-                "summary": "Add Seller Product",
-                "description": "Add Seller Product",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Added Products",
-                        "schema": {
-                            "type": "object",
-                            "properties":{
-                                "sellerProductId":{
-                                    "type":"string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -2214,76 +2273,8 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/buyer/rfp/{SellerId}/{skip}/{limit}":{
-            "get": {
-                "summary": "Get Parent Categories",
-                "description": "Get Single parent Categories",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "authorization",
-                        "description": "JWT Token",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "path",
-                        "name": "SellerId",
-                        "description": "Parent Categoriy Param",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "path",
-                        "name": "skip",
-                        "description": "Parent Categoriy Param",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "path",
-                        "name": "limit",
-                        "description": "Parent Categoriy Param",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -2291,10 +2282,124 @@
                 }
             }
         },
-        "/digital_space/delete":{
+        "/getsellerproduct": {
+            "post": {
+                "summary": "GET Seller Product",
+                "description": "API for GET Seller Product",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "sellerProductId": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "success": {
+                        "description": "Successful Response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/buyer/rfp/{SellerId}/{skip}/{limit}": {
+            "get": {
+                "summary": "Get Buyer Request for Proposal",
+                "description": "API to get buyer request for proposal",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "authorization",
+                        "description": "Use JWT",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "SellerId",
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "skip",
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "limit",
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "success": {
+                        "description": "Successful Response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/digital_space/delete": {
             "delete": {
                 "summary": "Delete From Space",
-                "description": "Delete From Space",
+                "description": "API to delete from space",
                 "produces": [
                     "application/json"
                 ],
@@ -2312,32 +2417,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "success": {
                                     "type": "boolean"
                                 },
-                                "message": {
-                                    "type": "string"
+                                "data": {
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "success": {
-                                    "type": "boolean"
-                                },
-                                "message": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/InvalidResponse"
                         }
                     }
                 }
@@ -2346,7 +2443,10 @@
     },
     "definitions": {
         "todosResponse": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "success": true
+            }
         },
         "Task": {
             "type": "object",
@@ -2386,8 +2486,8 @@
         "InvalidResponse": {
             "type": "object",
             "properties": {
-                "statusCode": {
-                    "type": "string"
+                "success": {
+                    "type": "boolean"
                 },
                 "message": {
                     "type": "string"

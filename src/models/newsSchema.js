@@ -7,6 +7,10 @@ const newsSchema = new Schema(
       type: String,
       required: true,
       trim: true
+    },
+    active: {
+      type: Boolean,
+      default: false
     }
   },
   {

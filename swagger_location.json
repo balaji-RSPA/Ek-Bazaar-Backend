@@ -13,14 +13,14 @@
         }
     },
     "schemes": [
-        "http"
+        "http","https"
     ],
     "basePath": "/api",
     "paths": {
         "/cities": {
             "get": {
                 "summary": "Get cities",
-                "description": "Get all cities (For EKB all Indian Cities will Come Else All cities Will Come",
+                "description": "Get all the cities (For EKB Indian Cities will come through, for Onebazaar all the cities will come)",
                 "produces": [
                     "application/json"
                 ],
@@ -28,7 +28,7 @@
                     {
                         "in": "query",
                         "name": "skip",
-                        "description": "Number of cities if want to skip (Optional)",
+                        "description": "Number of cities which you want to skip (Optional)",
                         "schema": {
                             "type": "integer"
                         }
@@ -36,7 +36,7 @@
                     {
                         "in": "query",
                         "name": "limit",
-                        "description": "Number of cities want to Fetch (Optional)",
+                        "description": "Number of cities you want to Fetch (Optional)",
                         "schema": {
                             "type": "integer"
                         }
@@ -44,15 +44,7 @@
                     {
                         "in": "query",
                         "name": "search",
-                        "description": "City name keyword search(Optional)",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "state",
-                        "description": "Required State Id's. This can be single String or array of String",
+                        "description": "City name as search keyword(Optional)",
                         "schema": {
                             "type": "string"
                         }
@@ -60,7 +52,7 @@
                     {
                         "in": "query",
                         "name": "stateId",
-                        "description": "Required State Id's. This can be single String or array of String",
+                        "description": "Required State ID's. This can be single String or an array of String",
                         "schema": {
                             "type": "string"
                         }
@@ -68,24 +60,29 @@
                     {
                         "in": "query",
                         "name": "countryId",
-                        "description": "Required country Id's. This can be single String or array of String",
+                        "description": "Required country ID's. This can be single String or an array of String",
                         "schema": {
                             "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "data": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -123,24 +120,29 @@
                     {
                         "in": "query",
                         "name": "sellingStates",
-                        "description": "Using While Adding The Products (Any JS True Value)",
+                        "description": "Used While Adding Products (Any JS True Value)",
                         "schema": {
                             "type": "integer"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -169,17 +171,22 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "successful operation",
+                    "success": {
+                        "description": "Successful Response",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid status value",
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
                         "schema": {
                             "$ref": "#/definitions/InvalidResponse"
                         }
@@ -262,8 +269,8 @@
         "InvalidResponse": {
             "type": "object",
             "properties": {
-                "statusCode": {
-                    "type": "string"
+                "success": {
+                    "type": "boolean"
                 },
                 "message": {
                     "type": "string"

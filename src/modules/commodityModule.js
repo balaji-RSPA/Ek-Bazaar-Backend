@@ -15,7 +15,7 @@ module.exports.getAllCommodity = (searchQuery) =>
   new Promise((resolve, reject) => {
     let searchQry = searchQuery.search
       ? searchQuery.search
-      : {};
+      : searchQuery;
 
     Commodity.find(searchQry)
       .skip(searchQuery.skip)
@@ -60,3 +60,13 @@ module.exports.deleteCommodity = query =>
       })
       .catch(error => reject(error));
   });
+
+module.exports.resetCommodity = (query,value) => {
+  return new Promise((resolve, reject) => {
+    Commodity.updateMany(query, { active: value})
+      .then(updated => {
+        resolve(updated)
+      })
+      .catch((error) => reject(error))
+  })
+}

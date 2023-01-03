@@ -5,7 +5,8 @@ const {
   getAllCommodity,
   getCommodity,
   updateCommodity,
-  deleteCommodity
+  deleteCommodity,
+  resetCommodity
 } = Commodity;
 
 /**create Commodity*/
@@ -22,7 +23,7 @@ module.exports.createCommodity = async (req, res) => {
     const commodity = await createCommodity(req.body);
     respSuccess(res, commodity, "Record created successfully");
   } catch (error) {
-    console.log(error, ' hhhhhhhhhhhhhhhhhhh')
+
     respError(res, error.message);
   }
 };
@@ -101,3 +102,21 @@ module.exports.deleteCommodity = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+module.exports.resetCommodity = async (req, res) => {
+  try {
+    const { _ids, value } = req.body;
+    let query
+    if(_ids){
+      query = {
+        _id: { $in: _ids }
+      }
+    }else {
+      query = { active: true }
+    }
+    const resetStatus = await resetCommodity(query, value);
+    respSuccess(res, resetStatus, "Commodity Reset Sucessfully");
+  } catch (error) {
+    respError(res, error.message);
+  }
+}

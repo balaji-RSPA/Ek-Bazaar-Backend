@@ -1,6 +1,6 @@
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { News } = require("../../modules");
-const { createNews, getAllNews, getNews, updateNews, deleteNews } = News;
+const { createNews, getAllNews, getNews, updateNews, deleteNews, resetNews } = News;
 
 /**create news*/
 module.exports.createNews = async (req, res) => {
@@ -51,10 +51,14 @@ module.exports.updateNews = async (req, res) => {
   try {
     const id = req.params.id;
     const updatedNewsData = {};
-    const { news } = req.body;
+    const { news, active } = req.body;
     if (news) {
       updatedNewsData.news = news;
     }
+    if (active){
+      updatedNewsData.active = active
+    }
+
     const updatedNews = await updateNews({ _id: id }, updatedNewsData);
     respSuccess(res, updatedNews, "Record successfully updated");
   } catch (error) {
@@ -73,3 +77,21 @@ module.exports.deleteNews = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+module.exports.resetNews = async (req, res) => {
+  try {
+    const { _ids, value } = req.body;
+    let query
+    if (_ids) {
+      query = {
+        _id: { $in: _ids }
+      }
+    } else {
+      query = { active: true }
+    }
+    const resetStatus = await resetNews(query, value);
+    respSuccess(res, resetStatus, "News Reset Sucessfully");
+  } catch (error) {
+    respError(res, error.message);
+  }
+}

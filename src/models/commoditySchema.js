@@ -35,6 +35,10 @@ const commoditySchema = new Schema(
       // required: true,
       trim: true
     },
+    active:{
+      type: Boolean,
+      default:false
+    },
     city: [
       {
         city: {

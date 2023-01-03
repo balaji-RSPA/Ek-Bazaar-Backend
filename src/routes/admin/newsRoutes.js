@@ -29,4 +29,6 @@ router.put("/news/:id", news.updateNews);
 // router.delete("/news/:id", news.deleteNews);
 router.post("/deleteNews", news.deleteNews);
 
+router.post("/resetNews", news.resetNews)
+
 module.exports = router;

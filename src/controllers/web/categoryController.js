@@ -460,6 +460,8 @@ module.exports.addBulkProducts = async (req, res) => {
                     }
                     console.log(index, "COunt----", element.name, element.l1, element.vendorId)
                     await updateSecondaryCategory(parentCat._id, updateData)
+                }else{
+                    console.log("L3 Not Exist.")
                 }
             } else {
                 console.log("duplicate level4 record", element.vendorId)
