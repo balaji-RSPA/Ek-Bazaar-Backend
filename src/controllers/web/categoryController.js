@@ -33,7 +33,8 @@ const {
     getProductCat,
     updateProductCategory,
     getProductSubcategory,
-    createSuggestions
+    createSuggestions,
+    deleteProductCategory
 } = require('../../modules/categoryModule')
 const camelcaseKeys = require('camelcase-keys');
 const {
@@ -431,6 +432,7 @@ module.exports.addBulkProducts = async (req, res) => {
         const reqData = req.body
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
+            element.status = element.status === 'TRUE' ? true : false
             const _product = await getProductCat({ vendorId: element.vendorId })
             // console.log("🚀 ~ file: categoryController.js ~ line 323 ~ module.exports.addBulkProducts= ~ _product", _product)
             if (!_product) {
@@ -453,7 +455,7 @@ module.exports.addBulkProducts = async (req, res) => {
                         l1: result.l1,
                         vendorId: result.vendorId
                     }
-                    // const sugge = await createSuggestions(suggestion)
+                    const sugge = await createSuggestions(suggestion)
 
                     const updateData = {
                         productId: parentCat.productId.concat(result._id)
@@ -480,12 +482,36 @@ module.exports.addBulkProducts = async (req, res) => {
 
 }
 
+module.exports.deleteBulkProduct = async (req, res) => {
+    try {
+        const reqData = req.body;
+        let vendoreIds = []
+        for(let i =0; i < reqData.length; i++){
+            let product = reqData[i];
+            vendoreIds.push(product.vendorId);
+        }
+        console.log("🚀 ~ file: categoryController.js:489 ~ module.exports.deleteBulkProduct ~ product", vendoreIds);
+
+        let query = {
+            vendorId: { $in: vendoreIds }
+        }
+
+        let deleted = await deleteProductCategory(query);
+
+        respSuccess(res, deleted)
+    } catch (error) {
+        respError(error)
+    }
+}
+
 module.exports.addBulkProductSubCategories = async (req, res) => {
     try {
         const reqData = req.body
         for (let index = 0; index < reqData.length; index++) {
             const element = reqData[index];
+            element.status = element.status === 'TRUE' ? true : false
             const productSubCategories = await getProductSubcategory({ vendorId: element.vendorId })
+            console.log(productSubCategories,"🚀 ~ file: categoryController.js:489 ~ module.exports.addBulkProductSubCategories= ~ element")
             if (!productSubCategories) {
                 // console.log("unique level5 record")
                 const query = {
@@ -508,7 +534,7 @@ module.exports.addBulkProductSubCategories = async (req, res) => {
                         l1: result.l1,
                         vendorId: result.vendorId
                     }
-                    // const sugge = await createSuggestions(suggestion)
+                    const sugge = await createSuggestions(suggestion)
 
                     // console.log("🚀 ~ file: categoryController.js ~ line 354 ~ module.exports.addBulkProductSubCategories= ~ result", result)
                     const updateData = {

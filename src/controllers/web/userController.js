@@ -244,6 +244,51 @@ module.exports.sendOtp = async (req, res) => {
   }
 };
 
+module.exports.sendOtpToMail = async (req, res) => {
+  try {
+
+    const { reset, email } = req.body;
+
+    let otp = 1234;
+    const url = req.get("origin");
+    let otpMessage = otpVerification({ otp, url });
+
+    let query = { email }
+
+    const seller = await checkUserExistOrNot(query);
+
+    if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
+      return respError(res, "User already exist");
+    }
+
+    if (reset && (!seller || !seller.length))
+      return respError(res, "User Not found");
+
+    const checkUser =
+      seller &&
+      seller.length &&
+      seller[0].email &&
+      seller[0].isEmailVerified === 2;
+
+    if (isProd) {
+      otp = Math.floor(1000 + Math.random() * 9000);
+    }
+
+    const message = {
+      from: MailgunKeys.senderMail,
+      to: email,
+      subject: "OTP Verification",
+      html: commonTemplate(otpMessage),
+    };
+    await sendSingleMail(message);
+
+    respSuccess(res, { otp }, `Your OTP  has been sent successfully to ${email} .Check your Mail`);
+
+  } catch (error) {
+    return respError(res, error.message);
+  }
+}
+
 // module.exports.sendExotelSms = async (req, res) => {
 //   try {
 //     let to = req.body.mobile;
@@ -647,7 +692,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans && !__usr.reresigistered) {
-        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121']
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121','AUG20','VNG20']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
 
         const dateNow = new Date();

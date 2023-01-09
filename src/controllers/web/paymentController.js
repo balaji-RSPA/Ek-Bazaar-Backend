@@ -4040,8 +4040,10 @@ module.exports.planActivation = async (req, res) => {
           if (
             seller &&
             seller.hearingSource &&
-            seller.hearingSource.source === "Uttarakhand" &&
-            seller.hearingSource.referralCode === "UTK1121"
+            ((seller.hearingSource.source === "Uttarakhand" &&
+              seller.hearingSource.referralCode === "UTK1121") || (seller.hearingSource.source === "Vietnam" &&
+                seller.hearingSource.referralCode === "VNG20") || (seller.hearingSource.source === "African Union" &&
+                  seller.hearingSource.referralCode === "AUG20"))
           ) {
             if (seller && seller.planId && seller.planId.isTrial) {
               const trialCreatedAt = seller.planId && seller.planId.createdAt;

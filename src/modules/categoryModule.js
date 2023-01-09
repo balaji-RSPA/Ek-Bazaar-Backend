@@ -549,6 +549,15 @@ module.exports.addProductCategory = (data) =>
       .catch(reject);
   });
 
+module.exports.deleteProductCategory = (data) =>
+  new Promise((resolve, reject) => {
+    Products.deleteMany(data)
+      .then((doc) => {
+        resolve(doc);
+      })
+      .catch(reject);
+  });  
+
 module.exports.addProductSubCategory = (data) =>
   new Promise((resolve, reject) => {
     ProductsSubCategories.create(data)

@@ -30,6 +30,7 @@ router.get("/secondary-categories", category.getAllSecondaryCategories)
 
 // product Categories
 router.post("/addBulkProducts", category.addBulkProducts);
+router.post("/deleteBulkProduct",category.deleteBulkProduct)
 router.post("/addProductCategory", category.addProduct);
 router.get("/getProductCategory/:id", category.getProduct);
 router.get("/products", category.getProducts)
