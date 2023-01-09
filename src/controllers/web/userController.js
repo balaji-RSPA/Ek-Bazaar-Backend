@@ -247,7 +247,7 @@ module.exports.sendOtp = async (req, res) => {
 module.exports.sendOtpToMail = async (req, res) => {
   try {
 
-    const { reset, email } = req.body;
+    const { reset, email, countryCode, mobile } = req.body;
 
     let otp = 1234;
     const url = req.get("origin");
@@ -255,6 +255,20 @@ module.exports.sendOtpToMail = async (req, res) => {
 
     let query = { email }
 
+    if(mobile){
+      let existQuery = { mobile, 'countryCode': countryCode || '+91' }
+
+      let userExist = await checkUserExistOrNot(existQuery);
+      console.log("🚀 ~ file: userController.js:262 ~ module.exports.sendOtpToMail= ~ userExist", userExist);
+      if (userExist && userExist.length){
+        if (userExist[0].email !== email){
+          return respError(res, `Given number is associated with email ${userExist[0].email}`)
+        } else if (userExist && userExist.length && !reset && !userExist[0]["deleteTrade"]["status"]){
+          return respError(res, "User already exist");
+        }
+      }
+    }
+    
     const seller = await checkUserExistOrNot(query);
 
     if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
