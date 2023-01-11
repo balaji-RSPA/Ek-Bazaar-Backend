@@ -40,6 +40,7 @@ const SellerOffferContacts = require('./sellerOfferContactSchema')
 const News = require("./newsSchema");
 const Commodity = require("./commoditySchema");
 const LanguageTemplate = require('./languageTemplateSchema')
+const LanguageTemplateL4 = require('./languageTemplateL4Schema')
 const LanguageTemplateOne = require('./languageTemplateOneSchema')
 const CurrencyConvters = require('./currencyConverterSchema')
 const SubChargedRes = require('./subChargedHookSchema')
@@ -90,6 +91,7 @@ module.exports = {
     News,
     Commodity,
     LanguageTemplate,
+    LanguageTemplateL4,
     LanguageTemplateOne,
     CurrencyConvters,
     PaymentData,
