@@ -53,6 +53,9 @@ const productsSubCategoriesSchema = new Schema(
         l1: {
             type: String,
             default: true
+        },
+        chatTempateId: {
+            type: ObjectId
         }
     },
     {

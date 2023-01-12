@@ -725,6 +725,36 @@ exports.getProductByQuery = (query) => new Promise((resolve, reject) => {
     .catch((error) => reject(error));
 })
 
+exports.getSubCatProductByQuery = (query) => new Promise((resolve, reject) => {
+  ProductsSubCategories.findOne(query)
+  .populate({
+    path:'productId',
+    model: Products,
+    select: "_id secondaryId vendorId",
+    populate:{
+      path:"secondaryId",
+      model: SecondaryCategory,
+      select:"_id primaryCatId vendorId",
+      populate:{
+        path:"primaryCatId",
+        model:PrimaryCategory,
+        select:"_id parentCatId vendorId",
+        populate:{
+          path:"parentCatId",
+          model:ParentCategory,
+          select:"_id vendorId"
+        }
+      }
+    }
+  })
+  .then((doc) => {
+    resolve(doc)
+  })
+  .catch((error) => {
+    reject(error)
+  })
+})
+
 exports.getSecondaryCategoryByName = (query) => new Promise((resolve, reject) => {
   SecondaryCategory.find(query)
     .populate('primaryCatId')

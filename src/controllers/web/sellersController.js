@@ -25,6 +25,7 @@ const {
 const { sellerSearch, searchFromElastic } = elastic;
 const _ = require('lodash')
 const { getMasterRecords, updateMasterSellerDetails } = require("../../modules/masterModule");
+const { getL5ChatAllTemplates } = require('../../modules/languageTemplateModule')
 
 const {
   updateSeller,
@@ -61,7 +62,7 @@ const {
 const { getFilteredCities, getSellerSelectedCities } = location;
 const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct, insertManyEslint, updateESDoc } = mastercollections
 const { updateSellerProducts } = sellerProducts
-const { getChatTemplate, getL4ChatTemplate } = LanguageTemplate
+const { getChatTemplate, getL4ChatTemplate, getL5ChatTemplate } = LanguageTemplate
 
 // module.exports.razorPay = async (req, res) => {
 
@@ -850,20 +851,34 @@ module.exports.updateSellerProduct = async (req, res) => {
 module.exports.getSellerProduct = async (req, res) => {
   try {
     const { sellerProductId } = req.body
-    console.log("🚀 ~ file: sellersController.js ~ line 851 ~ module.exports.getSellerProduct= ~ req.body", req.body)
+
     let sellerProduct = await getSellerProduct({ _id: sellerProductId })
-    console.log("module.exports.getSellerProduct -> sellerProduct", sellerProduct)
+    console.log("🚀 ~ file: sellersController.js:855 ~ module.exports.getSellerProduct= ~ sellerProduct", sellerProduct)
+
     let temp = {}
-    if (sellerProduct && sellerProduct.secondaryCategoryId && sellerProduct.secondaryCategoryId.length) {
-      temp = await getChatTemplate({ l3: sellerProduct.secondaryCategoryId[0]._id })
-      console.log("🚀 ~ file: sellersController.js ~ line 858 ~ module.exports.getSellerProduct= ~ temp", temp)
+  
+    console.log(Object.keys(temp).length,"!!!!!!!!!!!!!!!!!!!Never Run!!!!!!!!!!!!!!!!!!!!!")
+
+    if (sellerProduct && sellerProduct.productSubcategoryId && sellerProduct.productSubcategoryId.length) {
+      let l5Temp = await getL5ChatTemplate({ l5: sellerProduct.productSubcategoryId[0]._id });
+      if (l5Temp) {
+        temp = l5Temp
+      }
     }
-    if (sellerProduct && sellerProduct.poductId && sellerProduct.poductId.length){
-      let l4Temp = await getL4ChatTemplate({ l4: sellerProduct.poductId[0]._id});
-      if(l4Temp){
+    
+    if (Object.keys(temp).length == 0 && sellerProduct && sellerProduct.poductId && sellerProduct.poductId.length) {
+      let l4Temp = await getL4ChatTemplate({ l4: sellerProduct.poductId[0]._id });
+      if (l4Temp) {
         temp = l4Temp
       }
     }
+    if (Object.keys(temp).length == 0 && sellerProduct && sellerProduct.secondaryCategoryId && sellerProduct.secondaryCategoryId.length) {
+      temp = await getChatTemplate({ l3: sellerProduct.secondaryCategoryId[0]._id })
+    }
+
+    console.log(Object.keys(temp).length, "!!!!!!!!!!!!!!!!!!!Never Run!!!!!!!!!!!!!!!!!!!!!")
+    
+    
     respSuccess(res, { sellerProduct, chatTemplat: temp })
   } catch (error) {
     respError(res, error.message)
