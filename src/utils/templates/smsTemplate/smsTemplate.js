@@ -29,6 +29,12 @@ module.exports.sendOtp = (params) => {
   }
 }
 
+module.exports.SendOtpOnebazaar = (params) => {
+  return params.reset ? 
+    `${params.otp} is your OTP to reset password at Onebazaar.com.`
+    :
+    `“Dear Customer, ${params.otp} is the verification code to register or login for onebazaar.com. Verification code is valid only for 30 minutes."`
+}
 // `You have an enquiry from EkBazaar.com for  ${capitalizeFirstLetter(params.productDetails.name.name)},${params.productDetails.quantity} ${capitalizeFirstLetter(params.productDetails.weight)} from ${params._loc},
 
 // Details below: ${capitalizeFirstLetter(params.name)}

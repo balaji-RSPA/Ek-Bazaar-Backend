@@ -3,11 +3,12 @@ const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms } = require("../../utils/utils");
+const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms, sendKenyaSms } = require("../../utils/utils");
 const {
   sendOtp,
   successfulRegistration,
   businessProfileIncomplete,
+  SendOtpOnebazaar
 } = require("../../utils/templates/smsTemplate/smsTemplate");
 const {
   sellers,
@@ -288,15 +289,24 @@ module.exports.sendOtpToMail = async (req, res) => {
       otp = Math.floor(1000 + Math.random() * 9000);
     }
 
-    const message = {
-      from: MailgunKeys.senderMail,
-      to: email,
-      subject: "OTP Verification",
-      html: commonTemplate(otpMessage),
-    };
-    await sendSingleMail(message);
-
-    respSuccess(res, { otp }, `Your OTP  has been sent successfully to ${email} .Check your Mail`);
+    let responseText = "";
+    if(countryCode == "+254" && mobile){//send sms to user if from Kenya
+      let msgContent = SendOtpOnebazaar({reset:false, otp})
+      let msgResponse = await sendKenyaSms(mobile, msgContent)
+      responseText = `Your OTP  has been sent successfully to ${mobile} .Check your SMS`
+    }
+    else {
+      const message = {
+        from: MailgunKeys.senderMail,
+        to: email,
+        subject: "OTP Verification",
+        html: commonTemplate(otpMessage),
+      };
+      await sendSingleMail(message);
+      responseText = `Your OTP  has been sent successfully to ${email} .Check your Mail`;
+    }
+    
+    respSuccess(res, { otp }, responseText);
 
   } catch (error) {
     return respError(res, error.message);
