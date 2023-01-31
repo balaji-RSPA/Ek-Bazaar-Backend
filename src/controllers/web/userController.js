@@ -205,8 +205,11 @@ module.exports.sendOtp = async (req, res) => {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
         // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
         let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
-        let response = await sendExotelSms(`${code}${mobile}`, otpMessage);
-
+        let response = "";
+        if(code == "+254" || code == "254")
+          response = await sendKenyaSms(mobile, otpMessage)
+        else 
+          response = await sendExotelSms(`${code}${mobile}`, otpMessage);
         console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
       } else if (checkUser || (email && !reset)) {
         const message = {
@@ -290,7 +293,7 @@ module.exports.sendOtpToMail = async (req, res) => {
     }
 
     let responseText = "";
-    if(countryCode == "+254" && mobile){//send sms to user if from Kenya
+    if((countryCode == "+254" || countryCode == "254") && mobile){//send sms to user if from Kenya
       let msgContent = SendOtpOnebazaar({reset:false, otp})
       let msgResponse = await sendKenyaSms(mobile, msgContent)
       responseText = `Your OTP  has been sent successfully to ${mobile} .Check your SMS`
