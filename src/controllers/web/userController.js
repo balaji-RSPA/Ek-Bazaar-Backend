@@ -365,7 +365,7 @@ module.exports.addUser = async (req, res, next) => {
     } = req.body;
     console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
-    const client = _base.includes('onebazaar') || _base.includes('8086') ? 'onebazaar' : 'ekbazaar';
+    const client = (_base && (_base.includes('onebazaar') || _base.includes('8086'))) ? 'onebazaar' : 'ekbazaar';
 
     req.body.userId = user._id;
     const buyerData = {
