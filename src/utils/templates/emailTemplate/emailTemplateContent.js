@@ -39,7 +39,7 @@ module.exports.emailSuccessfulRegistration = (params) => { //userType
 }
 module.exports.otpVerification = (params) => {
   let message;
-  if (!params.url.includes('onebazaar')) {
+  if (!params.url || !params.url.includes('onebazaar')) { //this is added for postman-url.
     // For EKB
     message = {
       title: 'Ekbazaar Trade- OTP Verification',
