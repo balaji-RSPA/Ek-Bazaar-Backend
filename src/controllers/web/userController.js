@@ -251,7 +251,7 @@ module.exports.sendOtpToMail = async (req, res) => {
 
     let otp = 1234;
     const url = req.get("origin");
-    let otpMessage = otpVerification({ otp, url });
+    
 
     let query = { email }
 
@@ -287,6 +287,8 @@ module.exports.sendOtpToMail = async (req, res) => {
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
     }
+
+    let otpMessage = otpVerification({ otp, url });
 
     const message = {
       from: MailgunKeys.senderMail,

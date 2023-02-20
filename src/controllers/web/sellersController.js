@@ -857,7 +857,7 @@ module.exports.getSellerProduct = async (req, res) => {
 
     let temp = {}
   
-    console.log(Object.keys(temp).length,"!!!!!!!!!!!!!!!!!!!Never Run!!!!!!!!!!!!!!!!!!!!!")
+
 
     if (sellerProduct && sellerProduct.productSubcategoryId && sellerProduct.productSubcategoryId.length) {
       let l5Temp = await getL5ChatTemplate({ l5: sellerProduct.productSubcategoryId[0]._id });
@@ -876,7 +876,7 @@ module.exports.getSellerProduct = async (req, res) => {
       temp = await getChatTemplate({ l3: sellerProduct.secondaryCategoryId[0]._id })
     }
 
-    console.log(Object.keys(temp).length, "!!!!!!!!!!!!!!!!!!!Never Run!!!!!!!!!!!!!!!!!!!!!")
+    
     
     
     respSuccess(res, { sellerProduct, chatTemplat: temp })
