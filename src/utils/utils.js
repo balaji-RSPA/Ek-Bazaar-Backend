@@ -171,6 +171,45 @@ exports.sendSMS = async (mobile, message, templateId) =>
     }
   });
 
+//New SMS gateway for Kenya 
+exports.sendKenyaSms = (to, msgContent) => {
+  return new Promise(async (smsSuccess, smsFailed) => {
+    let url = "https://api.onfonmedia.co.ke/v1/sms/SendBulkSMS", 
+      AccessKey = "HsT1BPC7KKj85shGdmbANN9gi4vCrnv0", 
+      msgBody = {
+        "SenderId": "TEK_BOX",
+        "ApiKey": "MDAZR43U/Z24rhWFzdIaJg7GQjLTU6wkGwH7O4DrGkw=",
+        "ClientId": "2c520bd8-42df-45c9-a08a-c2b99ecbb1c1",
+        "MessageParameters": [
+            {
+                "Number": `254${to}`,
+                "Text": msgContent
+            
+            }
+        ] 
+      };
+    //country code is statically added as it's the format it works!! 
+    //The API shared is sendBulkSMS not SendSMS, hence the above multi-number/msg body is used.!!!!
+    axios.post(url, msgBody,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          AccessKey,
+        },
+      }
+    )
+    .then((apiResponse) => {
+      console.log(apiResponse.data)
+      smsSuccess(apiResponse.data)
+    })
+    .catch((apiErr) => {
+      console.log(apiErr, "=======SMS ERROR KENYA=======")
+      // smsFailed(apiErr.message)
+      smsSuccess({error: apiErr.message}) //to avoid unhandled rejections for now!!
+    });
+  })
+}
+
 exports.sendExotelSms = (to, msgBody) =>
   new Promise(async (resolve, reject) => {
     const from = exotelSms.senderID;

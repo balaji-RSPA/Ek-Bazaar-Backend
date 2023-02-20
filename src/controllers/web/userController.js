@@ -3,11 +3,12 @@ const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms } = require("../../utils/utils");
+const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms, sendKenyaSms } = require("../../utils/utils");
 const {
   sendOtp,
   successfulRegistration,
   businessProfileIncomplete,
+  SendOtpOnebazaar
 } = require("../../utils/templates/smsTemplate/smsTemplate");
 const {
   sellers,
@@ -204,8 +205,11 @@ module.exports.sendOtp = async (req, res) => {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
         // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
         let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
-        let response = await sendExotelSms(`${code}${mobile}`, otpMessage);
-
+        let response = "";
+        if(code == "+254" || code == "254")
+          response = await sendKenyaSms(mobile, otpMessage)
+        else 
+          response = await sendExotelSms(`${code}${mobile}`, otpMessage);
         console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
       } else if (checkUser || (email && !reset)) {
         const message = {
@@ -288,17 +292,24 @@ module.exports.sendOtpToMail = async (req, res) => {
       otp = Math.floor(1000 + Math.random() * 9000);
     }
 
-    let otpMessage = otpVerification({ otp, url });
-
-    const message = {
-      from: MailgunKeys.senderMail,
-      to: email,
-      subject: "OTP Verification",
-      html: commonTemplate(otpMessage),
-    };
-    await sendSingleMail(message);
-
-    respSuccess(res, { otp }, `Your OTP  has been sent successfully to ${email} .Check your Mail`);
+    let responseText = "";
+    if((countryCode == "+254" || countryCode == "254") && mobile){//send sms to user if from Kenya
+      let msgContent = SendOtpOnebazaar({reset:false, otp})
+      let msgResponse = await sendKenyaSms(mobile, msgContent)
+      responseText = `Your OTP  has been sent successfully to ${mobile} .Check your SMS`
+    }
+    else {
+      const message = {
+        from: MailgunKeys.senderMail,
+        to: email,
+        subject: "OTP Verification",
+        html: commonTemplate(otpMessage),
+      };
+      await sendSingleMail(message);
+      responseText = `Your OTP  has been sent successfully to ${email} .Check your Mail`;
+    }
+    
+    respSuccess(res, { otp }, responseText);
 
   } catch (error) {
     return respError(res, error.message);
@@ -354,7 +365,7 @@ module.exports.addUser = async (req, res, next) => {
     } = req.body;
     console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
-    const client = _base.includes('onebazaar') || _base.includes('8086') ? 'onebazaar' : 'ekbazaar';
+    const client = (_base && (_base.includes('onebazaar') || _base.includes('8086'))) ? 'onebazaar' : 'ekbazaar';
 
     req.body.userId = user._id;
     const buyerData = {
