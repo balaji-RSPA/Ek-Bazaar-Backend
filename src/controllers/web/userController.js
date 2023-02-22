@@ -19,6 +19,7 @@ const {
   SellerPlanLogs,
   Chat,
 } = require("../../modules");
+const { tradeSiteUrl } = require('../../utils/globalConstants');
 const { getSellerTypeAll } = require("../../modules/locationsModule");
 const {
   checkSellerExist,
@@ -672,7 +673,7 @@ module.exports.updateUser = async (req, res) => {
     let seller = {},
       activeChat = {};
     if (user && buyer && _seller) {
-      const url = req.get("origin");
+      const url = req.get("origin") || tradeSiteUrl;
       if (user.email && !buyer.isEmailSent) {
         let { token } = req.headers.authorization.split("|")[1];
         token = token || req.token;
