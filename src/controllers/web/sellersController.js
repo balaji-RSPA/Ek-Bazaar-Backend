@@ -855,7 +855,7 @@ module.exports.getSellerProduct = async (req, res) => {
     let sellerProduct = await getSellerProduct({ _id: sellerProductId })
     console.log("🚀 ~ file: sellersController.js:855 ~ module.exports.getSellerProduct= ~ sellerProduct", sellerProduct)
 
-    let temp = {}
+    let temp = {} 
   
 
 
@@ -874,7 +874,7 @@ module.exports.getSellerProduct = async (req, res) => {
     }
     if (Object.keys(temp).length == 0 && sellerProduct && sellerProduct.secondaryCategoryId && sellerProduct.secondaryCategoryId.length) {
       temp = await getChatTemplate({ l3: sellerProduct.secondaryCategoryId[0]._id })
-    }
+    } 
 
     
     
