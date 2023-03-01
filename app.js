@@ -131,7 +131,7 @@ app.get("/send-daily-report", async function (req, res) {
 
 var options = {}
 
-app.use('/api-docs/location', function (req, res, next) {
+app.useap('/i-docs/location', function (req, res, next) {
   swaggerLocation.host = req.get('host');
   req.swaggerDoc = swaggerLocation;
   next();

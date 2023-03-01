@@ -719,7 +719,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans && !__usr.reresigistered) {
-        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121','AUG20','VNG20']
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121','AUG20','VNG20',"DEUEMI230","GCCG20"]
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
 
         const dateNow = new Date();
