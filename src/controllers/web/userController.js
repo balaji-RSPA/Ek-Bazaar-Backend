@@ -19,6 +19,7 @@ const {
   SellerPlanLogs,
   Chat,
 } = require("../../modules");
+const { tradeSiteUrl } = require('../../utils/globalConstants');
 const { getSellerTypeAll } = require("../../modules/locationsModule");
 const {
   checkSellerExist,
@@ -255,6 +256,7 @@ module.exports.sendOtpToMail = async (req, res) => {
 
     let otp = 1234;
     const url = req.get("origin");
+    let otpMessage = otpVerification({ otp, url });
     
 
     let query = { email }
@@ -290,6 +292,7 @@ module.exports.sendOtpToMail = async (req, res) => {
 
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
+      otpMessage = otpVerification({ otp, url });
     }
 
     let responseText = "";
@@ -672,7 +675,7 @@ module.exports.updateUser = async (req, res) => {
     let seller = {},
       activeChat = {};
     if (user && buyer && _seller) {
-      const url = req.get("origin");
+      const url = req.get("origin") || tradeSiteUrl;
       if (user.email && !buyer.isEmailSent) {
         let { token } = req.headers.authorization.split("|")[1];
         token = token || req.token;
@@ -728,7 +731,7 @@ module.exports.updateUser = async (req, res) => {
           status: true,
         });
 
-        if (trialPlan) {
+        if (trialPlan && promoCode) {
           const sellerDetails = {
             sellerId: seller._id,
             userId: seller.userId,
