@@ -12,7 +12,8 @@ const SellerCompany = require('./sellerCompanySchema')
 const SellerEstablishment = require('./sellerEstablishmentSchema')
 const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema');
-const SellerPlans = require('./sellerPlanSchema')
+const SellerPlans = require('./sellerPlanSchema');
+const currencyExcenges = require('./currencySchema')
 const { identity } = require("lodash");
 
 // const notificationSchema = new Schema({
@@ -118,6 +119,11 @@ const sellersSchema = new Schema(
       default: null,
       // required: true,
       trim: true,
+    },
+    selectedCurrency:{
+      type: ObjectId,
+      ref: currencyExcenges,
+      default:null
     },
     countryCode: {
       type: String,

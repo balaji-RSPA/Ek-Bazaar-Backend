@@ -44,6 +44,7 @@ const LanguageTemplateL4 = require('./languageTemplateL4Schema');
 const LanguageTemplateL5 = require('./languageTemplateL5Schema');
 const LanguageTemplateOne = require('./languageTemplateOneSchema')
 const CurrencyConvters = require('./currencyConverterSchema')
+const currencyExcenges = require('./currencySchema')
 const SubChargedRes = require('./subChargedHookSchema')
 const SubPendingRes = require('./subPendingHookSchema')
 const SubHaltedRes = require('./subHaltedHookSchema')
@@ -104,5 +105,6 @@ module.exports = {
     cancleHookRes,
     PaymentFailedHook,
     PriceUnit,
-    Contact
+    Contact,
+    currencyExcenges
 }

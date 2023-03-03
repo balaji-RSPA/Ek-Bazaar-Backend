@@ -4,7 +4,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const _ = require("lodash");
 const moment = require("moment");
-const { Sellers } = require("../models");
+const { Sellers,currencyExcenges } = require("../models");
 const {
   sellers,
   mastercollections,
@@ -13,6 +13,7 @@ const {
   buyers,
   SellerPlans,
   QueEmails,
+  CurrencyConvrter,
 } = require("../modules");
 const {
   getAllSellers,
@@ -22,7 +23,9 @@ const {
   getSellerAllDetails,
   getSellerSomeData,
 } = sellers;
-const { updateMaster, updateMasterBulkProducts } = mastercollections;
+
+const { addCurrencyExcenge, updateCurrencyExcenge } = CurrencyConvrter
+const { updateMaster, updateMasterBulkProducts, getMasterCount, getMaster } = mastercollections;
 const { getSellerProducts, updateSellerProducts } = sellerProducts;
 const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue;
 const { getRFPData, updateRFP } = buyers;
@@ -46,6 +49,9 @@ const { searchFromElastic } = require("../modules/elasticSearchModule");
 const isProd = globalVaraibles._IS_PROD_;
 const { pricing } = globalVaraibles.authServiceURL();
 
+const axios = require('axios');
+// const { url } = require("inspector");
+const{ currencySymbole} = require('./symbole')
 exports.sendQueEmails = async (req, res) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -1426,3 +1432,75 @@ exports.sendDailyCount = async (req, res) =>
       reject(error.message);
     }
   });
+
+
+exports.createCurrencyExcenge = async (req, res) => new Promise(async (resolve, reject) => {
+  try {
+    const url = 'https://api.apilayer.com/exchangerates_data/symbols?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=USD'
+    let data = await axios.get(url)
+
+    let ourData = data.data.symbols
+    let excengeData = await axios.get('https://api.apilayer.com/exchangerates_data/latest?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=USD');
+    let excengeObj = excengeData && excengeData.data && excengeData.data.rates;
+    let currList = []
+    for (const property in ourData) {
+      console.log(`code is ${property} and name is ${ourData[property]}`);
+      let myObj = {
+        currencyName: ourData[property],
+        code: property,
+        base: 'USD',
+        exchangeRate: excengeObj[property]
+      }
+
+      currList.push(myObj)
+    }
+
+    const responce = await addCurrencyExcenge(currList)
+    resolve(responce)
+  } catch (error) {
+    Logger.error(error.message);
+    console.error(error.message);
+    reject(error.message);
+  }
+})
+
+exports.updateCurrencyExcenge = async(req, res) => new Promise(async (resolve, reject) => {
+  try {
+    let excengeData = await axios.get('https://api.apilayer.com/exchangerates_data/latest?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=USD');
+    let excengeObj = excengeData && excengeData.data && excengeData.data.rates;
+
+    let responce = []
+
+    for(const property in excengeObj){
+      console.log(`code is ${property} and name is ${excengeObj[property]}`);
+      let query = { code: property };
+      let data = { exchangeRate: excengeObj[property]}
+
+      let updatedRes = await updateCurrencyExcenge(query, data);
+
+      responce.push(updatedRes)
+    }
+
+    resolve(responce)
+  } catch (error) {
+    Logger.error(error.message);
+    console.error(error.message);
+    reject(error.message);
+  }
+})
+
+exports.getCurrencySymboles = async (req, res) => new Promise(async (resolve, reject) => {
+  // let result = await axios.get()
+  console.log(currencySymbole.length,"--------vvvvvvvvvvvv");
+  let responce = [];
+  for (let i = 0; i < currencySymbole.length; i++){
+    let curr = currencySymbole[i];
+    let query = { code: curr.iso }
+    let data = { currency_symbol: curr.currency_symbol }
+    if (curr && curr.currency_symbol){
+      let updated = await updateCurrencyExcenge(query,data)
+      responce.push(updated)
+    }
+  }
+  resolve(responce)
+})

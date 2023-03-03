@@ -3907,14 +3907,25 @@ const assignPlantoUser = async (
 // }
 
 module.exports.createStripePayment = async (req, res) => {
-  let { amount, id, description, currency } = req.body;
   try {
+    let { amount, id, description, currency } = req.body;
+    
+    const customer = await stripe.customers.create({
+      name: description.name || '',
+      email: description.email,
+      payment_method: id,
+      address:{
+        line1: description.address,
+        country: description.country.value,
+      }
+    });
     const payment = await stripe.paymentIntents.create({
       amount: amount,
       currency: "USD",
       description: id,
       payment_method: id,
       confirm: true,
+      customer: customer.id
     });
 
     console.log("Stripe Response :", payment);
@@ -4130,7 +4141,7 @@ module.exports.planActivation = async (req, res) => {
             gstNo: (orderDetails && orderDetails.gst) || null,
             address: (orderDetails && orderDetails.address) || null,
             pincode: (orderDetails && orderDetails.pincode) || null,
-            country: (orderDetails && orderDetails.country) || null,
+            country: (orderDetails && orderDetails.country && orderDetails.country.label) || null,
             sellerDetails: {
               ...sellerDetails,
             },

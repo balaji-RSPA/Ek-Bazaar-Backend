@@ -25,6 +25,8 @@ const {
   checkSellerExist,
   deleteSellerRecord,
 } = require("../../modules/sellersModule");
+
+const { findCurrencyConverter } = require('../../modules/currencyConverterModule')
 const { deleteSellerProducts } = require("../../modules/sellerProductModule");
 const { MailgunKeys, fromEmail } = require("../../utils/globalConstants");
 const bcrypt = require("bcrypt");
@@ -549,6 +551,8 @@ module.exports.updateUser = async (req, res) => {
     const { userID } = req;
     const dateNow = new Date();
     const _buyer = req.body.buyer || {};
+
+    console.log(JSON.stringify(_buyer),"---------_buyer_buyer-------------")
     let {
       name,
       email,
@@ -560,11 +564,19 @@ module.exports.updateUser = async (req, res) => {
       sellerType,
       userType,
       hearingSource,
-      preferredLanguage
+      preferredLanguage,
+      currency
     } = req.body;
-    console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", req.body,"llllllllllll");
     // return false
-
+    
+    let currencyQuery = {
+      code:'USD'
+    }
+    let usdExcenge = await findCurrencyConverter(currencyQuery);
+    
+    const selectedCurrency = currency || usdExcenge && usdExcenge.length && usdExcenge[0]._id
+    
+    console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", usdExcenge && usdExcenge.length && usdExcenge[0]._id, "llllllllllll", currency, selectedCurrency);
     // console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
     const __usr = await getUserProfile(userID)
     let userData = {
@@ -604,8 +616,11 @@ module.exports.updateUser = async (req, res) => {
         userId: userID,
         isPartialyRegistor: false
       }
+      sellerData.selectedCurrency = selectedCurrency;
       buyer = await updateBuyer({ userId: userID }, buyerData)
       _seller = await updateSeller({ userId: userID }, sellerData)
+
+      console.log(_seller,"Updated here 111111111111111111111")
     }
 
     let buyerData = {
@@ -633,6 +648,7 @@ module.exports.updateUser = async (req, res) => {
       hearingSource: _seller.hearingSource,
       ..._buyer,
     };
+    sellerData.selectedCurrency = selectedCurrency;
     if ((_buyer.mobile && _buyer.mobile.length) || (mobile && mobile.length)) {
       buyerData.mobile = _buyer.mobile[0]["mobile"] || mobile[0]["mobile"];
       buyerData.mobile =

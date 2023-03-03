@@ -567,6 +567,7 @@ module.exports.getSeller = (id, chkStock, query) =>
       .populate('location.state', 'name')
       .populate('location.country', 'name')
       .populate('planId')
+      .populate('selectedCurrency')
       .lean()
       .then((doc) => {
         resolve(doc)
@@ -804,6 +805,7 @@ module.exports.updateSeller = (query, data, elastic) =>
     })
       .populate('sellerProductId')
       .populate('sellerType')
+      .populate('selectedCurrency')
       // .populate('sellerType.name', 'name')
       // .populate('sellerType.cities.city', 'name')
       // .populate('sellerType.cities.state', 'name region')

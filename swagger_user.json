@@ -831,6 +831,55 @@
                 }
             }
         },
+        "/buyerAllRequest/{id}":{
+            "get": {
+                "summary": "Get Buyer All Requests",
+                "description": "API to get all Request By Buyer",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Parent Category Param",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "description": "Search with a product name (Optional)",
+                        "schema": {
+                            "typer": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "success": {
+                        "description": "Successful Response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/sellerTypes": {
             "get": {
                 "summary": "Get Seller Types",
