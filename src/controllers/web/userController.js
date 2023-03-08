@@ -19,7 +19,7 @@ const {
   SellerPlanLogs,
   Chat,
 } = require("../../modules");
-const { tradeSiteUrl } = require('../../utils/globalConstants');
+const { tradeSiteUrl, tradeClientUrl } = require('../../utils/globalConstants');
 const { getSellerTypeAll } = require("../../modules/locationsModule");
 const {
   checkSellerExist,

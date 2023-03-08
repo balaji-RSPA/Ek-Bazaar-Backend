@@ -20,12 +20,15 @@ const {
   mastercollections,
   elastic,
   sellerProducts,
-  LanguageTemplate
+  LanguageTemplate,
+  LanguageTemplateOne
 } = require('../../modules')
 const { sellerSearch, searchFromElastic } = elastic;
 const _ = require('lodash')
 const { getMasterRecords, updateMasterSellerDetails } = require("../../modules/masterModule");
 const { getL5ChatAllTemplates } = require('../../modules/languageTemplateModule')
+
+const { oneBazaarRequestOrigin, tradeClientUrl } = require("../../utils/globalConstants");
 
 const {
   updateSeller,
@@ -63,6 +66,8 @@ const { getFilteredCities, getSellerSelectedCities } = location;
 const { addMaster, updateMaster, insertManyMaster, deleteMasterProduct, insertManyEslint, updateESDoc } = mastercollections
 const { updateSellerProducts } = sellerProducts
 const { getChatTemplate, getL4ChatTemplate, getL5ChatTemplate } = LanguageTemplate
+
+const { getChatTemplateOne, getL4ChatTemplateOne, getL5ChatTemplateOne } = LanguageTemplateOne
 
 // module.exports.razorPay = async (req, res) => {
 
@@ -856,24 +861,36 @@ module.exports.getSellerProduct = async (req, res) => {
     console.log("🚀 ~ file: sellersController.js:855 ~ module.exports.getSellerProduct= ~ sellerProduct", sellerProduct)
 
     let temp = {} 
-  
+
+    let reqOrigin = req.get("origin") || tradeClientUrl;
 
 
     if (sellerProduct && sellerProduct.productSubcategoryId && sellerProduct.productSubcategoryId.length) {
-      let l5Temp = await getL5ChatTemplate({ l5: sellerProduct.productSubcategoryId[0]._id });
+      let l5Temp = oneBazaarRequestOrigin.includes(reqOrigin) ?
+       await getL5ChatTemplateOne({ l5: sellerProduct.productSubcategoryId[0]._id })
+        : await getL5ChatTemplate({ l5: sellerProduct.productSubcategoryId[0]._id });
+      // let l5Temp = await getL5ChatTemplate({ l5: sellerProduct.productSubcategoryId[0]._id });
       if (l5Temp) {
         temp = l5Temp
       }
     }
     
     if (Object.keys(temp).length == 0 && sellerProduct && sellerProduct.poductId && sellerProduct.poductId.length) {
-      let l4Temp = await getL4ChatTemplate({ l4: sellerProduct.poductId[0]._id });
+
+      let l4Temp = oneBazaarRequestOrigin.includes(reqOrigin) ?
+        await getL4ChatTemplateOne({ l4: sellerProduct.poductId[0]._id })
+        : await getL4ChatTemplate({l4: sellerProduct.poductId[0]._id });
+      // let l4Temp = await getL4ChatTemplate({ l4: sellerProduct.poductId[0]._id });
       if (l4Temp) {
         temp = l4Temp
       }
     }
     if (Object.keys(temp).length == 0 && sellerProduct && sellerProduct.secondaryCategoryId && sellerProduct.secondaryCategoryId.length) {
-      temp = await getChatTemplate({ l3: sellerProduct.secondaryCategoryId[0]._id })
+
+      temp = oneBazaarRequestOrigin.includes(reqOrigin) ?
+        await getChatTemplateOne({ l3: sellerProduct.secondaryCategoryId[0]._id })
+        : await getChatTemplate({ l3: sellerProduct.secondaryCategoryId[0]._id });
+      // temp = await getChatTemplate({ l3: sellerProduct.secondaryCategoryId[0]._id })
     } 
 
     

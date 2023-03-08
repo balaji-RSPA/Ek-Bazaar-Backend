@@ -140,3 +140,5 @@ exports.stripeApiKeys = NODE_ENV === 'production' ? {clientKey: "", secretKey: "
 };
 
 exports.oneBazaarRequestOrigin = NODE_ENV === 'production' ? ["https://trade.onebazaar.com"] : ["http://localhost:8086", "https://tradeonebazaar.tech-active.com"];
+
+exports.tradeClientUrl = NODE_ENV === 'production' ? 'https://trade.ekbazaar.com/' : NODE_ENV === 'development' ? 'https://tradebazaar.tech-active.com/' : 'http://localhost:8085/'

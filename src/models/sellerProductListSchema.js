@@ -157,6 +157,11 @@ const productDetailsSchema = new Schema({
       type: String,
       trim: true,
       default: null
+    },
+    currency: {
+      type: String,
+      trim: true,
+      default: null
     }
   },
   minmumOrderQty: {

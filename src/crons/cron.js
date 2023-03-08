@@ -4,7 +4,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const _ = require("lodash");
 const moment = require("moment");
-const { Sellers,currencyExcenges } = require("../models");
+const { Sellers, currencyExcenges, Payments } = require("../models");
 const {
   sellers,
   mastercollections,
@@ -770,6 +770,56 @@ exports.sendDailyCount = async (req, res) =>
         "Uttar Pradesh",
       ];
 
+      const totelSuccessPayment = await Payments.find({
+        $and:[
+          { paymentSuccess: true }
+        ],
+        createdAt: { $gte: dateyesterday, $lt: date },
+      }).populate({
+        path:'sellerId',
+        populate:{
+          path:'busenessId'
+        }
+      });
+
+      let totelAmount = 0;
+      let EKBSubscriptionCount = 0;
+      let OneBazaarSubscriptionCount = 0
+      
+      let paymentDetails = totelSuccessPayment.map((payment,i) => {
+        let obj = {};
+
+        obj.count = i + 1;
+        obj.name = payment && payment.sellerId && payment.sellerId.name || '';
+        obj.email = payment && payment.sellerId && payment.sellerId.email || '';
+        obj.mobile = payment && payment.sellerId && payment.sellerId.mobile[0].mobile || '';
+
+        // console.log(payment.paymentResponse.amount,"payment.paymentResponse.amountpayment.paymentResponse.amount")
+
+        if (payment && payment.paymentResponse && payment.paymentResponse.amount){
+          OneBazaarSubscriptionCount = OneBazaarSubscriptionCount + 1;
+          totelAmount += parseInt(payment.paymentResponse.amount) /100
+
+          obj.Amount = parseInt(payment.paymentResponse.amount)/100
+        } else if (payment && payment.paymentDetails && payment.paymentDetails.amount){
+          EKBSubscriptionCount = EKBSubscriptionCount + 1;
+          totelAmount += parseInt(payment.paymentDetails.amount)/100
+
+          obj.Amount = parseInt(payment.paymentDetails.amount)/100
+        }
+
+        obj.hearingSource = payment && payment.sellerId && payment.sellerId.hearingSource && payment.sellerId.hearingSource.source || '';
+        obj.reffralCode = payment && payment.sellerId && payment.sellerId.hearingSource && payment.sellerId.hearingSource.referralCode || '';
+        obj.businessName = payment && payment.sellerId && payment.sellerId.busenessId && payment.sellerId.busenessId.name || ''
+        obj.createdAt = payment && payment.createdAt
+
+        // console.log(obj, "$$$$$$$$$$$$$$$$$$$$$$$$")
+        return obj
+      })
+      
+      // console.log(totelSuccessPayment, "-------------totelSuccessPayment--------------", totelAmount, EKBSubscriptionCount, OneBazaarSubscriptionCount);
+
+
       // const gcc_count = await Sellers.find({ $and: [{ sellerProductId: { $exists: true } }, { "hearingSource.referralCode": { $exists: true } }, /* { $where: "this.sellerProductId.length > 0" },  */  { "hearingSource.source": "Gujarat Chamber of Commerce" }], createdAt: { $gte: dateyesterday, $lt: date } }).populate('busenessId').populate('sellerProductId').populate({}).select(selectFileds).lean().exec()
 
       const gcc_count = await getSellerAllDetails({
@@ -1041,6 +1091,29 @@ exports.sendDailyCount = async (req, res) =>
         );
       }
 
+      const paymnetFilePath = `paymentDetails-${new Date()}.csv`;
+      const paymentFileSource = "public/sellerDetailFiles/" + paymnetFilePath;
+
+      if (paymentDetails.length) {
+        const csv = Papa.unparse(paymentDetails, {
+          quotes: false, //or array of booleans
+          quoteChar: '"',
+          escapeChar: '"',
+          delimiter: ",",
+          header: true,
+          newline: "\r\n",
+          skipEmptyLines: false, //other option is 'greedy', meaning skip delimiters, quotes, and whitespace.
+          columns: null, //or array of strings
+        });
+        fs.writeFile(
+          path.resolve(__dirname, "../../public/sellerDetailFiles", paymnetFilePath),
+          csv,
+          (err, data) => {
+            console.log(err, "Completed data", data);
+          }
+        );
+      }
+
       const sum =
         gcc_count.length +
         smec_ount.length +
@@ -1121,6 +1194,10 @@ exports.sendDailyCount = async (req, res) =>
               (sellerrawData.length && _fs.createReadStream(FileSource)) ||
               "NoSellerData",
           },
+          {
+            filename: paymnetFilePath,
+            content: (paymentDetails.length && _fs.createReadStream(paymentFileSource)) || "No Payment Data"
+          }
         ],
         html: `<!doctype html>
                 <html lang="en">
@@ -1407,6 +1484,9 @@ exports.sendDailyCount = async (req, res) =>
           }</span></h4>
                                     <h4>Total Offers: <span>${totalOfferCount}</span></h4>
                                     <h4>Todays Offers: <span>${dailyOffersCoount}</span></h4>
+                                    <h4> Total Subscriptions(Ekbazaar): <span>${EKBSubscriptionCount}</span></h4>
+                                    <h4>Total Subscriptions(OneBazaar): <span>${OneBazaarSubscriptionCount}</span></h4>
+                                    <h4>Total Amount: <span>${totelAmount}</span></h4>
                                     <h4>Thank you. </h4>
                                 </div>
                             </div>

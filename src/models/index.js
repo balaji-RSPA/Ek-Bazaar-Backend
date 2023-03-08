@@ -52,6 +52,8 @@ const PaymentFailedHook = require('./paymentFailedHookSchema')
 const PriceUnit = require('./priceUnitSchema')
 const PaymentData = require('./paymentDataSchema');
 const Contact = require('./contactSchema')
+const LanguageTemplateL4One = require('./languageTemplateL4OneSchema')
+const LanguageTemplateL5One = require('./languageTemplateL5OneSchema')
 
 module.exports = {
     Cities,
@@ -96,6 +98,8 @@ module.exports = {
     LanguageTemplateL4,
     LanguageTemplateL5,
     LanguageTemplateOne,
+    LanguageTemplateL4One,
+    LanguageTemplateL5One,
     CurrencyConvters,
     PaymentData,
     Paylinks,

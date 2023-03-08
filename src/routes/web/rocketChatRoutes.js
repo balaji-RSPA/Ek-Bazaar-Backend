@@ -32,10 +32,14 @@ router.post('/uploadChatLanguageQuestions', chatTemplates.uploadChatLanguageQues
 router.post('/uploadChatLanguageQuestionsOne', chatTemplates.uploadChatLanguageQuestionsOne);
 
 router.post('/uploadL4ChatCategory', chatTemplates.uploadL4ChatLanguageTemplate);
+router.post('/uploadL4ChatCategoryOne', chatTemplates.uploadL4ChatLanguageTemplateOne)
 router.post('/uploadL4ChatLanguageQuestions',chatTemplates.uploadL4ChatLanguageQuestions);
+router.post('/uploadL4ChatLanguageQuestionsOne', chatTemplates.uploadL4ChatLanguageQuestionsOne);
 
 router.post('/uploadL5ChatCategory', chatTemplates.uploadeL5ChatLanguageTemplate);
+router.post('/uploadL5ChatCategoryOne', chatTemplates.uploadeL5ChatLanguageTemplateOne);
 router.post('/uploadL5ChatLanguageQuestion', chatTemplates.uploadL5ChatLanguageQuestions)
+router.post('/uploadL5ChatLanguageQuestionOne', chatTemplates.uploadL5ChatLanguageQuestionsOne)
 
 router.get('/chatAllTemplates', chatTemplates.getAllChatTemplates);
 router.get('/chatTemplate/:id', chatTemplates.getChatTemplate);
