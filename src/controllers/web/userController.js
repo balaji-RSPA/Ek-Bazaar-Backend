@@ -19,7 +19,7 @@ const {
   SellerPlanLogs,
   Chat,
 } = require("../../modules");
-const { tradeSiteUrl, tradeClientUrl } = require('../../utils/globalConstants');
+const { tradeSiteUrl, tradeClientUrl, tradeOnebazaarClientUrl } = require('../../utils/globalConstants');
 const { getSellerTypeAll } = require("../../modules/locationsModule");
 const {
   checkSellerExist,
@@ -53,6 +53,8 @@ const { createTrialPlan, deleteSellerPlans, getSellerPlan } = SellerPlans;
 const { createChat, deleteChat } = Chat;
 
 const { createChatUser, userChatLogin, deleteChatAccount } = require("./rocketChatController");
+
+const { sendWhatsaapWelcome } = require('./whatsappTemplateController')
 
 const { rocketChatDomain, rocketChatAdminLogin } = require('../../utils/globalConstants')
 const chatDomain = `https://${rocketChatDomain}`
@@ -366,7 +368,8 @@ module.exports.addUser = async (req, res, next) => {
       user,
       _user,
       url,
-      _base
+      _base,
+      whatsappChecked
     } = req.body;
     console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
@@ -503,9 +506,28 @@ module.exports.addUser = async (req, res, next) => {
         deviceId: user.deviceId,
         ipAddress,
       };
-      console.log("account created-------------------");
-
+      
       const result1 = await handleUserSession(seller.userId, finalData);
+
+      if (whatsappChecked){
+        let receiver_number = seller && seller.mobile && seller.mobile.length && `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`;
+        let first_name = seller && seller.name || 'Coustomer';
+        let dynamicname = seller && seller.client;
+
+        let website = client === 'ekbazaar' ? tradeSiteUrl : tradeOnebazaarClientUrl
+
+        let whatsAppWelcomeData = {
+          receiver_number,
+          first_name,
+          dynamicname,
+          website
+        }
+
+        console.log(whatsappChecked, "account created-------------------", whatsAppWelcomeData);
+
+        let wahtsappWlecomeResponce = await sendWhatsaapWelcome(whatsAppWelcomeData)
+      }
+      
       return respSuccess(
         res,
         { token, buyer, seller, user },

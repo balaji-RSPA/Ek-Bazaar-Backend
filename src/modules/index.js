@@ -28,6 +28,7 @@ const CurrencyConvrter = require('./currencyConverterModule')
 const PaymentData = require('./paymentDataModule')
 const PriceUnit = require('./priceUnitModule')
 const ContactUs = require('./contactModule')
+const Whatsapp = require('./whatsappTemplatemodule')
 
 module.exports = {
     location,
@@ -59,5 +60,6 @@ module.exports = {
     PaymentData,
     subChargedHook,
     PriceUnit,
-    ContactUs
+    ContactUs,
+    Whatsapp
 }
