@@ -13,7 +13,7 @@ const { capitalizeFirstLetter } = require("./helpers");
 
 const { endpoint, accessKeyId, secretAccessKey, region, Bucket } = awsKeys;
 
-const { sms, siteUrl, exotelSms } = require("./globalConstants");
+const { sms, siteUrl, exotelSms,whatsAppKey } = require("./globalConstants");
 const { username, password, senderID, smsURL } = sms;
 const spacesEndpoint = new AWS.Endpoint(endpoint);
 const s3 = new AWS.S3({
@@ -170,6 +170,51 @@ exports.sendSMS = async (mobile, message, templateId) =>
       resolve({ response });
     }
   });
+
+exports.sendWhatsappMassage = async (body) => new Promise(async (resolve, reject) => {
+  let url = 'https://app.chat360.io/service/v1/task';
+
+  let { receiver_number, template_id, first_name, dynamicname, website, client_number } = body;
+
+  let messageBody = {
+    "task_name": "whatsapp_push_notification",
+    "extra": "",
+    "task_body": [
+      {
+        "client_number": `${client_number}`,
+        "receiver_number": `${receiver_number}`,
+        "template_data": {
+          "template_id": `${template_id}`,
+          "param_data": {
+            "first_name": `${first_name}`,
+            "dynamicname": `${dynamicname}`,
+            "website": `${website}`
+          }
+          , "button_param_data": {}
+        }
+      }
+    ]
+  }
+
+
+  axios.post(url, messageBody,
+    {
+      headers:{
+        "Content-Type": "application/json",
+        "Authorization": whatsAppKey
+      }
+    }
+  )
+  .then((doc) => {
+    console.log("🚀 ~ file: utils.js:209 ~ .then ~ doc:", doc)
+    resolve(doc)
+  })
+  .catch((error) => {
+    console.log("🚀 ~ file: utils.js:213 ~ exports.sendWhatsappMassage= ~ error:", error)
+    reject(error)
+  })
+  
+})
 
 //New SMS gateway for Kenya 
 exports.sendKenyaSms = (to, msgContent) => {

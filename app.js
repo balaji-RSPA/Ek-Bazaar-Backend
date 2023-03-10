@@ -131,6 +131,15 @@ app.get("/send-daily-report", async function (req, res) {
 
 var options = {}
 
+// app.post('/sendWhatsappWelcome', async (req, res) => {
+//   const { receiver_number, first_name, dynamicname, website } = req.body;
+//   const { sendWhatsaapWelcome } = require('./src/controllers/web/whatsappTemplateController')
+
+//   const result = await sendWhatsaapWelcome(req.body)
+
+//   res.json(result)
+// })
+
 app.use('/api-docs/location', function (req, res, next) {
   swaggerLocation.host = req.get('host');
   req.swaggerDoc = swaggerLocation;

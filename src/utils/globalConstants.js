@@ -105,6 +105,8 @@ exports.tradeApiBaseUrl = NODE_ENV === 'production' ? 'https://tradeapi.ekbazaar
 
 exports.tradeSiteUrl = NODE_ENV === 'production' ? 'https://trade.ekbazaar.com/' : 'https://tradebazaar.tech-active.com/'
 
+exports.OneSiteUrl = NODE_ENV === 'production' ? 'http://onebazaar.com/' : 'https://tradeonebazaar.tech-active.com/'
+
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
   logo: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",
@@ -139,6 +141,10 @@ exports.stripeApiKeys = NODE_ENV === 'production' ? {clientKey: "", secretKey: "
   clientKey: "pk_test_51JhBmfSIrsAhsOaISFcd4J61fweaSlL7AwqYxZPzrNZXR1NfwPp3U6cF9CkYu68JE8rzksfo8dUMWhuLMbuazqru00XRhHRY7j", secretKey: "sk_test_51JhBmfSIrsAhsOaIafy9CUJ5SVhFBA2XtRXxdFLV5SvZFHuwIW52KbgtyZLz9BANufK3HYI1KGV94vaHCwzMcWrJ00q9gtQz7n"
 };
 
+exports.whatsAppKey = "Api-Key fvSYCVMb.m2BUUxjMXlbgKrtY4AGyTqDzZOpNujlA"
+
 exports.oneBazaarRequestOrigin = NODE_ENV === 'production' ? ["https://trade.onebazaar.com"] : ["http://localhost:8086", "https://tradeonebazaar.tech-active.com"];
 
 exports.tradeClientUrl = NODE_ENV === 'production' ? 'https://trade.ekbazaar.com/' : NODE_ENV === 'development' ? 'https://tradebazaar.tech-active.com/' : 'http://localhost:8085/'
+
+exports.tradeOnebazaarClientUrl = NODE_ENV === 'production' ? 'https://trade.ekbazaar.com/' : NODE_ENV === 'development' ? 'https://tradebazaar.tech-active.com/' : 'http://localhost:8085/'
