@@ -19,7 +19,7 @@ const {
   SellerPlanLogs,
   Chat,
 } = require("../../modules");
-const { tradeSiteUrl, tradeClientUrl, tradeOnebazaarClientUrl } = require('../../utils/globalConstants');
+const { tradeSiteUrl, tradeClientUrl, tradeOnebazaarClientUrl, OneSiteUrl } = require('../../utils/globalConstants');
 const { getSellerTypeAll } = require("../../modules/locationsModule");
 const {
   checkSellerExist,
@@ -514,7 +514,7 @@ module.exports.addUser = async (req, res, next) => {
         let first_name = seller && seller.name || 'Coustomer';
         let dynamicname = seller && seller.client;
 
-        let website = client === 'ekbazaar' ? tradeSiteUrl : tradeOnebazaarClientUrl
+        let website = client === 'ekbazaar' ? tradeSiteUrl : OneSiteUrl
 
         let whatsAppWelcomeData = {
           receiver_number,

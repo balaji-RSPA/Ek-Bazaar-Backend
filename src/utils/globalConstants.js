@@ -105,6 +105,8 @@ exports.tradeApiBaseUrl = NODE_ENV === 'production' ? 'https://tradeapi.ekbazaar
 
 exports.tradeSiteUrl = NODE_ENV === 'production' ? 'https://trade.ekbazaar.com/' : 'https://tradebazaar.tech-active.com/'
 
+exports.OneSiteUrl = NODE_ENV === 'production' ? 'http://onebazaar.com/' : 'https://tradeonebazaar.tech-active.com/'
+
 exports.siteURL = "https://www.tenders.ekbazaar.com"
 exports.imageURLS = {
   logo: "https://tradebazaarapi.tech-active.com/images/ekbazaarlogo.png",
