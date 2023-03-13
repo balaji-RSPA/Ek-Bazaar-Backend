@@ -511,7 +511,7 @@ module.exports.addUser = async (req, res, next) => {
 
       if (whatsappChecked){
         let receiver_number = seller && seller.mobile && seller.mobile.length && `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`;
-        let first_name = seller && seller.name || 'Coustomer';
+        let first_name = seller && seller.name || 'Customer';
         let dynamicname = seller && seller.client;
 
         let website = client === 'ekbazaar' ? tradeSiteUrl : OneSiteUrl
