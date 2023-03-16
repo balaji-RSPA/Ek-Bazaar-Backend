@@ -8,6 +8,8 @@ const AWS = require("aws-sdk");
 const { bcryptSalt } = require("./globalConstants");
 const { JWTTOKEN, awsKeys, razorPayCredentials } = require("./globalConstants");
 
+const base64 = require('base-64');
+
 const axios = require("axios");
 const { capitalizeFirstLetter } = require("./helpers");
 
@@ -219,19 +221,19 @@ exports.sendWhatsappMassage = async (body) => new Promise(async (resolve, reject
 //New SMS gateway for Kenya 
 exports.sendKenyaSms = (to, msgContent) => {
   return new Promise(async (smsSuccess, smsFailed) => {
-    let url = "https://api.onfonmedia.co.ke/v1/sms/SendBulkSMS", 
-      AccessKey = "HsT1BPC7KKj85shGdmbANN9gi4vCrnv0", 
+    let url = "https://api.onfonmedia.co.ke/v1/sms/SendBulkSMS",
+      AccessKey = "HsT1BPC7KKj85shGdmbANN9gi4vCrnv0",
       msgBody = {
         "SenderId": "TEK_BOX",
         "ApiKey": "MDAZR43U/Z24rhWFzdIaJg7GQjLTU6wkGwH7O4DrGkw=",
         "ClientId": "2c520bd8-42df-45c9-a08a-c2b99ecbb1c1",
         "MessageParameters": [
-            {
-                "Number": `254${to}`,
-                "Text": msgContent
-            
-            }
-        ] 
+          {
+            "Number": `254${to}`,
+            "Text": msgContent
+
+          }
+        ]
       };
     //country code is statically added as it's the format it works!! 
     //The API shared is sendBulkSMS not SendSMS, hence the above multi-number/msg body is used.!!!!
@@ -243,15 +245,15 @@ exports.sendKenyaSms = (to, msgContent) => {
         },
       }
     )
-    .then((apiResponse) => {
-      console.log(apiResponse.data)
-      smsSuccess(apiResponse.data)
-    })
-    .catch((apiErr) => {
-      console.log(apiErr, "=======SMS ERROR KENYA=======")
-      // smsFailed(apiErr.message)
-      smsSuccess({error: apiErr.message}) //to avoid unhandled rejections for now!!
-    });
+      .then((apiResponse) => {
+        console.log(apiResponse.data)
+        smsSuccess(apiResponse.data)
+      })
+      .catch((apiErr) => {
+        console.log(apiErr, "=======SMS ERROR KENYA=======")
+        // smsFailed(apiErr.message)
+        smsSuccess({ error: apiErr.message }) //to avoid unhandled rejections for now!!
+      });
   })
 }
 
@@ -275,6 +277,29 @@ exports.sendExotelSms = (to, msgBody) =>
       });
   });
 
+exports.sendIDMSms = (to, mesBody) => new Promise((resolve, reject) => {
+  const url = "https://api.i-digital-m.com/v1/sms";
+  const authString = "PLACEHOLDER-USERNAME:PLACEHOLDER-PASSWORD";
+  const authentication_params = base64.encode(authString);
+  const headers = {
+    'Authorization': 'Basic ' + authentication_params,
+    'Accept': 'application/json',
+    'Content-Type': 'application/x-www-form-urlencoded'
+  };
+  const data = {
+    'sender': 'PLACEHOLDER-SENDER',
+    'recipient': to,
+    'message': `${mesBody}`,
+  };
+
+  request.post({ url: url, form: data, headers: headers }, function (error, response, body) {
+    if (!error) {
+      resolve({ statusCode: response.statusCode, statusMessage: response.statusMessage, body: body });
+    } else {
+      resolve(error);
+    }
+  })
+})
 exports.messageContent = (productDetails, _loc, name) => {
   const message = `You have an enquiry from EkBazaar.com for ${capitalizeFirstLetter(
     productDetails.name.name
@@ -379,24 +404,24 @@ module.exports.deleteDigitalOceanDocs = async (query) => {
   });
 };
 
-module.exports.fetchRazorpayPayment =  async (paymentId) => {
+module.exports.fetchRazorpayPayment = async (paymentId) => {
   try {
     const fetchPayment = {
       method: "GET",
       url: `https://${razorPayCredentials.key_id}:${razorPayCredentials.key_secret}@api.razorpay.com/v1/payments/${paymentId}`,
     };
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve, reject) => {
       request(fetchPayment, function (error, response, body) {
-        if(error) reject(error);
-        else{
+        if (error) reject(error);
+        else {
           const paymentBody = JSON.parse(body);
           resolve(body)
           console.log("🚀 ~ file: utils.js ~ line 307 ~ paymentBody", paymentBody)
         }
       })
     })
-    
+
   } catch (error) {
-  console.log("🚀 ~ file: utils.js ~ line 301 ~ module.exports.fetchRazorpayPayment= ~ error", error)
+    console.log("🚀 ~ file: utils.js ~ line 301 ~ module.exports.fetchRazorpayPayment= ~ error", error)
   }
 }

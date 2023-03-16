@@ -3,7 +3,7 @@ const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
 const { respSuccess, respError } = require("../../utils/respHadler");
-const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms, sendKenyaSms } = require("../../utils/utils");
+const { createToken, encodePassword, sendSMS, sendwati, sendExotelSms, sendKenyaSms, sendIDMSms } = require("../../utils/utils");
 const {
   sendOtp,
   successfulRegistration,
@@ -66,6 +66,9 @@ const admin = {
 const algorithm = "aes-256-cbc";
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
+
+const request = require('request');
+const base64 = require('base-64');
 
 const {
   handleUserSession,
@@ -211,10 +214,13 @@ module.exports.sendOtp = async (req, res) => {
         // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
         let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
         let response = "";
-        if(code == "+254" || code == "254")
+        if(code == "+254" || code == "254"){
           response = await sendKenyaSms(mobile, otpMessage)
-        else 
-          response = await sendExotelSms(`${code}${mobile}`, otpMessage);
+        } else if (code == "+91" || code == "91"){
+          response = await sendExotelSms(`${code}${mobile}`, otpMessage) 
+        } else{
+          response = await sendIDMSms(`${code}${mobile}`, otpMessage)
+        }
         console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
       } else if (checkUser || (email && !reset)) {
         const message = {
