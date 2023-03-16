@@ -1,6 +1,7 @@
 const express = require("express");
 const { Router } = express;
 const router = Router();
+router.use(express.json());
 const user = require("../../controllers/web/userController");
 const auth = require("../../controllers/web/authController");
 const { authenticate } = require("../../middleware/auth");
