@@ -4,7 +4,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const _ = require("lodash");
 const moment = require("moment");
-const { Sellers, currencyExcenges, Payments } = require("../models");
+const { Sellers, currencyExcenges, Payments, MasterCollection } = require("../models");
 const {
   sellers,
   mastercollections,
@@ -24,7 +24,7 @@ const {
   getSellerSomeData,
 } = sellers;
 
-const { addCurrencyExcenge, updateCurrencyExcenge } = CurrencyConvrter
+const { addCurrencyExcenge, updateCurrencyExcenge, updateCurrencyExcengeINR, addCurrencyExcengeINR } = CurrencyConvrter
 const { updateMaster, updateMasterBulkProducts, getMasterCount, getMaster } = mastercollections;
 const { getSellerProducts, updateSellerProducts } = sellerProducts;
 const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue;
@@ -51,7 +51,7 @@ const { pricing } = globalVaraibles.authServiceURL();
 
 const axios = require('axios');
 // const { url } = require("inspector");
-const{ currencySymbole} = require('./symbole')
+const { currencySymbole } = require('./symbole')
 exports.sendQueEmails = async (req, res) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -771,22 +771,22 @@ exports.sendDailyCount = async (req, res) =>
       ];
 
       const totelSuccessPayment = await Payments.find({
-        $and:[
+        $and: [
           { paymentSuccess: true }
         ],
         createdAt: { $gte: dateyesterday, $lt: date },
       }).populate({
-        path:'sellerId',
-        populate:{
-          path:'busenessId'
+        path: 'sellerId',
+        populate: {
+          path: 'busenessId'
         }
       });
 
       let totelAmount = 0;
       let EKBSubscriptionCount = 0;
       let OneBazaarSubscriptionCount = 0
-      
-      let paymentDetails = totelSuccessPayment.map((payment,i) => {
+
+      let paymentDetails = totelSuccessPayment.map((payment, i) => {
         let obj = {};
 
         obj.count = i + 1;
@@ -796,16 +796,16 @@ exports.sendDailyCount = async (req, res) =>
 
         // console.log(payment.paymentResponse.amount,"payment.paymentResponse.amountpayment.paymentResponse.amount")
 
-        if (payment && payment.paymentResponse && payment.paymentResponse.amount){
+        if (payment && payment.paymentResponse && payment.paymentResponse.amount) {
           OneBazaarSubscriptionCount = OneBazaarSubscriptionCount + 1;
-          totelAmount += parseInt(payment.paymentResponse.amount) /100
+          totelAmount += parseInt(payment.paymentResponse.amount) / 100
 
-          obj.Amount = parseInt(payment.paymentResponse.amount)/100
-        } else if (payment && payment.paymentDetails && payment.paymentDetails.amount){
+          obj.Amount = parseInt(payment.paymentResponse.amount) / 100
+        } else if (payment && payment.paymentDetails && payment.paymentDetails.amount) {
           EKBSubscriptionCount = EKBSubscriptionCount + 1;
-          totelAmount += parseInt(payment.paymentDetails.amount)/100
+          totelAmount += parseInt(payment.paymentDetails.amount) / 100
 
-          obj.Amount = parseInt(payment.paymentDetails.amount)/100
+          obj.Amount = parseInt(payment.paymentDetails.amount) / 100
         }
 
         obj.hearingSource = payment && payment.sellerId && payment.sellerId.hearingSource && payment.sellerId.hearingSource.source || '';
@@ -816,7 +816,7 @@ exports.sendDailyCount = async (req, res) =>
         // console.log(obj, "$$$$$$$$$$$$$$$$$$$$$$$$")
         return obj
       })
-      
+
       // console.log(totelSuccessPayment, "-------------totelSuccessPayment--------------", totelAmount, EKBSubscriptionCount, OneBazaarSubscriptionCount);
 
 
@@ -1516,11 +1516,13 @@ exports.sendDailyCount = async (req, res) =>
 
 exports.createCurrencyExcenge = async (req, res) => new Promise(async (resolve, reject) => {
   try {
-    const url = 'https://api.apilayer.com/exchangerates_data/symbols?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=USD'
+    const url = 'https://api.apilayer.com/exchangerates_data/symbols?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=INR'
     let data = await axios.get(url)
+    console.log("🚀 ~ file: cron.js:1521 ~ exports.createCurrencyExcenge= ~ data:", data)
 
     let ourData = data.data.symbols
-    let excengeData = await axios.get('https://api.apilayer.com/exchangerates_data/latest?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=USD');
+    let excengeData = await axios.get('https://api.apilayer.com/exchangerates_data/latest?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=INR');
+    console.log("🚀 ~ file: cron.js:1525 ~ exports.createCurrencyExcenge= ~ excengeData:", excengeData)
     let excengeObj = excengeData && excengeData.data && excengeData.data.rates;
     let currList = []
     for (const property in ourData) {
@@ -1528,14 +1530,15 @@ exports.createCurrencyExcenge = async (req, res) => new Promise(async (resolve, 
       let myObj = {
         currencyName: ourData[property],
         code: property,
-        base: 'USD',
-        exchangeRate: excengeObj[property]
+        base: 'INR',
+        exchangeRate: excengeObj[property],
+        currency_symbol:property
       }
 
       currList.push(myObj)
     }
 
-    const responce = await addCurrencyExcenge(currList)
+    const responce = await addCurrencyExcengeINR(currList)
     resolve(responce)
   } catch (error) {
     Logger.error(error.message);
@@ -1544,17 +1547,17 @@ exports.createCurrencyExcenge = async (req, res) => new Promise(async (resolve, 
   }
 })
 
-exports.updateCurrencyExcenge = async(req, res) => new Promise(async (resolve, reject) => {
+exports.updateCurrencyExcenge = async (req, res) => new Promise(async (resolve, reject) => {
   try {
     let excengeData = await axios.get('https://api.apilayer.com/exchangerates_data/latest?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=USD');
     let excengeObj = excengeData && excengeData.data && excengeData.data.rates;
 
     let responce = []
 
-    for(const property in excengeObj){
+    for (const property in excengeObj) {
       console.log(`code is ${property} and name is ${excengeObj[property]}`);
       let query = { code: property };
-      let data = { exchangeRate: excengeObj[property]}
+      let data = { exchangeRate: excengeObj[property] }
 
       let updatedRes = await updateCurrencyExcenge(query, data);
 
@@ -1571,16 +1574,248 @@ exports.updateCurrencyExcenge = async(req, res) => new Promise(async (resolve, r
 
 exports.getCurrencySymboles = async (req, res) => new Promise(async (resolve, reject) => {
   // let result = await axios.get()
-  console.log(currencySymbole.length,"--------vvvvvvvvvvvv");
+  console.log(currencySymbole.length, "--------vvvvvvvvvvvv");
   let responce = [];
-  for (let i = 0; i < currencySymbole.length; i++){
+  for (let i = 0; i < currencySymbole.length; i++) {
     let curr = currencySymbole[i];
     let query = { code: curr.iso }
     let data = { currency_symbol: curr.currency_symbol }
-    if (curr && curr.currency_symbol){
-      let updated = await updateCurrencyExcenge(query,data)
+    if (curr && curr.currency_symbol) {
+      let updated = await updateCurrencyExcengeINR(query, data)
       responce.push(updated)
     }
   }
   resolve(responce)
+})
+
+
+exports.getProductCount = async (req, res) => new Promise(async (resolve, reject) => {
+  try {
+
+    const query = {
+      bool: {
+        must: [
+          {
+            term: {
+              status: true,
+            },
+          },
+          {
+            exists: {
+              field: "offers",
+            },
+          },
+          {
+            range: {
+              "offers.validity.toDate": {
+                // "gte": new Date().toISOString()
+                gte: new Date(moment.utc().startOf("day")),
+              },
+            },
+          },
+        ],
+      },
+    };
+
+    const query_daily_offers = {
+      bool: {
+        must: [
+          {
+            exists: {
+              field: "productDetails.price.price",
+            },
+          }
+        ],
+        must_not: [
+          {
+            term: {
+              "productDetails.price.price": ""
+            }
+          }
+        ]
+      },
+    };
+
+    // const totalOffers = await searchFromElastic(
+    //   query,
+    //   { skip: 0, limit: 1 },
+    //   // aggs
+    // );
+    // let totalOfferCount =
+    //   (totalOffers && totalOffers.length && totalOffers[1]) || 0;
+
+    const dailyOffers = await searchFromElastic(
+      query_daily_offers,
+      { skip: 0, limit: 10 },
+      // aggs
+    );
+
+    resolve({ /* totalOffers, */ dailyOffers })
+  } catch (error) {
+    reject(error.message);
+  }
+})
+
+const mongoose = require("mongoose");
+const { Schema, model, Types } = mongoose;
+const { ObjectId } = Types;
+
+const keeptrackofskip = new Schema({
+  skip: {
+    type: Number,
+  },
+  skip1: {
+    type: Number,
+    default: 0
+  },
+  limit: {
+    type: Number
+  }
+}, {
+  timestamps: true,
+  versionKey: false
+})
+
+let Track = model('keepTrack', keeptrackofskip)
+
+exports.updateMasterCollection = async (data) => new Promise(async (resolve, reject) => {
+  try {
+    let query = {
+      $match: {
+        "userId": {
+          $ne: null
+        },
+        "productDetails.price.price": {
+          $ne: ""
+        }
+      }
+    }
+
+    let keep = await Track.findOne({})
+
+    let skip = keep.skip;
+    let limit = keep.limit;
+
+    console.log(`***********Currenct Skip is: ${skip} with limit ${limit}******************`)
+
+    let data = await MasterCollection.aggregate([query]).skip(skip).limit(limit)
+
+
+    if (data && data.length) {
+
+      for (let i = 0; i < data.length; i++) {
+        let sellerProduct = data[i]
+
+        if ((sellerProduct && sellerProduct.sellerId && sellerProduct.sellerId.location && sellerProduct.sellerId.location.country && sellerProduct.sellerId.location.country.name === 'india') || (sellerProduct && sellerProduct.sellerId && sellerProduct.sellerId.contactDetails && sellerProduct.sellerId.contactDetails.location && sellerProduct.sellerId.contactDetails.location.country && sellerProduct.sellerId.contactDetails.location.country.name === 'india')) {
+
+
+          if (sellerProduct && sellerProduct.offers && sellerProduct.offers !== null && sellerProduct.offers.price) {
+            sellerProduct.offers.price.currency = "INR"
+          }
+          if (sellerProduct && sellerProduct.productDetails && sellerProduct.productDetails.price) {
+            sellerProduct.productDetails.price.currency = "INR"
+          }
+
+          console.log(sellerProduct && sellerProduct.productDetails && sellerProduct.productDetails.price, "======EKB==========", sellerProduct && sellerProduct.offers && sellerProduct.offers.price, i)
+
+
+        } else {
+
+
+          if (sellerProduct && sellerProduct.offers !== null && sellerProduct.offers.price) {
+            sellerProduct.offers.price.currency = "USD"
+          }
+          if (sellerProduct && sellerProduct.productDetails && sellerProduct.productDetails.price) {
+            sellerProduct.productDetails.price.currency = "USD"
+          }
+
+          console.log(sellerProduct && sellerProduct.productDetails && sellerProduct.productDetails.price, "============ONE==============", sellerProduct && sellerProduct.offers && sellerProduct.offers.price, i)
+
+        }
+
+        let updatedData = await MasterCollection.findByIdAndUpdate(sellerProduct._id, { $set: sellerProduct }, { new: true });
+
+
+        console.log(updatedData, "==================updatedData======================", i)
+
+      }
+
+      let updateSkip = await Track.findOneAndUpdate({}, { $set: { skip: skip + limit } }, { new: true })
+
+      if (updateSkip) {
+        resolve(data)
+      }
+
+    } else {
+      console.log("*****************No Data Avilable*********************")
+    }
+
+
+  } catch (error) {
+    reject(error)
+  }
+})
+
+exports.updateMasterCollectionAmount = async (data) => new Promise(async (resolve, reject) => {
+  try {
+    let query = {
+      $match: {
+        "userId": {
+          $ne: null
+        },
+        "productDetails.price.price": {
+          $ne: ""
+        },
+        "productDetails.price.currency":"USD"
+      }
+    }
+
+    let keep = await Track.findOne({})
+
+    let skip = keep.skip;
+    let limit = keep.limit;
+
+    console.log(`***********Currenct Skip is: ${skip} with limit ${limit}******************`)
+
+    let data = await MasterCollection.aggregate([query]).count('count')/* .skip(skip).limit(limit) */
+
+    resolve({data:data})
+
+
+    // if (data && data.length) {
+
+    //   for (let i = 0; i < data.length; i++) {
+    //     let sellerProduct = data[i]
+
+    //     if (sellerProduct && sellerProduct.offers !== null && sellerProduct.offers.price) {
+    //       sellerProduct.offers.price.price = parseInt(sellerProduct.offers.price.price)/75
+    //     }
+    //     if (sellerProduct && sellerProduct.productDetails && sellerProduct.productDetails.price) {
+    //       sellerProduct.productDetails.price.price = parseInt(sellerProduct.productDetails.price.price) / 75
+    //     }
+
+    //     console.log(sellerProduct && sellerProduct.productDetails && sellerProduct.productDetails.price, "============ONE==============", sellerProduct && sellerProduct.offers && sellerProduct.offers.price, i)
+
+
+    //     let updatedData = await MasterCollection.findByIdAndUpdate(sellerProduct._id, { $set: sellerProduct }, { new: true });
+
+
+    //     console.log(updatedData, "==================updatedData======================", i)
+
+    //   }
+
+    //   let updateSkip = await Track.findOneAndUpdate({}, { $set: { skip: skip + limit } }, { new: true })
+
+    //   if (updateSkip) {
+    //     resolve(data)
+    //   }
+
+    // } else {
+    //   console.log("*****************No Data Avilable*********************")
+    // }
+
+
+  } catch (error) {
+    reject(error)
+  }
 })

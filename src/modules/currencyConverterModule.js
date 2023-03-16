@@ -1,4 +1,4 @@
-const { CurrencyConvters, currencyExcenges } = require('../models')
+const { CurrencyConvters, currencyExcenges, currencyINRExcenges } = require('../models')
 
 
 // exports.findCurrencyConverter = () =>
@@ -56,6 +56,56 @@ exports.updateCurrencyExcenge = async (query, data) => new Promise((resolve, rej
 
 exports.getAllCurrency = async (query) => new Promise((resolve, reject) => {
     currencyExcenges.find(query)
+        .then((doc) => {
+            console.log("🚀 ~ file: currencyConverterModule.js:60 ~ .then ~ doc:", doc)
+            resolve(doc)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+})
+
+
+/* *****************Now for INR********************** */
+
+
+exports.findCurrencyConverterINR = (query) =>
+    new Promise((resolve, reject) => {
+        currencyINRExcenges.find(query)
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch((error) => {
+                reject(error)
+            })
+    })
+
+
+exports.addCurrencyExcengeINR = async (data) => new Promise(async (resolve, reject) => {
+    currencyINRExcenges.create(data)
+        .then((doc) => {
+
+            console.log(data, '------------', doc)
+            resolve(doc)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+});
+
+exports.updateCurrencyExcengeINR = async (query, data) => new Promise((resolve, reject) => {
+    currencyINRExcenges.findOneAndUpdate(query, { $set: data }, { new: true })
+        .then(doc => {
+            console.log(data, query, '------------', doc)
+            resolve(doc)
+        })
+        .catch((err) => {
+            reject(err)
+        })
+})
+
+exports.getAllCurrencyINR = async (query) => new Promise((resolve, reject) => {
+    currencyINRExcenges.find(query)
         .then((doc) => {
             console.log("🚀 ~ file: currencyConverterModule.js:60 ~ .then ~ doc:", doc)
             resolve(doc)

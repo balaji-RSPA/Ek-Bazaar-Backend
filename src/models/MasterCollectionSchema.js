@@ -239,7 +239,13 @@ const offerSchema = new Schema({
         unit: {
             type: String,
             trim: true
+        },
+        currency: {
+            type: String,
+            trim: true,
+            default: null
         }
+
     },
     qty: {
         qty: {
@@ -508,6 +514,14 @@ const masterCollectionSchema = new Schema(
 
 masterCollectionSchema.index({
     'userId._id': 1
+})
+
+masterCollectionSchema.index({
+    "productDetails.price.price":1
+})
+
+masterCollectionSchema.index({
+    "productDetails.price.currency": 1
 })
 
 

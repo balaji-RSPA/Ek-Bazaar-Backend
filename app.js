@@ -21,7 +21,7 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount } = require('./src/crons/cron')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
 const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
@@ -244,6 +244,12 @@ app.get("/getSellersList", async function (req, res) {
   // res.send('Its delete records  live')
 });
 
+app.get("/getProductCount", async (req, res) => {
+  let responce = await getProductCount()
+
+  res.json(responce)
+})
+
 app.get("/getPaymentList", async function (req, res) {
   try {
     console.log("getSellersPaymentList start++++")
@@ -386,6 +392,18 @@ server.on("listening", () => {
   console.log(`Listening:${server.address().port}`);
   Logger.info(`Listening:${server.address().port}`);
 });
+
+if (env.NODE_ENV === 'production1'){
+  const updateMaster = cron.schedule("* * * * *", async () => {
+    updateMaster.stop();
+
+    console.log("------------updateMaster crone Started-----------")
+    await updateMasterCollectionAmount()
+    console.log("---------------updateMaster cron completed----------")
+
+    updateMaster.start();
+  })
+}
 
 if (env.NODE_ENV === 'production1') {
   const dailyCount = cron.schedule("30 2 * * *", async () => {
