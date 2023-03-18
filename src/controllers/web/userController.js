@@ -375,7 +375,8 @@ module.exports.addUser = async (req, res, next) => {
       _user,
       url,
       _base,
-      whatsappChecked
+      whatsappChecked,
+      isMobileApp
     } = req.body;
     console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
@@ -407,7 +408,8 @@ module.exports.addUser = async (req, res, next) => {
         state: user && user.state || null,
       },
       isPartialyRegistor: true,
-      client
+      client,
+      isMobileApp: isMobileApp || false
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }

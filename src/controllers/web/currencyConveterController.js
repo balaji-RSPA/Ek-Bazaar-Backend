@@ -1,7 +1,7 @@
 const { respSuccess, respError } = require("../../utils/respHadler");
 const { CurrencyConvrter } = require('../../modules');
 
-const { findCurrencyConverter, addConverter, getAllCurrency } = CurrencyConvrter
+const { findCurrencyConverter, addConverter, getAllCurrency, getAllCurrencyINR } = CurrencyConvrter
 
 
 module.exports.getCurrencyConveter = async (req, res) => {
@@ -43,9 +43,10 @@ module.exports.getAllCurrency = async (req,res) => {
 module.exports.getSingleCurrency = async (req, res) => {
     try {
         const { value } = req.query
-        let singleCurrency = await getAllCurrency({ code: value })
+        let singleUSDCurrency = await getAllCurrency({ code: value })
+        let singleINRCurrency = await getAllCurrencyINR({ code: value })
 
-        respSuccess(res, singleCurrency, "Currency Convter Fetch Success")
+        respSuccess(res, { "USD": singleUSDCurrency, "INR": singleINRCurrency }, "Currency Convter Fetch Success")
     } catch (error) {
         console.log("The Error Part", error)
         respError(res, error.message);

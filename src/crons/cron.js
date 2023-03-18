@@ -4,7 +4,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const _ = require("lodash");
 const moment = require("moment");
-const { Sellers, currencyExcenges, Payments, MasterCollection } = require("../models");
+const { Sellers, currencyExcenges, Payments, MasterCollection, SellerProducts } = require("../models");
 const {
   sellers,
   mastercollections,
@@ -734,6 +734,19 @@ exports.sendDailyCount = async (req, res) =>
         .count()
         .exec();
 
+      const totalRegisteredSellersFromApp = await Sellers.find({
+        $and: [
+          { sellerProductId: { $exists: true } },
+          { "hearingSource.referralCode": { $exists: true } },
+          { $where: "this.sellerProductId.length > 0" },
+          { userId: { $ne: null } },
+          { isMobileApp: true }
+        ],
+        createdAt: { $gte: registerdate, $lt: date },
+      })
+        .count()
+        .exec();
+
       console.log(
         "🚀 ~ file: cron.js ~ line 452 ~ exports.sendDailyCount= ~ totalSellerCount",
         totalSellerCount,
@@ -1036,6 +1049,7 @@ exports.sendDailyCount = async (req, res) =>
           return {
             name: (v.name && v.name) || null,
             businessName: (v.busenessId && v.busenessId.name) || "",
+            registerdFrom: v.isMobileApp ? "MobileApp" : "Website",
             email: (v.email && v.email) || "",
             mobile:
               (v.mobile &&
@@ -1482,6 +1496,7 @@ exports.sendDailyCount = async (req, res) =>
                                     <h4>Registered Sellers: <span>${
                                       /* totalSellerCount.length */ totalRegisteredSellers
           }</span></h4>
+                                    <h4>Registered Sellers From App: <span>${totalRegisteredSellersFromApp}</span></h4>
                                     <h4>Total Offers: <span>${totalOfferCount}</span></h4>
                                     <h4>Todays Offers: <span>${dailyOffersCoount}</span></h4>
                                     <h4> Total Subscriptions(Ekbazaar): <span>${EKBSubscriptionCount}</span></h4>
@@ -1592,31 +1607,6 @@ exports.getCurrencySymboles = async (req, res) => new Promise(async (resolve, re
 exports.getProductCount = async (req, res) => new Promise(async (resolve, reject) => {
   try {
 
-    const query = {
-      bool: {
-        must: [
-          {
-            term: {
-              status: true,
-            },
-          },
-          {
-            exists: {
-              field: "offers",
-            },
-          },
-          {
-            range: {
-              "offers.validity.toDate": {
-                // "gte": new Date().toISOString()
-                gte: new Date(moment.utc().startOf("day")),
-              },
-            },
-          },
-        ],
-      },
-    };
-
     const query_daily_offers = {
       bool: {
         must: [
@@ -1691,6 +1681,8 @@ exports.updateMasterCollection = async (data) => new Promise(async (resolve, rej
       }
     }
 
+    // let keep = await Track.create({ skip: 0, limit: 100, skip1: 0 })
+
     let keep = await Track.findOne({})
 
     let skip = keep.skip;
@@ -1699,6 +1691,7 @@ exports.updateMasterCollection = async (data) => new Promise(async (resolve, rej
     console.log(`***********Currenct Skip is: ${skip} with limit ${limit}******************`)
 
     let data = await MasterCollection.aggregate([query]).skip(skip).limit(limit)
+    console.log("🚀 ~ file: cron.js:1719 ~ exports.updateMasterCollection= ~ data:", data)
 
 
     if (data && data.length) {
@@ -1722,7 +1715,7 @@ exports.updateMasterCollection = async (data) => new Promise(async (resolve, rej
         } else {
 
 
-          if (sellerProduct && sellerProduct.offers !== null && sellerProduct.offers.price) {
+          if (sellerProduct && sellerProduct.offers && sellerProduct.offers !== null &&   sellerProduct.offers.price) {
             sellerProduct.offers.price.currency = "USD"
           }
           if (sellerProduct && sellerProduct.productDetails && sellerProduct.productDetails.price) {
@@ -1816,6 +1809,26 @@ exports.updateMasterCollectionAmount = async (data) => new Promise(async (resolv
 
 
   } catch (error) {
+    reject(error)
+  }
+})
+
+
+exports.deleteMasterColl = async () => new Promise(async (resolve, reject) => {
+  try {
+    // let query = {
+    //   $match: {
+    //     "userId": null
+    //   }
+    // }
+
+    // console.log(query,"------------------")
+
+    let data = await SellerProducts.deleteMany({ "userId": null })
+
+    resolve(data)
+  } catch (error) {
+    console.log("🚀 ~ file: cron.js:1831 ~ exports.deleteMasterColl ~ error:", error)
     reject(error)
   }
 })
