@@ -234,7 +234,7 @@ exports.sendExotelSms = (to, msgBody) =>
 
 exports.sendIDMSms = (to, mesBody) => new Promise((resolve, reject) => {
   const url = "https://api.i-digital-m.com/v1/sms";
-  const authString = "PLACEHOLDER-USERNAME:PLACEHOLDER-PASSWORD";
+  const authString = "TCAcbDY1:Urn7RgB1";
   const authentication_params = base64.encode(authString);
   const headers = {
     'Authorization': 'Basic ' + authentication_params,
@@ -242,7 +242,7 @@ exports.sendIDMSms = (to, mesBody) => new Promise((resolve, reject) => {
     'Content-Type': 'application/x-www-form-urlencoded'
   };
   const data = {
-    'sender': 'PLACEHOLDER-SENDER',
+    'sender': 'One-Bazar',
     'recipient': to,
     'message': `${mesBody}`,
   };
