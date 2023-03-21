@@ -17,6 +17,7 @@ const Offers = require('./offerRouter')
 const News = require('./newsRoutes');
 const Commodity = require('./commodityRoutes');
 const currencyConvter = require('./currencyConvterRoutes')
+const whatsApp = require('./whatsappRoutes')
 
 router.use(location)
 router.use(buyer)
@@ -36,5 +37,6 @@ router.use(Offers)
 router.use(News)
 router.use(Commodity)
 router.use(currencyConvter)
+router.use(whatsApp)
 
 module.exports = router

@@ -45,6 +45,7 @@ const LanguageTemplateL5 = require('./languageTemplateL5Schema');
 const LanguageTemplateOne = require('./languageTemplateOneSchema')
 const CurrencyConvters = require('./currencyConverterSchema')
 const currencyExcenges = require('./currencySchema')
+const currencyINRExcenges = require('./currencyINRSchema')
 const SubChargedRes = require('./subChargedHookSchema')
 const SubPendingRes = require('./subPendingHookSchema')
 const SubHaltedRes = require('./subHaltedHookSchema')
@@ -54,6 +55,7 @@ const PaymentData = require('./paymentDataSchema');
 const Contact = require('./contactSchema')
 const LanguageTemplateL4One = require('./languageTemplateL4OneSchema')
 const LanguageTemplateL5One = require('./languageTemplateL5OneSchema')
+const WhatsappTemplate = require('./whatsappTemplateSchema')
 
 module.exports = {
     Cities,
@@ -110,5 +112,7 @@ module.exports = {
     PaymentFailedHook,
     PriceUnit,
     Contact,
-    currencyExcenges
+    currencyExcenges,
+    WhatsappTemplate,
+    currencyINRExcenges
 }

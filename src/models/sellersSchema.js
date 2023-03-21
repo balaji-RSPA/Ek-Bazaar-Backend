@@ -154,6 +154,10 @@ const sellersSchema = new Schema(
       default: false,
       // required: true
     },
+    isMobileApp:{
+      type:Boolean,
+      default:false
+    },
     hearingSource: {
       source: {
         type: String,

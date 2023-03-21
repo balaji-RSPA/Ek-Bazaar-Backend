@@ -21,7 +21,7 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount } = require('./src/crons/cron')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
 const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
@@ -131,6 +131,15 @@ app.get("/send-daily-report", async function (req, res) {
 
 var options = {}
 
+// app.post('/sendWhatsappWelcome', async (req, res) => {
+//   const { receiver_number, first_name, dynamicname, website } = req.body;
+//   const { sendWhatsaapWelcome } = require('./src/controllers/web/whatsappTemplateController')
+
+//   const result = await sendWhatsaapWelcome(req.body)
+
+//   res.json(result)
+// })
+
 app.use('/api-docs/location', function (req, res, next) {
   swaggerLocation.host = req.get('host');
   req.swaggerDoc = swaggerLocation;
@@ -234,6 +243,12 @@ app.get("/getSellersList", async function (req, res) {
   }
   // res.send('Its delete records  live')
 });
+
+app.get("/getProductCount", async (req, res) => {
+  let responce = await getProductCount()
+ 
+  res.json(responce)
+})
 
 app.get("/getPaymentList", async function (req, res) {
   try {
@@ -363,7 +378,9 @@ app.get("/checkcurrencyDemo",async(req, res) => {
 app.get('/getMasterCount', async (req, res) => {
 
   try {
-    const result = await getMasterCount();
+    // const result = await getMasterCount();
+    // let result = await updateMasterCollection();
+    let result = await deleteMasterColl()
 
     res.json(result)
   } catch (error) {
@@ -377,6 +394,19 @@ server.on("listening", () => {
   console.log(`Listening:${server.address().port}`);
   Logger.info(`Listening:${server.address().port}`);
 });
+
+// if (env.NODE_ENV === 'development'){
+//   const updateMaster = cron.schedule("* * * * *", async () => {
+//     updateMaster.stop();
+
+//     console.log("------------updateMaster crone Started-----------")
+//     await updateMasterCollection()
+//     // await updateMasterCollectionAmount()
+//     console.log("---------------updateMaster cron completed----------")
+
+//     updateMaster.start();
+//   })
+// }
 
 if (env.NODE_ENV === 'production1') {
   const dailyCount = cron.schedule("30 2 * * *", async () => {

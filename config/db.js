@@ -68,7 +68,8 @@ let host = '', conf = {
 if (env) {
   if (env.NODE_ENV === 'staging' || env.NODE_ENV === 'development') {
 
-    conf.host = 'tradebazaarapi.tech-active.com:5085'
+    // conf.host = 'tradebazaarapi.tech-active.com:5085'
+    conf.host = '167.71.229.163:5006'
     // conf.host = '159.89.166.142:5085'
 
     // new single node multi shard elasticsearch
