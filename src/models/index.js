@@ -56,6 +56,7 @@ const Contact = require('./contactSchema')
 const LanguageTemplateL4One = require('./languageTemplateL4OneSchema')
 const LanguageTemplateL5One = require('./languageTemplateL5OneSchema')
 const WhatsappTemplate = require('./whatsappTemplateSchema')
+const currentOTPs = require('./otpSchema')
 
 module.exports = {
     Cities,
@@ -114,5 +115,6 @@ module.exports = {
     Contact,
     currencyExcenges,
     WhatsappTemplate,
-    currencyINRExcenges
+    currencyINRExcenges,
+    currentOTPs
 }

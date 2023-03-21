@@ -99,6 +99,7 @@ const { addMaster, updateMaster, bulkDeleteMasterProducts, updateMasterSellerDet
 const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
 const { getMasterRecords } = require("../../modules/masterModule");
+const { currentOTPs } = require("../../models")
 const { username, password, senderID, smsURL } = sms
 
 const isProd = process.env.NODE_ENV === "production";
@@ -231,6 +232,11 @@ module.exports.sendOtp = async (req, res) => {
 
     if (isProd) {
       otp = Math.floor(1000 + Math.random() * 9000);
+
+      // let reff = await currentOTPs.create({ otp })
+
+      // otp = reff._id
+
       otpMessage = otpVerification({ otp, url });
       if (mobile) {
         const { otpMessage, templateId } = sendOtp({ reset, otp });
