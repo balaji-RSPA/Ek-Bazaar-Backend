@@ -1,4 +1,5 @@
 const camelcaseKeys = require("camelcase-keys");
+const CallBack=require("../../models/callback")
 const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
@@ -178,6 +179,28 @@ module.exports.checkUserExistOrNot = async (req, res) => {
     respError(res, error.message);
   }
 };
+
+module.exports.callBack = async (req, res) => {
+  // console.log(req.body);
+  const { name, mobileNumber } = req.body
+
+  const user = await CallBack.findOne({ mobileNumber });
+  if (user) {
+    return res.status(409).json({
+      status: "Failed",
+      message: "This Mobile Number Already Sumitted"
+    });
+  }
+  const data = await CallBack.create({
+    name,
+    mobileNumber
+  })
+  return res.status(200).json({
+    status: "Success",
+    message: "User successfuully added for Call Back",
+    data
+  })
+}
 
 module.exports.sendOtp = async (req, res) => {
   try {
