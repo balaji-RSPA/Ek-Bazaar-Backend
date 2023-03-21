@@ -382,41 +382,45 @@ module.exports.uploadChatLanguageCategoryOne = async (req, res) => {
 
             categoryNames: {
               en: cat.Category.trim() || "",
-              nl: cat.Dutch.trim() || "",
-              ar: cat.Arabic.trim() || "",
-              ko: cat.Korean.trim() || "",
-              vi: cat.Vietnamese.trim() || "",
-              tr: cat.Turkish.trim() || "",
-              jv: cat.Javanese.trim() || "",
-              fa: cat.Persian.trim() || "",
-              ms: cat.Malay.trim() || "",
-              th: cat.Thai.trim() || "",
-              de: cat.German.trim() || "",
-              pl: cat.Polish.trim() || "",
-              fr: cat.French.trim() || "",
-              "zh-CN": cat.Chinese.trim() || "",
-              pt: cat.Portuguese.trim() || "",
-              es: cat.Spanish.trim() || "",
-              it: cat.Italian.trim() || "",
+              sw: cat.Swahili.trim() || "",
+              zu: cat.Zulu.trim() || ""
+              // nl: cat.Dutch.trim() || "",
+              // ar: cat.Arabic.trim() || "",
+              // ko: cat.Korean.trim() || "",
+              // vi: cat.Vietnamese.trim() || "",
+              // tr: cat.Turkish.trim() || "",
+              // jv: cat.Javanese.trim() || "",
+              // fa: cat.Persian.trim() || "",
+              // ms: cat.Malay.trim() || "",
+              // th: cat.Thai.trim() || "",
+              // de: cat.German.trim() || "",
+              // pl: cat.Polish.trim() || "",
+              // fr: cat.French.trim() || "",
+              // "zh-CN": cat.Chinese.trim() || "",
+              // pt: cat.Portuguese.trim() || "",
+              // es: cat.Spanish.trim() || "",
+              // it: cat.Italian.trim() || "",
             },
             questions: {
               en: [],
-              nl: [],
-              ar: [],
-              ko: [],
-              vi: [],
-              tr: [],
-              jv: [],
-              fa: [],
-              ms: [],
-              th: [],
-              de: [],
-              pl: [],
-              fr: [],
-              "zh-CN": [],
-              pt: [],
-              es: [],
-              it: [],
+              sw: [],
+              zu: []
+              // nl: [],
+              // ar: [],
+              // ko: [],
+              // vi: [],
+              // tr: [],
+              // jv: [],
+              // fa: [],
+              // ms: [],
+              // th: [],
+              // de: [],
+              // pl: [],
+              // fr: [],
+              // "zh-CN": [],
+              // pt: [],
+              // es: [],
+              // it: [],
             },
           };
 
@@ -737,64 +741,70 @@ module.exports.uploadChatLanguageQuestionsOne = async (req, res) => {
           console.log(catDetails, "catDetails");
           // console.log(catDetails, ' records ------------------')
           let English = [],
-            Dutch = [],
-            Arabic = [],
-            Korean = [],
-            Vietnamese = [],
-            Turkish = [],
-            Javanese = [],
-            Persian = [],
-            Malay = [],
-            Thai = [],
-            German = [],
-            Polish = [],
-            French = [],
-            Chinese = [],
-            Portuguese = [],
-            Spanish = [],
-            Italian = [];
+              Swahili = [],
+              Zulu = [];
+            // Dutch = [],
+            // Arabic = [],
+            // Korean = [],
+            // Vietnamese = [],
+            // Turkish = [],
+            // Javanese = [],
+            // Persian = [],
+            // Malay = [],
+            // Thai = [],
+            // German = [],
+            // Polish = [],
+            // French = [],
+            // Chinese = [],
+            // Portuguese = [],
+            // Spanish = [],
+            // Italian = [];
 
           if (catDetails) {
             const oldQue = catDetails.questions;
 
             English.push(cat.English.trim());
-            Dutch.push(cat.Dutch.trim());
-            Arabic.push(cat.Arabic.trim());
-            Korean.push(cat.Korean.trim());
-            Vietnamese.push(cat.Vietnamese.trim());
-            Turkish.push(cat.Turkish.trim());
-            Javanese.push(cat.Javanese.trim());
-            Persian.push(cat.Persian.trim());
-            Malay.push(cat.Malay.trim());
-            Thai.push(cat.Thai.trim());
+            Swahili.push(cat.Swahili.trim());
+            Zulu.push(cat.Zulu.trim());
+            // Dutch.push(cat.Dutch.trim());
+            // Arabic.push(cat.Arabic.trim());
+            // Korean.push(cat.Korean.trim());
+            // Vietnamese.push(cat.Vietnamese.trim());
+            // Turkish.push(cat.Turkish.trim());
+            // Javanese.push(cat.Javanese.trim());
+            // Persian.push(cat.Persian.trim());
+            // Malay.push(cat.Malay.trim());
+            // Thai.push(cat.Thai.trim());
 
-            German.push(cat.German.trim());
-            Polish.push(cat.Polish.trim());
-            French.push(cat.French.trim());
-            Chinese.push(cat.Chinese.trim());
-            Portuguese.push(cat.Portuguese.trim());
-            Spanish.push(cat.Spanish.trim());
-            Italian.push(cat.Italian.trim());
+            // German.push(cat.German.trim());
+            // Polish.push(cat.Polish.trim());
+            // French.push(cat.French.trim());
+            // Chinese.push(cat.Chinese.trim());
+            // Portuguese.push(cat.Portuguese.trim());
+            // Spanish.push(cat.Spanish.trim());
+            // Italian.push(cat.Italian.trim());
 
             const question = {
               en: [...oldQue["en"], ...English],
-              nl: [...oldQue["nl"], ...Dutch],
-              ar: [...oldQue["ar"], ...Arabic],
-              ko: [...oldQue["ko"], ...Korean],
-              vi: [...oldQue["vi"], ...Vietnamese],
-              tr: [...oldQue["tr"], ...Turkish],
-              jv: [...oldQue["jv"], ...Javanese],
-              fa: [...oldQue["fa"], ...Persian],
-              ms: [...oldQue["ms"], ...Malay],
-              th: [...oldQue["th"], ...Thai],
+              sw: [...oldQue["sw"], ...Swahili],
+              zu: [...oldQue["zu"], ...Zulu]
+              // nl: [...oldQue["nl"], ...Dutch],
+              // ar: [...oldQue["ar"], ...Arabic],
+              // ko: [...oldQue["ko"], ...Korean],
+              // vi: [...oldQue["vi"], ...Vietnamese],
+              // tr: [...oldQue["tr"], ...Turkish],
+              // jv: [...oldQue["jv"], ...Javanese],
+              // fa: [...oldQue["fa"], ...Persian],
+              // ms: [...oldQue["ms"], ...Malay],
+              // th: [...oldQue["th"], ...Thai],
 
-              de: [...oldQue["de"], ...German],
-              pl: [...oldQue["pl"], ...Polish],
-              fr: [...oldQue["fr"], ...French],
-              "zh-CN": [...oldQue["zh-CN"], ...Chinese],
-              pt: [...oldQue["pt"], ...Portuguese],
-              es: [...oldQue["es"], ...Spanish],
-              it: [...oldQue["it"], ...Italian],
+              // de: [...oldQue["de"], ...German],
+              // pl: [...oldQue["pl"], ...Polish],
+              // fr: [...oldQue["fr"], ...French],
+              // "zh-CN": [...oldQue["zh-CN"], ...Chinese],
+              // pt: [...oldQue["pt"], ...Portuguese],
+              // es: [...oldQue["es"], ...Spanish],
+              // it: [...oldQue["it"], ...Italian],
             };
 
             const data = {
