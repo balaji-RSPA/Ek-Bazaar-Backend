@@ -6,7 +6,7 @@ const request = require("request");
 const fs = require("fs");
 const AWS = require("aws-sdk");
 const { bcryptSalt } = require("./globalConstants");
-const { JWTTOKEN, awsKeys, razorPayCredentials } = require("./globalConstants");
+const { JWTTOKEN, awsKeys, razorPayCredentials, whatsAppKey } = require("./globalConstants");
 
 const base64 = require('base-64');
 

@@ -158,6 +158,10 @@ const sellersSchema = new Schema(
       type:Boolean,
       default:false
     },
+    isWhatsappApp: {
+      type: Boolean,
+      default: false
+    },
     hearingSource: {
       source: {
         type: String,

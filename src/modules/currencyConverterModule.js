@@ -1,14 +1,14 @@
 const { CurrencyConvters, currencyExcenges, currencyINRExcenges } = require('../models')
 
 
-// exports.findCurrencyConverter = () =>
-//     new Promise((resolve, reject) => {
-//         CurrencyConvters.find()
-//             .then((doc) => {
-//                 resolve(doc)
-//             })
-//             .catch(error => reject(error))
-// })
+exports.findCurrencyConverter = () =>
+    new Promise((resolve, reject) => {
+        CurrencyConvters.find()
+            .then((doc) => {
+                resolve(doc)
+            })
+            .catch(error => reject(error))
+})
 
 exports.addConverter = (data) =>
     new Promise((resolve, reject) => {
@@ -19,7 +19,7 @@ exports.addConverter = (data) =>
             .catch((error) => reject(error));
 });
 
-exports.findCurrencyConverter = (query) => 
+exports.findCurrencyConverter2 = (query) => 
     new Promise((resolve, reject) => {
         currencyExcenges.find(query)
             .then((doc) => {

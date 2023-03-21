@@ -399,7 +399,8 @@ module.exports.addUser = async (req, res, next) => {
       url,
       _base,
       whatsappChecked,
-      isMobileApp
+      isMobileApp,
+      isWhatsappApp
     } = req.body;
     console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
@@ -432,7 +433,8 @@ module.exports.addUser = async (req, res, next) => {
       },
       isPartialyRegistor: true,
       client,
-      isMobileApp: isMobileApp || false
+      isMobileApp: isMobileApp || false,
+      isWhatsappApp: isWhatsappApp || false
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -542,7 +544,7 @@ module.exports.addUser = async (req, res, next) => {
 
       if (whatsappChecked){
         let receiver_number = seller && seller.mobile && seller.mobile.length && `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`;
-        let first_name = seller && seller.name || 'Coustomer';
+        let first_name = seller && seller.name || 'Customer';
         let dynamicname = seller && seller.client;
 
         let website = client === 'ekbazaar' ? tradeSiteUrl : OneSiteUrl
