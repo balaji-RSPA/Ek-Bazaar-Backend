@@ -1,5 +1,5 @@
 const camelcaseKeys = require("camelcase-keys");
-const CallBack=require("../../models/callback")
+const CallBack = require("../../models/callback")
 const _ = require("lodash");
 const axios = require("axios");
 const { machineIdSync } = require("node-machine-id");
@@ -205,83 +205,97 @@ module.exports.callBack = async (req, res) => {
 
 module.exports.sendOtp = async (req, res) => {
   try {
-    const { mobile, reset, email } = req.body;
-    const countryCode = req.body.countryCode || '+91';
+    const { mobile, reset, email, verify, reff, value } = req.body;
 
-    let otp = 1234;
-    const url = req.get("origin");
-    let otpMessage = otpVerification({ otp , url});
-    let query = {}
-    if (mobile) query = { mobile, 'countryCode': countryCode || '+91' }
-    else query = { email }
-    const seller = await checkUserExistOrNot(query);
-    const user = await checkBuyerExistOrNot(query)
-    console.log("🚀 ~ file: userController.js ~ line 174 ~ module.exports.sendOtp= ~ seller", seller, user)
-
-    if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
-      return respError(res, "User already exist");
-    }
-    if (reset && (!seller || !seller.length))
-      return respError(res, "User Not found");
-
-    const checkUser =
-      seller &&
-      seller.length &&
-      seller[0].email &&
-      seller[0].isEmailVerified === 2;
-
-    if (isProd) {
-      otp = Math.floor(1000 + Math.random() * 9000);
-
-      // let reff = await currentOTPs.create({ otp })
-
-      // otp = reff._id
-
-      otpMessage = otpVerification({ otp, url });
-      if (mobile) {
-        const { otpMessage, templateId } = sendOtp({ reset, otp });
-        // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
-        let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
-        let response = "";
-        if(code == "+254" || code == "254"){
-          response = await sendKenyaSms(mobile, otpMessage)
-        } else if (code == "+91" || code == "91"){
-          response = await sendExotelSms(`${code}${mobile}`, otpMessage) 
-        } else{
-          response = await sendIDMSms(`${code}${mobile}`, otpMessage)
-        }
-        console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
-      } else if (checkUser || (email && !reset)) {
-        const message = {
-          from: MailgunKeys.senderMail,
-          to: seller[0].email,
-          subject: "OTP Verification",
-          html: commonTemplate(otpMessage),
-        };
-        await sendSingleMail(message);
-
-        return respSuccess(res, { otp }, checkUser || (email && !reset) ? "Your OTP  has been sent successfully to the mobile number .Check your SMS " : "");
-      } else {
-        console.log("=======Email is not verified yet================");
+    if (verify) {
+      let otpDoc = await currentOTPs.findById(reff)
+      if(value == otpDoc.otp) {
+        respSuccess(res,{otpVerified: true},"OTP Verified")
+      }else{
+        respSuccess(res, { otpVerified: false }, "OTP Not Verified")
       }
-      return respSuccess(res, { otp });
     } else {
-      if (mobile) {
-        return respSuccess(res, { otp }, "Your OTP  has been sent successfully to the mobile number .Check your SMS ");
-      } else if (checkUser || (email && !reset)) {
-        //send email
-        const message = {
-          from: MailgunKeys.senderMail,
-          to: email || seller.length && seller[0].email,
-          subject: "OTP Verification",
-          html: commonTemplate(otpMessage),
-        };
-        await sendSingleMail(message);
-        return respSuccess(res, { otp }, checkUser || email ? "Your OTP  has been sent successfully to the mobile number .Check your SMS " : "");
-      } else {
-        console.log("=======Email is not verified yet================");
+      const countryCode = req.body.countryCode || '+91';
+
+      let otp = 1234;
+      const url = req.get("origin");
+      let otpMessage = otpVerification({ otp, url });
+      let query = {}
+      if (mobile) query = { mobile, 'countryCode': countryCode || '+91' }
+      else query = { email }
+      const seller = await checkUserExistOrNot(query);
+      const user = await checkBuyerExistOrNot(query)
+      console.log("🚀 ~ file: userController.js ~ line 174 ~ module.exports.sendOtp= ~ seller", seller, user)
+
+      if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
+        return respError(res, "User already exist");
       }
-      return respError(res, "Invalid Input");
+      if (reset && (!seller || !seller.length))
+        return respError(res, "User Not found");
+
+      const checkUser =
+        seller &&
+        seller.length &&
+        seller[0].email &&
+        seller[0].isEmailVerified === 2;
+
+      if (isProd) {
+        otp = Math.floor(1000 + Math.random() * 9000);
+
+        let reff = await currentOTPs.create({ otp })
+
+        otp = reff._id
+
+        otpMessage = otpVerification({ otp, url });
+        if (mobile) {
+          const { otpMessage, templateId } = sendOtp({ reset, otp });
+          // let response = await sendSMS(`${countryCode}${mobile}`, otpMessage, templateId);
+          let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
+          let response = "";
+          if (code == "+254" || code == "254") {
+            response = await sendKenyaSms(mobile, otpMessage)
+          } else if (code == "+91" || code == "91") {
+            response = await sendExotelSms(`${code}${mobile}`, otpMessage)
+          } else {
+            response = await sendIDMSms(`${code}${mobile}`, otpMessage)
+          }
+          console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
+        } else if (checkUser || (email && !reset)) {
+          const message = {
+            from: MailgunKeys.senderMail,
+            to: seller[0].email,
+            subject: "OTP Verification",
+            html: commonTemplate(otpMessage),
+          };
+          await sendSingleMail(message);
+
+          return respSuccess(res, { otp }, checkUser || (email && !reset) ? "Your OTP  has been sent successfully to the mobile number .Check your SMS " : "");
+        } else {
+          console.log("=======Email is not verified yet================");
+        }
+        return respSuccess(res, { otp });
+      } else {
+
+        let reff = await currentOTPs.create({ otp })
+
+        otp = reff._id
+        if (mobile) {
+          return respSuccess(res, { otp }, "Your OTP  has been sent successfully to the mobile number .Check your SMS ");
+        } else if (checkUser || (email && !reset)) {
+          //send email
+          const message = {
+            from: MailgunKeys.senderMail,
+            to: email || seller.length && seller[0].email,
+            subject: "OTP Verification",
+            html: commonTemplate(otpMessage),
+          };
+          await sendSingleMail(message);
+          return respSuccess(res, { otp }, checkUser || email ? "Your OTP  has been sent successfully to the mobile number .Check your SMS " : "");
+        } else {
+          console.log("=======Email is not verified yet================");
+        }
+        return respError(res, "Invalid Input");
+      }
     }
   } catch (error) {
     return respError(res, error.message);
@@ -296,24 +310,24 @@ module.exports.sendOtpToMail = async (req, res) => {
     let otp = 1234;
     const url = req.get("origin");
     let otpMessage = otpVerification({ otp, url });
-    
+
 
     let query = { email }
 
-    if(mobile){
+    if (mobile) {
       let existQuery = { mobile, 'countryCode': countryCode || '+91' }
 
       let userExist = await checkUserExistOrNot(existQuery);
       console.log("🚀 ~ file: userController.js:262 ~ module.exports.sendOtpToMail= ~ userExist", userExist);
-      if (userExist && userExist.length){
-        if (userExist[0].email !== email){
+      if (userExist && userExist.length) {
+        if (userExist[0].email !== email) {
           return respError(res, `Given number is associated with email ${userExist[0].email}`)
-        } else if (userExist && userExist.length && !reset && !userExist[0]["deleteTrade"]["status"]){
+        } else if (userExist && userExist.length && !reset && !userExist[0]["deleteTrade"]["status"]) {
           return respError(res, "User already exist");
         }
       }
     }
-    
+
     const seller = await checkUserExistOrNot(query);
 
     if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
@@ -335,8 +349,8 @@ module.exports.sendOtpToMail = async (req, res) => {
     }
 
     let responseText = "";
-    if((countryCode == "+254" || countryCode == "254") && mobile){//send sms to user if from Kenya
-      let msgContent = SendOtpOnebazaar({reset:false, otp})
+    if ((countryCode == "+254" || countryCode == "254") && mobile) {//send sms to user if from Kenya
+      let msgContent = SendOtpOnebazaar({ reset: false, otp })
       let msgResponse = await sendKenyaSms(mobile, msgContent)
       responseText = `Your OTP  has been sent successfully to ${mobile} .Check your SMS`
     }
@@ -350,7 +364,7 @@ module.exports.sendOtpToMail = async (req, res) => {
       await sendSingleMail(message);
       responseText = `Your OTP  has been sent successfully to ${email} .Check your Mail`;
     }
-    
+
     respSuccess(res, { otp }, responseText);
 
   } catch (error) {
@@ -408,7 +422,7 @@ module.exports.addUser = async (req, res, next) => {
       isMobileApp,
       isWhatsappApp
     } = req.body;
-    console.log(_base,"🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
+    console.log(_base, "🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
     const client = (_base && (_base.includes('onebazaar') || _base.includes('8086'))) ? 'onebazaar' : 'ekbazaar';
 
@@ -545,10 +559,10 @@ module.exports.addUser = async (req, res, next) => {
         deviceId: user.deviceId,
         ipAddress,
       };
-      
+
       const result1 = await handleUserSession(seller.userId, finalData);
 
-      if (whatsappChecked){
+      if (whatsappChecked) {
         let receiver_number = seller && seller.mobile && seller.mobile.length && `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`;
         let first_name = seller && seller.name || 'Customer';
         let dynamicname = seller && seller.client;
@@ -566,7 +580,7 @@ module.exports.addUser = async (req, res, next) => {
 
         let wahtsappWlecomeResponce = await sendWhatsaapWelcome(whatsAppWelcomeData)
       }
-      
+
       return respSuccess(
         res,
         { token, buyer, seller, user },
@@ -613,7 +627,7 @@ module.exports.updateUser = async (req, res) => {
     const dateNow = new Date();
     const _buyer = req.body.buyer || {};
 
-    console.log(JSON.stringify(_buyer),"---------_buyer_buyer-------------")
+    console.log(JSON.stringify(_buyer), "---------_buyer_buyer-------------")
     let {
       name,
       email,
@@ -629,14 +643,14 @@ module.exports.updateUser = async (req, res) => {
       currency
     } = req.body;
     // return false
-    
+
     let currencyQuery = {
-      code:'USD'
+      code: 'USD'
     }
     let usdExcenge = await findCurrencyConverter(currencyQuery);
-    
+
     const selectedCurrency = currency || usdExcenge && usdExcenge.length && usdExcenge[0]._id
-    
+
     console.log("🚀 ~ file: userController.js ~ line 445 ~ module.exports.updateUser= ~ req.body", usdExcenge && usdExcenge.length && usdExcenge[0]._id, "llllllllllll", currency, selectedCurrency);
     // console.log("🚀 ~ file: userController.js ~ line 440 ~ module.exports.updateUser= ~ _buyer", _buyer, location)
     const __usr = await getUserProfile(userID)
@@ -681,7 +695,7 @@ module.exports.updateUser = async (req, res) => {
       buyer = await updateBuyer({ userId: userID }, buyerData)
       _seller = await updateSeller({ userId: userID }, sellerData)
 
-      console.log(_seller,"Updated here 111111111111111111111")
+      console.log(_seller, "Updated here 111111111111111111111")
     }
 
     let buyerData = {
@@ -725,7 +739,7 @@ module.exports.updateUser = async (req, res) => {
     if (userData && userData.email) {
       userData.userHash = encrypt(userData.email);
     }
-    if (preferredLanguage && Object.keys(preferredLanguage).length !== 0){
+    if (preferredLanguage && Object.keys(preferredLanguage).length !== 0) {
       userData.preferredLanguage = {
         lang: preferredLanguage.label,
         langCode: preferredLanguage.value,
@@ -799,7 +813,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans && !__usr.reresigistered) {
-        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121','AUG20','VNG20']
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121', 'AUG20', 'VNG20']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
 
         const dateNow = new Date();
