@@ -218,6 +218,7 @@ module.exports.sendOtp = async (req, res) => {
       const countryCode = req.body.countryCode || '+91';
 
       let otp = 1234;
+      let reff;
       const url = req.get("origin");
       let otpMessage = otpVerification({ otp, url });
       let query = {}
@@ -242,9 +243,9 @@ module.exports.sendOtp = async (req, res) => {
       if (isProd) {
         otp = Math.floor(1000 + Math.random() * 9000);
 
-        let reff = await currentOTPs.create({ otp })
+        reff = await currentOTPs.create({ otp })
 
-        otp = reff._id
+        
 
         otpMessage = otpVerification({ otp, url });
         if (mobile) {
@@ -269,17 +270,21 @@ module.exports.sendOtp = async (req, res) => {
           };
           await sendSingleMail(message);
 
+          otp = reff._id
+
           return respSuccess(res, { otp }, checkUser || (email && !reset) ? "Your OTP  has been sent successfully to the mobile number .Check your SMS " : "");
         } else {
           console.log("=======Email is not verified yet================");
         }
+        otp = reff._id
         return respSuccess(res, { otp });
       } else {
 
-        let reff = await currentOTPs.create({ otp })
+        reff = await currentOTPs.create({ otp })
 
-        otp = reff._id
+        
         if (mobile) {
+          otp = reff._id
           return respSuccess(res, { otp }, "Your OTP  has been sent successfully to the mobile number .Check your SMS ");
         } else if (checkUser || (email && !reset)) {
           //send email
@@ -290,6 +295,7 @@ module.exports.sendOtp = async (req, res) => {
             html: commonTemplate(otpMessage),
           };
           await sendSingleMail(message);
+          otp = reff._id
           return respSuccess(res, { otp }, checkUser || email ? "Your OTP  has been sent successfully to the mobile number .Check your SMS " : "");
         } else {
           console.log("=======Email is not verified yet================");
@@ -305,68 +311,81 @@ module.exports.sendOtp = async (req, res) => {
 module.exports.sendOtpToMail = async (req, res) => {
   try {
 
-    const { reset, email, countryCode, mobile } = req.body;
+    const { reset, email, countryCode, mobile, verify, reff, value } = req.body;
 
-    let otp = 1234;
-    const url = req.get("origin");
-    let otpMessage = otpVerification({ otp, url });
+    if (verify) {
+      let otpDoc = await currentOTPs.findById(reff)
+      if (value == otpDoc.otp) {
+        respSuccess(res, { otpVerified: true }, "OTP Verified")
+      } else {
+        respSuccess(res, { otpVerified: false }, "OTP Not Verified")
+      }
+    } else {
+
+      let otp = 1234;
+      const url = req.get("origin");
+      let otpMessage = otpVerification({ otp, url });
 
 
-    let query = { email }
+      let query = { email }
 
-    if (mobile) {
-      let existQuery = { mobile, 'countryCode': countryCode || '+91' }
+      if (mobile) {
+        let existQuery = { mobile, 'countryCode': countryCode || '+91' }
 
-      let userExist = await checkUserExistOrNot(existQuery);
-      console.log("🚀 ~ file: userController.js:262 ~ module.exports.sendOtpToMail= ~ userExist", userExist);
-      if (userExist && userExist.length) {
-        if (userExist[0].email !== email) {
-          return respError(res, `Given number is associated with email ${userExist[0].email}`)
-        } else if (userExist && userExist.length && !reset && !userExist[0]["deleteTrade"]["status"]) {
-          return respError(res, "User already exist");
+        let userExist = await checkUserExistOrNot(existQuery);
+        console.log("🚀 ~ file: userController.js:262 ~ module.exports.sendOtpToMail= ~ userExist", userExist);
+        if (userExist && userExist.length) {
+          if (userExist[0].email !== email) {
+            return respError(res, `Given number is associated with email ${userExist[0].email}`)
+          } else if (userExist && userExist.length && !reset && !userExist[0]["deleteTrade"]["status"]) {
+            return respError(res, "User already exist");
+          }
         }
       }
+
+      const seller = await checkUserExistOrNot(query);
+
+      if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
+        return respError(res, "User already exist");
+      }
+
+      if (reset && (!seller || !seller.length))
+        return respError(res, "User Not found");
+
+      const checkUser =
+        seller &&
+        seller.length &&
+        seller[0].email &&
+        seller[0].isEmailVerified === 2;
+
+      if (isProd) {
+        otp = Math.floor(1000 + Math.random() * 9000);
+        otpMessage = otpVerification({ otp, url });
+      }
+
+      let responseText = "";
+      if ((countryCode == "+254" || countryCode == "254") && mobile) {//send sms to user if from Kenya
+        let msgContent = SendOtpOnebazaar({ reset: false, otp })
+        let msgResponse = await sendKenyaSms(mobile, msgContent)
+        responseText = `Your OTP  has been sent successfully to ${mobile} .Check your SMS`
+      }
+      else {
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: email,
+          subject: "OTP Verification",
+          html: commonTemplate(otpMessage),
+        };
+        await sendSingleMail(message);
+        responseText = `Your OTP  has been sent successfully to ${email} .Check your Mail`;
+      }
+
+      let reff = await currentOTPs.create({ otp })
+
+      otp = reff._id
+
+      respSuccess(res, { otp }, responseText);
     }
-
-    const seller = await checkUserExistOrNot(query);
-
-    if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
-      return respError(res, "User already exist");
-    }
-
-    if (reset && (!seller || !seller.length))
-      return respError(res, "User Not found");
-
-    const checkUser =
-      seller &&
-      seller.length &&
-      seller[0].email &&
-      seller[0].isEmailVerified === 2;
-
-    if (isProd) {
-      otp = Math.floor(1000 + Math.random() * 9000);
-      otpMessage = otpVerification({ otp, url });
-    }
-
-    let responseText = "";
-    if ((countryCode == "+254" || countryCode == "254") && mobile) {//send sms to user if from Kenya
-      let msgContent = SendOtpOnebazaar({ reset: false, otp })
-      let msgResponse = await sendKenyaSms(mobile, msgContent)
-      responseText = `Your OTP  has been sent successfully to ${mobile} .Check your SMS`
-    }
-    else {
-      const message = {
-        from: MailgunKeys.senderMail,
-        to: email,
-        subject: "OTP Verification",
-        html: commonTemplate(otpMessage),
-      };
-      await sendSingleMail(message);
-      responseText = `Your OTP  has been sent successfully to ${email} .Check your Mail`;
-    }
-
-    respSuccess(res, { otp }, responseText);
-
   } catch (error) {
     return respError(res, error.message);
   }
