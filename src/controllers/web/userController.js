@@ -184,6 +184,7 @@ module.exports.callBack = async (req, res) => {
   // console.log(req.body);
   const { name, mobile } = req.body
   const user = await CallBack.findOne({ "mobile.mobile": mobile });
+  console.log(user);
   if (user) {
     return res.status(409).json({
       status: "Failed",
@@ -194,7 +195,6 @@ module.exports.callBack = async (req, res) => {
     name,
     "mobile":[{mobile}]
   })
-  data.save()
   return res.status(200).json({
     status: "Success",
     message: "User successfuully added for Call Back",
