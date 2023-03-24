@@ -183,14 +183,13 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 module.exports.callBack = async (req, res) => {
   // console.log(req.body);
   const { name, mobile } = req.body
-  // const {mobile}=mobile
-  // const user = await CallBack.findOne({ "mobile": [{ mobile }] });
-  // if (user) {
-  //   return res.status(409).json({
-  //     status: "Failed",
-  //     message: "This Mobile Number Already Sumitted"
-  //   });
-  // }
+  const user = await CallBack.findOne({ "mobile.mobile": mobile });
+  if (user) {
+    return res.status(409).json({
+      status: "Failed",
+      message: "This Mobile Number Already Sumitted"
+    });
+  }
   const data = await CallBack.create({
     name,
     "mobile":[{mobile}]
