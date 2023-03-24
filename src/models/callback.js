@@ -9,11 +9,12 @@ const mobile = new schema({
 })
 
 const mySchema = new schema({
-    name: { type: String },
-    mobile:  [mobile], default: [] ,
-    date: { type: Date, default: Date.now },
+    name: { 
+        type: String 
+    },
+    mobile:  [mobile],
     source:{type:String, default:"market"},
-},{ timestamps: true, });
+},{ timestamps: true,versionKey:false });
 
 
 const myModel = mongoose.model("callBack", mySchema)
