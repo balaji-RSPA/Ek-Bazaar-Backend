@@ -4,7 +4,8 @@ const fs = require("fs").promises;
 const path = require("path");
 const _ = require("lodash");
 const moment = require("moment");
-const { Sellers, currencyExcenges, Payments, MasterCollection, SellerProducts } = require("../models");
+const { Sellers, currencyExcenges, Payments, MasterCollection, SellerProducts, Datecol, currentOTPs } = require("../models");
+const Callback = require("../models/callback")
 const {
   sellers,
   mastercollections,
@@ -31,7 +32,7 @@ const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue;
 const { getRFPData, updateRFP } = buyers;
 const { bulkInserQemails, getQueEmail, updateQueEmails } = QueEmails;
 const { getExpirePlans, updateSellerPlans, getAboutToexpirePlan } = SellerPlans;
-const { sendSMS, sendBulkSMS } = require("../utils/utils");
+const { sendSMS, sendBulkSMS, insetInSheat } = require("../utils/utils");
 const { respSuccess, respError } = require("../utils/respHadler");
 const { planExpiry } = require("../utils/templates/smsTemplate/smsTemplate");
 const {
@@ -41,7 +42,7 @@ const {
   planExpired,
   planExpiring,
 } = require("../utils/templates/emailTemplate/emailTemplateContent");
-const { MailgunKeys } = require("../utils/globalConstants");
+const { MailgunKeys, googleSheat } = require("../utils/globalConstants");
 const Logger = require("../utils/logger");
 const { sendSingleMail } = require("../utils/mailgunService");
 const { globalVaraibles } = require("../utils/utils");
@@ -52,6 +53,7 @@ const { pricing } = globalVaraibles.authServiceURL();
 const axios = require('axios');
 // const { url } = require("inspector");
 const { currencySymbole } = require('./symbole')
+
 exports.sendQueEmails = async (req, res) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -1528,6 +1530,76 @@ exports.sendDailyCount = async (req, res) =>
     }
   });
 
+exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject) => {
+  try {
+    
+    // let url = 'https://script.google.com/macros/s/AKfycbzyLVP7XL4QXMa_-rX3M2VkZSk8h51JAF1Da9yL2qQCi67zz-aqlR-pcL0RqkZrTmvX/exec' // production
+
+    // let url = 'https://script.google.com/macros/s/AKfycbw8_gM-cMMTJLxlFSAw1CcHQzCZYKS_gETECILKob85cn7Df_EyzynsgQ0-Va6Ga63U/exec' // Staging
+
+    let url = googleSheat
+
+    const coldata = await Datecol.find({});
+ 
+    const from = new Date(
+      moment(coldata[0].date).utc()
+    ).toISOString()
+
+    const to = new Date(
+      moment.utc()
+    ).toISOString();
+
+    console.log(from, "--------------Last Time Interval Data Entry-----------", to)
+
+    let dataArr = []
+    // let marketArr = []
+    const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to } }, { _id: 0, "name": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
+
+    sellerData.map((seller) => {
+      let mySellerObje = {};
+      
+      mySellerObje.name = seller.name || '';
+      mySellerObje.mobile = seller.mobile || [];
+      mySellerObje.createdAt = seller.createdAt || new Data()
+      
+      if (seller.isMobileApp){
+        mySellerObje.source = "MobileApp"
+      }else if(seller.isWhataap){
+        mySellerObje.source = "whatsapp"
+      }else{
+        mySellerObje.source = seller.client
+      }
+      
+      dataArr.push(mySellerObje)
+    })
+    const marketData = await Callback.find({ createdAt: { $gt: from, $lt: to } }, { "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
+    marketData.map((value)=>{
+      let marketobj = {};
+
+      marketobj.name = value.name || '';
+      marketobj.mobile = value.mobile || [];
+      marketobj.createdAt = value.createdAt || new Data()
+      
+      marketobj.source = value.source || 'market'
+
+      dataArr.push(marketobj)
+    })
+    
+   
+    let result = await insetInSheat(url, dataArr);
+
+
+    let updated = await Datecol.updateOne({ _id: coldata[0]._id }, { date: to })
+
+    resolve({ data: result.data, updated })
+
+
+  } catch (error) {
+    console.log("🚀 ~ file: cron.js:1672 ~ exports.fillGoogleSheat= ~ error:", error)
+    reject(error.message);
+  }
+
+})
 
 exports.createCurrencyExcenge = async (req, res) => new Promise(async (resolve, reject) => {
   try {
@@ -1547,7 +1619,7 @@ exports.createCurrencyExcenge = async (req, res) => new Promise(async (resolve, 
         code: property,
         base: 'INR',
         exchangeRate: excengeObj[property],
-        currency_symbol:property
+        currency_symbol: property
       }
 
       currList.push(myObj)
@@ -1715,7 +1787,7 @@ exports.updateMasterCollection = async (data) => new Promise(async (resolve, rej
         } else {
 
 
-          if (sellerProduct && sellerProduct.offers && sellerProduct.offers !== null &&   sellerProduct.offers.price) {
+          if (sellerProduct && sellerProduct.offers && sellerProduct.offers !== null && sellerProduct.offers.price) {
             sellerProduct.offers.price.currency = "USD"
           }
           if (sellerProduct && sellerProduct.productDetails && sellerProduct.productDetails.price) {
@@ -1759,7 +1831,7 @@ exports.updateMasterCollectionAmount = async (data) => new Promise(async (resolv
         "productDetails.price.price": {
           $ne: ""
         },
-        "productDetails.price.currency":"USD"
+        "productDetails.price.currency": "USD"
       }
     }
 
@@ -1772,7 +1844,7 @@ exports.updateMasterCollectionAmount = async (data) => new Promise(async (resolv
 
     let data = await MasterCollection.aggregate([query]).count('count')/* .skip(skip).limit(limit) */
 
-    resolve({data:data})
+    resolve({ data: data })
 
 
     // if (data && data.length) {
@@ -1830,5 +1902,25 @@ exports.deleteMasterColl = async () => new Promise(async (resolve, reject) => {
   } catch (error) {
     console.log("🚀 ~ file: cron.js:1831 ~ exports.deleteMasterColl ~ error:", error)
     reject(error)
+  }
+})
+
+
+exports.deleteOtps = async () => new Promise(async (resolve, reject) => {
+  try {
+    let time = new Date(
+      moment().subtract(30,'minutes')
+    ).toISOString()
+
+    let query = {
+      createdAt: { $lt: time }
+    }
+
+    let deletedOtps = await currentOTPs.deleteMany(query)
+
+    resolve(deletedOtps)
+  } catch (error) {
+    console.log("🚀 ~ file: cron.js:1841 ~ exports.deleteOtps ~ error:", error)
+    reject(error.message)
   }
 })

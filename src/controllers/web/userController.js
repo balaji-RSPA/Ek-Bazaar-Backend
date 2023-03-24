@@ -56,6 +56,7 @@ const { createChat, deleteChat } = Chat;
 const { createChatUser, userChatLogin, deleteChatAccount } = require("./rocketChatController");
 
 const { sendWhatsaapWelcome } = require('./whatsappTemplateController')
+const { currentOTPs } = require('../../models')
 
 const { rocketChatDomain, rocketChatAdminLogin } = require('../../utils/globalConstants')
 const chatDomain = `https://${rocketChatDomain}`
@@ -99,7 +100,6 @@ const { addMaster, updateMaster, bulkDeleteMasterProducts, updateMasterSellerDet
 const { addSellerPlanLog, getSellerPlansLog } = SellerPlanLogs;
 const { sms } = require("../../utils/globalConstants");
 const { getMasterRecords } = require("../../modules/masterModule");
-const { currentOTPs } = require("../../models")
 const { username, password, senderID, smsURL } = sms
 
 const isProd = process.env.NODE_ENV === "production";
@@ -183,9 +183,9 @@ module.exports.checkUserExistOrNot = async (req, res) => {
 
 module.exports.callBack = async (req, res) => {
   // console.log(req.body);
-  const { name, mobileNumber } = req.body
-
-  const user = await CallBack.findOne({ mobileNumber });
+  const { name, mobile } = req.body
+  const user = await CallBack.findOne({ "mobile.mobile": mobile });
+  console.log(user);
   if (user) {
     return res.status(409).json({
       status: "Failed",
@@ -194,7 +194,7 @@ module.exports.callBack = async (req, res) => {
   }
   const data = await CallBack.create({
     name,
-    mobileNumber
+    "mobile":[{mobile}]
   })
   return res.status(200).json({
     status: "Success",
@@ -438,8 +438,7 @@ module.exports.addUser = async (req, res, next) => {
       url,
       _base,
       whatsappChecked,
-      isMobileApp,
-      isWhatsappApp
+      isMobileApp
     } = req.body;
     console.log(_base, "🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
@@ -472,8 +471,7 @@ module.exports.addUser = async (req, res, next) => {
       },
       isPartialyRegistor: true,
       client,
-      isMobileApp: isMobileApp || false,
-      isWhatsappApp: isWhatsappApp || false
+      isMobileApp: isMobileApp || false
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -583,7 +581,7 @@ module.exports.addUser = async (req, res, next) => {
 
       if (whatsappChecked) {
         let receiver_number = seller && seller.mobile && seller.mobile.length && `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`;
-        let first_name = seller && seller.name || 'Customer';
+        let first_name = seller && seller.name || 'Coustomer';
         let dynamicname = seller && seller.client;
 
         let website = client === 'ekbazaar' ? tradeSiteUrl : OneSiteUrl
