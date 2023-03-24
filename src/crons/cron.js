@@ -4,7 +4,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const _ = require("lodash");
 const moment = require("moment");
-const { Sellers, currencyExcenges, Payments, MasterCollection, SellerProducts } = require("../models");
+const { Sellers, currencyExcenges, Payments, MasterCollection, SellerProducts, currentOTPs } = require("../models");
 const {
   sellers,
   mastercollections,
@@ -1830,5 +1830,25 @@ exports.deleteMasterColl = async () => new Promise(async (resolve, reject) => {
   } catch (error) {
     console.log("🚀 ~ file: cron.js:1831 ~ exports.deleteMasterColl ~ error:", error)
     reject(error)
+  }
+})
+
+
+exports.deleteOtps = async () => new Promise(async (resolve, reject) => {
+  try {
+    let time = new Date(
+      moment().subtract(30,'minutes')
+    ).toISOString()
+
+    let query = {
+      createdAt: { $lt: time }
+    }
+
+    let deletedOtps = await currentOTPs.deleteMany(query)
+
+    resolve(deletedOtps)
+  } catch (error) {
+    console.log("🚀 ~ file: cron.js:1841 ~ exports.deleteOtps ~ error:", error)
+    reject(error.message)
   }
 })

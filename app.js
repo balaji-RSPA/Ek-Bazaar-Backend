@@ -21,7 +21,7 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl } = require('./src/crons/cron')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, deleteOtps } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
 const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
@@ -389,6 +389,16 @@ app.get('/getMasterCount', async (req, res) => {
   
 })
 
+app.get('/deleteOtps',async (req, res) => {
+  try {
+    let result = await deleteOtps()
+    res.json(result);
+
+  } catch (error) {
+    res.send('Some issue came in API')
+  }
+})
+
 
 server.on("listening", () => {
   console.log(`Listening:${server.address().port}`);
@@ -505,5 +515,14 @@ if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
     console.log('Incomplete registration cron end ------------------')
   });
   emailSmsToPartiallyRegistered.start();
+
+  const deleteOtpsCron = cron.schedule("* * * * *", async() => {
+    deleteOtpsCron.stop();
+    console.log("====================Delete OTP Started=================")
+    await deleteOtps();
+    console.log("=======================Delete OTP Ends===================")
+    deleteOtpsCron.start()
+  })
+  deleteOtpsCron.start();
 
 }
