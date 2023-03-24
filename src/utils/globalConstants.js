@@ -148,3 +148,8 @@ exports.oneBazaarRequestOrigin = NODE_ENV === 'production' ? ["https://trade.one
 exports.tradeClientUrl = NODE_ENV === 'production' ? 'https://trade.ekbazaar.com/' : NODE_ENV === 'development' ? 'https://tradebazaar.tech-active.com/' : 'http://localhost:8085/'
 
 exports.tradeOnebazaarClientUrl = NODE_ENV === 'production' ? 'https://trade.ekbazaar.com/' : NODE_ENV === 'development' ? 'https://tradebazaar.tech-active.com/' : 'http://localhost:8085/'
+
+
+exports.googleSheat = NODE_ENV === 'production' 
+? 'https://script.google.com/macros/s/AKfycbzyLVP7XL4QXMa_-rX3M2VkZSk8h51JAF1Da9yL2qQCi67zz-aqlR-pcL0RqkZrTmvX/exec' 
+  : 'https://script.google.com/macros/s/AKfycbw8_gM-cMMTJLxlFSAw1CcHQzCZYKS_gETECILKob85cn7Df_EyzynsgQ0-Va6Ga63U/exec'

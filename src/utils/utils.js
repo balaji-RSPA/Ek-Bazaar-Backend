@@ -425,3 +425,12 @@ module.exports.fetchRazorpayPayment = async (paymentId) => {
     console.log("🚀 ~ file: utils.js ~ line 301 ~ module.exports.fetchRazorpayPayment= ~ error", error)
   }
 }
+
+module.exports.insetInSheat = async (url, data) => new Promise(async (resolve, reject) => {
+  try {
+    const response = await axios.post(url, data);
+    resolve(response)
+  } catch (error) {
+    console.log("🚀 ~ file: utils.js:433 ~ module.exports.insetInSheat= ~ error:", error)
+  }
+})

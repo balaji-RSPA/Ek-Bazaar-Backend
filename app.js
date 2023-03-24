@@ -21,7 +21,7 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, deleteOtps } = require('./src/crons/cron')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, fillGoogleSheat, deleteOtps } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
 const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
@@ -296,8 +296,9 @@ app.get("/uploadOnBoardBuyers", async function (req, res) {
 
 app.get("/functionTest", async function (req, res) {
   try {
-    await getExpirePlansCron();
-    res.send("Ok")
+    // await getExpirePlansCron();
+    let data = await fillGoogleSheat()
+    res.send(data)
   } catch (error) {}
   // res.send('Its delete records  live')
 });
@@ -450,6 +451,20 @@ if (env.NODE_ENV === "production1") {
     queSms.start();
   });
   queSms.start();
+}
+
+if (env.NODE_ENV === "development") {
+  const dataEntry = cron.schedule("*/30 * * * *", async () => {
+    dataEntry.stop();
+    console.log("------------------New User Data Entry Started---------------");
+
+    await fillGoogleSheat();
+
+    console.log("--------------------- New User Data Entry Compleated-------------")
+
+    dataEntry.start();
+  })
+  dataEntry.start();
 }
 
 if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {

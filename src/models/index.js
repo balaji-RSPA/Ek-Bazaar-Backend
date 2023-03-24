@@ -57,7 +57,7 @@ const LanguageTemplateL4One = require('./languageTemplateL4OneSchema')
 const LanguageTemplateL5One = require('./languageTemplateL5OneSchema')
 const WhatsappTemplate = require('./whatsappTemplateSchema')
 const currentOTPs = require('./otpSchema')
-
+const Datecol=require("./dateSchema")
 module.exports = {
     Cities,
     States,
@@ -116,5 +116,6 @@ module.exports = {
     currencyExcenges,
     WhatsappTemplate,
     currencyINRExcenges,
-    currentOTPs
+    currentOTPs,
+    Datecol
 }
