@@ -56,6 +56,7 @@ const { createChat, deleteChat } = Chat;
 const { createChatUser, userChatLogin, deleteChatAccount } = require("./rocketChatController");
 
 const { sendWhatsaapWelcome } = require('./whatsappTemplateController')
+const { currentOTPs } = require('../../models')
 
 const { rocketChatDomain, rocketChatAdminLogin } = require('../../utils/globalConstants')
 const chatDomain = `https://${rocketChatDomain}`
