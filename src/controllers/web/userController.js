@@ -257,9 +257,10 @@ module.exports.sendOtp = async (req, res) => {
             response = await sendKenyaSms(mobile, otpMessage)
           } else if (code == "+91" || code == "91") {
             response = await sendExotelSms(`${code}${mobile}`, otpMessage)
-          } else {
-            response = await sendIDMSms(`${code}${mobile}`, otpMessage)
-          }
+          } 
+          // else {
+          //   response = await sendIDMSms(`${code}${mobile}`, otpMessage)
+          // }
           console.log("🚀 ~ file: userController.js ~ line 189 ~ module.exports.sendOtp= ~ response", response)
         } else if (checkUser || (email && !reset)) {
           const message = {
@@ -312,7 +313,6 @@ module.exports.sendOtpToMail = async (req, res) => {
   try {
 
     const { reset, email, countryCode, mobile, verify, reff, value } = req.body;
-
     if (verify) {
       let otpDoc = await currentOTPs.findById(reff)
       if (value == otpDoc.otp) {
@@ -331,7 +331,6 @@ module.exports.sendOtpToMail = async (req, res) => {
 
       if (mobile) {
         let existQuery = { mobile, 'countryCode': countryCode || '+91' }
-
         let userExist = await checkUserExistOrNot(existQuery);
         console.log("🚀 ~ file: userController.js:262 ~ module.exports.sendOtpToMail= ~ userExist", userExist);
         if (userExist && userExist.length) {
@@ -364,12 +363,8 @@ module.exports.sendOtpToMail = async (req, res) => {
       }
 
       let responseText = "";
+      let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
       if ((countryCode == "+254" || countryCode == "254") && mobile) {//send sms to user if from Kenya
-        let msgContent = SendOtpOnebazaar({ reset: false, otp })
-        let msgResponse = await sendKenyaSms(mobile, msgContent)
-        responseText = `Your OTP  has been sent successfully to ${mobile} .Check your SMS`
-      }
-      else {
         const message = {
           from: MailgunKeys.senderMail,
           to: email,
@@ -377,7 +372,35 @@ module.exports.sendOtpToMail = async (req, res) => {
           html: commonTemplate(otpMessage),
         };
         await sendSingleMail(message);
-        responseText = `Your OTP  has been sent successfully to ${email} .Check your Mail`;
+
+        let msgContent = SendOtpOnebazaar({ reset: false, otp })
+        let msgResponse = await sendKenyaSms(mobile, msgContent)
+        responseText = `OTP has been sent successfully to your Mobile number and Email address`
+      }
+      else if (code == "+91" || code == "91") {
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: email,
+          subject: "OTP Verification",
+          html: commonTemplate(otpMessage),
+        };
+        await sendSingleMail(message);
+
+        const { otpMessage1, templateId } = sendOtp({ reset, otp });
+        response = await sendExotelSms(`${code}${mobile}`, otpMessage1)
+        // console.log(response, "========================");
+        responseText = `OTP has been sent successfully to your Mobile number and Email address`;
+      } 
+      else {
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: email,
+          subject: "OTP Verification",
+          html: commonTemplate(otpMessage),
+        };
+        const a=await sendSingleMail(message);
+        console.log(a,"=================================");
+        responseText = `OTP has been sent successfully to your Email address`;
       }
 
       let reff = await currentOTPs.create({ otp })
