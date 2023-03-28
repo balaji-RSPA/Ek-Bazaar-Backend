@@ -580,6 +580,7 @@ module.exports.addUser = async (req, res, next) => {
       const result1 = await handleUserSession(seller.userId, finalData);
 
       if (whatsappChecked) {
+      // if(false){
         let receiver_number = seller && seller.mobile && seller.mobile.length && `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`;
         let first_name = seller && seller.name || 'Coustomer';
         let dynamicname = seller && seller.client;

@@ -44,7 +44,7 @@ module.exports.sendWhatsaapWelcome = async (data) => new Promise(async (resolve,
             resolve(res)
         })
         .catch((error) => {
-            console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error)
+            console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error,error.message)
             reject(error.message)
         })
 })

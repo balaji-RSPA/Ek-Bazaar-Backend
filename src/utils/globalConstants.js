@@ -137,9 +137,15 @@ exports.rocketChatAdminLogin = NODE_ENV === 'production' ? {
   password: "ramesh123"
 }
 
-exports.stripeApiKeys = NODE_ENV === 'production' ? {clientKey: "", secretKey: ""} : {
-  clientKey: "pk_test_51JhBmfSIrsAhsOaISFcd4J61fweaSlL7AwqYxZPzrNZXR1NfwPp3U6cF9CkYu68JE8rzksfo8dUMWhuLMbuazqru00XRhHRY7j", secretKey: "sk_test_51JhBmfSIrsAhsOaIafy9CUJ5SVhFBA2XtRXxdFLV5SvZFHuwIW52KbgtyZLz9BANufK3HYI1KGV94vaHCwzMcWrJ00q9gtQz7n"
-};
+exports.stripeApiKeys = NODE_ENV === 'production' 
+? { 
+  clientKey: "pk_live_51JhBmfSIrsAhsOaIRJXbX7bcEt0ouEPI7lKA0nXhaTlOehadjhlJ7faeDzSFhqinXZesRIOz2Sxee2QPk5bhIVRu00ILl4MsrY", 
+  secretKey: "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"
+  } 
+: {
+  clientKey: "pk_test_51JhBmfSIrsAhsOaISFcd4J61fweaSlL7AwqYxZPzrNZXR1NfwPp3U6cF9CkYu68JE8rzksfo8dUMWhuLMbuazqru00XRhHRY7j", 
+  secretKey: "sk_test_51JhBmfSIrsAhsOaIafy9CUJ5SVhFBA2XtRXxdFLV5SvZFHuwIW52KbgtyZLz9BANufK3HYI1KGV94vaHCwzMcWrJ00q9gtQz7n"
+  };
 
 exports.whatsAppKey = "Api-Key fvSYCVMb.m2BUUxjMXlbgKrtY4AGyTqDzZOpNujlA"
 

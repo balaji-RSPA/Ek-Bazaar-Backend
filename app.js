@@ -453,7 +453,7 @@ if (env.NODE_ENV === "production1") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production" || env.NODE_ENV === "development") {
+if (env.NODE_ENV === "production" /* || env.NODE_ENV === "development" */) {
   const dataEntry = cron.schedule("*/5 * * * *", async () => {
     dataEntry.stop();
     console.log("------------------New User Data Entry Started---------------");
