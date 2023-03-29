@@ -357,7 +357,7 @@ module.exports.sendOtpToMail = async (req, res) => {
         seller[0].email &&
         seller[0].isEmailVerified === 2;
 
-      if (isProd) {
+      if (!isProd) {
         otp = Math.floor(1000 + Math.random() * 9000);
         otpMessage = otpVerification({ otp, url });
       }
@@ -378,18 +378,21 @@ module.exports.sendOtpToMail = async (req, res) => {
         responseText = `OTP has been sent successfully to your Mobile number and Email address`
       }
       else if (code == "+91" || code == "91") {
+       
+        // const { otpMessage1, templateId } = sendOtp({ reset, otp });
+        const sendMsg = sendOtp({ reset, otp })
+        console.log(sendMsg,"==============================");
+        response = await sendExotelSms(`${code}${mobile}`, sendMsg.otpMessage)
+        console.log(response, "========================");
+        responseText = `OTP has been sent successfully to your Mobile number and Email address`;
         const message = {
           from: MailgunKeys.senderMail,
           to: email,
           subject: "OTP Verification",
           html: commonTemplate(otpMessage),
         };
-        await sendSingleMail(message);
-
-        const { otpMessage1, templateId } = sendOtp({ reset, otp });
-        response = await sendExotelSms(`${code}${mobile}`, otpMessage1)
-        // console.log(response, "========================");
-        responseText = `OTP has been sent successfully to your Mobile number and Email address`;
+        const a = await sendSingleMail(message);
+        console.log(a,"=================================");
       } 
       else {
         const message = {
@@ -399,6 +402,7 @@ module.exports.sendOtpToMail = async (req, res) => {
           html: commonTemplate(otpMessage),
         };
         const a=await sendSingleMail(message);
+        
         console.log(a,"=================================");
         responseText = `OTP has been sent successfully to your Email address`;
       }
