@@ -32,6 +32,8 @@ const { deleteSellerProducts } = require("../../modules/sellerProductModule");
 const { MailgunKeys, fromEmail } = require("../../utils/globalConstants");
 const bcrypt = require("bcrypt");
 
+const { findPincode } = require("../../modules/pincodeModule");
+
 const crypto = require("crypto");
 const {
   activateAccount,
@@ -82,6 +84,7 @@ const {
   getUserProfile,
   getSeller,
   updateSeller,
+  addContactDetails,
   forgetPassword,
   addSeller,
   addbusinessDetails,
@@ -596,7 +599,7 @@ module.exports.addUser = async (req, res, next) => {
 
         console.log(whatsappChecked, "account created-------------------", whatsAppWelcomeData);
 
-        let wahtsappWlecomeResponce = await sendWhatsaapWelcome(whatsAppWelcomeData)
+        let wahtsappWlecomeResponce = sendWhatsaapWelcome(whatsAppWelcomeData)
       }
 
       return respSuccess(
@@ -658,10 +661,19 @@ module.exports.updateUser = async (req, res) => {
       userType,
       hearingSource,
       preferredLanguage,
-      currency
+      currency,
+      contactDetails,
+      pincode
     } = req.body;
     // return false
-
+    console.log(JSON.stringify(req.body),"-------------DDDDDDDDDDDDDDDDDDDDDDDDD")
+    if (contactDetails && pincode){
+      let checkPin = await findPincode({ pincode }) 
+      console.log("🚀 ~ file: userController.js:671 ~ module.exports.updateUser= ~ checkPin:", checkPin,"PPPPPPPPPPPPPPPPPPPPPPPPPPPp")
+      if (!checkPin){
+        return respError(res, "Pin code is not valid")
+      }
+    }
     let currencyQuery = {
       code: 'USD'
     }
@@ -783,6 +795,21 @@ module.exports.updateUser = async (req, res) => {
 
     let seller = {},
       activeChat = {};
+
+    if (contactDetails) {
+      contactDetails = {
+        email,
+        location: { ...location, pincode },
+        sellerId: _seller._id
+      }
+      const cntctDtls = await addContactDetails(_seller._id, contactDetails)
+      seller = await updateSeller({
+        _id: _seller._id
+      }, {
+        sellerContactId: cntctDtls._id
+      })
+    }
+
     if (user && buyer && _seller) {
       const url = req.get("origin") || tradeSiteUrl;
       if (user.email && !buyer.isEmailSent) {

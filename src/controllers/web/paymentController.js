@@ -747,7 +747,11 @@ async function CalculateGst(price, findPinCode, currency) {
   let sgstAmount = "";
   let totalAmount = "";
   if (currency === "INR") {
-    if (findPinCode.stateName === "Karnataka") {
+    if (!findPinCode){
+      gstAmount = (parseFloat(price) * gstValue) / 100;
+      totalAmount = parseFloat(price) + gstAmount;
+    }
+    else if (findPinCode.stateName === "Karnataka") {
       console.log("karnataka");
       cgstAmount = (parseFloat(price) * cgst) / 100;
       sgstAmount = (parseFloat(price) * cgst) / 100;
@@ -1972,9 +1976,7 @@ module.exports.createRazorPayLink = async (req, res) => {
     } = req.body;
     console.log(
       "🚀 ~ file: paymentController.js ~ line 507 ~ module.exports.createRazorPayLink= ~ isSubLink",
-      isSubLink,
-      "rrrrr",
-      isSubscription
+      JSON.stringify(req.body)
     );
     const { pincode, name, email, mobile } = orderDetails;
 
