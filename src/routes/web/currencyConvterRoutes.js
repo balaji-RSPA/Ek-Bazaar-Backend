@@ -8,8 +8,8 @@ const currencyConveter = require('../../controllers/web/currencyConveterControll
 /* 
 This will Return 1 Doller in Rupies
 */
-// router.get('/currencyConveter', currencyConveter.getSingleCurrency)
-router.get('/currencyConveter', currencyConveter.getCurrencyConveter)
+router.get('/currencyConveter', currencyConveter.getSingleCurrency)
+// router.get('/currencyConveter', currencyConveter.getCurrencyConveter)
 
 router.post('/currencyConveter', currencyConveter.addCurrencyConveter)
 
