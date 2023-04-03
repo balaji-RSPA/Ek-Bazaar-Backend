@@ -315,7 +315,7 @@ module.exports.sendOtp = async (req, res) => {
 module.exports.sendOtpToMail = async (req, res) => {
   try {
 
-    const { reset, email, countryCode, mobile, verify, reff, value } = req.body;
+    let { reset, email, countryCode, mobile, verify, reff, value } = req.body;
     if (verify) {
       let otpDoc = await currentOTPs.findById(reff)
       if (value == otpDoc.otp) {
@@ -325,34 +325,52 @@ module.exports.sendOtpToMail = async (req, res) => {
       }
     } else {
 
+      if (!countryCode){
+       return respError(res,"Country Code is required!")
+      }
+
+      if (!mobile){
+        return respError(res, "Mobile number is required!")
+      }
+
+      // if (!email){
+      //   return respError(res, "Email address is required!")
+      // }
+
       let otp = 1234;
       const url = req.get("origin");
       let otpMessage = otpVerification({ otp, url });
 
+      if (mobile && !email) {
+        let sellerData = await checkSellerExist({ "mobile.mobile": mobile })
+        email = email || sellerData && sellerData.email;
+      }
 
-      let query = { email }
-
-      if (mobile) {
+      let query = { mobile }
+      
+    
+      if (mobile && !reset) {
         let existQuery = { mobile, 'countryCode': countryCode || '+91' }
         let userExist = await checkUserExistOrNot(existQuery);
-        console.log("🚀 ~ file: userController.js:262 ~ module.exports.sendOtpToMail= ~ userExist", userExist);
+        // console.log("🚀 ~ file: userController.js:262 ~ module.exports.sendOtpToMail= ~ userExist", userExist);
         if (userExist && userExist.length) {
           if (userExist[0].email !== email) {
-            return respError(res, `Given number is associated with email ${userExist[0].email}`)
+            return respError(res, `Given number is associated with the email ${userExist[0].email}`)
           } else if (userExist && userExist.length && !reset && !userExist[0]["deleteTrade"]["status"]) {
-            return respError(res, "User already exist");
+            return respError(res, "User already exists");
           }
         }
       }
 
+
       const seller = await checkUserExistOrNot(query);
 
       if (seller && seller.length && !reset /* && user && user.length */ && !seller[0]["deleteTrade"]["status"]) {
-        return respError(res, "User already exist");
+        return respError(res, "User already exists");
       }
 
       if (reset && (!seller || !seller.length))
-        return respError(res, "User Not found");
+        return respError(res, "User not found");
 
       const checkUser =
         seller &&
@@ -366,7 +384,7 @@ module.exports.sendOtpToMail = async (req, res) => {
       }
 
       let responseText = "";
-      let code = countryCode || seller[0].countryCode || user[0].countryCode || +91;
+      let code = countryCode || seller[0].countryCode || user[0].countryCode || '+91';
       if ((countryCode == "+254" || countryCode == "254") && mobile) {//send sms to user if from Kenya
         const message = {
           from: MailgunKeys.senderMail,

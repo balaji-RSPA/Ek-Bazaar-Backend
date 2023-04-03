@@ -3871,7 +3871,9 @@ module.exports.planActivation = async (req, res) => {
             ((seller.hearingSource.source === "Uttarakhand" &&
               seller.hearingSource.referralCode === "UTK1121") || (seller.hearingSource.source === "Vietnam" &&
                 seller.hearingSource.referralCode === "VNG20") || (seller.hearingSource.source === "African Union" &&
-                  seller.hearingSource.referralCode === "AUG20"))
+                seller.hearingSource.referralCode === "AUG20") || (seller.hearingSource.source === "Germany" &&
+                seller.hearingSource.referralCode === "DEUEMI23") || (seller.hearingSource.source === "GCC" &&
+              seller.hearingSource.referralCode === "GCCG23"))
           ) {
             if (seller && seller.planId && seller.planId.isTrial) {
               const trialCreatedAt = seller.planId && seller.planId.createdAt;
