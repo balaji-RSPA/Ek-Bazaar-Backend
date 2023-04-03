@@ -65,6 +65,16 @@ exports.getAllCurrency = async (query) => new Promise((resolve, reject) => {
         })
 })
 
+exports.deleteMultipaleCurrency = async (query) => new Promise((resolve, reject) => {
+    currencyExcenges.deleteMany(query)
+        .then((doc) => {
+            resolve(doc)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+})
+
 
 /* *****************Now for INR********************** */
 

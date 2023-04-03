@@ -25,7 +25,7 @@ const {
   getSellerSomeData,
 } = sellers;
 
-const { addCurrencyExcenge, updateCurrencyExcenge, updateCurrencyExcengeINR, addCurrencyExcengeINR } = CurrencyConvrter
+const { addCurrencyExcenge, updateCurrencyExcenge, updateCurrencyExcengeINR, addCurrencyExcengeINR, deleteMultipaleCurrency } = CurrencyConvrter
 const { updateMaster, updateMasterBulkProducts, getMasterCount, getMaster } = mastercollections;
 const { getSellerProducts, updateSellerProducts } = sellerProducts;
 const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue;
@@ -1657,6 +1657,22 @@ exports.updateCurrencyExcenge = async (req, res) => new Promise(async (resolve, 
     console.error(error.message);
     reject(error.message);
   }
+})
+
+exports.deleteExtraCurrency = async (req,res) => new Promise(async (resolve, reject) => {
+  try {
+    let required = ['USD', 'EUR', 'GBP', 'KES', 'VND', 'CNY', 'JPY', 'INR'];
+    let query = {
+      code: { $nin: required }
+    }
+
+    let deleted = await deleteMultipaleCurrency(query);
+
+    resolve(deleted)
+  } catch (error) {
+    reject(error.message);
+  }
+  
 })
 
 exports.getCurrencySymboles = async (req, res) => new Promise(async (resolve, reject) => {

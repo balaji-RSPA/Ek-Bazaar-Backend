@@ -21,7 +21,7 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, fillGoogleSheat, deleteOtps } = require('./src/crons/cron')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, fillGoogleSheat, deleteOtps, deleteExtraCurrency } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
 const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
@@ -369,7 +369,8 @@ app.get("/checkcurrencyDemo",async(req, res) => {
   try {
     // const result = await createCurrencyExcenge();
     // const result = await updateCurrencyExcenge();
-    const result = await getCurrencySymboles()
+    // const result = await getCurrencySymboles()
+    const result = await deleteExtraCurrency()
     res.json(result)
   } catch (error) {
     res.send('Some issue came in API.')

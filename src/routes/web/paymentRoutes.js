@@ -10,6 +10,7 @@ router.post('/fetchSubscriptionPayment',subscriptionPaymentAuth,payment.fetchSub
 router.post('/checkPaymentStatus/:paymentId', payment.checkPaymentStatus)
 // router.post('/captureRazorPayPayment/:paymentId', payment.captureRazorPayPaymentTwo)
 router.post('/createRazorPayPaymentLink', payment.createRazorPayLink)
+router.post('/whatsappRazorPayPaymentLink',payment.createWhatsappPaymentLink)
 
 router.post('/cancleSubscription', payment.cancleSubscription)
 router.get('/captureLinkPayment', payment.captureLink)
