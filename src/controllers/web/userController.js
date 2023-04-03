@@ -493,6 +493,10 @@ module.exports.addUser = async (req, res, next) => {
     const client = (_base && (_base.includes('onebazaar') || _base.includes('8086'))) ? 'onebazaar' : 'ekbazaar';
 
     req.body.userId = user._id;
+    if (!Boolean(mobile.mobile)){
+      return respError(res, "Mobile is required!")
+    }
+
     const buyerData = {
       countryCode: Boolean(mobile.countryCode) ? mobile.countryCode : "+91",
       mobile: Boolean(mobile.mobile) ? mobile.mobile : null,
@@ -903,7 +907,7 @@ module.exports.updateUser = async (req, res) => {
 
       const sellerPlans = await getSellerPlan({ sellerId: seller._id })
       if (userType === "seller" && !sellerPlans && !__usr.reresigistered) {
-        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121', 'AUG20', 'VNG20']
+        const code = ['GCC0721', 'SMEC0721', 'DVRN0721', 'TN0721', 'UP0721', 'UTK1121', 'AUG20', 'VNG20', 'DEUEMI23','GCCG23']
         const promoCode = code.indexOf(hearingSource.referralCode) !== -1 ? true : false
 
         const dateNow = new Date();

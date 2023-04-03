@@ -1553,7 +1553,7 @@ exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject
 
     let dataArr = []
     // let marketArr = []
-    const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to } }, { _id: 0, "name": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
+    const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to },"mobile.mobile":{$exists: true} }, { _id: 0, "name": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
 
     sellerData.map((seller) => {
       let mySellerObje = {};
@@ -1572,7 +1572,7 @@ exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject
       
       dataArr.push(mySellerObje)
     })
-    const marketData = await Callback.find({ createdAt: { $gt: from, $lt: to } }, { "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
+    const marketData = await Callback.find({ createdAt: { $gt: from, $lt: to }, "mobile.mobile": { $exists: true } }, { "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
     marketData.map((value)=>{
       let marketobj = {};
 
