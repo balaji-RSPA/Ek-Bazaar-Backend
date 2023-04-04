@@ -1552,12 +1552,12 @@ exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject
     console.log(from, "--------------Last Time Interval Data Entry-----------", to)
 
     let dataArr = []
-    // let marketArr = []
-    const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to } }, { _id: 0, "name": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
+    const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to } }, { _id: 0, "name": 1, "mobile.countryCode": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
 
     sellerData.map((seller) => {
-      let mySellerObje = {};
       
+      if (seller.client !="onebazaar"){
+      let mySellerObje = {};
       mySellerObje.name = seller.name || '';
       mySellerObje.mobile = seller.mobile || [];
       mySellerObje.createdAt = seller.createdAt || new Data()
@@ -1569,8 +1569,9 @@ exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject
       }else{
         mySellerObje.source = seller.client
       }
-      
       dataArr.push(mySellerObje)
+    }else{
+    }
     })
     const marketData = await Callback.find({ createdAt: { $gt: from, $lt: to } }, { "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
     marketData.map((value)=>{
