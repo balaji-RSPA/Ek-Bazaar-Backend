@@ -25,7 +25,7 @@ const {
   getSellerSomeData,
 } = sellers;
 
-const { addCurrencyExcenge, updateCurrencyExcenge, updateCurrencyExcengeINR, addCurrencyExcengeINR } = CurrencyConvrter
+const { addCurrencyExcenge, updateCurrencyExcenge, updateCurrencyExcengeINR, addCurrencyExcengeINR, deleteMultipaleCurrency } = CurrencyConvrter
 const { updateMaster, updateMasterBulkProducts, getMasterCount, getMaster } = mastercollections;
 const { getSellerProducts, updateSellerProducts } = sellerProducts;
 const { getQueSMS, updateQueSMS, queSMSBulkInsert } = SMSQue;
@@ -1552,7 +1552,8 @@ exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject
     console.log(from, "--------------Last Time Interval Data Entry-----------", to)
 
     let dataArr = []
-    const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to } }, { _id: 0, "name": 1, "mobile.countryCode": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
+    // let marketArr = []
+    const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to },"mobile.mobile":{$exists: true} }, { _id: 0, "name": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
 
     sellerData.map((seller) => {
       
@@ -1573,7 +1574,7 @@ exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject
     }else{
     }
     })
-    const marketData = await Callback.find({ createdAt: { $gt: from, $lt: to } }, { "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
+    const marketData = await Callback.find({ createdAt: { $gt: from, $lt: to }, "mobile.mobile": { $exists: true } }, { "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
     marketData.map((value)=>{
       let marketobj = {};
 
@@ -1658,6 +1659,22 @@ exports.updateCurrencyExcenge = async (req, res) => new Promise(async (resolve, 
     console.error(error.message);
     reject(error.message);
   }
+})
+
+exports.deleteExtraCurrency = async (req,res) => new Promise(async (resolve, reject) => {
+  try {
+    let required = ['USD', 'EUR', 'GBP', 'KES', 'VND', 'CNY', 'JPY', 'INR'];
+    let query = {
+      code: { $nin: required }
+    }
+
+    let deleted = await deleteMultipaleCurrency(query);
+
+    resolve(deleted)
+  } catch (error) {
+    reject(error.message);
+  }
+  
 })
 
 exports.getCurrencySymboles = async (req, res) => new Promise(async (resolve, reject) => {
