@@ -63,7 +63,7 @@ const { addOrders, updateOrder, getOrderById, updateOrderPlan } = Orders;
 const { addOrdersLog, updateOrderLog, addRecurringOrder, updateRecurringOrder, getRecurringOrder, getPendingSubscriptionOrders, updatePendingSubscriptionOrders } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
 const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
-const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook, saveCancledPaymentHookRes,getCancledPaymentHook,updateCancledPaymentHook } = subChargedHook;
+const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook, saveCancledPaymentHookRes, getCancledPaymentHook, updateCancledPaymentHook } = subChargedHook;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { getAllSellerTypes } = category;
 const { updateSellerProducts } = sellerProducts;
@@ -271,7 +271,7 @@ const assignOurPlan = async (data, body, url, updatePending) => new Promise(asyn
     } = data;
 
     if (updatePending) {
-      console.log(sellerId,"#########$$$$$$$$$$$$$$%%%%%%%%%%%%%%%!!!!!!!!!!!!!!!!")
+      console.log(sellerId, "#########$$$$$$$$$$$$$$%%%%%%%%%%%%%%%!!!!!!!!!!!!!!!!")
       var { update, OrderId, PaymentId } = updatePending;
     }
     const dateNow = new Date();
@@ -407,11 +407,11 @@ const assignOurPlan = async (data, body, url, updatePending) => new Promise(asyn
       let paymentJson;
       let payment;
 
-      if (updatePending && update){
-        const paymentQuery = { _id: PaymentId}
-        payment = await updatePayment(paymentQuery, { paymentSuccess: true});
+      if (updatePending && update) {
+        const paymentQuery = { _id: PaymentId }
+        payment = await updatePayment(paymentQuery, { paymentSuccess: true });
         paymentJson = payment;
-      }else{
+      } else {
         paymentJson = {
           ...userData,
           paymentResponse: paymentResponse,
@@ -421,7 +421,7 @@ const assignOurPlan = async (data, body, url, updatePending) => new Promise(asyn
         };
         payment = await addPayment(paymentJson);
       }
-      
+
       const _p_details = {
         subscriptionId: planDetails._id,
         expireStatus: false,
@@ -458,8 +458,8 @@ const assignOurPlan = async (data, body, url, updatePending) => new Promise(asyn
       };
       let order_details;
       let OrdersData;
-      if (updatePending && update){
-        const ordersQuery = { _id: OrderId}
+      if (updatePending && update) {
+        const ordersQuery = { _id: OrderId }
         let result = await getOrderById(ordersQuery);
         result = await updateOrder(ordersQuery, { invoiceNo: _invoice })
         order_details = result;
@@ -747,7 +747,7 @@ async function CalculateGst(price, findPinCode, currency) {
   let sgstAmount = "";
   let totalAmount = "";
   if (currency === "INR") {
-    if (!findPinCode){
+    if (!findPinCode) {
       gstAmount = (parseFloat(price) * gstValue) / 100;
       totalAmount = parseFloat(price) + gstAmount;
     }
@@ -1102,10 +1102,10 @@ module.exports.subscriptionCharged = async (req, res) => {
         //   "🚀 ~ file: paymentController.js ~ line 395 ~ module.exports.subscriptionCharged= ~ invoice",
         //   invoice
         // );
-        
 
 
-        if (recurringId){
+
+        if (recurringId) {
           invoiceNoArr.push(_invoice);
           invoicePathArr.push(invoice.Location)
           let nextPaymentLogDate = moment(new Date()).format("DD/MM/YYYY")
@@ -1118,7 +1118,7 @@ module.exports.subscriptionCharged = async (req, res) => {
             nextPaymentDate: newDate
           })
         }
-        
+
 
 
 
@@ -1134,7 +1134,7 @@ module.exports.subscriptionCharged = async (req, res) => {
         //   nextPaymentDate: newDate
         // })
 
-        
+
 
         const sellerDetails = order_details && order_details.sellerDetails;
 
@@ -1188,10 +1188,10 @@ module.exports.subscriptionCharged = async (req, res) => {
           let pendingQuery = { pending: true, rzrSubscriptionId: subId }
 
           let pendingSub = await getPendingSubscriptionOrders(pendingQuery)
-          
-          if (pendingSub && pendingSub.length){
+
+          if (pendingSub && pendingSub.length) {
             console.log(
-              pendingSub,"pendingSub-------------- Pending Subscription Through Checkout-----------------"
+              pendingSub, "pendingSub-------------- Pending Subscription Through Checkout-----------------"
             );
             const { userId, subscriptionId, orderDetails, currency, isSubscription, OrderId, PaymentId, sellerId, paymentResponse } = pendingSub[0];
 
@@ -1208,10 +1208,10 @@ module.exports.subscriptionCharged = async (req, res) => {
             const isAssigned = await assignOurPlan(data, JSON.stringify(payment && payment.entity), url, { update: true, OrderId, PaymentId });
 
             if (isAssigned && isAssigned.status === "ok") {
-              const updatePending = await updatePendingSubscriptionOrders(pendingQuery, { pending: false})
+              const updatePending = await updatePendingSubscriptionOrders(pendingQuery, { pending: false })
               console.log("---------Pending Subscription Assingned Successfully-----------------")
             }
-          }else{
+          } else {
             console.log(
               "--------------SucessFull Subscription Through Checkout-----------------"
             );
@@ -1545,7 +1545,7 @@ module.exports.subscriptionCharged = async (req, res) => {
                       },
                       order_details
                     );
-                    console.log(invoice, "))))))))))))))))))))))))))))))0") 
+                    console.log(invoice, "))))))))))))))))))))))))))))))0")
                     let recurringResponce;
                     if (isSubscription) {
                       const fromDate = moment();
@@ -1756,7 +1756,7 @@ module.exports.subscriptionCharged = async (req, res) => {
   }
 };
 
-module.exports.paymentFailedHook = async (req,res) => {
+module.exports.paymentFailedHook = async (req, res) => {
   try {
     const check = await getCancledPaymentHook({ uniqueEventId: req.headers['x-razorpay-event-id'] })
     let save;
@@ -1776,7 +1776,7 @@ module.exports.paymentFailedHook = async (req,res) => {
     console.log("🚀 ~ file: paymentController.js ~ line 1741 ~ module.exports.paymentFailedHook= ~ save", save)
 
     const { payload } = save.paymentFailedHookResponse;
-    const { payment} = payload;
+    const { payment } = payload;
     const { entity } = payment;
 
     const payId = entity && entity.id;
@@ -1792,12 +1792,12 @@ module.exports.paymentFailedHook = async (req,res) => {
 
       let result = await updateOrder(ordersQuery, { orderStatus: "failed" })
 
-      if(result){
+      if (result) {
         const updatePending = await updatePendingSubscriptionOrders(pendingQuery, { pending: false })
         console.log("---------Payment Failed Now Order Status is Failed -----------------")
-      } 
+      }
 
-    }else{
+    } else {
 
       // Request will Go to tender.
       const url = tenderApiBaseUrl + "/paymentFailedHook";
@@ -1810,10 +1810,10 @@ module.exports.paymentFailedHook = async (req,res) => {
         // res.status(200).json({ status: "ok" });
       }
     }
-    
+
   } catch (error) {
-  console.log("🚀 ~ file: paymentController.js ~ line 1733 ~ module.exports.paymentFailedHook= ~ error", error)
-    
+    console.log("🚀 ~ file: paymentController.js ~ line 1733 ~ module.exports.paymentFailedHook= ~ error", error)
+
   }
 }
 
@@ -1888,7 +1888,7 @@ module.exports.subscriptionCancleHook = async (req, res) => {
         console.log("🚀 ~ file: paymentController.js ~ line 1689 ~ module.exports.subscriptionCancleHook= ~ update", update)
       }
 
-      if (isTender){
+      if (isTender) {
         // Request will Go to tender.
         const url = tenderApiBaseUrl + "/subscriptionCancled";
         const response = await axios({
@@ -2098,6 +2098,60 @@ module.exports.createRazorPayLink = async (req, res) => {
     respError(error);
   }
 };
+
+module.exports.createWhatsappPaymentLink = async (req, res) => {
+  try {
+    let { sellerId, planId, pincode, mobile } = req.body;
+
+    let currency = "INR";
+    let isSubscription = false
+
+    if (!sellerId) {
+      return respError(res, "Seller Id is Required!")
+    }
+
+    if (!planId) {
+      return respError(res, "Plan Id is required for the Payment Link")
+    }
+
+    let sellerDetails = await getSellerProfile(sellerId);
+    let seller = sellerDetails && sellerDetails[0];
+
+    if (!seller) {
+      return respError(res, "Seller Id is not valid!")
+    }
+    if (seller && seller.isPartialyRegistor) {
+      return respError(res, "Please complete your profile first")
+    }
+
+    const planDetails = await getSubscriptionPlanDetail({
+      _id: planId,
+    });
+
+    if (!planDetails) {
+      return respError(res, "Please send a valid Plan Id.")
+    }
+
+    let pin = pincode || (seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.pincode);
+
+    if (!pin) {
+      return respError(res, "Pin code is required!")
+    }
+
+    let orderDetails = {
+      name: seller && seller.name || '',
+      email : seller && seller.email || '',
+      mobile : seller && seller.mobile || {},
+      gst : seller
+    }
+
+
+    res.json({ seller, planDetails })
+
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:2106 ~ module.exports.createWhatsappPaymentLink= ~ error:", error)
+  }
+}
 
 module.exports.captureLink = async (req, res) => {
   try {
@@ -2620,7 +2674,7 @@ module.exports.createRazorPayOrder = async (req, res) => {
           result.currency = currency;
         }
         // console.log(result, 'create Order')
-        console.log(result,"@@@@@@@@@@@@@@@@@@@");
+        console.log(result, "@@@@@@@@@@@@@@@@@@@");
 
         respSuccess(res, { ...result, key_id: razorPayCredentials.key_id });
       }
@@ -2809,246 +2863,7 @@ module.exports.captureRazorPayPayment = async (req, res) => {
                   "subscription activated successfully!"
                 );
               }
-              //     const invoiceNumner = await getInvoiceNumber({ id: 1 })
-              //     const _invoice = invoiceNumner && invoiceNumner.invoiceNumber || ''
-              //     let planExpireDate = dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))
-              //     let date = new Date()
-              //     // let subscriptionValidety = date.setDate(date.getDate() + parseInt(planDetails.days))
-              //     const SourceCode = seller && seller.hearingSource && seller.hearingSource.referralCode;
-              //     let isFreeTrialIncluded = false;
-              //     let planValidFrom = moment()
 
-              //     if (seller && seller.hearingSource && seller.hearingSource.source === 'Uttarakhand' && seller.hearingSource.referralCode === 'UTK1121') {
-              //         if (seller && seller.planId && seller.planId.isTrial) {
-              //             const trialCreatedAt = seller.planId && seller.planId.createdAt;
-              //             const today = moment();
-              //             const daysFromRegistration = today.diff(moment(trialCreatedAt, 'DD-MM-YYYY'), 'days');
-              //             const todayDate = new Date();
-              //             if (daysFromRegistration <= 7) {
-              //                 planExpireDate = todayDate.setDate(todayDate.getDate() + parseInt(planDetails.days) + parseInt(seller.planId.days) - daysFromRegistration)
-
-              //                 planDetails.days = `${parseInt(planDetails.days) + parseInt(seller.planId.days) - daysFromRegistration}`
-
-              //                 isFreeTrialIncluded = true
-
-              //                 planValidFrom = moment(seller.planId.exprireDate)
-              //             }
-              //         }
-              //     }
-              //     await updateInvoiceNumber({ id: 1 }, { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 })
-
-              //     const sellerDetails = {
-              //         name: orderDetails.name,
-              //         email: orderDetails.email || seller.email,
-              //         sellerType: seller.sellerType,
-              //         groupId: planDetails.groupType,
-              //         location: seller.location,
-              //         mobile: seller.mobile
-              //     }
-              //     const paymentJson = {
-              //         ...userData,
-              //         paymentResponse: paymentResponse,
-              //         paymentDetails: JSON.parse(body),
-              //         paymentSuccess: true,
-              //         isSubscription
-              //     }
-              //     const _p_details = {
-              //         subscriptionId: planDetails._id,
-              //         expireStatus: false,
-              //         name: planDetails.type,
-              //         price: planDetails.price,
-              //         usdPrice: planDetails.usdPrice,
-              //         description: planDetails.description,
-              //         features: planDetails.features,
-              //         days: planDetails.days,
-              //         extendTimes: null,
-              //         exprireDate: planExpireDate,
-              //         // subscriptionValidety,
-              //         hearingSourceCode: SourceCode,
-              //         isTrial: false,
-              //         planType: planDetails.type,
-              //         extendDays: planDetails.days,
-              //         groupType: planDetails.groupType,
-              //         billingType: planDetails.billingType,
-              //         priceUnit: planDetails.priceUnit,
-              //         type: planDetails.type,
-              //         currency
-              //     }
-              //     const payment = await addPayment(paymentJson)
-              //     const planData = {
-              //         ...userData,
-              //         ..._p_details,
-              //         isFreeTrialIncluded,
-              //         planValidFrom,
-              //         isSubscription,
-              //         canceled: false,
-              //         createdAt: new Date(),
-              //         createdOn: new Date()
-              //     }
-
-              //     const order_details = {
-              //         ...userData,
-              //         invoiceNo: _invoice,
-              //         invoicePath: '',
-              //         gstNo: orderDetails && orderDetails.gst || null,
-              //         address: orderDetails && orderDetails.address || null,
-              //         pincode: orderDetails && orderDetails.pincode || null,
-              //         country: orderDetails && orderDetails.country || null,
-              //         sellerDetails: {
-              //             ...sellerDetails
-              //         },
-              //         // sellerPlanId: '', // seller plan collectio id
-              //         subscriptionId: subscriptionId,
-              //         // orderPlanId: '', // order items/plans id
-              //         gst: gstValue,
-              //         price: price,
-              //         gstAmount: includedGstAmount.gstAmount,
-              //         cgstAmount: includedGstAmount.cgstAmount,
-              //         sgstAmount: includedGstAmount.sgstAmount,
-              //         total: includedGstAmount.totalAmount,
-              //         orderedOn: new Date(),
-              //         hearingSourceCode: SourceCode,
-              //         // paymentId: '', // payment collection id
-              //         // paymentStatus: '',
-              //         ipAddress: orderDetails && orderDetails.ipAddress || null,
-              //         currency: currency,
-              //         isSubscription
-              //         // isEmailSent: ''
-              //     }
-              //     const OrdersData = await addOrders(order_details)
-
-              //     const orderItem = {
-              //         ...userData,
-              //         orderId: OrdersData._id,
-              //         subscriptionId: planDetails._id,
-              //         ..._p_details,
-              //         isFreeTrialIncluded,
-              //         planValidFrom,
-              //         isSubscription
-              //     }
-              //     const orderItemData = await addOrdersPlans(orderItem)
-              //     let sellerUpdate = {
-              //         paidSeller: true,
-              //         sellerVerified: true,
-              //         isSubscription
-              //     }
-              //     console.log(existingGroup, '!==', currentGroup, ' Group equality check------')
-              //     if (existingGroup !== currentGroup) {
-              //         const sellerType = await getAllSellerTypes(0, 10, { group: parseInt(currentGroup) })
-              //         const typeSeller = sellerType.map((item) => item._id)
-              //         sellerUpdate = {
-              //             ...sellerUpdate,
-              //             sellerType: typeSeller
-              //         }
-              //         deleteProduct = true
-              //     }
-              //     const patmentUpdate = await updatePayment({ _id: payment._id }, { orderId: OrdersData._id })
-              //     if (sellerPlanDetails) {
-              //         sellerPlanDetails = await updateSellerPlan({ _id: sellerPlanDetails._id }, planData);
-              //     } else {
-              //         sellerPlanDetails = await createPlan(planData)
-              //         sellerUpdate.planId = sellerPlanDetails._id
-              //     }
-              //     const sellerUpdateData = await updateSeller({ _id: seller._id }, sellerUpdate)
-
-              //     const planLog = {
-              //         ...userData,
-              //         sellerPlanId: sellerPlanDetails._id,
-              //         subscriptionId: planDetails._id,
-              //         sellerDetails: { ...sellerDetails },
-              //         planDetails: {
-              //             ..._p_details,
-              //             exprireDate: new Date(_p_details.exprireDate)
-              //         },
-              //         isSubscription
-              //     }
-              //     const OrderUpdate = await updateOrder({ _id: OrdersData._id }, { orderPlanId: orderItemData._id, paymentId: payment._id, planId: sellerPlanDetails._id, sellerPlanId: sellerPlanDetails._id })
-              //     // Generate invoice
-              //     const invoice = await createPdf(seller, { ..._p_details, totalPlanPrice: price, totalPrice, isFreeTrialIncluded, planValidFrom }, order_details)
-
-              //     await addSellerPlanLog(planLog)
-              //     if (deleteProduct === true && seller.sellerProductId && seller.sellerProductId.length) {
-              //         updateSellerProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
-              //         updateMasterBulkProducts({ _id: { $in: seller.sellerProductId } }, { isDeleted: true })
-              //         console.log('--- Old Service Type Product Status changed-------')
-              //         // update product deleta status true
-
-              //     }
-
-              //     // const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
-              //     if (currency === 'INR' && checkMobile && isProd && planTo && planFrom && checkPaidSeller) {
-              //         const msgData = {
-              //             plan: _p_details.planType,
-              //             currency: currency,
-              //             amount: includedGstAmount.totalAmount,
-              //             url: invoice.Location,
-              //             name: order_details.invoiceNo.toString() + '-invoice.pdf',
-              //             till: _p_details.exprireDate,
-              //             to: planTo,
-              //             from: planFrom
-              //         }
-              // /* await */ sendSMS(checkMobile, planChanged(msgData))
-              //     } else if (currency === 'INR' && checkMobile && isProd) {
-              //         const msgData = {
-              //             plan: _p_details.planType,
-              //             currency: currency,
-              //             amount: includedGstAmount.totalAmount,
-              //             url: invoice && invoice.Location || null,
-              //             name: order_details.invoiceNo.toString() + '-invoice.pdf',
-              //             till: _p_details.exprireDate
-              //         }
-              // /* await */ sendSMS(checkMobile, planSubscription(msgData))
-              //     } else {
-              //         console.log("================sms not send===========")
-              //     }
-              //     if (orderDetails && orderDetails.email/* seller && seller.email */ && planTo && planFrom && checkPaidSeller) {
-              //         let planChangedEmailMsg = planChangedEmail({
-              //             oldPlanType,
-              //             newPlanType: _p_details.planType,
-              //             from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
-              //             till: _p_details.exprireDate,
-              //             // till: _p_details.subscriptionValidety,
-              //             url
-              //         })
-              //         const message = {
-              //             from: MailgunKeys.senderMail,
-              //             to: orderDetails && orderDetails.email || seller.email,
-              //             subject: 'Plan changed',
-              //             html: commonTemplate(planChangedEmailMsg),
-              //         }
-              //  /* await */ sendSingleMail(message)
-              //     } else {
-              //         console.log("==============Plan Changed Email Not Send====================")
-              //     }
-              //     if (orderDetails && orderDetails.email) {
-              //         let invoiceEmailMsg = invoiceContent({
-              //             plan: _p_details.planType,
-              //             from: isFreeTrialIncluded && planValidFrom ? planValidFrom : new Date(),
-              //             till: _p_details.exprireDate,
-              //             price: includedGstAmount.totalAmount,
-              //             invoiceLink: invoice.Location,
-              //             cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
-              //             isOneBazzar: false
-              //         });
-              //         const message = {
-              //             from: MailgunKeys.senderMail,
-              //             to: orderDetails.email || seller.email,
-              //             subject: 'Ekbazaar Subscription activated successfully',
-              //             html: commonTemplate(invoiceEmailMsg),
-              //             // attachment: invoice.attachement,
-              //             attachments: [{ // stream as an attachment
-              //                 filename: 'invoice.pdf',
-              //                 content: fs.createReadStream(invoice.attachement)
-              //                 // path: invoice.Location,
-              //             }]
-              //         }
-              //     /* await */ sendSingleMail(message)
-              //     } else {
-              //         console.log("==============Invoice Not Send====================")
-              //     }
-              //     await updateOrder({ _id: OrdersData._id }, { isEmailSent: true, invoicePath: invoice && invoice.Location || '' })
-              //     console.log('------------------ Payment done ---------')
-              //     return respSuccess(res, { payment: true }, 'subscription activated successfully!')
             } else {
               console.log("-------  Payment Failled -------------");
               const paymentJson = {
@@ -3911,12 +3726,12 @@ const assignPlantoUser = async (
 module.exports.createStripePayment = async (req, res) => {
   try {
     let { amount, id, description, currency } = req.body;
-    
+
     const customer = await stripe.customers.create({
       name: description.name || '',
       email: description.email,
       payment_method: id,
-      address:{
+      address: {
         line1: description.address,
         country: description.country.value,
       }
@@ -3958,7 +3773,7 @@ module.exports.planActivation = async (req, res) => {
       paymentMethod,
     } = req.body;
 
-    
+
     const cardLastDigits = paymentMethod && paymentMethod.cardData && paymentMethod.cardData.last4;
     console.log(req.body, "req.bodyreq.body", cardLastDigits);
 
@@ -4056,7 +3871,9 @@ module.exports.planActivation = async (req, res) => {
             ((seller.hearingSource.source === "Uttarakhand" &&
               seller.hearingSource.referralCode === "UTK1121") || (seller.hearingSource.source === "Vietnam" &&
                 seller.hearingSource.referralCode === "VNG20") || (seller.hearingSource.source === "African Union" &&
-                  seller.hearingSource.referralCode === "AUG20"))
+                seller.hearingSource.referralCode === "AUG20") || (seller.hearingSource.source === "Germany" &&
+                seller.hearingSource.referralCode === "DEUEMI23") || (seller.hearingSource.source === "GCC" &&
+              seller.hearingSource.referralCode === "GCCG23"))
           ) {
             if (seller && seller.planId && seller.planId.isTrial) {
               const trialCreatedAt = seller.planId && seller.planId.createdAt;
