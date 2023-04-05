@@ -60,6 +60,12 @@ const subscriptionPlanSchema = new Schema({
   plan_id:{
     type: String
   },
+  gstamount:{
+    type:Number
+  },
+  totalamount:{
+    type: Number
+  }
 }, {
   timestamps: true,
   versionKey: false
