@@ -574,7 +574,7 @@ module.exports.getSeller = (id, chkStock, query) =>
       })
       .catch((error) => reject(error))
   })
-
+// changed at top func for getting entair location obj
 exports.getSellerProfile = (id) =>
   new Promise((resolve, reject) => {
     console.log("id", id)

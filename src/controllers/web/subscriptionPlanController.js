@@ -27,7 +27,8 @@ const {
 module.exports.getAllSubscriptionPlan = async(req, res) => {
     try {
         const { skip, limit } = req.body
-        const subscriptionPlan = await getAllSubscriptionPlan({}, skip, limit);
+        // console.log(req.query,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        const subscriptionPlan = await getAllSubscriptionPlan(req.query || {}, skip, limit);
         respSuccess(res, subscriptionPlan);
     } catch (error) {
         respError(res, error.message);
