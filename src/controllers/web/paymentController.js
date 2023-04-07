@@ -2101,7 +2101,12 @@ module.exports.createRazorPayLink = async (req, res) => {
 
 module.exports.createWhatsappPaymentLink = async (req, res) => {
   try {
-    let { sellerId, planId, pincode, mobile } = req.body;
+    var instance = new Razorpay({
+      key_id: razorPayCredentials.key_id, //'rzp_test_jCeoTVbZGMSzfn',
+      key_secret: razorPayCredentials.key_secret, //'V8BiRAAeeqxBVheb0xWIBL8E',
+    });
+
+    let { sellerId, planId, pinCode, mobile } = req.body;
 
     let currency = "INR";
     let isSubscription = false
@@ -2132,21 +2137,124 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
       return respError(res, "Please send a valid Plan Id.")
     }
 
-    let pin = pincode || (seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.pincode);
+    let pin = pinCode || (seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.pincode);
 
     if (!pin) {
       return respError(res, "Pin code is required!")
     }
 
+    delete seller.mobile[0]._id
+
+    const trialExp = new Date(seller && seller.planId && seller.planId.exprireDate)
+    const dateNow = new Date();
+    const trialCreatedAt = seller.planId && seller.planId.createdAt;
+    const today = moment();
+    const daysFromRegistration = today.diff(moment(trialCreatedAt, 'YYYY-MM-DD'), 'days');
+
+    // console.log(planDetails.price, planDetails.gst, "BBBBBBBBBBB", planDetails)
+
+    let gstPercent = planDetails.gst || 18;
+
     let orderDetails = {
       name: seller && seller.name || '',
       email : seller && seller.email || '',
-      mobile : seller && seller.mobile || {},
-      gst : seller
+      mobile : seller && seller.mobile[0] || {},
+      gst: seller && seller.statutoryId && seller.statutoryId.GstNumber && seller.statutoryId.GstNumber.number || '',
+      address: seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.address || '',
+      pincode: pin,
+      planName: planDetails && planDetails.type,
+      groupType: planDetails && planDetails.groupType === 1 ? "Manufacturers/Traders" : planDetails.groupType === 2 ? 'Farmer' : 'Service' || '',
+      validityFrom: seller && seller.hearingSource && seller.hearingSource.source === 'Uttarakhand' && seller && seller.planId && seller.planId.isTrial && daysFromRegistration <= 7 ? moment(trialExp).format('DD/MM/YYYY') : moment(dateNow).format('DD/MM/YYYY'),
+      validityTill: seller && seller.hearingSource && seller.hearingSource.source === 'Uttarakhand' && seller && seller.planId && seller.planId.isTrial && daysFromRegistration <= 7
+        ? moment(trialExp.setDate(trialExp.getDate() + parseInt(planDetails.days))).format('DD/MM/YYYY')
+        : moment(dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))).format('DD/MM/YYYY') || '',
+      price: planDetails && planDetails.price || '',
+      gstAmount: planDetails && (planDetails.price * gstPercent) / 100,
+      isSubscription:false,
+      ipAddress: ""
+    }
+
+    const data = {
+      sellerId,
+      userId : seller.userId,
+      isSubscription,
+      currency,
+      orderDetails,
+      isSubLink : false,
+      subscriptionId: planId,
+      razorPay: {},
+    };
+
+    let findpincode = currency === "INR" ? await findPincode({ pincode: pin }) : "";
+    // console.log(pin,"🚀 ~ file: paymentController.js:2184 ~ module.exports.createWhatsappPaymentLink= ~ findpincode:", findpincode)
+
+    if (!findpincode){
+      return respError(res, "Invalid pincode");
+    }else{
+
+      const price =
+        planDetails &&
+        (currency === "INR" ? planDetails.price : planDetails.usdPrice);
+      const includedGstAmount = await CalculateGst(
+        price,
+        findpincode,
+        currency
+      );
+
+      const mob =
+        orderDetails && orderDetails.mobile && orderDetails.mobile.mobile,
+        mail = orderDetails && orderDetails.email;
+      const response = await createPayLinks(data);
+      // console.log("🚀 ~ file: paymentController.js:2208 ~ module.exports.createWhatsappPaymentLink= ~ response:", response)
+
+      const query = { _id: response._id };
+
+      let result = await instance.paymentLink.create({
+        // upi_link: true,
+        amount: parseInt((includedGstAmount.totalAmount * 100).toFixed(2)),
+        currency: currency,
+        accept_partial: false,
+        description: planDetails.description,
+        reference_id: response._id,
+        customer: {
+          name: orderDetails.name,
+          email: mail,
+          contact: mob,
+        },
+        notify: {
+          sms: true,
+          email: true,
+        },
+        notes: {
+          client: "trade",
+          url: tradeSiteUrl,
+        },
+        callback_url: tradeApiBaseUrl + "captureLinkPayment",
+        callback_method: "get",
+      });
+
+      const update = await updatePayLinks(query, { razorPay: result });
+      // console.log("🚀 ~ file: paymentController.js:2236 ~ module.exports.createWhatsappPaymentLink= ~ update:", update)
+      if (update && update.orderDetails && update.orderDetails.email) {
+        let payLinkEmailMsg = paymentLinkGeneration({
+          userName: seller.name,
+          payLink: result.short_url,
+        });
+        const message = {
+          from: MailgunKeys.senderMail,
+          to: mail,
+          subject: "Payment link",
+          html: commonTemplate(payLinkEmailMsg),
+        };
+        sendSingleMail(message);
+
+        respSuccess(res, { payLink: result.short_url }, "Link Send to Your Email");
+
+      }
     }
 
 
-    res.json({ seller, planDetails })
+    // res.json({ result })
 
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:2106 ~ module.exports.createWhatsappPaymentLink= ~ error:", error)

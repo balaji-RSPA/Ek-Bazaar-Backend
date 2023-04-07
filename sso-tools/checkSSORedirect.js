@@ -8,10 +8,24 @@ async function ssoRedirect(req, res, next) {
   // check if the req has the queryParameter as ssoToken
   // and who is the referer.
   const { ssoToken } = req.query;
+
   if (ssoToken != null) {
     try {
       const url = `${ssoServerJWTURL}?ssoToken=${ssoToken}`
-      const response = await request({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } })
+      const oneUrl = `https://auth.onebazaar.com/simplesso/${ssoServerJWTURL}?ssoToken=${ssoToken}`
+      let response;
+      if (req.body && req.body._base && req.body._base.includes('onebazaar')) {
+        // If Request is comimg From Onebazaar.
+        response = await axios.get(oneUrl, {
+          headers: {
+            Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL"
+          }
+        })
+
+      } else {
+        response = await request({ url, method: "GET", headers: { Authorization: "Bearer l1Q7zkOL59cRqWBkQ12ZiGVW2DBL" } })
+
+      }
 
       const { token } = response.data;
       const decoded = await verifyJwtToken(token);
