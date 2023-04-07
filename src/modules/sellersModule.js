@@ -565,7 +565,7 @@ module.exports.getSeller = (id, chkStock, query) =>
       .populate(matchVal)
       .populate('location.city', 'name')
       .populate('location.state', 'name')
-      .populate('location.country', 'name')
+      .populate('location.country')
       .populate('planId')
       .populate('selectedCurrency')
       .lean()
