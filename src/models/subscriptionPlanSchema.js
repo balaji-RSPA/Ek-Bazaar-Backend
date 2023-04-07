@@ -54,6 +54,9 @@ const subscriptionPlanSchema = new Schema({
     type: Boolean,
     default: true
   },
+  gst:{
+    type:Number
+  },
   numberOfExtends: {
     type: Number
   },
