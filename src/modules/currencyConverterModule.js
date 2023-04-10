@@ -57,7 +57,7 @@ exports.updateCurrencyExcenge = async (query, data) => new Promise((resolve, rej
 exports.getAllCurrency = async (query) => new Promise((resolve, reject) => {
     currencyExcenges.find(query)
         .then((doc) => {
-            console.log("🚀 ~ file: currencyConverterModule.js:60 ~ .then ~ doc:", doc)
+            // console.log("🚀 ~ file: currencyConverterModule.js:60 ~ .then ~ doc:", doc)
             resolve(doc)
         })
         .catch((error) => {
@@ -117,7 +117,7 @@ exports.updateCurrencyExcengeINR = async (query, data) => new Promise((resolve, 
 exports.getAllCurrencyINR = async (query) => new Promise((resolve, reject) => {
     currencyINRExcenges.find(query)
         .then((doc) => {
-            console.log("🚀 ~ file: currencyConverterModule.js:60 ~ .then ~ doc:", doc)
+            // console.log("🚀 ~ file: currencyConverterModule.js:60 ~ .then ~ doc:", doc)
             resolve(doc)
         })
         .catch((error) => {

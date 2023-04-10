@@ -2112,18 +2112,18 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
     let isSubscription = false
 
     if (!sellerId) {
-      return respError(res, "Seller Id is Required!")
+      return respError(res, "Seller ID is required for the payment link!")
     }
 
     if (!planId) {
-      return respError(res, "Plan Id is required for the Payment Link")
+      return respError(res, "Plan ID is required for the payment link!")
     }
 
     let sellerDetails = await getSellerProfile(sellerId);
     let seller = sellerDetails && sellerDetails[0];
 
     if (!seller) {
-      return respError(res, "Seller Id is not valid!")
+      return respError(res, "Seller ID is not valid!")
     }
     if (seller && seller.isPartialyRegistor) {
       return respError(res, "Please complete your profile first")
@@ -2134,7 +2134,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
     });
 
     if (!planDetails) {
-      return respError(res, "Please send a valid Plan Id.")
+      return respError(res, "Please send a valid Plan ID.")
     }
 
     let pin = pinCode || (seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.pincode);
@@ -2189,7 +2189,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
     // console.log(pin,"🚀 ~ file: paymentController.js:2184 ~ module.exports.createWhatsappPaymentLink= ~ findpincode:", findpincode)
 
     if (!findpincode){
-      return respError(res, "Invalid pincode");
+      return respError(res, "Pin code is not valid!");
     }else{
 
       const price =
@@ -2208,6 +2208,10 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
       // console.log("🚀 ~ file: paymentController.js:2208 ~ module.exports.createWhatsappPaymentLink= ~ response:", response)
 
       const query = { _id: response._id };
+      // let timeStamp = Date.now();
+      let timeStamp = Math.round(+new Date() / 1000);
+      let expireTime = timeStamp + (15 * 60)
+      console.log(timeStamp,"🚀 ~ file: paymentController.js:2212 ~ module.exports.createWhatsappPaymentLink= ~ expireTime:", expireTime)
 
       let result = await instance.paymentLink.create({
         // upi_link: true,
@@ -2221,6 +2225,8 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
           email: mail,
           contact: mob,
         },
+        expire_by: expireTime,
+        // expired_at:expireTime,
         notify: {
           sms: true,
           email: true,
@@ -2232,6 +2238,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
         callback_url: tradeApiBaseUrl + "captureLinkPayment",
         callback_method: "get",
       });
+      console.log("🚀 ~ file: paymentController.js:2239 ~ module.exports.createWhatsappPaymentLink= ~ result:", result)
 
       const update = await updatePayLinks(query, { razorPay: result });
       // console.log("🚀 ~ file: paymentController.js:2236 ~ module.exports.createWhatsappPaymentLink= ~ update:", update)
@@ -2248,7 +2255,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
         };
         sendSingleMail(message);
 
-        respSuccess(res, { payLink: result.short_url }, "Link Send to Your Email");
+        respSuccess(res, { payLink: result.short_url }, "Payment link is generated. Link is valid only for 15 minutes.");
 
       }
     }
@@ -4323,3 +4330,17 @@ module.exports.planActivation = async (req, res) => {
     respError(error);
   }
 };
+
+module.exports.createStripeLink = async(req, res) => {
+  try {
+    const price = await stripe.prices.create({
+      currency: 'usd',
+      unit_amount: 1000,
+    })
+    console.log("🚀 ~ file: paymentController.js:4333 ~ module.exports.createStripeLink=async ~ price:", price)
+
+    respSuccess(res,price)
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:4331 ~ module.exports.createStripeLink=async ~ error:", error)
+  }
+}
