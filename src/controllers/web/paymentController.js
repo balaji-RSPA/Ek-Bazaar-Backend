@@ -2258,6 +2258,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
 
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:2106 ~ module.exports.createWhatsappPaymentLink= ~ error:", error)
+    respError(res,{error:error.message},"Internal Server Error")
   }
 }
 
