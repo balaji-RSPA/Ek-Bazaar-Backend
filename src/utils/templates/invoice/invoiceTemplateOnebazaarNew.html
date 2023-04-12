@@ -349,6 +349,16 @@
               >
               {{details.sellerDetails.name}}
               </p>
+              {{#if details.sellerDetails.businessname}}
+              <p style="
+                           font-size: 10px !important;
+                           font-weight: 600;
+                           color: #000;
+                           margin-bottom: 5px;">
+                {{details.sellerDetails.businessname}}
+              </p>
+              {{/if}}
+
               <p class="billingAddress">
                 {{details.sellerDetails.address}}
               </p>

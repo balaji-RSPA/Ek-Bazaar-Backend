@@ -86,6 +86,11 @@ const createPdf = async (seller, plan, orderDetails) =>
             orderDetails.sellerDetails &&
             capitalizeFirstLetter(orderDetails.sellerDetails.name)) ||
           seller.name,
+        businessname: 
+          (seller &&
+            seller.busenessId &&
+            capitalizeFirstLetter(seller.busenessId.name)) ||
+          "",
         city:
           (seller &&
             seller.location &&
