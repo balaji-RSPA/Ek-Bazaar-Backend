@@ -2267,7 +2267,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
     console.log("🚀 ~ file: paymentController.js:2106 ~ module.exports.createWhatsappPaymentLink= ~ error:", error)
     respError(res,{error:error.message},"Internal Server Error")
   }
-}
+} 
 
 module.exports.captureLink = async (req, res) => {
   try {
@@ -4333,14 +4333,156 @@ module.exports.planActivation = async (req, res) => {
 
 module.exports.createStripeLink = async(req, res) => {
   try {
-    const price = await stripe.prices.create({
-      currency: 'usd',
-      unit_amount: 1000,
-    })
-    console.log("🚀 ~ file: paymentController.js:4333 ~ module.exports.createStripeLink=async ~ price:", price)
+    let { sellerId, planId, pinCode, mobile } = req.body;
 
-    respSuccess(res,price)
+    let isSubscription = false;
+    let currency = "USD"
+
+    if (!sellerId) {
+      return respError(res, "Seller ID is required for the payment link!")
+    }
+
+    if(!planId){
+      return respError(res,"Plan ID is required for the payment link!");
+    }
+
+    const planDetails = await getSubscriptionPlanDetail({
+      _id: planId,
+    });
+
+    if(!planDetails){
+      return respError(res, "Please send a valid Plan ID.")
+    }
+
+    let sellerDetails = await getSellerProfile(sellerId);
+    let seller = sellerDetails && sellerDetails[0];
+
+    if (!seller) {
+      return respError(res, "Seller ID is not valid!")
+    }
+    if (seller && seller.isPartialyRegistor) {
+      return respError(res, "Please complete your profile first")
+    }
+
+    let pin = pinCode || (seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.pincode);
+
+    if (!pin) {
+      return respError(res, "Pin code is required!")
+    }
+
+    delete seller.mobile[0]._id
+
+    const trialExp = new Date(seller && seller.planId && seller.planId.exprireDate)
+    const dateNow = new Date();
+    const trialCreatedAt = seller.planId && seller.planId.createdAt;
+    const today = moment();
+    const daysFromRegistration = today.diff(moment(trialCreatedAt, 'YYYY-MM-DD'), 'days');
+
+    // console.log(planDetails.price, planDetails.gst, "BBBBBBBBBBB", planDetails)
+
+    let gstPercent = planDetails.gst || 18;
+
+    let orderDetails = {
+      name: seller && seller.name || '',
+      email: seller && seller.email || '',
+      mobile: seller && seller.mobile[0] || {},
+      gst: seller && seller.statutoryId && seller.statutoryId.GstNumber && seller.statutoryId.GstNumber.number || '',
+      address: seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.address || '',
+      pincode: pin,
+      planName: planDetails && planDetails.type,
+      groupType: planDetails && planDetails.groupType === 1 ? "Manufacturers/Traders" : planDetails.groupType === 2 ? 'Farmer' : 'Service' || '',
+      validityFrom: seller && seller.hearingSource && seller.hearingSource.source === 'Uttarakhand' && seller && seller.planId && seller.planId.isTrial && daysFromRegistration <= 7 ? moment(trialExp).format('DD/MM/YYYY') : moment(dateNow).format('DD/MM/YYYY'),
+      validityTill: seller && seller.hearingSource && seller.hearingSource.source === 'Uttarakhand' && seller && seller.planId && seller.planId.isTrial && daysFromRegistration <= 7
+        ? moment(trialExp.setDate(trialExp.getDate() + parseInt(planDetails.days))).format('DD/MM/YYYY')
+        : moment(dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))).format('DD/MM/YYYY') || '',
+      price: planDetails && planDetails.price || '',
+      gstAmount: planDetails && (planDetails.price * gstPercent) / 100,
+      isSubscription: false,
+      ipAddress: ""
+    }
+
+    const data = {
+      sellerId,
+      userId: seller.userId,
+      isSubscription,
+      currency,
+      orderDetails,
+      isSubLink: false,
+      subscriptionId: planId,
+      razorPay: {},
+    };
+
+    const product = await stripe.products.retrieve(
+      'prod_NfZJbEXaXaMyNw'
+    );
+
+
+    // const product = await stripe.products.create({
+    //   name: `Onebazaar -${planDetails.type}`,
+    //   metadata: {
+    //     planId: planId
+    //   }
+    // });
+
+    // const price = await stripe.prices.create({
+    //   currency: 'usd',
+    //   unit_amount: 1000,
+    //   product: product.id
+    // })
+    // // console.log("🚀 ~ file: paymentController.js:4333 ~ module.exports.createStripeLink=async ~ price:", product)
+
+    const paymentLink = await stripe.paymentLinks.create({
+      line_items: [
+        {
+          price: product.default_price,
+          quantity: 1,
+        },
+      ],
+    });
+
+    respSuccess(res, {paymentLink, product})
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:4331 ~ module.exports.createStripeLink=async ~ error:", error)
+  }
+}
+
+
+const endpointSecret = "whsec_3541ec50a270a77092f53ba8daf5704fa309854ccf84ebb234f22833c4ba60a3";
+
+module.exports.captureStripLinkPayment = async(req, res) => {
+  try {
+    const sig = req.headers['stripe-signature'];
+
+    let event;
+
+    console.log(req.body,"===========")
+
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (err) {
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'payment_link.created':
+        const paymentLinkCreated = event.data.object;
+        // Then define and call a function to handle the event payment_link.created
+        console.log(event.data,"--------event.data.objectevent.data.object=========")
+        break;
+      case 'payment_link.updated':
+        const paymentLinkUpdated = event.data.object;
+        // Then define and call a function to handle the event payment_link.updated
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    res.status(200).json({status:'ok'})
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:4466 ~ module.exports.captureStripLinkPayment=async ~ error:", error)
+    
   }
 }
