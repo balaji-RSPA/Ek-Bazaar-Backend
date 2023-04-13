@@ -29,6 +29,7 @@ const PaymentData = require('./paymentDataModule')
 const PriceUnit = require('./priceUnitModule')
 const ContactUs = require('./contactModule')
 const Whatsapp = require('./whatsappTemplatemodule')
+const Referalcodes = require('./referralcodeModule')
 
 module.exports = {
     location,
@@ -61,5 +62,6 @@ module.exports = {
     subChargedHook,
     PriceUnit,
     ContactUs,
-    Whatsapp
+    Whatsapp,
+    Referalcodes
 }

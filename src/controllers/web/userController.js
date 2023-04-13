@@ -33,7 +33,7 @@ const { MailgunKeys, fromEmail } = require("../../utils/globalConstants");
 const bcrypt = require("bcrypt");
 
 const { findPincode } = require("../../modules/pincodeModule");
-
+const { VerifyReferralCode }=require("../../modules/referralcodeModule")
 const crypto = require("crypto");
 const {
   activateAccount,
@@ -486,7 +486,7 @@ module.exports.addUser = async (req, res, next) => {
       url,
       _base,
       whatsappChecked,
-      isMobileApp
+      isMobileApp,
     } = req.body;
     console.log(_base, "🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
@@ -556,7 +556,7 @@ module.exports.addUser = async (req, res, next) => {
       // });
       // if (trialPlan/*  && _buyer && !_buyer.length */) {
       //   const sellerDetails = {
-      //     sellerId: seller._id,
+      //     sellerId: seller._id,ipAddress
       //     userId: seller.userId,
       //     name: seller.name || null,
       //     email: seller.email || null,
@@ -715,7 +715,45 @@ module.exports.updateUser = async (req, res) => {
       pincode
     } = req.body;
     // return false
-    console.log(JSON.stringify(req.body),"-------------DDDDDDDDDDDDDDDDDDDDDDDDD")
+    console.log(JSON.stringify(req.body),"-------------DDDDDDDDDDDD")
+     
+    // "hearingSource":{"referralCode":"","source":"Online Ads"}}
+    
+    // Code for Checking Referral codes along with Hearing sources
+
+    if (hearingSource && hearingSource.source === "Gujarat Chamber of Commerce" && 
+    ((hearingSource.referralCode.toUpperCase() !== "GCC0721" && hearingSource.referralCode.toUpperCase() !== "SMEC0721") && 
+    (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    } 
+    else if (hearingSource && hearingSource.source === "SME Chamber of India (Maharashtra)" && (hearingSource.referralCode.toUpperCase() !== "SMEC0721" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    } 
+    else if (hearingSource && hearingSource.source === "Desh aur Vyapar Rajasthan Newspaper" && (hearingSource.referralCode.toUpperCase() !== "DVRN0721" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    } 
+    else if (hearingSource && hearingSource.source === "Tamil Nadu" && (hearingSource.referralCode.toUpperCase() !== "TN0721" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    } 
+    else if (hearingSource && hearingSource.source === "Uttar Pradesh" && (hearingSource.referralCode.toUpperCase() !== "UP0721" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    } 
+    else if (hearingSource && hearingSource.source === "Uttarakhand" && (hearingSource.referralCode.toUpperCase() !== "UTK1121" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    }
+    else if (hearingSource && hearingSource.source === "African Union" && (hearingSource.referralCode.toUpperCase() !== "AUG20" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    } 
+    else if (hearingSource && hearingSource.source=== "Vietnam" && (hearingSource.referralCode.toUpperCase() !== "VNG20" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    }
+    else if (hearingSource && hearingSource.source=== "Germany" && (hearingSource.referralCode.toUpperCase() !== "DEUEMI23" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    } 
+    else if (hearingSource && hearingSource.source=== "GCC" && (hearingSource.referralCode.toUpperCase() !== "GCCG23" && (hearingSource.referralCode || !hearingSource.referralCode))) {
+      return respError(res, "Please enter valid Referral Code")
+    }
+
     if (contactDetails && pincode){
       let checkPin = await findPincode({ pincode }) 
       console.log("🚀 ~ file: userController.js:671 ~ module.exports.updateUser= ~ checkPin:", checkPin,"PPPPPPPPPPPPPPPPPPPPPPPPPPPp")
@@ -723,6 +761,10 @@ module.exports.updateUser = async (req, res) => {
         return respError(res, "Pin code is not valid")
       }
     }
+    // if (hearingSource && hearingSource.source && hearingSource.referralCode){
+    //   let valid = VerifyReferralCode(hearingSource.source)
+    //   console.log(valid,"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    // }
     let currencyQuery = {
       code: 'USD'
     }
