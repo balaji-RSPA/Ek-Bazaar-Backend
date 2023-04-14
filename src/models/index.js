@@ -59,6 +59,8 @@ const WhatsappTemplate = require('./whatsappTemplateSchema')
 const currentOTPs = require('./otpSchema')
 const Datecol=require("./dateSchema")
 const StripPaylinks = require("./stripPayLinkSchema")
+const Referalcodes=require("./referralcodeSchema")
+
 module.exports = {
     Cities,
     States,
@@ -119,5 +121,6 @@ module.exports = {
     currencyINRExcenges,
     currentOTPs,
     Datecol,
-    StripPaylinks
+    StripPaylinks,
+    Referalcodes
 }
