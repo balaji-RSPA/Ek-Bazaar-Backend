@@ -62,7 +62,7 @@ const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans;
 const { addOrders, updateOrder, getOrderById, updateOrderPlan } = Orders;
 const { addOrdersLog, updateOrderLog, addRecurringOrder, updateRecurringOrder, getRecurringOrder, getPendingSubscriptionOrders, updatePendingSubscriptionOrders } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
-const { createPayLinks, updatePayLinks, findPayLink } = Paylinks;
+const { createPayLinks, updatePayLinks, findPayLink, createStripPayLinks, updateStripPayLinks,findStripPayLink } = Paylinks;
 const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook, saveCancledPaymentHookRes, getCancledPaymentHook, updateCancledPaymentHook } = subChargedHook;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { getAllSellerTypes } = category;
@@ -2139,7 +2139,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
     });
 
     if (!planDetails) {
-      return respError(res, "Please send a valid Plan ID.")
+      return respError(res, "Plan ID is not valid!")
     }
 
     let pin = pinCode || (seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.pincode);
@@ -2162,8 +2162,8 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
 
     let orderDetails = {
       name: seller && seller.name || '',
-      email : seller && seller.email || '',
-      mobile : seller && seller.mobile[0] || {},
+      email: seller && seller.email || '',
+      mobile: seller && seller.mobile[0] || {},
       gst: seller && seller.statutoryId && seller.statutoryId.GstNumber && seller.statutoryId.GstNumber.number || '',
       address: seller && seller.sellerContactId && seller.sellerContactId.location && seller.sellerContactId.location.address || '',
       pincode: pin,
@@ -2175,17 +2175,17 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
         : moment(dateNow.setDate(dateNow.getDate() + parseInt(planDetails.days))).format('DD/MM/YYYY') || '',
       price: planDetails && planDetails.price || '',
       gstAmount: planDetails && (planDetails.price * gstPercent) / 100,
-      isSubscription:false,
+      isSubscription: false,
       ipAddress: ""
     }
 
     const data = {
       sellerId,
-      userId : seller.userId,
+      userId: seller.userId,
       isSubscription,
       currency,
       orderDetails,
-      isSubLink : false,
+      isSubLink: false,
       subscriptionId: planId,
       razorPay: {},
     };
@@ -2193,9 +2193,9 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
     let findpincode = currency === "INR" ? await findPincode({ pincode: pin }) : "";
     // console.log(pin,"🚀 ~ file: paymentController.js:2184 ~ module.exports.createWhatsappPaymentLink= ~ findpincode:", findpincode)
 
-    if (!findpincode){
+    if (!findpincode) {
       return respError(res, "Pin code is not valid!");
-    }else{
+    } else {
 
       const price =
         planDetails &&
@@ -2215,8 +2215,8 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
       const query = { _id: response._id };
       // let timeStamp = Date.now();
       let timeStamp = Math.round(+new Date() / 1000);
-      let expireTime = timeStamp + (15 * 60)
-      console.log(timeStamp,"🚀 ~ file: paymentController.js:2212 ~ module.exports.createWhatsappPaymentLink= ~ expireTime:", expireTime)
+      let expireTime = timeStamp + (16 * 60);
+      console.log(timeStamp, "🚀 ~ file: paymentController.js:2212 ~ module.exports.createWhatsappPaymentLink= ~ expireTime:", expireTime)
 
       let result = await instance.paymentLink.create({
         // upi_link: true,
@@ -2231,7 +2231,6 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
           contact: mob,
         },
         expire_by: expireTime,
-        // expired_at:expireTime,
         notify: {
           sms: true,
           email: true,
@@ -2270,7 +2269,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
 
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:2106 ~ module.exports.createWhatsappPaymentLink= ~ error:", error)
-    respError(res,{error:error.message},"Internal Server Error")
+    respError(res, { error: error.message }, "Internal Server Error")
   }
 } 
 
@@ -4336,7 +4335,7 @@ module.exports.planActivation = async (req, res) => {
   }
 };
 
-module.exports.createStripeLink = async(req, res) => {
+module.exports.createStripeLink = async (req, res) => {
   try {
     let { sellerId, planId, pinCode, mobile } = req.body;
 
@@ -4347,15 +4346,15 @@ module.exports.createStripeLink = async(req, res) => {
       return respError(res, "Seller ID is required for the payment link!")
     }
 
-    if(!planId){
-      return respError(res,"Plan ID is required for the payment link!");
+    if (!planId) {
+      return respError(res, "Plan ID is required for the payment link!");
     }
 
     const planDetails = await getSubscriptionPlanDetail({
       _id: planId,
     });
 
-    if(!planDetails){
+    if (!planDetails) {
       return respError(res, "Please send a valid Plan ID.")
     }
 
@@ -4406,34 +4405,24 @@ module.exports.createStripeLink = async(req, res) => {
       ipAddress: ""
     }
 
-    const data = {
-      sellerId,
-      userId: seller.userId,
-      isSubscription,
-      currency,
-      orderDetails,
-      isSubLink: false,
-      subscriptionId: planId,
-      razorPay: {},
-    };
-
+    
     const product = await stripe.products.retrieve(
-      'prod_NfZJbEXaXaMyNw'
+      planDetails.strip_product
     );
 
-
+    
     // const product = await stripe.products.create({
     //   name: `Onebazaar -${planDetails.type}`,
     //   metadata: {
-    //     planId: planId
-    //   }
-    // });
-
-    // const price = await stripe.prices.create({
-    //   currency: 'usd',
-    //   unit_amount: 1000,
-    //   product: product.id
-    // })
+      //     planId: planId
+      //   }
+      // });
+      
+      // const price = await stripe.prices.create({
+        //   currency: 'usd',
+        //   unit_amount: 1000,
+        //   product: product.id
+        // })
     // // console.log("🚀 ~ file: paymentController.js:4333 ~ module.exports.createStripeLink=async ~ price:", product)
 
     const paymentLink = await stripe.paymentLinks.create({
@@ -4443,51 +4432,134 @@ module.exports.createStripeLink = async(req, res) => {
           quantity: 1,
         },
       ],
+      metadata: {
+        sellerId: sellerId.toString(),
+        userId: seller.userId.toString(),
+        subscriptionId: planId
+      }
     });
+    
+    const data = {
+      sellerId,
+      userId: seller.userId,
+      isSubscription,
+      currency,
+      orderDetails,
+      isSubLink: false,
+      subscriptionId: planId,
+      product,
+      paymentLink
+    };
 
-    respSuccess(res, {paymentLink, product})
+    let stripPayLink = await createStripPayLinks(data)
+    console.log(stripPayLink,"---------------========")
+
+    respSuccess(res, { paymentLink, stripPayLink })
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:4331 ~ module.exports.createStripeLink=async ~ error:", error)
   }
 }
 
+let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => {
+  if (!data.payment_link){
+    resolve(true)
+  }
+  let pyaLinkId = data.payment_link;
+  let payLinkData = await findStripPayLink({ "paymentLink.id": pyaLinkId })
+  console.log(data,"🚀 ~ file: paymentController.js:4469 ~ handleLinkPaymentSuccess ~ payLinkData:", payLinkData)
 
-const endpointSecret = "whsec_3541ec50a270a77092f53ba8daf5704fa309854ccf84ebb234f22833c4ba60a3";
+  resolve(true)
+})
 
-module.exports.captureStripLinkPayment = async(req, res) => {
+
+// const endpointSecret = "whsec_3541ec50a270a77092f53ba8daf5704fa309854ccf84ebb234f22833c4ba60a3";
+module.exports.captureStripWebhook = async (req, res) => {
   try {
     const sig = req.headers['stripe-signature'];
 
-    let event;
+    // let  sigArr = sig.split(',');
 
-    console.log(req.body,"===========")
+    // let timeArr =  sigArr[0].split('=');
+    // let timeStamp = timeArr[1];
 
-    try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    } catch (err) {
-      response.status(400).send(`Webhook Error: ${err.message}`);
-      return;
-    }
+
+    let event = req.body;
+
+
+    // const payload = req.body;
+
+    // let jsonData = payload.toJSON();
+
+    const secret = 'we_1MvzfKSIrsAhsOaI55sGtAKq';
+    // var crypto = require('crypto');
+
+    // var hmac = crypto.createHmac('sha256', stripeApiKeys.secretKey);
+
+    // data = hmac.update(`${timeStamp}.${payload}`); 
+
+    // gen_hmac = data.digest('hex');
+
+
+
+    // const payloadString = JSON.stringify(payload, null, 2);
+
+    // console.log(data,"&&&&&&&&&&&&&&&&: ", payload.toJSON())
+    // console.log(gen_hmac,'\n\n\n');
+    // console.log("&&&&&&&&&&&&&&&&: ", payloadString)
+    // const header = await stripe.webhooks.generateTestHeaderString({
+    //   payload: payload,
+    //   secret,
+    // });
+
+    // console.log(`${timeStamp}.${jsonData}`,"============+++++",gen_hmac, "===========", req.headers['stripe-signature'])
+    // const eventTest = stripe.webhooks.constructEvent(payloadString, header, secret);
+    // console.log("🚀 ~ file: paymentController.js:4476 ~ module.exports.captureStripLinkPayment= ~ eventTest:", eventTest)
+
+    // Do something with mocked signed event
+    // expect(eventTest.id).to.equal(payload.id);
+
+    // return false
+
+    // try {
+    //   event = await stripe.webhooks.constructEvent(payload, finalSig, secret);
+    //   console.log("🚀 ~ file: paymentController.js:4466 ~ module.exports.captureStripLinkPayment=async ~ event:", event)
+    // } catch (err) {
+    //   console.log("🚀 ~ file: paymentController.js:4468 ~ module.exports.captureStripLinkPayment=async ~ err:", err)
+    //   res.status(400).send(`Webhook Error: ${err.message}`);
+    //   return;
+    // }
+
+    console.log(event, "==============================")
+    let response;
 
     // Handle the event
     switch (event.type) {
       case 'payment_link.created':
         const paymentLinkCreated = event.data.object;
         // Then define and call a function to handle the event payment_link.created
-        console.log(event.data,"--------event.data.objectevent.data.object=========")
+        console.log(event.data, "--------payment_link.created=========")
+        response = true
         break;
       case 'payment_link.updated':
         const paymentLinkUpdated = event.data.object;
         // Then define and call a function to handle the event payment_link.updated
+        console.log(event.data, "--------payment_link.updated=========")
+        response = true
+        break;
+      case 'checkout.session.completed':
+        const checkoutSession = event.data.object;
+        response = await handleLinkPaymentSuccess(checkoutSession)
+
         break;
       // ... handle other event types
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
 
-    res.status(200).json({status:'ok'})
+    res.status(200).json({ status: 'ok' })
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:4466 ~ module.exports.captureStripLinkPayment=async ~ error:", error)
-    
+
   }
 }
+

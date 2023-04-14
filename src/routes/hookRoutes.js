@@ -10,6 +10,6 @@ hookRouter.post('/webhooks/subscriptionCharged', payment.subscriptionCharged)
 hookRouter.post('/webhook/subscriptionCancle',payment.subscriptionCancleHook)
 hookRouter.post('/webhook/paymentFailed',payment.paymentFailedHook)
 
-hookRouter.post('/webhooks/stripPaymentLink',payment.captureStripLinkPayment)
+hookRouter.post('/webhooks/stripPaymentLink', payment.captureStripWebhook)
 
 module.exports = hookRouter

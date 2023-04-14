@@ -13,7 +13,7 @@ exports.hookAuth = (req, res, next) => {
     // let digest = crypto.createHmac('sha256', mySecret)
     //     .update(JSON.stringify(req.body))
     //     .digest('hex');
-    console.log(req.body," $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$") 
+
     let digest = razorpay.validateWebhookSignature(req.body, signature, mySecret);
     console.log(digest, " =====================================", req.headers['x-razorpay-signature']);
 

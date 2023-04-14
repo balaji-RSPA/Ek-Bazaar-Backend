@@ -68,6 +68,9 @@ const subscriptionPlanSchema = new Schema({
   },
   totalamount:{
     type: Number
+  },
+  strip_product:{
+    type:String
   }
 }, {
   timestamps: true,
