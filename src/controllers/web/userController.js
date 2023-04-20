@@ -57,7 +57,8 @@ const { createChat, deleteChat } = Chat;
 
 const { createChatUser, userChatLogin, deleteChatAccount } = require("./rocketChatController");
 
-const { sendWhatsaapWelcome } = require('./whatsappTemplateController')
+const { sendWhatsaapWelcome } = require('./whatsappTemplateController');
+const { createWhatsappNotifictionDoc } = require('../../modules/whatsappTemplatemodule')
 const { currentOTPs } = require('../../models')
 
 const { rocketChatDomain, rocketChatAdminLogin } = require('../../utils/globalConstants')
@@ -632,6 +633,8 @@ module.exports.addUser = async (req, res, next) => {
       const result1 = await handleUserSession(seller.userId, finalData);
 
       if (whatsappChecked) {
+
+       
       // if(false){
         let receiver_number = seller && seller.mobile && seller.mobile.length && `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`;
         let first_name = seller && seller.name || 'Coustomer';
@@ -646,10 +649,50 @@ module.exports.addUser = async (req, res, next) => {
           website
         }
 
-        console.log(whatsappChecked, "account created-------------------", whatsAppWelcomeData);
+
+
+        console.log(seller, "account created-------------------", user);
 
         let wahtsappWlecomeResponce = sendWhatsaapWelcome(whatsAppWelcomeData)
+
+        let genral = {
+          started: false,
+          completed: false,
+          count: 0,
+          lastTriggerd: null
+        }
+
+        let genralForPro = {
+          started: false,
+          completed: false,
+          count: 0,
+          hasProduct: false,
+          lastTriggred:null
+        }
+
+        let data = {
+          sellerId: seller._id,
+          userId: user.userId,
+          reciver_number: seller.mobile[0].mobile,
+          website: website,
+          firstName:'',
+          completed:false,
+          setLanguageNotification: genral,
+          completeProfilReminder: genral,
+          onCompleteProfile: {
+            triggred: false,
+            triggredTime: null
+          },
+          addProduct: genralForPro,
+          addProductReminder: genralForPro
+        }
+        console.log(user,"🚀 ~ file: userController.js:689 ~ module.exports.addUser= ~ data:", data)
+
+        let responce = await createWhatsappNotifictionDoc(data);
+        console.log("🚀 ~ file: userController.js:692 ~ module.exports.addUser= ~ responce:", responce, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSS")
       }
+
+
 
       return respSuccess(
         res,

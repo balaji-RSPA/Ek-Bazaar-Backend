@@ -62,7 +62,7 @@ const { getSellerPlan, createPlan, updateSellerPlan } = SellerPlans;
 const { addOrders, updateOrder, getOrderById, updateOrderPlan } = Orders;
 const { addOrdersLog, updateOrderLog, addRecurringOrder, updateRecurringOrder, getRecurringOrder, getPendingSubscriptionOrders, updatePendingSubscriptionOrders } = OrdersLog;
 const { addPayment, updatePayment, findPayment } = Payments;
-const { createPayLinks, updatePayLinks, findPayLink, createStripPayLinks, updateStripPayLinks,findStripPayLink } = Paylinks;
+const { createPayLinks, updatePayLinks, findPayLink, createStripPayLinks, updateStripPayLinks, findStripPayLink } = Paylinks;
 const { saveSubChargedHookRes, saveSubPendingHookRes, saveSubHaltedHookRes, getSubChargedHook, getSubPendingHook, updateSubPendingHook, getSubHaltedHook, updateSubHaltedHook, saveSubCancledHookRes, getSubCancledHook, updateSubCancledHook, saveCancledPaymentHookRes, getCancledPaymentHook, updateCancledPaymentHook } = subChargedHook;
 const { addSellerPlanLog } = SellerPlanLogs;
 const { getAllSellerTypes } = category;
@@ -86,7 +86,7 @@ const createPdf = async (seller, plan, orderDetails) =>
             orderDetails.sellerDetails &&
             capitalizeFirstLetter(orderDetails.sellerDetails.name)) ||
           seller.name,
-        businessname: 
+        businessname:
           (seller &&
             seller.busenessId &&
             capitalizeFirstLetter(seller.busenessId.name)) ||
@@ -2271,7 +2271,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
     console.log("🚀 ~ file: paymentController.js:2106 ~ module.exports.createWhatsappPaymentLink= ~ error:", error)
     respError(res, { error: error.message }, "Internal Server Error")
   }
-} 
+}
 
 module.exports.captureLink = async (req, res) => {
   try {
@@ -3991,9 +3991,9 @@ module.exports.planActivation = async (req, res) => {
             ((seller.hearingSource.source === "Uttarakhand" &&
               seller.hearingSource.referralCode === "UTK1121") || (seller.hearingSource.source === "Vietnam" &&
                 seller.hearingSource.referralCode === "VNG20") || (seller.hearingSource.source === "African Union" &&
-                seller.hearingSource.referralCode === "AUG20") || (seller.hearingSource.source === "Germany" &&
-                seller.hearingSource.referralCode === "DEUEMI23") || (seller.hearingSource.source === "GCC" &&
-              seller.hearingSource.referralCode === "GCCG23"))
+                  seller.hearingSource.referralCode === "AUG20") || (seller.hearingSource.source === "Germany" &&
+                    seller.hearingSource.referralCode === "DEUEMI23") || (seller.hearingSource.source === "GCC" &&
+                      seller.hearingSource.referralCode === "GCCG23"))
           ) {
             if (seller && seller.planId && seller.planId.isTrial) {
               const trialCreatedAt = seller.planId && seller.planId.createdAt;
@@ -4405,25 +4405,11 @@ module.exports.createStripeLink = async (req, res) => {
       ipAddress: ""
     }
 
-    
+
     const product = await stripe.products.retrieve(
       planDetails.strip_product
     );
 
-    
-    // const product = await stripe.products.create({
-    //   name: `Onebazaar -${planDetails.type}`,
-    //   metadata: {
-      //     planId: planId
-      //   }
-      // });
-      
-      // const price = await stripe.prices.create({
-        //   currency: 'usd',
-        //   unit_amount: 1000,
-        //   product: product.id
-        // })
-    // // console.log("🚀 ~ file: paymentController.js:4333 ~ module.exports.createStripeLink=async ~ price:", product)
 
     const paymentLink = await stripe.paymentLinks.create({
       line_items: [
@@ -4438,7 +4424,7 @@ module.exports.createStripeLink = async (req, res) => {
         subscriptionId: planId
       }
     });
-    
+
     const data = {
       sellerId,
       userId: seller.userId,
@@ -4452,21 +4438,472 @@ module.exports.createStripeLink = async (req, res) => {
     };
 
     let stripPayLink = await createStripPayLinks(data)
-    console.log(stripPayLink,"---------------========")
 
-    respSuccess(res, { paymentLink, stripPayLink })
+
+    respSuccess(res, { paymentLink: paymentLink.url })
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:4331 ~ module.exports.createStripeLink=async ~ error:", error)
   }
 }
 
 let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => {
-  if (!data.payment_link){
+  if (!data.payment_link) {
     resolve(true)
+    return;
   }
   let pyaLinkId = data.payment_link;
   let payLinkData = await findStripPayLink({ "paymentLink.id": pyaLinkId })
-  console.log(data,"🚀 ~ file: paymentController.js:4469 ~ handleLinkPaymentSuccess ~ payLinkData:", payLinkData)
+
+  if (payLinkData) {
+
+    const updateLink = await stripe.paymentLinks.update(
+      pyaLinkId,
+      { active: false }
+    );
+
+    let { userId, sellerId, isSubscription, subscriptionId, currency, orderDetails, isSubLink, product, paymentLink } = payLinkData
+
+    const paymentIntents = await stripe.paymentIntents.retrieve(
+      data.payment_intent
+    )
+
+    let paymentResponse = paymentIntents;
+    const paymentMethod = await stripe.paymentMethods.retrieve(
+      paymentIntents.payment_method
+    );
+    console.log("🚀 ~ file: paymentController.js:4482 ~ handleLinkPaymentSuccess ~ paymentMethod:", paymentMethod)
+
+    const cardLastDigits = paymentMethod && paymentMethod.card && paymentMethod.card.last4;
+
+    // const url = req.get("origin");
+    let url = '';
+    const dateNow = new Date();
+    const gstValue = currency === "INR" ? 18 : 0;
+    //  currency = 'INR'
+    let deleteProduct = false;
+    const pincode = orderDetails && orderDetails.pincode;
+    let findpincode = currency === "INR" ? await findPincode({ pincode }) : "";
+
+    if (!findpincode && currency === "INR") {
+      // respError(res, "Invalid pincode");
+      resolve(false)
+    } else {
+      let seller = await getSellerProfile(sellerId);
+      const planDetails = await getSubscriptionPlanDetail({
+        _id: subscriptionId,
+      });
+
+      if (planDetails && seller && seller.length) {
+        seller = seller[0];
+        const checkMobile =
+          seller &&
+          seller.mobile &&
+          seller.mobile.length &&
+          seller.mobile[0] &&
+          seller.mobile[0].mobile;
+        const existingGroup = seller.sellerType[0].group;
+        const currentGroup = planDetails.groupType;
+
+        let sellerPlanDetails =
+          seller && seller.planId
+            ? await getSellerPlan({ _id: seller.planId })
+            : null;
+        const planTo = sellerPlanDetails && sellerPlanDetails.exprireDate;
+        const planFrom = sellerPlanDetails && sellerPlanDetails.createdAt;
+        const checkPaidSeller =
+          sellerPlanDetails && sellerPlanDetails.isTrial === false;
+        const oldPlanType = sellerPlanDetails && sellerPlanDetails.planType;
+        let newPlanType = "";
+
+        const months =
+          planDetails && planDetails.type === "Quarterly"
+            ? 3
+            : planDetails.type === "Half Yearly"
+              ? 6
+              : planDetails.type === "Yearly"
+                ? 12
+                : "";
+        const pricePerMonth =
+          planDetails &&
+          (currency === "INR" ? planDetails.price : planDetails.usdPrice);
+        const price = pricePerMonth; /*  * parseInt(months) */
+        const includedGstAmount = await CalculateGst(
+          price,
+          findpincode,
+          currency
+        );
+
+        try {
+          const userData = {
+            userId: seller.userId,
+            sellerId: seller._id,
+          };
+          const invoiceNumner = await getInvoiceNumber({ id: 1 });
+          const _invoice = (invoiceNumner && invoiceNumner.invoiceNumber) || "";
+          let planExpireDate = dateNow.setDate(
+            dateNow.getDate() + parseInt(planDetails.days)
+          );
+          let date = new Date();
+          // let subscriptionValidety = date.setDate(date.getDate() + parseInt(planDetails.days))
+          const SourceCode =
+            seller && seller.hearingSource && seller.hearingSource.referralCode;
+          let isFreeTrialIncluded = false;
+          let planValidFrom = moment();
+
+          if (
+            seller &&
+            seller.hearingSource &&
+            ((seller.hearingSource.source === "Uttarakhand" &&
+              seller.hearingSource.referralCode === "UTK1121") || (seller.hearingSource.source === "Vietnam" &&
+                seller.hearingSource.referralCode === "VNG20") || (seller.hearingSource.source === "African Union" &&
+                  seller.hearingSource.referralCode === "AUG20") || (seller.hearingSource.source === "Germany" &&
+                    seller.hearingSource.referralCode === "DEUEMI23") || (seller.hearingSource.source === "GCC" &&
+                      seller.hearingSource.referralCode === "GCCG23"))
+          ) {
+            if (seller && seller.planId && seller.planId.isTrial) {
+              const trialCreatedAt = seller.planId && seller.planId.createdAt;
+              const today = moment();
+              const daysFromRegistration = today.diff(
+                moment(trialCreatedAt, "DD-MM-YYYY"),
+                "days"
+              );
+              const todayDate = new Date();
+              if (daysFromRegistration <= 7) {
+                planExpireDate = todayDate.setDate(
+                  todayDate.getDate() +
+                  parseInt(planDetails.days) +
+                  parseInt(seller.planId.days) -
+                  daysFromRegistration
+                );
+
+                planDetails.days = `${parseInt(planDetails.days) +
+                  parseInt(seller.planId.days) -
+                  daysFromRegistration
+                  }`;
+
+                isFreeTrialIncluded = true;
+
+                planValidFrom = moment(seller.planId.exprireDate);
+              }
+            }
+          }
+          await updateInvoiceNumber(
+            { id: 1 },
+            { invoiceNumber: parseInt(invoiceNumner.invoiceNumber) + 1 }
+          );
+
+          const sellerDetails = {
+            name: orderDetails.name,
+            email: orderDetails.email || seller.email,
+            sellerType: seller.sellerType,
+            groupId: planDetails.groupType,
+            location: seller.location,
+            mobile: seller.mobile,
+          };
+          const paymentJson = {
+            ...userData,
+            paymentResponse: paymentResponse,
+            paymentDetails: paymentMethod,
+            paymentSuccess: true,
+          };
+          const _p_details = {
+            subscriptionId: planDetails._id,
+            expireStatus: false,
+            name: planDetails.type,
+            price: planDetails.price,
+            usdPrice: planDetails.usdPrice,
+            description: planDetails.description,
+            features: planDetails.features,
+            days: planDetails.days,
+            extendTimes: null,
+            exprireDate: planExpireDate,
+            // subscriptionValidety,
+            hearingSourceCode: SourceCode,
+            isTrial: false,
+            planType: planDetails.type,
+            extendDays: planDetails.days,
+            groupType: planDetails.groupType,
+            billingType: planDetails.billingType,
+            priceUnit: planDetails.priceUnit,
+            type: planDetails.type,
+            currency,
+          };
+          const payment = await addPayment(paymentJson);
+          const planData = {
+            ...userData,
+            ..._p_details,
+            isFreeTrialIncluded,
+            planValidFrom,
+            createdAt: new Date(),
+            createdOn: new Date(),
+          };
+
+          const order_details = {
+            ...userData,
+            invoiceNo: _invoice,
+            invoicePath: "",
+            gstNo: (orderDetails && orderDetails.gst) || null,
+            address: (orderDetails && orderDetails.address) || null,
+            pincode: (orderDetails && orderDetails.pincode) || null,
+            country: (orderDetails && orderDetails.country && orderDetails.country.label) || null,
+            sellerDetails: {
+              ...sellerDetails,
+            },
+            // sellerPlanId: '', // seller plan collectio id
+            subscriptionId: subscriptionId,
+            // orderPlanId: '', // order items/plans id
+            gst: gstValue,
+            price: price,
+            gstAmount: includedGstAmount.gstAmount,
+            cgstAmount: includedGstAmount.cgstAmount,
+            sgstAmount: includedGstAmount.sgstAmount,
+            total: includedGstAmount.totalAmount,
+            orderedOn: new Date(),
+            hearingSourceCode: SourceCode,
+            // paymentId: '', // payment collection id
+            // paymentStatus: '',
+            ipAddress: (orderDetails && orderDetails.ipAddress) || null,
+            currency: currency,
+            // isEmailSent: ''
+          };
+          const OrdersData = await addOrders(order_details);
+
+          const orderItem = {
+            ...userData,
+            orderId: OrdersData._id,
+            subscriptionId: planDetails._id,
+            ..._p_details,
+            isFreeTrialIncluded,
+            planValidFrom,
+          };
+          const orderItemData = await addOrdersPlans(orderItem);
+          let sellerUpdate = {
+            paidSeller: true,
+            sellerVerified: true,
+          };
+          console.log(
+            existingGroup,
+            "!==",
+            currentGroup,
+            " Group equality check------"
+          );
+          if (existingGroup !== currentGroup) {
+            const sellerType = await getAllSellerTypes(0, 10, {
+              group: parseInt(currentGroup),
+            });
+            const typeSeller = sellerType.map((item) => item._id);
+            sellerUpdate = {
+              ...sellerUpdate,
+              sellerType: typeSeller,
+            };
+            deleteProduct = true;
+          }
+          const patmentUpdate = await updatePayment(
+            { _id: payment._id },
+            { orderId: OrdersData._id }
+          );
+          if (sellerPlanDetails) {
+            sellerPlanDetails = await updateSellerPlan(
+              { _id: sellerPlanDetails._id },
+              planData
+            );
+          } else {
+            sellerPlanDetails = await createPlan(planData);
+            sellerUpdate.planId = sellerPlanDetails._id;
+          }
+          const sellerUpdateData = await updateSeller(
+            { _id: seller._id },
+            sellerUpdate
+          );
+
+          const planLog = {
+            ...userData,
+            sellerPlanId: sellerPlanDetails._id,
+            subscriptionId: planDetails._id,
+            sellerDetails: { ...sellerDetails },
+            planDetails: {
+              ..._p_details,
+              exprireDate: new Date(_p_details.exprireDate),
+            },
+          };
+          const OrderUpdate = await updateOrder(
+            { _id: OrdersData._id },
+            {
+              orderPlanId: orderItemData._id,
+              paymentId: payment._id,
+              planId: sellerPlanDetails._id,
+              sellerPlanId: sellerPlanDetails._id,
+            }
+          );
+          // Generate invoice
+          const invoice = await createPdf(
+            seller,
+            {
+              ..._p_details,
+              totalPlanPrice: price,
+              pricePerMonth,
+              isFreeTrialIncluded,
+              planValidFrom,
+            },
+            order_details
+          );
+
+          // const invoice = await createOnebazaarPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth, isFreeTrialIncluded, planValidFrom }, order_details)
+
+          await addSellerPlanLog(planLog);
+          if (
+            deleteProduct === true &&
+            seller.sellerProductId &&
+            seller.sellerProductId.length
+          ) {
+            updateSellerProducts(
+              { _id: { $in: seller.sellerProductId } },
+              { isDeleted: true }
+            );
+            updateMasterBulkProducts(
+              { _id: { $in: seller.sellerProductId } },
+              { isDeleted: true }
+            );
+            console.log("--- Old Service Type Product Status changed-------");
+            // update product deleta status true
+          }
+
+          if (
+            deleteProduct === false &&
+            seller.sellerProductId &&
+            seller.sellerProductId.length
+          ) {
+            updateMasterBulkProducts(
+              { _id: { $in: seller.sellerProductId } },
+              { priority: 1 }
+            );
+            console.log("--- Old product priority changed-------");
+            // update product deleta status true
+          }
+
+          // const invoicePath = path.resolve(__dirname, "../../../", "public/orders", order_details.invoiceNo.toString() + '-invoice.pdf')
+          if (
+            currency === "INR" &&
+            checkMobile &&
+            isProd &&
+            planTo &&
+            planFrom &&
+            checkPaidSeller
+          ) {
+            const msgData = {
+              plan: _p_details.planType,
+              currency: currency,
+              amount: includedGstAmount.totalAmount,
+              url: invoice.Location,
+              name: order_details.invoiceNo.toString() + "-invoice.pdf",
+              till: _p_details.exprireDate,
+              to: planTo,
+              from: planFrom,
+            };
+            /* await */ sendSMS(checkMobile, planChanged(msgData));
+          } else if (currency === "INR" && checkMobile && isProd) {
+            const msgData = {
+              plan: _p_details.planType,
+              currency: currency,
+              amount: includedGstAmount.totalAmount,
+              url: (invoice && invoice.Location) || null,
+              name: order_details.invoiceNo.toString() + "-invoice.pdf",
+              till: _p_details.exprireDate,
+            };
+            /* await */ sendSMS(checkMobile, planSubscription(msgData));
+          } else {
+            console.log("================sms not send===========");
+          }
+          console.log();
+          if (
+            orderDetails &&
+            orderDetails.email /* seller && seller.email */ &&
+            planTo &&
+            planFrom &&
+            checkPaidSeller
+          ) {
+            let planChangedEmailMsg = planChangedEmail({
+              oldPlanType,
+              newPlanType: _p_details.planType,
+              from:
+                isFreeTrialIncluded && planValidFrom
+                  ? planValidFrom
+                  : new Date(),
+              till: _p_details.exprireDate,
+              // till: _p_details.subscriptionValidety,
+              url,
+            });
+            const message = {
+              from: MailgunKeys.senderMail,
+              to: (orderDetails && orderDetails.email) || seller.email,
+              subject: "Plan changed",
+              html: commonTemplate(planChangedEmailMsg),
+            };
+            if (orderDetails && orderDetails.email) {
+              let invoiceEmailMsg = invoiceContent({
+                plan: _p_details.planType,
+                from:
+                  isFreeTrialIncluded && planValidFrom
+                    ? planValidFrom
+                    : new Date(),
+                till: _p_details.exprireDate,
+                price: includedGstAmount.totalAmount,
+                invoiceLink: invoice.Location,
+                // cardNo: paymentJson.paymentDetails && paymentJson.paymentDetails.card && paymentJson.paymentDetails.card.last4,
+                cardNo: cardLastDigits,
+                isOneBazzar: true,
+              });
+              const message = {
+                from: MailgunKeys.senderMail,
+                to: orderDetails.email || seller.email,
+                subject: "Onebazaar Subscription activated successfully",
+                html: commonTemplate(invoiceEmailMsg),
+                // attachment: invoice.attachement,
+                attachments: [
+                  {
+                    // stream as an attachment
+                    filename: "invoice.pdf",
+                    content: fs.createReadStream(invoice.attachement),
+                    // path: invoice.Location,
+                  },
+                ],
+              };
+              await sendSingleMail(message);
+            } else {
+              console.log("==============Invoice Not Send====================");
+            }
+            await sendSingleMail(message);
+          } else {
+            console.log("==============Invoice Not Send====================");
+          }
+          await updateOrder(
+            { _id: OrdersData._id },
+            {
+              isEmailSent: true,
+              invoicePath: (invoice && invoice.Location) || "",
+            }
+          );
+          console.log("------------------ Payment done ---------");
+          // return respSuccess(
+          //   res,
+          //   { payment: true },
+          //   "subscription activated successfully!"
+          // );
+          resolve(true)
+        } catch (err) {
+          console.log(err);
+          resolve(false)
+        }
+
+      } else {
+        // return respSuccess(res, { payment: false }, "Payment failed");
+        resolve(false)
+      }
+    }
+  }else{
+    resolve(false);
+  }
+
 
   resolve(true)
 })
@@ -4530,7 +4967,7 @@ module.exports.captureStripWebhook = async (req, res) => {
     // }
 
     console.log(event, "==============================")
-    let response;
+    let response = false;
 
     // Handle the event
     switch (event.type) {
@@ -4555,8 +4992,11 @@ module.exports.captureStripWebhook = async (req, res) => {
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
-
-    res.status(200).json({ status: 'ok' })
+    if (response) {
+      res.status(200).json({ status: 'ok' })
+    } else {
+      res.status(400).json({ status: 'Internal Server Issue' })
+    }
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:4466 ~ module.exports.captureStripLinkPayment=async ~ error:", error)
 

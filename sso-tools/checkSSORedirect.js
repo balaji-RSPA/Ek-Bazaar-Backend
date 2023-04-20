@@ -14,7 +14,7 @@ async function ssoRedirect(req, res, next) {
       const url = `${ssoServerJWTURL}?ssoToken=${ssoToken}`
       const oneUrl = `https://auth.onebazaar.com/simplesso/${ssoServerJWTURL}?ssoToken=${ssoToken}`
       let response;
-      if (req.body && req.body._base && req.body._base.includes('onebazaar')) {
+      if (req.body && req.body._base && req.body._base.includes('onebazaar') && !req.body._base.includes('tech-active')) {
         // If Request is comimg From Onebazaar.
         response = await axios.get(oneUrl, {
           headers: {

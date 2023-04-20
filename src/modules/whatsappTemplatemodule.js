@@ -1,4 +1,4 @@
-const {WhatsappTemplate} = require('../models');
+const {WhatsappTemplate, WhatsAppNotification} = require('../models');
 
 
 
@@ -22,5 +22,15 @@ module.exports.getSingleTemplateById = (query) => new Promise((resolve, reject) 
         .catch((error) => {
             console.log("🚀 ~ file: whatsappTemplatemodule.js:12 ~ module.exports.createWhatsaapTemplate= ~ error:", error)
             reject(error.message);
+        })
+});
+
+module.exports.createWhatsappNotifictionDoc = (data) => new Promise((resolve, reject) => {
+    WhatsAppNotification.create(data)
+        .then((doc) => {
+            resolve(doc)
+        })
+        .catch((error) => {
+            reject(error)
         })
 })

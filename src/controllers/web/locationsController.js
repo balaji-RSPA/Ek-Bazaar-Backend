@@ -21,7 +21,9 @@ const {
   countiesBulkInsert,
   getAllCitiesUpdate,
   getCountryData,
-  updateCountry
+  updateCountry,
+  getAllCitiesCount,
+  getTotelCountriesCount
 } = location;
 
 module.exports.uploadPhoneCountryCode = async (req, res) => {
@@ -59,8 +61,10 @@ module.exports.getAllCities = async (req, res) => {
       req.query.countryId = [ObjectId("5e312f978acbee60ab54de08")]
     }
     const cities = await getAllCities(req.query);
+
+    const citiesCount = await getAllCitiesCount()
     // console.log("🚀 ~ file: locationsController.js ~ line 55 ~ module.exports.getAllCities= ~ cities", cities)
-    respSuccess(res, cities);
+    respSuccess(res, cities, { count: citiesCount });
   } catch (error) {
     respError(res, error.message);
   }
@@ -154,7 +158,8 @@ module.exports.getAllCountries = async (req, res) => {
       const countries = await _getAllCountries({ query, limit: 50 })
       respSuccess(res, countries)
     } else {
-      const countries = await getAllCountries();
+      let {skip,limit} = req.query;
+      const countries = await getAllCountries(parseInt(skip),parseInt(limit));
       let newArray = [
         { name: 'india', priority: 1 },
         { name: 'united states', priority: 2 },
@@ -190,8 +195,10 @@ module.exports.getAllCountries = async (req, res) => {
         return acc
       }, []));
 
+      let countryCount = await getTotelCountriesCount()
+
       // console.log("🚀 ~ file: locationsController.js ~ line 171 ~ _countries=_countries.concat ~ _countries", _countries)
-      respSuccess(res, /* countries */ _countries);
+      respSuccess(res, /* countries */ _countries, { count: countryCount });
     }
   } catch (error) {
     res.send(error.message);
