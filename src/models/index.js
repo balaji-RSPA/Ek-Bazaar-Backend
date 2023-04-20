@@ -60,6 +60,7 @@ const currentOTPs = require('./otpSchema')
 const Datecol=require("./dateSchema")
 const StripPaylinks = require("./stripPayLinkSchema")
 const Referalcodes=require("./referralcodeSchema")
+const WhatsAppNotification = require('./whatsapNotificationSchema')
 
 module.exports = {
     Cities,
@@ -122,5 +123,6 @@ module.exports = {
     currentOTPs,
     Datecol,
     StripPaylinks,
-    Referalcodes
+    Referalcodes,
+    WhatsAppNotification
 }
