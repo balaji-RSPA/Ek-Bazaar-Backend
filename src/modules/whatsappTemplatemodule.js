@@ -34,3 +34,13 @@ module.exports.createWhatsappNotifictionDoc = (data) => new Promise((resolve, re
             reject(error)
         })
 })
+
+module.exports.updateWhatsappNotificationDoc = (query, data) => new Promise((resolve, reject) => {
+    WhatsAppNotification.findOneAndUpdate(query, data,{new: true})
+        .then((doc) => {
+            resolve(doc)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+})

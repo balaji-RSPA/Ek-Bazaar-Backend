@@ -21,7 +21,7 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, fillGoogleSheat, deleteOtps, deleteExtraCurrency } = require('./src/crons/cron')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, fillGoogleSheat, deleteOtps, deleteExtraCurrency, sendWhatsappNotification } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
 const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
@@ -126,6 +126,17 @@ app.get("/send-daily-report", async function (req, res) {
 //     console.log(error)
 //   }
 // })
+
+app.get("/sendWhatsappNotification", async function (req, res) {
+  try {
+    let resp = await sendWhatsappNotification();
+
+    return respSuccess(res,resp)
+  } catch (error) {
+    console.log("🚀 ~ file: app.js:134 ~ error:", error)
+    return respError(res, "Something went wrong try again!")
+  }
+})
 
 // app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 

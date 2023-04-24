@@ -551,64 +551,6 @@ module.exports.addUser = async (req, res, next) => {
     // });
 
     if (seller && buyer) {
-      // const trialPlan = await getSubscriptionPlanDetail({
-      //   planType: "trail",
-      //   status: true,
-      // });
-      // if (trialPlan/*  && _buyer && !_buyer.length */) {
-      //   const sellerDetails = {
-      //     sellerId: seller._id,ipAddress
-      //     userId: seller.userId,
-      //     name: seller.name || null,
-      //     email: seller.email || null,
-      //     mobile: seller.mobile || null,
-      //     sellerType: seller.sellerType || null,
-      //     paidSeller: seller.paidSeller,
-      //     planId: seller.planId,
-      //     trialExtends: seller.trialExtends,
-      //   };
-      //   const planData = {
-      //     name: trialPlan.type,
-      //     description: trialPlan.description,
-      //     features: trialPlan.features,
-      //     days: trialPlan.days,
-      //     extendTimes: trialPlan.numberOfExtends,
-      //     exprireDate: dateNow.setDate(
-      //       dateNow.getDate() + parseInt(trialPlan.days)
-      //     ),
-      //     userId: seller.userId,
-      //     sellerId: seller._id,
-      //     isTrial: true,
-      //     planType: trialPlan.type,
-      //     extendDays: trialPlan.days,
-      //     subscriptionId: trialPlan._id,
-      //     createdOn: new Date(),
-      //   };
-
-      //   const planResult = await createTrialPlan(planData);
-      //   const planDatra = {
-      //     planId: planResult._id,
-      //     trialExtends: trialPlan.numberOfExtends,
-      //   };
-      //   const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
-
-      //   const planLog = {
-      //     sellerId: seller._id,
-      //     userId: seller.userId,
-      //     sellerPlanId: sellerUpdate.planId,
-      //     subscriptionId: trialPlan._id,
-      //     sellerDetails: { ...sellerDetails },
-      //     planDetails: {
-      //       ...planData,
-      //       exprireDate: new Date(planData.exprireDate),
-      //     },
-      //   };
-      //   const log = await addSellerPlanLog(planLog);
-      // }
-
-      // const response = await axios.post(ssoRegisterUrl, { mobile: mobile.mobile, password }, { params: { serviceURL } })
-      // const { data } = response
-      // let _user = data.user
 
       if (url) {
         const ssoToken = url.substring(url.indexOf("=") + 1);
@@ -650,10 +592,7 @@ module.exports.addUser = async (req, res, next) => {
         }
 
 
-
-        console.log(seller, "account created-------------------", user);
-
-        let wahtsappWlecomeResponce = sendWhatsaapWelcome(whatsAppWelcomeData)
+        // let wahtsappWlecomeResponce = sendWhatsaapWelcome(whatsAppWelcomeData)
 
         let genral = {
           started: false,
@@ -677,6 +616,7 @@ module.exports.addUser = async (req, res, next) => {
           website: website,
           firstName:'',
           completed:false,
+          lastTriggerdTime: null,
           setLanguageNotification: genral,
           completeProfilReminder: genral,
           onCompleteProfile: {
@@ -686,10 +626,14 @@ module.exports.addUser = async (req, res, next) => {
           addProduct: genralForPro,
           addProductReminder: genralForPro
         }
-        console.log(user,"🚀 ~ file: userController.js:689 ~ module.exports.addUser= ~ data:", data)
+        // console.log(user,"🚀 ~ file: userController.js:689 ~ module.exports.addUser= ~ data:", data)
 
-        let responce = await createWhatsappNotifictionDoc(data);
-        console.log("🚀 ~ file: userController.js:692 ~ module.exports.addUser= ~ responce:", responce, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSS")
+        let response = await createWhatsappNotifictionDoc(data);
+        console.log("🚀 ~ file: userController.js:631 ~ module.exports.addUser= ~ responce:", response)
+
+        let update = await updateSeller({ _id: seller._id }, { whatsappNotification: response._id, whatsappNotificationCompleted :false})
+        // console.log("🚀 ~ file: userController.js:634 ~ module.exports.addUser= ~ update:", update)
+        
       }
 
 
