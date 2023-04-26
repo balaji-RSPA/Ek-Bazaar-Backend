@@ -44,7 +44,7 @@ module.exports.otpVerification = (params) => {
     message = {
       title: 'Ekbazaar Trade- OTP Verification',
       image: otpverification,
-      body: `<p>Your one time password is <strong>${params.otp}<strong>.</p><p>Please enter the code and proceed with setting up a new password for your account.</p>`,
+      body: `<p>Your one time password is <br/><h1>${params.otp}<h1></p><p>Please enter the code and proceed with setting up a new password for your account.</p>`,
       originOneFlag: false
     }
   } else {
@@ -52,7 +52,7 @@ module.exports.otpVerification = (params) => {
     message = {
       title: 'Onebazaar Trade- OTP Verification',
       image: otpverification,
-      body: `<p>Your one time password is <strong>${params.otp}<strong>.</p><p>Please enter the code and proceed with setting up a new password for your account.</p>`,
+      body: `<p>Your one time password is </br><h1>${params.otp}<h1></p><p>Please enter the code and proceed with setting up a new password for your account.</p>`,
       originOneFlag: true
     }
   }
@@ -117,7 +117,7 @@ module.exports.invoiceContent = (params) => {
     message = {
       title: 'Ekbazaar Trade- Invoice',
       image: invoice,
-      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}` : 'You'} has been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
+      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}` : 'You'} have been successfully charged Rs ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
       <p style="text-align: left">Plan       : ${params.plan}</p>
       <p style="text-align: left">Valid from : ${moment(params.from).format("Do MMM YYYY")}</p>
       <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
@@ -131,7 +131,7 @@ module.exports.invoiceContent = (params) => {
     message = {
       title: 'Onebazaar Trade- Invoice',
       image: invoice,
-      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}` : 'You'} has been successfully charged $ ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
+      body: `<p style="text-align: left">Thank you for subscribing to EkBazaar. ${params.cardNo ? `The credit card ending x${params.cardNo}` : 'You'} have been successfully charged $ ${params.price}. A copy of receipt is also present in your EkBazaar account details.</p>
       <p style="text-align: left">Plan       : ${params.plan}</p>
       <p style="text-align: left">Valid from : ${moment(params.from).format("Do MMM YYYY")}</p>
       <p style="text-align: left">Valid till : ${moment(params.till).format("Do MMM YYYY")} </p>`,
