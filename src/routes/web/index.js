@@ -19,6 +19,7 @@ const Commodity = require('./commodityRoutes');
 const currencyConvter = require('./currencyConvterRoutes')
 const whatsApp = require('./whatsappRoutes')
 const referal = require('./referralcodeRoutes')
+const language=require('./languageRoutes')
 
 router.use(location)
 router.use(buyer)
@@ -40,5 +41,6 @@ router.use(Commodity)
 router.use(currencyConvter)
 router.use(whatsApp)
 router.use(referal)
+router.use(language)
 
 module.exports = router

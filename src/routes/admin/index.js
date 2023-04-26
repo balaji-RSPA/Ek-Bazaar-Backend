@@ -9,6 +9,7 @@ const subscriptionPlan = require('./subscriptionPlanRoutes')
 const news = require('./newsRoutes')
 const commodity = require('./commodityRoutes');
 const referralcode=require('./referralcodeRoutes')
+const language=require('./languageRoute')
 
 router.use(buyer)
 router.use(seller)
@@ -20,5 +21,6 @@ router.use(news);
 router.use(commodity);
 router.use(priceUnit)
 router.use(referralcode)
+router.use(language)
 
 module.exports = router
