@@ -61,6 +61,8 @@ const Datecol=require("./dateSchema")
 const StripPaylinks = require("./stripPayLinkSchema")
 const Referalcodes=require("./referralcodeSchema")
 const Languages=require("./languageSchema")
+const primaryBusinessType=require('./BusinessTypeSchema')
+const OwnershipType=require('./ownershipschema')
 
 module.exports = {
     Cities,
@@ -124,5 +126,7 @@ module.exports = {
     Datecol,
     StripPaylinks,
     Referalcodes,
-    Languages
+    Languages,
+    primaryBusinessType,
+    OwnershipType
 }
