@@ -83,6 +83,10 @@ let whatsappNotificationSchema = new Schema({
         type: Boolean,
         default: false
     },
+    lastTriggerdTime: {
+        type: Date,
+        default: null
+    },
     setLanguageNotification: {
         type: genralTypeANotificationSchema,
         required: true

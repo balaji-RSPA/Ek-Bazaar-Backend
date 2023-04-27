@@ -30,6 +30,9 @@ const PriceUnit = require('./priceUnitModule')
 const ContactUs = require('./contactModule')
 const Whatsapp = require('./whatsappTemplatemodule')
 const Referalcodes = require('./referralcodeModule')
+const Languages=require('./LanguageModules')
+const BusinessType=require('./businessModule')
+const OwnershipType=require('./ownershipModule')
 
 module.exports = {
     location,
@@ -63,5 +66,8 @@ module.exports = {
     PriceUnit,
     ContactUs,
     Whatsapp,
-    Referalcodes
+    Referalcodes,
+    Languages,
+    BusinessType,
+    OwnershipType
 }

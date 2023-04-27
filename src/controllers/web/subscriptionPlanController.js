@@ -28,7 +28,19 @@ module.exports.getAllSubscriptionPlan = async(req, res) => {
     try {
         const { skip, limit } = req.body
         // console.log(req.query,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        const subscriptionPlan = await getAllSubscriptionPlan(req.query || {}, skip, limit);
+        const group=req.query
+        let myquery={}
+        if (group && group.params && group.params=="2"){
+            myquery = { groupType: "2"}
+        }
+        else if (group && group.params && group.params == "1") {
+            myquery = { groupType: "1" }
+        }
+        else if (group && group.params && group.params == "3") {
+            myquery = { groupType: "3" }
+        }
+        // console.log(myquery,"-------------------PPPPPPPPPPP---------------");
+        const subscriptionPlan = await getAllSubscriptionPlan(myquery || {}, skip, limit);
         respSuccess(res, subscriptionPlan);
     } catch (error) {
         respError(res, error.message);

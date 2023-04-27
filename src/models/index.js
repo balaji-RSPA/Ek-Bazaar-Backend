@@ -61,6 +61,9 @@ const Datecol=require("./dateSchema")
 const StripPaylinks = require("./stripPayLinkSchema")
 const Referalcodes=require("./referralcodeSchema")
 const WhatsAppNotification = require('./whatsapNotificationSchema')
+const Languages=require("./languageSchema")
+const primaryBusinessType=require('./BusinessTypeSchema')
+const OwnershipType=require('./ownershipschema')
 
 module.exports = {
     Cities,
@@ -124,5 +127,8 @@ module.exports = {
     Datecol,
     StripPaylinks,
     Referalcodes,
-    WhatsAppNotification
+    WhatsAppNotification,
+    Languages,
+    primaryBusinessType,
+    OwnershipType
 }
