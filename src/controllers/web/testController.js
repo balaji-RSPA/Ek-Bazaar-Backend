@@ -1966,7 +1966,7 @@ module.exports.getSellersList = async (req, res) => new Promise(async (resolve, 
                 let l1 = [], l1Id = [], l2 = [], l2Id = [], l3 = [], l3Id = [], l4 = [], l4Id = [], l5 = [], l5Id = [], pro_names = []
                 const seller = totalSellerCount[index];
 
-                console.log(seller.sellerProductId && seller.sellerProductId.length, 'aaaaaaaaaaaaaa')
+                // console.log(seller.sellerProductId && seller.sellerProductId.length, 'aaaaaaaaaaaaaa')
                 console.log(seller && seller.sellerType && seller.sellerType[0] && seller.sellerType[0].name, 'Seller Data');
 
                 const details = seller.sellerProductId && seller.sellerProductId.length && seller.sellerProductId.map((pro) => {
@@ -2002,7 +2002,8 @@ module.exports.getSellersList = async (req, res) => new Promise(async (resolve, 
                     sellerType: seller && seller.sellerType && seller.sellerType[0] && seller.sellerType[0].name,
 
                     city: seller && seller.location && seller.location.city && seller.location.city.name,
-                    state: seller && seller.location && seller.location.state && seller.location.state.name,
+                    state: seller && seller.location && seller.location.state && seller.location.state.name, 
+                    companyName: seller && seller.busenessId && seller.busenessId.name || '',
                     // sellerType: seller.sellerType && seller.sellerType[0] && seller.sellerType[0].name || '',
 
                     // sellerProducts: seller.sellerProductId && seller.sellerProductId.length && seller.sellerProductId.map((pro) => pro.productDetails && pro.productDetails.name || '').toString() || '',
@@ -2025,7 +2026,7 @@ module.exports.getSellersList = async (req, res) => new Promise(async (resolve, 
 
                     createdDate: seller.createdAt || '',
                 }
-                // console.log(JSON.stringify(qqq), ' ttttttttttttttt')
+                console.log(qqq, ' ttttttttttttttt')
                 produts.push(qqq)
 
 

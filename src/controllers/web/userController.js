@@ -612,7 +612,7 @@ module.exports.addUser = async (req, res, next) => {
         let data = {
           sellerId: seller._id,
           userId: user.userId,
-          reciver_number: seller.mobile[0].mobile,
+          reciver_number: `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`,
           website: website,
           firstName:'',
           completed:false,
