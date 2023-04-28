@@ -295,6 +295,19 @@ module.exports.getUserProfile = (id) =>
       .catch((error) => reject(error))
   })
 
+module.exports.getUserData = (query) => new Promise((resolve, reject) => {
+  Users.findOne(query)
+  .select({
+    _id:1
+  })
+    .then((doc) => {
+      resolve(doc)
+    })
+    .catch((error) => {
+      reject(error)
+    })
+})
+
 module.exports.updateUser = (query, data) =>
   new Promise((resolve, reject) => {
     Users.findOneAndUpdate(query, data, {
@@ -574,6 +587,8 @@ module.exports.getSeller = (id, chkStock, query) =>
       })
       .catch((error) => reject(error))
   })
+
+module.exports.getSellerAllDetails
 // changed at top func for getting entair location obj
 exports.getSellerProfile = (id) =>
   new Promise((resolve, reject) => {
@@ -587,6 +602,7 @@ exports.getSellerProfile = (id) =>
       .populate('busenessId')
       .populate('statutoryId')
       .populate('planId')
+      .populate('sellerType')
       .populate({
         path: 'sellerContactId',
         model: SellersContact,
@@ -1745,6 +1761,8 @@ module.exports.getSellerAllDetails = (query) =>
       .populate('sellerProductId')
       // .populate('sellerType')
       .populate('busenessId')
+      .populate('sellerType')
+      .populate('sellerContactId')
       // .populate('statutoryId')
       // .populate({
       //   path: 'sellerContactId',
@@ -1827,9 +1845,9 @@ module.exports.getSellerAllDetails = (query) =>
       //     path: 'productDetails.countryOfOrigin',
       //   },
       // })
-      // .populate('location.city', 'name')
-      // .populate('location.state', 'name')
-      // .populate('location.country', 'name')
+      .populate('location.city', 'name')
+      .populate('location.state', 'name')
+      .populate('location.country', 'name')
       // .populate('planId')
       .lean()
       .then((doc) => {
