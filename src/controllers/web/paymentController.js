@@ -5489,7 +5489,7 @@ module.exports.addCashPlan = async (req, res) => {
           console.log("------------------ Payment done ---------");
           return respSuccess(
             res,
-            { payment: true },
+            { payment: true, invoice },
             "subscription activated successfully!"
           );
           // resolve(true)
