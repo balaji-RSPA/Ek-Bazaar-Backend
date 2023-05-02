@@ -60,6 +60,7 @@ const currentOTPs = require('./otpSchema')
 const Datecol=require("./dateSchema")
 const StripPaylinks = require("./stripPayLinkSchema")
 const Referalcodes=require("./referralcodeSchema")
+const WhatsAppNotification = require('./whatsapNotificationSchema')
 const Languages=require("./languageSchema")
 const primaryBusinessType=require('./BusinessTypeSchema')
 const OwnershipType=require('./ownershipschema')
@@ -126,6 +127,7 @@ module.exports = {
     Datecol,
     StripPaylinks,
     Referalcodes,
+    WhatsAppNotification,
     Languages,
     primaryBusinessType,
     OwnershipType

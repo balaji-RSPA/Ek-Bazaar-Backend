@@ -31,6 +31,17 @@ module.exports.getAllCountries = (skip, limit) =>
       });
   });
 
+module.exports.getTotelCountriesCount = () => 
+  new Promise((resolve, reject) => {
+    Countries.countDocuments()
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
+
 module.exports._getAllCountries = (query) => new Promise((resolve, reject) => {
   Countries.find(query.query)
     .limit(query.limit)
@@ -213,9 +224,9 @@ exports.getAllCities = (reqQuery) =>
           name: 1,
         }
       },
-      // {
-      //   $skip: 0
-      // },
+      {
+        $skip: skip
+      },
       {
         $limit: limit
       },
@@ -252,6 +263,17 @@ exports.getAllCities = (reqQuery) =>
       })
       .catch(reject);
   });
+
+exports.getAllCitiesCount = () => 
+  new Promise((resolve, reject) => {
+    Cities.countDocuments()
+      .then((doc) => {
+        resolve(doc)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
 
 module.exports.checkAndAddCity = (query) =>
   new Promise((resolve, reject) => {
