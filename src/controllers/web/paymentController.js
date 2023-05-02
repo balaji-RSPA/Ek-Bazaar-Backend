@@ -5010,11 +5010,11 @@ module.exports.addCashPlan = async (req, res) => {
     let allowedMonths = [3,6,12]
 
     if(!months){
-      return respError(res,"Please give the mounth");
+      return respError(res,"Please enter plan months");
     }
 
     if (!allowedMonths.includes(months)){
-      return respError(res,"Please send a valid months")
+      return respError(res,"Please enter a valid Plan time")
     }
 
     let currency = "INR"
@@ -5024,11 +5024,11 @@ module.exports.addCashPlan = async (req, res) => {
     let userId = await getUserData({ mobile: mobileNumber });
     // console.log("🚀 ~ file: paymentController.js:5011 ~ module.exports.addCashPlan= ~ user:", user);
     if(!userId){
-      return respError(res,"User not Exist!")
+      return respError(res,"Mobile Number does not exist!")
     }
     let sellerDetails = await getSellerAllDetails({ userId: userId._id})
     if(!sellerDetails && !sellerDetails.length){
-      return respError(res, "No User Found")
+      return respError(res, "Mobile Number does not exist !")
     }
 
     let seller = sellerDetails && sellerDetails[0];
@@ -5084,7 +5084,7 @@ module.exports.addCashPlan = async (req, res) => {
     let findpincode = currency === "INR" ? await findPincode({ pincode }) : "";
 
     if (!findpincode) {
-      return respError(res, "Invalid pincode");
+      return respError(res, "Invalid Pin Code");
     } else {
       if (planDetails && seller) {
         const checkMobile =
