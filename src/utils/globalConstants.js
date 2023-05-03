@@ -158,4 +158,4 @@ exports.tradeOnebazaarClientUrl = NODE_ENV === 'production' ? 'https://trade.ekb
 
 exports.googleSheat = NODE_ENV === 'production' 
 ? 'https://script.google.com/macros/s/AKfycbzyLVP7XL4QXMa_-rX3M2VkZSk8h51JAF1Da9yL2qQCi67zz-aqlR-pcL0RqkZrTmvX/exec' 
-  : 'https://script.google.com/macros/s/AKfycbxVk3khA5AK9M0BI9JtY-MGPEg7hlhJCAHprlyJZA3mk-AmNIVg_99FgEkOxXxpzeeGKQ/exec'
+  : 'https://script.google.com/macros/s/AKfycbxSjAlRT7EeozkLowKMofamIAxp3JEhvEJQveSZiU5cXMbPlBdgYZu6cL64G_ihao7h4Q/exec'
