@@ -171,14 +171,14 @@ exports.mPesa = NODE_ENV === 'production'
     Consumer_Secret: "mt0TaFhGeq9QAje0"
   };
 
-// exports.ConfirmationURL = NODE_ENV === 'production'
-//   ? 'https://tradebazaarapi.tech-active.com/api/mPesa/coinfurmation'
-//   : 'https://tradebazaarapi.tech-active.com/api/mPesa/coinfurmation'
+exports.ConfirmationURL = NODE_ENV === 'production'
+  ? 'https://tradebazaarapi.tech-active.com/api/mPesa/coinfurmation'
+  : 'https://tradebazaarapi.tech-active.com/api/mPesa/coinfurmation'
 
-// exports.ValidationURL = NODE_ENV === 'production'
-//   ? 'https://tradebazaarapi.tech-active.com/api/mPesa/validation'
-//   : 'https://tradebazaarapi.tech-active.com/api/mPesa/validation'
+exports.ValidationURL = NODE_ENV === 'production'
+  ? 'https://tradebazaarapi.tech-active.com/api/mPesa/validation'
+  : 'https://tradebazaarapi.tech-active.com/api/mPesa/validation'
 
-// exports.ShortCode = NODE_ENV === 'production'
-//   ? "4018455"
-//   : "600383"
+exports.ShortCode = NODE_ENV === 'production'
+  ? "4018455"
+  : "600383"

@@ -241,13 +241,12 @@ exports.mpesaAuth = async (req, res, next) => {
                     console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
                 }
 
-                let body = JSON.parse(body)
-                req.access_token = body.access_token
+                let _body = JSON.parse(body)
+                req.access_token = _body.access_token
                 next();
             }
         )
     } catch (error) {
         console.log("🚀 ~ file: paymentAuth.js:229 ~ exports.mpesaAuth=async ~ error:", error)
     }
-            
 }
