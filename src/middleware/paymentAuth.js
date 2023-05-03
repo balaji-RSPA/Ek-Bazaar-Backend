@@ -8,7 +8,7 @@ const { getSellerProfile } = sellers
 const { getSubscriptionPlanDetail } = subscriptionPlan;
 const request = require("request");
 const { respSuccess, respError } = require("../utils/respHadler");
-const { razorPayCredentials, mPesa } = require('../utils/globalConstants')
+const { razorPayCredentials } = require('../utils/globalConstants')
 
 async function CalculateGst(price, findPinCode, currency) {
     const gstValue = 18;
@@ -34,7 +34,7 @@ async function CalculateGst(price, findPinCode, currency) {
     return { gstAmount, cgstAmount, sgstAmount, totalAmount };
 }
 
-const createPendingOrder = async (userId, sellerId, paymentId, subscriptionId, orderDetails, currency, isSubscription, paymentResponse) => new Promise(async (resolve, reject) => {
+const createPendingOrder = async (userId, sellerId, paymentId, subscriptionId, orderDetails, currency, isSubscription, paymentResponse) => new Promise(async (resolve,reject)=> {
     const userData = {
         userId: userId,
         sellerId: sellerId,
@@ -69,7 +69,7 @@ const createPendingOrder = async (userId, sellerId, paymentId, subscriptionId, o
         findpincode,
         currency
     );
-    if (planDetails && seller && seller.length) {
+    if (planDetails && seller && seller.length ) {
         seller = seller[0];
         const SourceCode =
             seller && seller.hearingSource && seller.hearingSource.referralCode;
@@ -115,9 +115,9 @@ const createPendingOrder = async (userId, sellerId, paymentId, subscriptionId, o
                 // paymentStatus: '',
                 ipAddress: (orderDetails && orderDetails.ipAddress) || null,
                 currency: currency,
-                status: false,
-                orderStatus: 'pending',
-                recurringId: null,
+                status:false,
+                orderStatus:'pending',
+                recurringId:null,
                 isSubscription,
                 // isEmailSent: ''
             };
@@ -131,7 +131,7 @@ const createPendingOrder = async (userId, sellerId, paymentId, subscriptionId, o
                     PaymentId: payment._id
                 }
                 resolve({ pendingOrderCreated: true, data })
-            }
+            }   
         })
     }
 })
@@ -165,8 +165,8 @@ exports.subscriptionPaymentAuth = async (req, res, next) => {
     const responce = await addOrdersLog(data)
 
     var instance = new Razorpay({
-        key_id: razorPayCredentials.key_id,
-        key_secret: razorPayCredentials.key_secret,
+        key_id: razorPayCredentials.key_id, 
+        key_secret: razorPayCredentials.key_secret, 
     })
 
     instance.payments.edit(paymentId, {
@@ -199,13 +199,13 @@ exports.subscriptionPaymentAuth = async (req, res, next) => {
         }
         const savedPending = await addPendingSubscriptionOrders(pendingSubData);
         console.log("🚀 ~ file: paymentAuth.js ~ line 179 ~ exports.subscriptionPaymentAuth= ~ savedPending", savedPending)
-
+        
         if (savedPending) {
             const createdPending = await createPendingOrder(userId, sellerId, paymentId, subscriptionId, orderDetails, currency, isSubscription, paymentResponse)
 
             if (createdPending && createdPending.pendingOrderCreated) {
                 const { data } = createdPending,
-                    query = { _id: savedPending._id }
+                query = { _id: savedPending._id}
 
                 const pendingTable = await updatePendingSubscriptionOrders(query, data);
 
@@ -220,34 +220,4 @@ exports.subscriptionPaymentAuth = async (req, res, next) => {
     }
 
 
-}
-
-exports.mpesaAuth = async (req, res, next) => {
-    try {
-        let url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
-        let auth = new Buffer.from(`${mPesa.Consumer_key}:${mPesa.Consumer_Secret}`).toString('base64');
-
-        request(
-            {
-                method:'GET',
-                url: url,
-                headers: {
-                    "Authorization": "Basic " + auth
-                }
-            },
-            (error, response,body) => {
-                console.log("🚀 ~ file: paymentAuth.js:249 ~ exports.mpesaAuth= ~ response:", body)
-                if(error){
-                    console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
-                }
-
-                let body = JSON.parse(body)
-                req.access_token = body.access_token
-                next();
-            }
-        )
-    } catch (error) {
-        console.log("🚀 ~ file: paymentAuth.js:229 ~ exports.mpesaAuth=async ~ error:", error)
-    }
-            
 }
