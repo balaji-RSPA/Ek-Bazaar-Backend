@@ -159,3 +159,25 @@ exports.tradeOnebazaarClientUrl = NODE_ENV === 'production' ? 'https://trade.ekb
 exports.googleSheat = NODE_ENV === 'production' 
 ? 'https://script.google.com/macros/s/AKfycbzyLVP7XL4QXMa_-rX3M2VkZSk8h51JAF1Da9yL2qQCi67zz-aqlR-pcL0RqkZrTmvX/exec' 
   : 'https://script.google.com/macros/s/AKfycbxVk3khA5AK9M0BI9JtY-MGPEg7hlhJCAHprlyJZA3mk-AmNIVg_99FgEkOxXxpzeeGKQ/exec'
+
+exports.mPesa = NODE_ENV === 'production'
+  ? {
+    Consumer_key: "o5pCbUGpEV42xJf2dW1L5f3nUzShWOss",
+    Consumer_Secret: "mt0TaFhGeq9QAje0"
+  }
+  : {
+    Consumer_key: "o5pCbUGpEV42xJf2dW1L5f3nUzShWOss",
+    Consumer_Secret: "mt0TaFhGeq9QAje0"
+  };
+
+exports.ConfirmationURL = NODE_ENV === 'production' 
+  ? 'https://tradebazaarapi.tech-active.com/api/mPesa/coinfurmation' 
+  : 'https://tradebazaarapi.tech-active.com/api/mPesa/coinfurmation'
+
+exports.ValidationURL = NODE_ENV === 'production'
+  ? 'https://tradebazaarapi.tech-active.com/api/mPesa/validation'
+  : 'https://tradebazaarapi.tech-active.com/api/mPesa/validation'
+
+exports.ShortCode = NODE_ENV === 'production'
+  ? "4018455"
+  : "600383"
