@@ -57,7 +57,8 @@ const { createChat, deleteChat } = Chat;
 
 const { createChatUser, userChatLogin, deleteChatAccount } = require("./rocketChatController");
 
-const { sendWhatsaapWelcome } = require('./whatsappTemplateController')
+const { sendWhatsaapWelcome } = require('./whatsappTemplateController');
+const { createWhatsappNotifictionDoc } = require('../../modules/whatsappTemplatemodule')
 const { currentOTPs } = require('../../models')
 
 const { rocketChatDomain, rocketChatAdminLogin } = require('../../utils/globalConstants')
@@ -550,64 +551,6 @@ module.exports.addUser = async (req, res, next) => {
     // });
 
     if (seller && buyer) {
-      // const trialPlan = await getSubscriptionPlanDetail({
-      //   planType: "trail",
-      //   status: true,
-      // });
-      // if (trialPlan/*  && _buyer && !_buyer.length */) {
-      //   const sellerDetails = {
-      //     sellerId: seller._id,ipAddress
-      //     userId: seller.userId,
-      //     name: seller.name || null,
-      //     email: seller.email || null,
-      //     mobile: seller.mobile || null,
-      //     sellerType: seller.sellerType || null,
-      //     paidSeller: seller.paidSeller,
-      //     planId: seller.planId,
-      //     trialExtends: seller.trialExtends,
-      //   };
-      //   const planData = {
-      //     name: trialPlan.type,
-      //     description: trialPlan.description,
-      //     features: trialPlan.features,
-      //     days: trialPlan.days,
-      //     extendTimes: trialPlan.numberOfExtends,
-      //     exprireDate: dateNow.setDate(
-      //       dateNow.getDate() + parseInt(trialPlan.days)
-      //     ),
-      //     userId: seller.userId,
-      //     sellerId: seller._id,
-      //     isTrial: true,
-      //     planType: trialPlan.type,
-      //     extendDays: trialPlan.days,
-      //     subscriptionId: trialPlan._id,
-      //     createdOn: new Date(),
-      //   };
-
-      //   const planResult = await createTrialPlan(planData);
-      //   const planDatra = {
-      //     planId: planResult._id,
-      //     trialExtends: trialPlan.numberOfExtends,
-      //   };
-      //   const sellerUpdate = await updateSeller({ _id: seller._id }, planDatra);
-
-      //   const planLog = {
-      //     sellerId: seller._id,
-      //     userId: seller.userId,
-      //     sellerPlanId: sellerUpdate.planId,
-      //     subscriptionId: trialPlan._id,
-      //     sellerDetails: { ...sellerDetails },
-      //     planDetails: {
-      //       ...planData,
-      //       exprireDate: new Date(planData.exprireDate),
-      //     },
-      //   };
-      //   const log = await addSellerPlanLog(planLog);
-      // }
-
-      // const response = await axios.post(ssoRegisterUrl, { mobile: mobile.mobile, password }, { params: { serviceURL } })
-      // const { data } = response
-      // let _user = data.user
 
       if (url) {
         const ssoToken = url.substring(url.indexOf("=") + 1);
@@ -632,6 +575,8 @@ module.exports.addUser = async (req, res, next) => {
       const result1 = await handleUserSession(seller.userId, finalData);
 
       if (whatsappChecked) {
+
+       
       // if(false){
         let receiver_number = seller && seller.mobile && seller.mobile.length && `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`;
         let first_name = seller && seller.name || 'Coustomer';
@@ -646,10 +591,52 @@ module.exports.addUser = async (req, res, next) => {
           website
         }
 
-        console.log(whatsappChecked, "account created-------------------", whatsAppWelcomeData);
 
-        let wahtsappWlecomeResponce = sendWhatsaapWelcome(whatsAppWelcomeData)
+        // let wahtsappWlecomeResponce = sendWhatsaapWelcome(whatsAppWelcomeData)
+
+        let genral = {
+          started: false,
+          completed: false,
+          count: 0,
+          lastTriggerd: null
+        }
+
+        let genralForPro = {
+          started: false,
+          completed: false,
+          count: 0,
+          hasProduct: false,
+          lastTriggred:null
+        }
+
+        let data = {
+          sellerId: seller._id,
+          userId: user.userId,
+          reciver_number: `${seller.mobile[0].countryCode}${seller.mobile[0].mobile}`,
+          website: website,
+          firstName:'',
+          completed:false,
+          lastTriggerdTime: null,
+          setLanguageNotification: genral,
+          completeProfilReminder: genral,
+          onCompleteProfile: {
+            triggred: false,
+            triggredTime: null
+          },
+          addProduct: genralForPro,
+          addProductReminder: genralForPro
+        }
+        // console.log(user,"🚀 ~ file: userController.js:689 ~ module.exports.addUser= ~ data:", data)
+
+        let response = await createWhatsappNotifictionDoc(data);
+        console.log("🚀 ~ file: userController.js:631 ~ module.exports.addUser= ~ responce:", response)
+
+        let update = await updateSeller({ _id: seller._id }, { whatsappNotification: response._id, whatsappNotificationCompleted :false})
+        // console.log("🚀 ~ file: userController.js:634 ~ module.exports.addUser= ~ update:", update)
+        
       }
+
+
 
       return respSuccess(
         res,

@@ -14,6 +14,7 @@ const SellerProducts = require('./sellerProductListSchema')
 const SellerTypes = require('./sellertTypesSchema');
 const SellerPlans = require('./sellerPlanSchema');
 const currencyExcenges = require('./currencySchema')
+const WhatsAppNotification = require('./whatsapNotificationSchema')
 const { identity } = require("lodash");
 
 // const notificationSchema = new Schema({
@@ -333,6 +334,15 @@ const sellersSchema = new Schema(
       type: String
     },
     isSubscription: {
+      type: Boolean,
+      default: false
+    },
+    whatsappNotification: {
+      type: ObjectId,
+      ref: WhatsAppNotification,
+      default: null,
+    },
+    whatsappNotificationCompleted: {
       type: Boolean,
       default: false
     }

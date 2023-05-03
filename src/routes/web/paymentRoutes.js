@@ -19,6 +19,8 @@ router.post('/stripe/charge', payment.createStripePayment)
 router.post('/planActivation/:paymentId', payment.planActivation)
 router.post('/whtasappONEpayment',payment.createStripeLink);
 
+router.post('/addCashPlan',payment.addCashPlan)
+
 // router.post('/subscriptionPending', payment.pendingSubWebHook)
 // router.post('/subscriptionHalted', payment.subscriptionHalted)
 // router.post('/subscriptionCharged', payment.subscriptionCharged)
