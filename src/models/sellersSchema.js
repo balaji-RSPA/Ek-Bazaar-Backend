@@ -345,6 +345,10 @@ const sellersSchema = new Schema(
     whatsappNotificationCompleted: {
       type: Boolean,
       default: false
+    },
+    synced:{
+      type:Boolean,
+      default:false
     }
   },
   {
