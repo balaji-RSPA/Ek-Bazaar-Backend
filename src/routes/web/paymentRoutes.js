@@ -21,17 +21,19 @@ router.post('/whtasappONEpayment',payment.createStripeLink);
 
 router.post('/addCashPlan',payment.addCashPlan)
 
-router.post('/mPesa/coinfurmation',(req, res) => {
-    console.log(req.body,"==============coinfurmation============");
-})
+// router.post('/mPesa/coinfurmation',(req, res) => {
+//     console.log(req.body,"==============coinfurmation============");
+//     res.send({ body: req.body })
+// })
 
-router.post('/mPesa/validation', (req, res) => {
-    console.log(req.body, "==============coinfurmation============");
-})
+// router.post('/mPesa/validation', (req, res) => {
+//     console.log(req.body, "==============coinfurmation============");
+//     res.send({body: req.body })
+// })
 
-router.post('registerUrl', payment.registerC2B)
+// router.post('/registerUrl', payment.registerC2B)
 
-router.get('/mPesa', mpesaAuth,)
+// router.get('/mPesa', mpesaAuth)
 
 // router.post('/subscriptionPending', payment.pendingSubWebHook)
 // router.post('/subscriptionHalted', payment.subscriptionHalted)

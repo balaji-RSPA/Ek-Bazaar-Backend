@@ -43,7 +43,6 @@
         "moment": "^2.29.1",
         "mongoose": "^5.10.9",
         "morgan": "^1.10.0",
-        "mpesa-api": "^3.0.2",
         "node-cron": "^2.0.3",
         "node-machine-id": "^1.1.12",
         "nodemailer": "^6.4.17",

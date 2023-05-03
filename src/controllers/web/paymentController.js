@@ -32,11 +32,7 @@ const {
   stripeApiKeys,
   tenderApiBaseUrl,
   tradeApiBaseUrl,
-  tradeSiteUrl,
-  ConfirmationURL,
-  ValidationURL,
-  ShortCode,
-  mPesa
+  tradeSiteUrl
 } = require("../../utils/globalConstants");
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
@@ -80,16 +76,16 @@ const toWords = new ToWords();
 const crypto = require("crypto");
 const { createHmac, Hmac } = crypto;
 
-const Mpesa = require('mpesa-api').Mpesa;
+// const Mpesa = require('mpesa-api').Mpesa;
 
-const environment = "sandbox";
-const credentials = {
-  clientKey: mPesa.Consumer_key,
-  clientSecret: mPesa.Consumer_Secret,
-  initiatorPassword: 'Leke1fNjjdHzO2+NwRYyzc4dFAMhl4sVVA6T/NfzSkL3CZIW5yOyRe0W7tqjqyPVIP4/q8gBr9kDv3fLQ+Rt8kfGfwvNxTn3ydGVmAW0v9SedR/hCQ/+8oeSi2hDMhNHfLZlY1qGs4qTfK6TJq8oHafr7pZDXWQtWMtYohMyz61W0kP4+5LMgQocoBDMd6HsbEznVx9qf3zV3oy3yAMQtlvPtek1jQaSWPOh+oRFPcuebo6UgwZUiTyPCz5s8EIYdC8Iah7pa93h3Z6gWy6TiFi8+/OG4zbtPZGNdmBrKkRE4bbKZ+PXK/uGyq+Weo5fJMF8WqdfyP+z42W6ElxN4Q==',
-};
+// const environment = "sandbox";
+// const credentials = {
+//   clientKey: mPesa.Consumer_key,
+//   clientSecret: mPesa.Consumer_Secret,
+//   initiatorPassword: 'Leke1fNjjdHzO2+NwRYyzc4dFAMhl4sVVA6T/NfzSkL3CZIW5yOyRe0W7tqjqyPVIP4/q8gBr9kDv3fLQ+Rt8kfGfwvNxTn3ydGVmAW0v9SedR/hCQ/+8oeSi2hDMhNHfLZlY1qGs4qTfK6TJq8oHafr7pZDXWQtWMtYohMyz61W0kP4+5LMgQocoBDMd6HsbEznVx9qf3zV3oy3yAMQtlvPtek1jQaSWPOh+oRFPcuebo6UgwZUiTyPCz5s8EIYdC8Iah7pa93h3Z6gWy6TiFi8+/OG4zbtPZGNdmBrKkRE4bbKZ+PXK/uGyq+Weo5fJMF8WqdfyP+z42W6ElxN4Q==',
+// };
 
-let mpesa = new Mpesa(credentials,environment)
+// let mpesa = new Mpesa(credentials,environment)
 
 const createPdf = async (seller, plan, orderDetails) =>
   new Promise((resolve, reject) => {
@@ -5532,17 +5528,17 @@ module.exports.addCashPlan = async (req, res) => {
 
 module.exports.registerC2B = async (req, res) => {
   try {
-    // let url = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl'
-    // let auth = 'Bearer ' + req.access_token;
+    let url = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl'
+    let auth = 'Bearer ' + req.access_token;
 
-    let responce = await mpesa.c2bRegister({
-      ShortCode: ShortCode,
-      ConfirmationURL: ConfirmationURL,
-      ValidationURL: ValidationURL,
-      ResponseType: "Complete",
-    })
+    // let responce = await mpesa.c2bRegister({
+    //   ShortCode: ShortCode,
+    //   ConfirmationURL: ConfirmationURL,
+    //   ValidationURL: ValidationURL,
+    //   ResponseType: "Complete",
+    // })
 
-    respSuccess(res, responce)
+    respSuccess(res, {})
 
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:5522 ~ module.exports.registoreC2B= ~ error:", error)
