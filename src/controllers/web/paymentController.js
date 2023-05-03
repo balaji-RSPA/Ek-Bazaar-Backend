@@ -35,7 +35,8 @@ const {
   tradeSiteUrl,
   ConfirmationURL,
   ValidationURL,
-  ShortCode
+  ShortCode,
+  mPesa
 } = require("../../utils/globalConstants");
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
@@ -83,8 +84,8 @@ const Mpesa = require('mpesa-api').Mpesa;
 
 const environment = "sandbox";
 const credentials = {
-  clientKey: 'o5pCbUGpEV42xJf2dW1L5f3nUzShWOss',
-  clientSecret: 'mt0TaFhGeq9QAje0',
+  clientKey: mPesa.Consumer_key,
+  clientSecret: mPesa.Consumer_Secret,
   initiatorPassword: 'Leke1fNjjdHzO2+NwRYyzc4dFAMhl4sVVA6T/NfzSkL3CZIW5yOyRe0W7tqjqyPVIP4/q8gBr9kDv3fLQ+Rt8kfGfwvNxTn3ydGVmAW0v9SedR/hCQ/+8oeSi2hDMhNHfLZlY1qGs4qTfK6TJq8oHafr7pZDXWQtWMtYohMyz61W0kP4+5LMgQocoBDMd6HsbEznVx9qf3zV3oy3yAMQtlvPtek1jQaSWPOh+oRFPcuebo6UgwZUiTyPCz5s8EIYdC8Iah7pa93h3Z6gWy6TiFi8+/OG4zbtPZGNdmBrKkRE4bbKZ+PXK/uGyq+Weo5fJMF8WqdfyP+z42W6ElxN4Q==',
 };
 
@@ -5540,9 +5541,6 @@ module.exports.registerC2B = async (req, res) => {
       ValidationURL: ValidationURL,
       ResponseType: "Complete",
     })
-
-    
-
 
     respSuccess(res, responce)
 

@@ -12,6 +12,7 @@ router.get('/currencyConveter', currencyConveter.getSingleCurrency)
 // router.get('/currencyConveter', currencyConveter.getCurrencyConveter)
 
 router.post('/currencyConveter', currencyConveter.addCurrencyConveter)
+// router.post('/getAllCurrency', currencyConveter.addCurrencyExcenge)
 
 router.get('/getAllCurrency',currencyConveter.getAllCurrency)
 
