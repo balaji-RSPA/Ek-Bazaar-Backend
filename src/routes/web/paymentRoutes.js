@@ -22,6 +22,10 @@ router.post('/whtasappONEpayment',payment.createStripeLink);
 router.post('/addCashPlan',payment.addCashPlan)
 
 
+
+/**
+ * mPesa Routes
+ */
 router.post('/mPesa/coinfurmation', (req, res) => {
     console.log(req.body, "==============coinfurmation============");
     res.send({
