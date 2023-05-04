@@ -24,15 +24,23 @@ router.post('/addCashPlan',payment.addCashPlan)
 
 router.post('/mPesa/coinfurmation', (req, res) => {
     console.log(req.body, "==============coinfurmation============");
-    res.send({ body: req.body })
+    res.send({
+        "ResultCode": "0",
+        "ResultDesc": "Accepted",
+    })
 })
 
 router.post('/mPesa/validation', (req, res) => {
     console.log(req.body, "==============validation============");
-    res.send({body: req.body })
+    res.send({
+        "ResultCode": "0",
+        "ResultDesc": "Accepted",
+    })
 })
 
 router.post('/registerUrl', mpesaAuth, payment.registerC2B)
+
+router.post('/smulate', mpesaAuth, payment.smulatePayment)
 
 // router.get('/mPesa', mpesaAuth)
 

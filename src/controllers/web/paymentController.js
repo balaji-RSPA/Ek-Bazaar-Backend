@@ -5554,6 +5554,40 @@ module.exports.registerC2B = async (req, res) => {
   }
 }
 
+module.exports.smulatePayment = async (req, res) => {
+  try {
+    let url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate";
+    let auth = 'Bearer ' + req.access_token;
+
+    request(
+      {
+        method: "POST",
+        url: url,
+        headers: {
+          "Authorization": auth
+        },
+        json: {
+          "ShortCode": ShortCode,
+          "CommandID": "CustomerPayBillOnline",
+          "Amount": "100",
+          "Msisdn": "254708374149",
+          "BillRefNumber": "TestAPI"
+        }
+      },
+      (error, response, body) => {
+        console.log(error, "🚀 ~ file: paymentController.js:5555 ~ module.exports.registerC2B= ~ body:", body)
+        if (error) {
+          console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
+        }
+        // let _body = JSON.parse(body)
+        respSuccess(res, { body })
+      }
+    )
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:5562 ~ module.exports.smulatePayment= ~ error:", error)
+  }
+}
+
 
 
 
