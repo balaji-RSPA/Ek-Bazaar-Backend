@@ -14,6 +14,10 @@ const mySchema = new schema({
     },
     mobile:  [mobile],
     source:{type:String, default:"market"},
+    synced: {
+        type: Boolean,
+        default: false
+    }
 },{ timestamps: true,versionKey:false });
 
 

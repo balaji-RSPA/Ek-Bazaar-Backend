@@ -1532,74 +1532,168 @@ exports.sendDailyCount = async (req, res) =>
     }
   });
 
+// exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject) => {
+//   try {
+    
+//     // let url = 'https://script.google.com/macros/s/AKfycbzyLVP7XL4QXMa_-rX3M2VkZSk8h51JAF1Da9yL2qQCi67zz-aqlR-pcL0RqkZrTmvX/exec' // production
+
+//     // let url = 'https://script.google.com/macros/s/AKfycbw8_gM-cMMTJLxlFSAw1CcHQzCZYKS_gETECILKob85cn7Df_EyzynsgQ0-Va6Ga63U/exec' // Staging
+
+//     let url = googleSheat
+
+//     const coldata = await Datecol.find({});
+ 
+//     const from = new Date(
+//       moment(coldata[0].date).utc()
+//     ).toISOString()
+
+//     const to = new Date(
+//       moment.utc()
+//     ).toISOString();
+
+//     console.log(from, "--------------Last Time Interval Data Entry-----------", to)
+
+//     let dataArr = []
+//     // let marketArr = []
+//     const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to }, "mobile.mobile": { $exists: true } }, { _id: 0, "name": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
+
+//     sellerData.map((seller) => {
+
+//       if (seller.client != "onebazaar") {
+//         let mySellerObje = {};
+//         mySellerObje.name = seller.name || '';
+//         mySellerObje.mobile = seller.mobile || [];
+//         mySellerObje.createdAt = seller.createdAt || new Data()
+
+//         if (seller.isMobileApp) {
+//           mySellerObje.source = "MobileApp"
+//         } else if (seller.isWhataap) {
+//           mySellerObje.source = "whatsapp"
+//         } else {
+//           mySellerObje.source = seller.client
+//         }
+//         dataArr.push(mySellerObje)
+//       } else {
+//       }
+//     })
+//     const marketData = await Callback.find({ createdAt: { $gt: from, $lt: to }, "mobile.mobile": { $exists: true } }, { "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
+//     marketData.map((value) => {
+//       let marketobj = {};
+
+//       marketobj.name = value.name || '';
+//       marketobj.mobile = value.mobile || [];
+//       marketobj.createdAt = value.createdAt || new Data()
+
+//       marketobj.source = value.source || 'market'
+
+//       dataArr.push(marketobj)
+//     })
+
+
+//     let result = await insetInSheat(url, dataArr);
+
+
+//     let updated = await Datecol.updateOne({ _id: coldata[0]._id }, { date: to })
+
+//     resolve({ data: result.data, updated })
+
+
+//   } catch (error) {
+//     console.log("🚀 ~ file: cron.js:1672 ~ exports.fillGoogleSheat= ~ error:", error)
+//     reject(error.message);
+//   }
+
+// })
+
 exports.fillGoogleSheat = async (req, res) => new Promise(async (resolve, reject) => {
   try {
-    
-    // let url = 'https://script.google.com/macros/s/AKfycbzyLVP7XL4QXMa_-rX3M2VkZSk8h51JAF1Da9yL2qQCi67zz-aqlR-pcL0RqkZrTmvX/exec' // production
-
-    // let url = 'https://script.google.com/macros/s/AKfycbw8_gM-cMMTJLxlFSAw1CcHQzCZYKS_gETECILKob85cn7Df_EyzynsgQ0-Va6Ga63U/exec' // Staging
-
     let url = googleSheat
 
-    const coldata = await Datecol.find({});
- 
-    const from = new Date(
-      moment(coldata[0].date).utc()
-    ).toISOString()
+    // const to = new Date(
+    //   moment.utc()
+    // ).toISOString();
+
+    // const coldata = await Datecol.find({});
+
+    // const from = new Date(
+    //   moment(coldata[0].date).utc()
+    // ).toISOString()
 
     const to = new Date(
       moment.utc()
     ).toISOString();
 
-    console.log(from, "--------------Last Time Interval Data Entry-----------", to)
 
     let dataArr = []
-    // let marketArr = []
-    const sellerData = await Sellers.find({ createdAt: { $gt: from, $lt: to },"mobile.mobile":{$exists: true} }, { _id: 0, "name": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1 });
 
-    sellerData.map((seller) => {
-      
-      if (seller.client !="onebazaar"){
-      let mySellerObje = {};
-      mySellerObje.name = seller.name || '';
-      mySellerObje.mobile = seller.mobile || [];
-      mySellerObje.createdAt = seller.createdAt || new Data()
-      
-      if (seller.isMobileApp){
-        mySellerObje.source = "MobileApp"
-      }else if(seller.isWhataap){
-        mySellerObje.source = "whatsapp"
-      }else{
-        mySellerObje.source = seller.client
+    const sellerData = await Sellers.find({ synced: false }, { _id: 1, "name": 1, "mobile.mobile": 1, "createdAt": 1, "isMobileApp": 1, "isWhatsappApp": 1, "client": 1, "synced": 1 });
+    console.log(sellerData, "dssssssssssss");
+
+
+    for (let i = 0; i < sellerData.length; i++) {
+      const creto =sellerData[i].createdAt
+      creto.setMinutes(creto.getMinutes()+5)
+      const afterFivemin = creto.toISOString();
+      // console.log(afterFivemin, "dfgergggggggggggggg", new Date(afterFivemin));
+      if (sellerData[i].client != "onebazaar" && sellerData[i].createdAt <= new Date(afterFivemin) && sellerData[i].name != null) {
+        let mySellerObje = {};
+        mySellerObje.name = sellerData[i].name || ''
+        mySellerObje.mobile = sellerData[i].mobile || []
+        mySellerObje.createdAt = sellerData[i].createdAt || new Data()
+        mySellerObje.synced = "Complete"
+
+        if (sellerData[i].isMobileApp) {
+          mySellerObje.source = "MobileApp"
+        } else if (sellerData[i].isWhataap) {
+          mySellerObje.source = "whatsapp"
+        } else {
+          mySellerObje.source = sellerData[i].client
+        }
+        dataArr.push(mySellerObje)
+        const updateTotrue = await Sellers.updateOne({ _id: sellerData[i]._id }, { $set: { synced: true } })
+        // console.log(updateTotrue, "-------------------------");
       }
-      dataArr.push(mySellerObje)
-    }else{
+      else if (sellerData[i].client != "onebazaar" && new Date(afterFivemin) < new Date(to) && sellerData[i].name == null) {
+        let mySellerObje = {};
+        mySellerObje.name = sellerData[i].name || ''
+        mySellerObje.mobile = sellerData[i].mobile || []
+        mySellerObje.createdAt = sellerData[i].createdAt || new Data()
+        mySellerObje.synced = "Incomplete"
+
+        if (sellerData[i].isMobileApp) {
+          mySellerObje.source = "MobileApp"
+        } else if (sellerData[i].isWhataap) {
+          mySellerObje.source = "whatsapp"
+        } else {
+          mySellerObje.source = sellerData[i].client
+        }
+        dataArr.push(mySellerObje)
+        const updated = await Sellers.updateOne({ _id: sellerData[i]._id }, { $set: { synced: true } })
+      }
     }
-    })
-    const marketData = await Callback.find({ createdAt: { $gt: from, $lt: to }, "mobile.mobile": { $exists: true } }, { "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
-    marketData.map((value)=>{
+    const marketData = await Callback.find({ synced: false }, { _id:1, "name": 1, "mobile.mobile": 1, "createdAt": 1, "source": 1 })
+    for (let i = 0; i < marketData.length; i++) {
       let marketobj = {};
 
-      marketobj.name = value.name || '';
-      marketobj.mobile = value.mobile || [];
-      marketobj.createdAt = value.createdAt || new Data()
-      
-      marketobj.source = value.source || 'market'
+      marketobj.name = marketData[i].name || '';
+      marketobj.mobile = marketData[i].mobile || [];
+      marketobj.createdAt = marketData[i].createdAt || new Data()
 
+      marketobj.source = marketData[i].source || 'market'
+      marketobj.synced = "Complete"
       dataArr.push(marketobj)
-    })
-    
-   
+
+      let updated = await Callback.updateOne({ _id: marketData[i]._id }, { $set: {synced: true }})
+    }
+  console.log(dataArr,"ddddddddddddddddddddddddddd");
     let result = await insetInSheat(url, dataArr);
 
 
-    let updated = await Datecol.updateOne({ _id: coldata[0]._id }, { date: to })
+    resolve({ data: result.data })
 
-    resolve({ data: result.data, updated })
-
-
-  } catch (error) {
-    console.log("🚀 ~ file: cron.js:1672 ~ exports.fillGoogleSheat= ~ error:", error)
+  }
+  catch (error) {
+    console.log("🚀 ~ file: cron.js:1690 ~ exports.fillGoogleSheat= ~ error:", error)
     reject(error.message);
   }
 
@@ -1676,7 +1770,7 @@ exports.deleteExtraCurrency = async (req,res) => new Promise(async (resolve, rej
   } catch (error) {
     reject(error.message);
   }
-  
+
 })
 
 exports.getCurrencySymboles = async (req, res) => new Promise(async (resolve, reject) => {
@@ -1930,7 +2024,7 @@ exports.deleteMasterColl = async () => new Promise(async (resolve, reject) => {
 exports.deleteOtps = async () => new Promise(async (resolve, reject) => {
   try {
     let time = new Date(
-      moment().subtract(30,'minutes')
+      moment().subtract(30, 'minutes')
     ).toISOString()
 
     let query = {
@@ -1956,15 +2050,15 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
   let requiredGapIndiffrentNotification = 1;
 
   let noti = [];
-  for(let i = 0; i < sellers.length; i++){
+  for (let i = 0; i < sellers.length; i++) {
     // const today_date = new Date(moment().startOf("day")).toISOString();
     const today_date = moment(new Date())
     let seller = sellers[i];
     let whatsapNoti = seller && seller.whatsappNotification;
 
     // Checking for user name is avilabel or not  
-    if (whatsapNoti.firstName === '' && seller.name !== null){
-      let updated = await updateWhatsappNotificationDoc({ _id: whatsapNoti._id }, { firstName : seller.name})
+    if (whatsapNoti.firstName === '' && seller.name !== null) {
+      let updated = await updateWhatsappNotificationDoc({ _id: whatsapNoti._id }, { firstName: seller.name })
       whatsapNoti = updated;
     }
 
@@ -1977,14 +2071,14 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
     let Notification5_status = whatsapNoti && whatsapNoti.addProductReminder;
     let Notification_Max_Count = 3
 
-    let gapWithLastTriggred = today_date.diff(whatsapNoti.lastTriggerdTime,'minutes')
+    let gapWithLastTriggred = today_date.diff(whatsapNoti.lastTriggerdTime, 'minutes')
     console.log("🚀 ~ file: cron.js:1983 ~ exports.sendWhatsappNotification= ~ gapWithLastTriggred:", gapWithLastTriggred)
 
-    if (gapWithLastTriggred >= requiredGapIndiffrentNotification){
+    if (gapWithLastTriggred >= requiredGapIndiffrentNotification) {
 
       // check for notification 1
       if ((!Notification1_status.started) || (Notification1_status.started && !Notification1_status.completed && Notification1_status.count < Notification_Max_Count)) {
-        let timeGapforsetLangNotification = today_date.diff(Notification1_status.lastTriggerd ? Notification1_status.lastTriggerd :whatsapNoti.lastTriggerdTime,'minutes')
+        let timeGapforsetLangNotification = today_date.diff(Notification1_status.lastTriggerd ? Notification1_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'minutes')
         console.log("🚀 ~ file: cron.js:1992 ~ exports.sendWhatsappNotification= ~ timeGapfrosetLangNotification:", timeGapforsetLangNotification)
         if (!Notification1_status.started || (Notification1_status.count < Notification_Max_Count && timeGapforsetLangNotification > requiredGapInSameNotification)) {
 
@@ -2002,12 +2096,12 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
 
           let responce = await setLanguageWhatsapp(setLangData)
 
-          console.log(responce,"********************setLanguageNotification*****************")
+          console.log(responce, "********************setLanguageNotification*****************")
           Notification1_status.started = true;
           Notification1_status.count = Notification1_status.count + 1;
           Notification1_status.lastTriggerd = today_date;
 
-          if (Notification1_status.count >= Notification_Max_Count){
+          if (Notification1_status.count >= Notification_Max_Count) {
             Notification1_status.completed = true
           }
 
@@ -2017,12 +2111,12 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
       }
 
       // checking for Notification 2 and 3.
-      if ((!Notification2_status.started) || (Notification2_status.started && !Notification2_status.completed && Notification2_status.count <= Notification_Max_Count)){
-        let timeGapforNotification2 = today_date.diff(Notification2_status.lastTriggerd ? Notification2_status.lastTriggerd : whatsapNoti.lastTriggerdTime,'minutes')
+      if ((!Notification2_status.started) || (Notification2_status.started && !Notification2_status.completed && Notification2_status.count <= Notification_Max_Count)) {
+        let timeGapforNotification2 = today_date.diff(Notification2_status.lastTriggerd ? Notification2_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'minutes')
         console.log("🚀 ~ file: cron.js:2016 ~ exports.sendWhatsappNotification= ~ timeGapforNotification2:", timeGapforNotification2)
 
-        
-        
+
+
 
         if (!Notification2_status.started || (Notification2_status.count < Notification_Max_Count && timeGapforNotification2 > requiredGapInSameNotification)) {
 
@@ -2040,7 +2134,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
 
           let response = await completeProfileWhatsapp(completeProfileData)
 
-          console.log(response,"********************completeProfilReminder*****************")
+          console.log(response, "********************completeProfilReminder*****************")
           Notification2_status.started = true;
           Notification2_status.count = Notification2_status.count + 1;
           Notification2_status.lastTriggerd = today_date;
@@ -2071,7 +2165,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
           }
 
           let response = await onCompleteProfileWhatsapp(onCompleteData)
-          console.log(response,"*************onCompleteProfile*****************")
+          console.log(response, "*************onCompleteProfile*****************")
           Notification3_status.triggred = true;
           Notification3_status.triggredTime = today_date;
 
@@ -2082,14 +2176,14 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
       }
 
       // check for Notification 4
-      if ((!Notification4_status.started && Notification3_status.triggred) || (Notification3_status.triggred && Notification4_status.started && !Notification4_status.completed && Notification4_status.count <= Notification_Max_Count)){
+      if ((!Notification4_status.started && Notification3_status.triggred) || (Notification3_status.triggred && Notification4_status.started && !Notification4_status.completed && Notification4_status.count <= Notification_Max_Count)) {
 
         //Here we can check for if seller has product or not.
 
-        let timeGapforNotification4 = today_date.diff(Notification4_status.lastTriggred ? Notification4_status.lastTriggred : whatsapNoti.lastTriggerdTime,'minutes');
+        let timeGapforNotification4 = today_date.diff(Notification4_status.lastTriggred ? Notification4_status.lastTriggred : whatsapNoti.lastTriggerdTime, 'minutes');
         console.log("🚀 ~ file: cron.js:2055 ~ exports.sendWhatsappNotification= ~ timeGapforNotification4:", timeGapforNotification4)
 
-        if(!Notification4_status.started || (Notification4_status.count < Notification_Max_Count && timeGapforNotification4 > requiredGapInSameNotification)){
+        if (!Notification4_status.started || (Notification4_status.count < Notification_Max_Count && timeGapforNotification4 > requiredGapInSameNotification)) {
           /**
            * Send whatsapp notification 4 here
            */
@@ -2112,17 +2206,17 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
 
           let update = await updateWhatsappNotificationDoc({ _id: whatsapNoti._id }, { lastTriggerdTime: today_date, addProduct: Notification4_status })
           continue;
-          
+
         }
       }
 
       // check for Notification 5
-      if ((!Notification5_status.started && Notification4_status.completed)|| (Notification4_status.completed && Notification5_status.started && !Notification5_status.completed && Notification5_status.count <= Notification_Max_Count)){
+      if ((!Notification5_status.started && Notification4_status.completed) || (Notification4_status.completed && Notification5_status.started && !Notification5_status.completed && Notification5_status.count <= Notification_Max_Count)) {
 
-        let timeGapforNotification5 = today_date.diff(Notification5_status.lastTriggerd ? Notification5_status.lastTriggerd : whatsapNoti.lastTriggerdTime,'minutes');
+        let timeGapforNotification5 = today_date.diff(Notification5_status.lastTriggerd ? Notification5_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'minutes');
         console.log("🚀 ~ file: cron.js:2080 ~ exports.sendWhatsappNotification= ~ timeGapforNotification5:", timeGapforNotification5);
 
-        if(!Notification5_status.started || (Notification5_status.count < Notification_Max_Count && timeGapforNotification5 > requiredGapInSameNotification)){
+        if (!Notification5_status.started || (Notification5_status.count < Notification_Max_Count && timeGapforNotification5 > requiredGapInSameNotification)) {
           /**
            * Send whatsapp notification 5 here
            */
@@ -2142,21 +2236,21 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
           Notification5_status.count = Notification5_status.count + 1;
           Notification5_status.lastTriggerd = today_date;
 
-          if (Notification5_status.count >= Notification_Max_Count){
+          if (Notification5_status.count >= Notification_Max_Count) {
             Notification5_status.completed = true;
             data.completed = true;
 
             // Here we can close whatsapp notification cahpter for the user.
-            let updateSeller = Seller.findOneAndUpdate({ _id: seller._id }, { whatsappNotificationCompleted : true})
+            let updateSeller = Seller.findOneAndUpdate({ _id: seller._id }, { whatsappNotificationCompleted: true })
           }
           data.lastTriggerdTime = today_date;
           data.addProductReminder = Notification5_status;
-          let update = await updateWhatsappNotificationDoc({_id: whatsapNoti._id},data)
+          let update = await updateWhatsappNotificationDoc({ _id: whatsapNoti._id }, data)
         }
 
       }
 
-    }else {
+    } else {
       console.log(`@@@@@@@@@@@@@@@@@@@@@@@@ At least ${requiredGapIndiffrentNotification} hours of Gap Required between two notification @@@@@@@@@@@@@@@@@@@@@`);
       // return resolve(true)
     }

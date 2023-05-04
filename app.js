@@ -314,6 +314,14 @@ app.get("/functionTest", async function (req, res) {
   // res.send('Its delete records  live')
 });
 
+app.get("/fillgooglesheat", async function (req, res) {
+  try {
+    let data = await fillGoogleSheat()
+    res.send(data)
+  } catch (error) { }
+
+});
+
 
 async function indexing() {
   await checkIndices();
@@ -465,19 +473,19 @@ if (env.NODE_ENV === "production1") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production1" /* || env.NODE_ENV === "development" */) {
-  const dataEntry = cron.schedule("*/5 * * * *", async () => {
-    dataEntry.stop();
-    console.log("------------------New User Data Entry Started---------------");
+// if (env.NODE_ENV === "production1" /* || env.NODE_ENV === "development" */) {
+//   const dataEntry = cron.schedule("*/5 * * * *", async () => {
+//     dataEntry.stop();
+//     console.log("------------------New User Data Entry Started---------------");
 
-    await fillGoogleSheat();
+//     await fillGoogleSheat();
 
-    console.log("--------------------- New User Data Entry Compleated-------------")
+//     console.log("--------------------- New User Data Entry Compleated-------------")
 
-    dataEntry.start();
-  })
-  dataEntry.start();
-}
+//     dataEntry.start();
+//   })
+//   dataEntry.start();
+// }
 
 if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
   const planExpire = cron.schedule(
