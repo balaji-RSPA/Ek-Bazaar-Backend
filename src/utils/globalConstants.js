@@ -172,12 +172,12 @@ exports.mPesa = NODE_ENV === 'production'
   };
 
 exports.ConfirmationURL = NODE_ENV === 'production'
-  ? 'https://tradebazaarapi.tech-active.com/api/mPesa/coinfurmation'
-  : 'https://tradebazaarapi.tech-active.com/api/mPesa/coinfurmation'
+  ? 'https://tradebazaarapi.tech-active.com/api/coinfurmation'
+  : 'https://tradebazaarapi.tech-active.com/api/coinfurmation'
 
 exports.ValidationURL = NODE_ENV === 'production'
-  ? 'https://tradebazaarapi.tech-active.com/api/mPesa/validation'
-  : 'https://tradebazaarapi.tech-active.com/api/mPesa/validation'
+  ? 'https://tradebazaarapi.tech-active.com/api/validation'
+  : 'https://tradebazaarapi.tech-active.com/api/validation'
 
 exports.ShortCode = NODE_ENV === 'production'
   ? "4018455"

@@ -26,7 +26,7 @@ router.post('/addCashPlan',payment.addCashPlan)
 /**
  * mPesa Routes
  */
-router.post('/mPesa/coinfurmation', (req, res) => {
+router.post('/coinfurmation', (req, res) => {
     console.log(req.body, "==============coinfurmation============");
     res.send({
         "ResultCode": "0",
@@ -34,7 +34,7 @@ router.post('/mPesa/coinfurmation', (req, res) => {
     })
 })
 
-router.post('/mPesa/validation', (req, res) => {
+router.post('/validation', (req, res) => {
     console.log(req.body, "==============validation============");
     res.send({
         "ResultCode": "0",
@@ -44,7 +44,7 @@ router.post('/mPesa/validation', (req, res) => {
 
 router.post('/registerUrl', mpesaAuth, payment.registerC2B)
 
-router.post('/smulate', mpesaAuth, payment.smulatePayment)
+router.post('/requestMpesa', mpesaAuth, payment.smulatePayment)
 
 // router.get('/mPesa', mpesaAuth)
 

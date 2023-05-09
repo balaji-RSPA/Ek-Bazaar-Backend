@@ -5556,6 +5556,11 @@ module.exports.registerC2B = async (req, res) => {
 
 module.exports.smulatePayment = async (req, res) => {
   try {
+
+    console.log(req.body,"============DATA================");
+
+    let { sellerId, subscriptionId, userId, orderDetails, currency } = req.body;
+
     let url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate";
     let auth = 'Bearer ' + req.access_token;
 
