@@ -361,6 +361,16 @@ module.exports.sendOtpToMail = async (req, res) => {
             return respError(res, "User already exists");
           }
         }
+
+        let emailQuery = {
+          email: email
+        }
+
+        let emailExist = await checkUserExistOrNot(emailQuery)
+
+        if (emailExist && emailExist.length){
+          return respError(res, 'Given Email is already Exist')
+        }
       }
 
 
