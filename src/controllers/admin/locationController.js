@@ -33,8 +33,8 @@ module.exports.getStates = async (req, res) => {
 /**Get all countries*/
 module.exports.getCountries = async (req, res) => {
   try {
-    const {skip,limit} = req.query
-    const countries = await getAllCountries(parseInt(skip),parseInt(500));
+    const {skip,limit,search} = req.query
+    const countries = await getAllCountries(parseInt(skip), parseInt(500), search);
     respSuccess(res, countries);
   } catch (error) {
     respError(res, error.message);

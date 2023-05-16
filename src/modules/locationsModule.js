@@ -34,7 +34,7 @@ module.exports.getAllStates = (reqQuery) =>
 //   }
 // ])
 
-module.exports.getAllCountries = (skip, limit) =>
+module.exports.getAllCountries = (skip, limit, search) =>
   new Promise((resolve, reject) => {
     Countries.find({})
       .skip(skip)
@@ -45,7 +45,7 @@ module.exports.getAllCountries = (skip, limit) =>
       .catch((error) => {
         reject(error);
       });
-//     Countries.aggregate([
+//   const query = Countries.aggregate([
 //   {
 //     $match: {
 //       name: {
@@ -56,7 +56,7 @@ module.exports.getAllCountries = (skip, limit) =>
 //   },
 //   {
 //     $project: {
-//       _id: 0,  // exclude the _id field from the result
+//       _id: 1,  // exclude the _id field from the result
 //       name: 1   // include the name field in the result
 //     }
 //   }
