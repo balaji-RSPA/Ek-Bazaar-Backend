@@ -17,10 +17,70 @@ module.exports.getAllStates = (reqQuery) =>
         reject(error);
       });
   });
+// db.countries.aggregate([
+//   {
+//     $match: {
+//       name: {
+//         $regex: "search string",  // replace "search string" with your actual search query
+//         $options: "i"  // case-insensitive search
+//       }
+//     }
+//   },
+//   {
+//     $project: {
+//       _id: 0,  // exclude the _id field from the result
+//       name: 1   // include the name field in the result
+//     }
+//   }
+// ])
 
-module.exports.getAllCountries = (skip, limit) =>
+module.exports.getAllCountries = (skip, limit, search) =>
   new Promise((resolve, reject) => {
-    Countries.find({})
+    // Countries.find({})
+    //   .skip(skip)
+    //   .limit(limit)
+    //   .then((doc) => {
+    //     resolve(doc);
+    //   })
+    //   .catch((error) => {
+    //     reject(error);
+    //   });
+    if(search){
+    const query = Countries.aggregate([
+      {
+        $match: {
+          name: {
+            $regex: `^${search}`,  // replace "search string" with your actual search query
+            $options: "i"  // case-insensitive search
+          }
+        }
+      },
+        {
+      $sort: {
+             name: 1,
+             }
+         },
+      {
+        $skip: skip // Skip first 10 documents
+      },
+      {
+        $limit: limit // Return only 20 documents
+      },
+      {
+        $project: {
+          _id: 1,  // exclude the _id field from the result
+          name: 1   // include the name field in the result
+        }
+      },
+    ])
+    query
+      .then((countries) => {
+        console.log("countries", countries)
+        resolve(countries);
+      })
+      .catch(reject);}
+      else{
+            Countries.find({})
       .skip(skip)
       .limit(limit)
       .then((doc) => {
@@ -29,6 +89,7 @@ module.exports.getAllCountries = (skip, limit) =>
       .catch((error) => {
         reject(error);
       });
+      }
   });
 
 module.exports.getTotelCountriesCount = () => 
@@ -215,7 +276,7 @@ exports.getAllCities = (reqQuery) =>
       };
       if (reqQuery.stateId) match["$match"]["state"] = ObjectId(reqQuery.stateId)
     }
-    console.log("<<<---------------- match -------------->>>", match)
+    console.log("<<<---------------- match -------------->>>1", match)
 
     const execQuery = Cities.aggregate([
       match,

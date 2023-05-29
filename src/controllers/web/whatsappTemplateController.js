@@ -19,6 +19,7 @@ module.exports.whatsappTempCreate = async (req, res) => {
         respSuccess(res,createdTemplates,"Whatsapp Templates is created");
         
     }catch (error){
+        console.log("🚀 ~ file: whatsappTemplateController.js:22 ~ module.exports.whatsappTempCreate= ~ error:", error)
         // console.log("🚀 ~ file: whatsappTemplateController.js:10 ~ module.exports.whatsappTempCreate= ~ error:", error)
         respError(res, error.message)
     }
@@ -36,7 +37,7 @@ module.exports.sendWhatsaapWelcome = async (data) => new Promise(async (resolve,
     data.template_id = template_id;
     data.client_number = userTemplate.client_number
 
-    console.log("🚀 ############################Final Data########################", data)
+    console.log("🚀 ############################ sendWhatsaapWelcome Final Data########################", data)
 
     sendWhatsappMassage(data)
         .then((res) => {
@@ -44,7 +45,7 @@ module.exports.sendWhatsaapWelcome = async (data) => new Promise(async (resolve,
             resolve(res)
         })
         .catch((error) => {
-            console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error,error.message)
+            console.log("🚀 ~ file: whatsappTemplateController.js:47 ~ module.exports.sendWhatsaapWelcome= ~ error:", error.message)
             reject(error.message)
         })
 })
@@ -63,7 +64,7 @@ module.exports.setLanguageWhatsapp = async (data) => new Promise(async (resolve,
     data.template_id = template_id;
     data.client_number = userTemplate.client_number
 
-    console.log("🚀 ############################Final Data########################", data)
+    console.log("🚀 ############################ setLanguageWhatsapp Final Data########################", data)
 
     sendWhatsappMassage(data)
         .then((res) => {
@@ -71,7 +72,8 @@ module.exports.setLanguageWhatsapp = async (data) => new Promise(async (resolve,
             resolve(res)
         })
         .catch((error) => {
-            console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
+            console.log("🚀 ~ file: whatsappTemplateController.js:75 ~ module.exports.setLanguageWhatsapp= ~ error:", error.message)
+            // console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
             reject(error.message)
         })
 })
@@ -90,7 +92,7 @@ module.exports.completeProfileWhatsapp = async (data) => new Promise(async (reso
     data.template_id = template_id;
     data.client_number = userTemplate.client_number
 
-    console.log("🚀 ############################Final Data########################", data)
+    console.log("🚀 ############################ completeProfileWhatsapp Final Data########################", data)
 
     sendWhatsappMassage(data)
         .then((res) => {
@@ -98,7 +100,8 @@ module.exports.completeProfileWhatsapp = async (data) => new Promise(async (reso
             resolve(res)
         })
         .catch((error) => {
-            console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
+            console.log("🚀 ~ file: whatsappTemplateController.js:103 ~ module.exports.completeProfileWhatsapp ~ error:", error.message)
+            // console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
             reject(error.message)
         })
 })
@@ -117,7 +120,7 @@ module.exports.onCompleteProfileWhatsapp = async (data) => new Promise(async (re
     data.template_id = template_id;
     data.client_number = userTemplate.client_number
 
-    console.log("🚀 ############################Final Data########################", data)
+    console.log("🚀 ############################ onCompleteProfileWhatsapp Final Data########################", data)
 
     sendWhatsappMassage(data)
         .then((res) => {
@@ -125,7 +128,8 @@ module.exports.onCompleteProfileWhatsapp = async (data) => new Promise(async (re
             resolve(res)
         })
         .catch((error) => {
-            console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
+            console.log("🚀 ~ file: whatsappTemplateController.js:131 ~ module.exports.onCompleteProfileWhatsapp ~ error:", error.message)
+            // console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
             reject(error.message)
         })
 })
@@ -144,7 +148,7 @@ module.exports.toAddProductWhatsapp = async (data) => new Promise(async (resolve
     data.template_id = template_id;
     data.client_number = userTemplate.client_number
 
-    console.log("🚀 ############################Final Data########################", data)
+    console.log("🚀 ############################ toAddProductWhatsapp Final Data########################", data)
 
     sendWhatsappMassage(data)
         .then((res) => {
@@ -152,7 +156,8 @@ module.exports.toAddProductWhatsapp = async (data) => new Promise(async (resolve
             resolve(res)
         })
         .catch((error) => {
-            console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
+            console.log("🚀 ~ file: whatsappTemplateController.js:159 ~ module.exports.toAddProductWhatsapp= ~ error:", error.message)
+            // console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
             reject(error.message)
         })
 })
@@ -165,13 +170,13 @@ module.exports.addProductReminderWhatsapp = async (data) => new Promise(async (r
     let userTemplate = await getSingleTemplateById({ template_id })
     // console.log("=====================Whatsaap Template User==================", userTemplate)
 
-    let { receiver_number, first_name, dynamicname, website } = data;
+    // let { receiver_number, first_name, dynamicname, website } = data;
 
 
     data.template_id = template_id;
     data.client_number = userTemplate.client_number
 
-    console.log("🚀 ############################Final Data########################", data)
+    console.log("🚀 ############################ addProductReminderWhatsapp Final Data########################", data)
 
     sendWhatsappMassage(data)
         .then((res) => {
@@ -179,7 +184,8 @@ module.exports.addProductReminderWhatsapp = async (data) => new Promise(async (r
             resolve(res)
         })
         .catch((error) => {
-            console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
+            console.log("🚀 ~ file: whatsappTemplateController.js:187 ~ module.exports.addProductReminderWhatsapp= ~ error:", error.message)
+            // console.log("🚀 ~ file: whatsappTemplateController.js:40 ~ module.exports.sendWelcome= ~ error:", error, error.message)
             reject(error.message)
         })
 })

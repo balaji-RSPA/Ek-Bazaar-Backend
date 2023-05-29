@@ -11,6 +11,7 @@ const {
   businessProfileIncomplete,
   SendOtpOnebazaar
 } = require("../../utils/templates/smsTemplate/smsTemplate");
+const moment = require('moment');
 const {
   sellers,
   buyers,
@@ -498,6 +499,7 @@ module.exports.addUser = async (req, res, next) => {
       _base,
       whatsappChecked,
       isMobileApp,
+      isWhatsappApp
     } = req.body;
     console.log(_base, "🚀 ~ file: userController.js ~ line 278 ~ module.exports.addUser= ~ req.body", req.body)
     const dateNow = new Date();
@@ -534,7 +536,8 @@ module.exports.addUser = async (req, res, next) => {
       },
       isPartialyRegistor: true,
       client,
-      isMobileApp: isMobileApp || false
+      isMobileApp: isMobileApp || false,
+      isWhatsappApp: isWhatsappApp || false
     };
     let query = {}
     if (Boolean(mobile.mobile)) query = { mobile: mobile.mobile || mobile }
@@ -602,7 +605,7 @@ module.exports.addUser = async (req, res, next) => {
         }
 
 
-        // let wahtsappWlecomeResponce = sendWhatsaapWelcome(whatsAppWelcomeData)
+        let wahtsappWlecomeResponce = await sendWhatsaapWelcome(whatsAppWelcomeData)
 
         let genral = {
           started: false,
@@ -626,7 +629,7 @@ module.exports.addUser = async (req, res, next) => {
           website: website,
           firstName:'',
           completed:false,
-          lastTriggerdTime: null,
+          lastTriggerdTime: moment(new Date()),
           setLanguageNotification: genral,
           completeProfilReminder: genral,
           onCompleteProfile: {

@@ -3,6 +3,7 @@ const { Schema, model, Types } = mongoose;
 const { ObjectId } = Types;
 
 const City = require("./citiesSchema");
+const Countries = require("./countriesSchema")
 
 const commoditySchema = new Schema(
   {
@@ -47,6 +48,14 @@ const commoditySchema = new Schema(
         },
         price: {
           type: Number
+        }
+      }
+    ],
+    country: [
+      {
+        country: {
+          type: ObjectId,
+          ref: Countries
         }
       }
     ]

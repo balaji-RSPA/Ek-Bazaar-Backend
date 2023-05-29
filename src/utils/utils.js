@@ -208,12 +208,12 @@ exports.sendWhatsappMassage = async (body) => new Promise(async (resolve, reject
     }
   )
     .then((doc) => {
-      console.log("🚀 ~ file: utils.js:209 ~ .then ~ doc:", doc)
+      // console.log("🚀 ~ file: utils.js:209 ~ .then ~ doc:", doc)
       resolve(doc)
     })
     .catch((error) => {
-      console.log("🚀 ~ file: utils.js:213 ~ exports.sendWhatsappMassage= ~ error:", error)
-      reject(error)
+      console.log("🚀 ~ file: utils.js:213 ~ exports.sendWhatsappMassage= ~ error:", error.message)
+      resolve(error)
     })
 
 })

@@ -79,6 +79,7 @@ module.exports.updateCommodity = async (req, res) => {
     // if (city) {
     //   updatedCommodityData.city = city;
     // }
+    console.log(req.body,"sdf");
 
     const updatedCommodity = await updateCommodity(
       { _id: id },
