@@ -3535,6 +3535,7 @@ const sendDatatoWhatsapp = async (url, data) => new Promise(async (resolve, reje
     resolve(response)
     console.log(url, data, "===========sending data to whatsapp Completed============");
   } catch (error) {
+    resolve(error)
     console.log("🚀 ~ file: utils.js:433 ~ module.exports.insetInSheat= ~ error:", error)
   }
 })
