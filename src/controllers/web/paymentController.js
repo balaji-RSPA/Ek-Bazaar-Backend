@@ -2239,7 +2239,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
           client: "trade",
           url: tradeSiteUrl,
         },
-        callback_url: tradeApiBaseUrl + "captureLinkPayment",
+        callback_url: tradeApiBaseUrl + "captureLinkPayment?iswhatsapp=true",
         callback_method: "get",
       });
       console.log("🚀 ~ file: paymentController.js:2239 ~ module.exports.createWhatsappPaymentLink= ~ result:", result)
