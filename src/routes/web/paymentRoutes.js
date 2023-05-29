@@ -44,7 +44,7 @@ router.post('/validation', (req, res) => {
 
 router.post('/registerUrl', mpesaAuth, payment.registerC2B)
 
-router.post('/requestMpesa', mpesaAuth, payment.smulatePayment)
+router.post('/requestMpesa', mpesaAuth, payment.smulatePayment) 
 
 // router.get('/mPesa', mpesaAuth)
 

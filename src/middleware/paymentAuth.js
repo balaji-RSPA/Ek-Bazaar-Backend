@@ -236,7 +236,7 @@ exports.mpesaAuth = async (req, res, next) => {
                 }
             },
             (error, response,body) => {
-                console.log("🚀 ~ file: paymentAuth.js:249 ~ exports.mpesaAuth= ~ response:", body)
+                console.log(error,"🚀 ~ file: paymentAuth.js:249 ~ exports.mpesaAuth= ~ response:", response)
                 if(error){
                     console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
                 }
