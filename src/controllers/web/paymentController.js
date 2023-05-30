@@ -5780,7 +5780,11 @@ module.exports.processRequest = async (req, res) => {
 
 module.exports.coinfurmPayment = async (req, res) => {
   try {
+    let MpesaCallBack = require('../../models/mPesaCallBackResposeSchema')
     console.log(req.body, "==============coinfurmation============");
+
+    let response = await MpesaCallBack.create({ data: req.body })
+    console.log("🚀 ~ file: paymentController.js:5787 ~ module.exports.coinfurmPayment= ~ response:", response)
 
     res.send({
       "ResultCode": "0",
