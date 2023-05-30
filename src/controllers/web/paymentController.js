@@ -35,6 +35,7 @@ const {
   tradeSiteUrl,
   mPesa,
   ShortCode,
+  Passkey,
   ValidationURL,
   ConfirmationURL
 } = require("../../utils/globalConstants");
@@ -79,6 +80,8 @@ const isProd = process.env.NODE_ENV === "production";
 const toWords = new ToWords();
 const crypto = require("crypto");
 const { createHmac, Hmac } = crypto;
+
+const Mpesa = require('../../models/mPesaOrderSchema')
 
 
 const createPdf = async (seller, plan, orderDetails) =>
@@ -5586,6 +5589,67 @@ module.exports.smulatePayment = async (req, res) => {
         }
         // let _body = JSON.parse(body)
         respSuccess(res, { body })
+      }
+    )
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:5562 ~ module.exports.smulatePayment= ~ error:", error)
+  }
+}
+
+module.exports.processRequest = async (req, res) => {
+  try {
+
+    console.log(req.body, "============DATA================");
+
+    let { sellerId, subscriptionId, userId, orderDetails, currency } = req.body;
+
+    let mobile = orderDetails && orderDetails.mobile && orderDetails.mobile.mobile
+
+    let url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
+    let auth = 'Bearer ' + req.access_token;
+
+    // console.log()
+
+    let timeStamp = moment( new Date()).format('yyyy:mm:DD:hh:mm:ss').split(':').join('');
+
+    let password = new Buffer.from(`${ShortCode}${Passkey}${timeStamp}`).toString('base64');
+
+    request(
+      {
+        method: "POST",
+        url: url,
+        headers: {
+          "Authorization": auth
+        },
+        json: {
+          "BusinessShortCode": ShortCode,
+          "Password": password,
+          "Timestamp": timeStamp,
+          "TransactionType": "CustomerPayBillOnline",
+          "Amount": "1",
+          "PartyA": `254${mobile}`,
+          "PartyB": ShortCode,
+          "PhoneNumber": `254${mobile}`,
+          "CallBackURL": "https://tradebazaarapi.tech-active.com/api/coinfurmation",
+          "AccountReference": "ONEBAZAAR",
+          "TransactionDesc": "Test"
+        }
+      },
+      async (error, response, body) => {
+        console.log(error, "🚀 ~ file: paymentController.js:5555 ~ module.exports.registerC2B= ~ body:", body)
+        if (error) {
+          console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
+        }
+        // let _body = JSON.parse(body)
+        let resp = await Mpesa.create({
+          sellerId,
+          subscriptionId,
+          userId,
+          orderDetails,
+          currency,
+          mPesaResponce: body
+        })
+        respSuccess(res, { resp })
       }
     )
   } catch (error) {

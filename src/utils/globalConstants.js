@@ -167,8 +167,8 @@ exports.mPesa = NODE_ENV === 'production'
     Consumer_Secret: "mt0TaFhGeq9QAje0"
   }
   : {
-    Consumer_key: "o5pCbUGpEV42xJf2dW1L5f3nUzShWOss",
-    Consumer_Secret: "mt0TaFhGeq9QAje0"
+    Consumer_key: "UxSV0G4BUIV42AxaXeDSMmfyskTChs7V",
+    Consumer_Secret: "EqhU2Pvpj9FQrFDe"
   };
 
 exports.ConfirmationURL = NODE_ENV === 'production'
@@ -181,4 +181,8 @@ exports.ValidationURL = NODE_ENV === 'production'
 
 exports.ShortCode = NODE_ENV === 'production'
   ? "4018455"
-  : "600383"
+  : "174379"
+
+exports.Passkey = NODE_ENV === 'production'
+  ? "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+  :"bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
