@@ -1789,6 +1789,27 @@ exports.getCurrencySymboles = async (req, res) => new Promise(async (resolve, re
   resolve(responce)
 })
 
+exports.keepUpdatedExcenageRate = async () => new Promise(async (resolve, reject) => {
+  try {
+    let UpdatedExcenge = require("../models/updatedExcengeRateSchema")
+    let excengeData = await axios.get('https://api.apilayer.com/exchangerates_data/latest?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=USD');
+    console.log("🚀 ~ file: cron.js:1795 ~ exports.keepUpdatedExcenageRate= ~ excengeData:", excengeData.data)
+
+    let excengeObj = excengeData && excengeData.data;
+
+    delete excengeObj.success
+    // delete excengeObj.timestamp
+
+    let updatedRes = await UpdatedExcenge.findOneAndUpdate({}, excengeObj,{new:true})
+
+    resolve(updatedRes)
+  } catch (error) {
+    Logger.error(error.message);
+    console.error(error.message);
+    resolve(error.message);
+  }
+})
+
 
 exports.getProductCount = async (req, res) => new Promise(async (resolve, reject) => {
   try {

@@ -5658,6 +5658,8 @@ module.exports.smulatePayment = async (req, res) => {
 module.exports.processRequest = async (req, res) => {
   try {
 
+    let UpdatedExcenge = require("../../models/updatedExcengeRateSchema")
+
     console.log(req.body, "============DATA================");
 
     let { sellerId, subscriptionId, userId, orderDetails, currency } = req.body;
@@ -5667,6 +5669,23 @@ module.exports.processRequest = async (req, res) => {
     let url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
     let auth = 'Bearer ' + req.access_token;
 
+    const planDetails = await getSubscriptionPlanDetail({
+      _id: subscriptionId,
+    }); 
+    
+    if (!planDetails){
+      return respError(res,"Not an valid Plan")
+    }
+    
+    let usdPrice = planDetails && planDetails.usdPrice;
+    
+    let updatedExcenge = await UpdatedExcenge.findOne({});
+
+    let kenyaExcengeRate = updatedExcenge && updatedExcenge.rates && updatedExcenge.rates.KES;
+
+    let amount =  Math.round(usdPrice * kenyaExcengeRate);
+    
+    console.log("🚀 ~ file: paymentController.js:5673 ~ module.exports.processRequest= ~ planDetails:", amount);
     // console.log()
 
     let timeStamp = moment( new Date()).format('yyyy:mm:DD:hh:mm:ss').split(':').join('');
@@ -5685,11 +5704,11 @@ module.exports.processRequest = async (req, res) => {
           "Password": password,
           "Timestamp": timeStamp,
           "TransactionType": "CustomerPayBillOnline",
-          "Amount": "1",
+          "Amount": amount,
           "PartyA": `254${mobile}`,
           "PartyB": ShortCode,
           "PhoneNumber": `254${mobile}`,
-          "CallBackURL": "https://tradebazaarapi.tech-active.com/api/coinfurmation",
+          "CallBackURL": ConfirmationURL,
           "AccountReference": "ONEBAZAAR",
           "TransactionDesc": "Test"
         }
@@ -5706,6 +5725,7 @@ module.exports.processRequest = async (req, res) => {
           userId,
           orderDetails,
           currency,
+          kenyanAmount: amount,
           mPesaResponce: body
         })
         respSuccess(res, { resp })
@@ -5713,6 +5733,19 @@ module.exports.processRequest = async (req, res) => {
     )
   } catch (error) {
     console.log("🚀 ~ file: paymentController.js:5562 ~ module.exports.smulatePayment= ~ error:", error)
+  }
+}
+
+module.exports.coinfurmPayment = async (req, res) => {
+  try {
+    console.log(req.body, "==============coinfurmation============");
+
+    res.send({
+      "ResultCode": "0",
+      "ResultDesc": "Accepted",
+    })
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:5743 ~ module.exports.coinfurmPayment= ~ error:", error)
   }
 }
 

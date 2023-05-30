@@ -26,6 +26,9 @@ const mPesaOrderSchema = new Schema({
         type: String,
         default: true
     },
+    kenyanAmount: {
+        type: Number
+    },
     mPesaResponce: {
         type: Object,
     }

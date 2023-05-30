@@ -26,21 +26,15 @@ router.post('/addCashPlan',payment.addCashPlan)
 /**
  * mPesa Routes
  */
-router.post('/coinfurmation', (req, res) => {
-    console.log(req.body, "==============coinfurmation============");
-    res.send({
-        "ResultCode": "0",
-        "ResultDesc": "Accepted",
-    })
-})
+router.post('/coinfurmation', payment.coinfurmPayment)
 
-router.post('/validation', (req, res) => {
-    console.log(req.body, "==============validation============");
-    res.send({
-        "ResultCode": "0",
-        "ResultDesc": "Accepted",
-    })
-})
+// router.post('/validation', (req, res) => {
+//     console.log(req.body, "==============validation============");
+//     res.send({
+//         "ResultCode": "0",
+//         "ResultDesc": "Accepted",
+//     })
+// })
 
 router.post('/registerUrl', mpesaAuth, payment.registerC2B)
 

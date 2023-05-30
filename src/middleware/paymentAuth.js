@@ -8,7 +8,9 @@ const { getSellerProfile } = sellers
 const { getSubscriptionPlanDetail } = subscriptionPlan;
 const request = require("request");
 const { respSuccess, respError } = require("../utils/respHadler");
-const { razorPayCredentials } = require('../utils/globalConstants')
+const { razorPayCredentials,mPesa } = require('../utils/globalConstants');
+
+
 
 async function CalculateGst(price, findPinCode, currency) {
     const gstValue = 18;
