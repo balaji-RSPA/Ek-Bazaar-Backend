@@ -1771,6 +1771,8 @@ module.exports.subscriptionCharged = async (req, res) => {
 
 module.exports.paymentFailedHook = async (req, res) => {
   try {
+    const iswhatsapp = req.body.payload.payment.entity.notes.iswhatsapp
+    const sellerId=req.body.payload.payment.entity.notes.sellerId
     const check = await getCancledPaymentHook({ uniqueEventId: req.headers['x-razorpay-event-id'] })
     let save;
     if (check && check.length) {
@@ -1782,9 +1784,32 @@ module.exports.paymentFailedHook = async (req, res) => {
         uniqueEventId: req.headers['x-razorpay-event-id'],
         oprated: false
       });
+      if (iswhatsapp) {
+        const url = "https://app.chat360.io/api/ekbazaar/payment/status"
+        const fres = req.body
+        const data = {
+          sellerId,
+          userId: null,
+          paymentSuccess: false,
+          currency: fres.payload.payment.entity.currency,
+          amount: fres.payload.payment.entity.amount,
+          payment_id: fres.payload.payment.entity.id,
+          source: "ekbazaar",
+          order_id: fres.payload.payment.entity.order_id,
+          status: fres.payload.payment.entity.status,
+          captured: fres.payload.payment.entity.captured,
+          error_code: fres.payload.payment.entity.error_code,
+          error_description: fres.payload.payment.entity.error_description,
+          invoice: null
+        }
+        console.log(url, data, "Before sending fail data to whats app=================--------------");
+        await sendDatatoWhatsapp(url, data)
+      }
+
       if (save) {
         res.status(200).json({ status: "ok" });
       }
+
     }
     console.log("🚀 ~ file: paymentController.js ~ line 1741 ~ module.exports.paymentFailedHook= ~ save", save)
 
@@ -2246,6 +2271,8 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
         notes: {
           client: "trade",
           url: tradeSiteUrl,
+          iswhatsapp: true,
+          sellerId
         },
         callback_url: tradeApiBaseUrl + "captureLinkPayment?iswhatsapp=true",
         callback_method: "get",
@@ -2438,7 +2465,8 @@ module.exports.captureLink = async (req, res) => {
                   checkPaidSeller,
                   oldPlanType,
                   url,
-                  dateNow
+                  dateNow,
+                  iswhatsapp
                 );
                 if (result && result.status === "ok") {
                   // return respSuccess(
@@ -2446,23 +2474,6 @@ module.exports.captureLink = async (req, res) => {
                   //   { payment: true },
                   //   "subscription activated successfully!"
                   // );
-                if (iswhatsapp==="true"){
-                  const url ="https://app.chat360.io/api/ekbazaar/payment/status"
-                  const paydetails = JSON.parse(body)
-                  
-                  const data = { sellerId, userId, 
-                    paymentSuccess: true, 
-                    payment_id: paymentResponse.razorpay_payment_id, 
-                    amount: paydetails.amount,
-                    currency: paydetails.currency, 
-                    status: paydetails.status, 
-                    order_id: paydetails.order_id, 
-                    captured: paydetails.captured, 
-                    error_code: paydetails.error_code, 
-                    error_description: paydetails.error_description,
-                    source:"ekbazaar"}
-                  await sendDatatoWhatsapp(url, data)
-                }
                   return res.redirect(301, tradeSiteUrl)
                   // return res.location(301, 'https://tradebazaar.tech-active.com/')
                 }
@@ -3185,7 +3196,8 @@ const assignPlantoUser = async (
   checkPaidSeller,
   oldPlanType,
   url,
-  dateNow
+  dateNow,
+  iswhatsapp
 ) => {
   try {
     const invoiceNumner = await getInvoiceNumber({ id: 1 });
@@ -3400,6 +3412,27 @@ const assignPlantoUser = async (
       },
       order_details
     );
+    
+    if (iswhatsapp === "true") {
+      const url = "https://app.chat360.io/api/ekbazaar/payment/status"
+      const paydetails = JSON.parse(body)
+
+      const data = {
+        ...userData,
+        paymentSuccess: true,
+        payment_id: paymentResponse.razorpay_payment_id,
+        amount: paydetails.amount,
+        currency: paydetails.currency,
+        status: paydetails.status,
+        order_id: paydetails.order_id,
+        captured: paydetails.captured,
+        error_code: paydetails.error_code,
+        error_description: paydetails.error_description,
+        source: "ekbazaar",
+        invoice: (invoice && invoice.Location) || ""
+      }
+      await sendDatatoWhatsapp(url, data)
+    }
 
     await addSellerPlanLog(planLog);
     if (
@@ -4683,15 +4716,7 @@ let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => 
             currency,
           };
           const payment = await addPayment(paymentJson);
-          if (isWhatsappApp===true){
-            const url = "https://app.chat360.io/api/ekbazaar/payment/status"
 
-            const data = {
-              ...userData, source: "onebazaar", paymentSuccess: true, payment_id: paymentResponse.id, amount: paymentResponse.amount, currency: paymentResponse.currency, status: paymentResponse.status, orderId: null, captured: paymentResponse.charges.data[0].captured || "",
-              error_description: ""
-            }
-            await sendDatatoWhatsapp(url, data)
-          }
 
           const planData = {
             ...userData,
@@ -4813,7 +4838,23 @@ let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => 
           );
 
           // const invoice = await createOnebazaarPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth, isFreeTrialIncluded, planValidFrom }, order_details)
+          if (isWhatsappApp === true) {
+            const url = "https://app.chat360.io/api/ekbazaar/payment/status"
 
+            const data = {
+              ...userData, source: "onebazaar",
+              paymentSuccess: true,
+              payment_id: paymentResponse.id,
+              amount: paymentResponse.amount,
+              currency: paymentResponse.currency,
+              status: paymentResponse.status,
+              orderId: null,
+              captured: paymentResponse.charges.data[0].captured || "",
+              error_description: "",
+              invoice: (invoice && invoice.Location) || ""
+            }
+            await sendDatatoWhatsapp(url, data)
+          }
           await addSellerPlanLog(planLog);
           if (
             deleteProduct === true &&
