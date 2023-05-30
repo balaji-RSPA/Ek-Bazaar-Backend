@@ -516,7 +516,7 @@ module.exports.searchSuggestion = async (req, res) => {
           }
         }
       }
-      const sellers = await searchFromElastic(query, { skip: 0, limit: 1000 }, aggs);
+      const sellers = await searchFromElastic(query, { skip: skip|| 0, limit: limit||1000 }, aggs);
       let _sellers = sellers && sellers.length && sellers[0].length && sellers[0].map(elem => ({ _id: elem._id, ...elem._source }))
       const suggestions = []
       _sellers.forEach(elem => {

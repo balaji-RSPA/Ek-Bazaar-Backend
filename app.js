@@ -129,6 +129,8 @@ app.get("/send-daily-report", async function (req, res) {
 
 app.get("/sendWhatsappNotification", async function (req, res) {
   try {
+
+    console.log("**********sendWhatsappNotification**********")
     let resp = await sendWhatsappNotification();
 
     return respSuccess(res,resp)
@@ -473,7 +475,7 @@ if (env.NODE_ENV === "production") {
   queSms.start();
 }
 
-if (env.NODE_ENV === "production1" /* || env.NODE_ENV === "development" */) {
+if (env.NODE_ENV === "production" /* || env.NODE_ENV === "development" */) {
   const dataEntry = cron.schedule("*/5 * * * *", async () => {
     dataEntry.stop();
     console.log("------------------New User Data Entry Started---------------");
@@ -481,6 +483,20 @@ if (env.NODE_ENV === "production1" /* || env.NODE_ENV === "development" */) {
     await fillGoogleSheat();
 
     console.log("--------------------- New User Data Entry Compleated-------------")
+
+    dataEntry.start();
+  })
+  dataEntry.start();
+}
+
+if (env.NODE_ENV === "production" || env.NODE_ENV === "development") {
+  const dataEntry = cron.schedule("* */6 * * *", async () => {
+    dataEntry.stop();
+    console.log("------------------Send Whatsapp Notification tp User---------------");
+
+    await sendWhatsappNotification();
+
+    console.log("------------------Send Whatsapp Notification tp User---------------")
 
     dataEntry.start();
   })

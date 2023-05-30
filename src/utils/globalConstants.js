@@ -157,7 +157,7 @@ exports.tradeOnebazaarClientUrl = NODE_ENV === 'production' ? 'https://trade.ekb
 
 
 exports.googleSheat = NODE_ENV === 'production' 
-? 'https://script.google.com/macros/s/AKfycbzyLVP7XL4QXMa_-rX3M2VkZSk8h51JAF1Da9yL2qQCi67zz-aqlR-pcL0RqkZrTmvX/exec' 
+  ? 'https://script.google.com/macros/s/AKfycbwG6ztV9acbbE0--d3ddBVss_ppWK7DF2JJWD4q3laq_l6MxsMLJCtKD0AcykQFVtNg/exec'
   : 'https://script.google.com/macros/s/AKfycbxSjAlRT7EeozkLowKMofamIAxp3JEhvEJQveSZiU5cXMbPlBdgYZu6cL64G_ihao7h4Q/exec'
 
 
@@ -186,3 +186,7 @@ exports.ShortCode = NODE_ENV === 'production'
 exports.Passkey = NODE_ENV === 'production'
   ? "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
   :"bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+
+
+
+

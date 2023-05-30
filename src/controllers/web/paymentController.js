@@ -2247,7 +2247,7 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
           client: "trade",
           url: tradeSiteUrl,
         },
-        callback_url: tradeApiBaseUrl + "captureLinkPayment",
+        callback_url: tradeApiBaseUrl + "captureLinkPayment?iswhatsapp=true",
         callback_method: "get",
       });
       console.log("🚀 ~ file: paymentController.js:2239 ~ module.exports.createWhatsappPaymentLink= ~ result:", result)
@@ -2289,6 +2289,7 @@ module.exports.captureLink = async (req, res) => {
       razorpay_payment_link_reference_id,
       razorpay_payment_link_status,
       razorpay_signature,
+      iswhatsapp
     } = req.query;
 
     const resive = await findPayLink({
@@ -2445,6 +2446,23 @@ module.exports.captureLink = async (req, res) => {
                   //   { payment: true },
                   //   "subscription activated successfully!"
                   // );
+                if (iswhatsapp==="true"){
+                  const url ="https://app.chat360.io/api/ekbazaar/payment/status"
+                  const paydetails = JSON.parse(body)
+                  
+                  const data = { sellerId, userId, 
+                    paymentSuccess: true, 
+                    payment_id: paymentResponse.razorpay_payment_id, 
+                    amount: paydetails.amount,
+                    currency: paydetails.currency, 
+                    status: paydetails.status, 
+                    order_id: paydetails.order_id, 
+                    captured: paydetails.captured, 
+                    error_code: paydetails.error_code, 
+                    error_description: paydetails.error_description,
+                    source:"ekbazaar"}
+                  await sendDatatoWhatsapp(url, data)
+                }
                   return res.redirect(301, tradeSiteUrl)
                   // return res.location(301, 'https://tradebazaar.tech-active.com/')
                 }
@@ -2690,6 +2708,19 @@ module.exports.captureLink = async (req, res) => {
                 // return respSuccess(res, { payment: true }, 'subscription activated successfully!')
               } else {
                 console.log("-------  Payment Failled -------------");
+                if (iswhatsapp === "true") {
+                  const url = "https://app.chat360.io/api/ekbazaar/payment/status"
+                  const paydetails = JSON.parse(body)
+                  const data = {
+                    sellerId, userId, 
+                    paymentSuccess: false, 
+                    payment_id: paymentResponse.razorpay_payment_id || "", 
+                    error_code: paydetails.error.code || "", 
+                    error_description: paydetails.error.description || "",
+                    source:"ekbazaar"
+                  }
+                  await sendDatatoWhatsapp(url, data)
+                }
                 const paymentJson = {
                   ...userData,
                   paymentResponse: paymentResponse,
@@ -3504,6 +3535,18 @@ const assignPlantoUser = async (
     console.log("Errrrrrrrrrrrr...", error);
   }
 };
+
+const sendDatatoWhatsapp = async (url, data) => new Promise(async (resolve, reject) => {
+  try {
+     console.log(url, data,"===========Before sending data to whats app============");
+    const response = await axios.post(url, data);
+    resolve(response)
+    console.log(url, data, "===========sending data to whatsapp Completed============");
+  } catch (error) {
+    resolve(error)
+    console.log("🚀 ~ file: utils.js:433 ~ module.exports.insetInSheat= ~ error:", error)
+  }
+})
 
 // For Manully Assign Plan.
 
@@ -4454,6 +4497,8 @@ module.exports.createStripeLink = async (req, res) => {
   }
 }
 
+// FOR SUCCESS RESPONSE HANDELING PURPOSE
+
 let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => {
   if (!data.payment_link) {
     resolve(true)
@@ -4511,7 +4556,8 @@ let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => 
           seller.mobile[0].mobile;
         const existingGroup = seller.sellerType[0].group;
         const currentGroup = planDetails.groupType;
-
+        const isWhatsappApp = seller && seller.isWhatsappApp
+        // console.log(seller, "rrr", isWhatsappApp, "tttttttttttttttttttttttttttt");
         let sellerPlanDetails =
           seller && seller.planId
             ? await getSellerPlan({ _id: seller.planId })
@@ -4637,6 +4683,16 @@ let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => 
             currency,
           };
           const payment = await addPayment(paymentJson);
+          if (isWhatsappApp===true){
+            const url = "https://app.chat360.io/api/ekbazaar/payment/status"
+
+            const data = {
+              ...userData, source: "onebazaar", paymentSuccess: true, payment_id: paymentResponse.id, amount: paymentResponse.amount, currency: paymentResponse.currency, status: paymentResponse.status, orderId: null, captured: paymentResponse.charges.data[0].captured || "",
+              error_description: ""
+            }
+            await sendDatatoWhatsapp(url, data)
+          }
+
           const planData = {
             ...userData,
             ..._p_details,
@@ -4994,10 +5050,13 @@ module.exports.captureStripWebhook = async (req, res) => {
       case 'checkout.session.completed':
         const checkoutSession = event.data.object;
         response = await handleLinkPaymentSuccess(checkoutSession)
-
+        break;
+      case 'checkout.session.failed':
+        const failedPaymentIntent = event.data.object;
+        console.log('Payment failed:--------------------', failedPaymentIntent.id);
         break;
       // ... handle other event types
-      default:
+      default: 
         console.log(`Unhandled event type ${event.type}`);
     }
     if (response) {
