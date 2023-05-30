@@ -439,7 +439,7 @@ server.on("listening", () => {
 //   })
 // }
 
-if (env.NODE_ENV === 'production1') {
+if (env.NODE_ENV === 'production') {
   const dailyCount = cron.schedule("30 2 * * *", async () => {
     dailyCount.stop();
     console.log(
@@ -456,7 +456,7 @@ if (env.NODE_ENV === 'production1') {
   dailyCount.start();
 }
 
-if (env.NODE_ENV === "production1") {
+if (env.NODE_ENV === "production") {
   const queSms = cron.schedule("* * * * *", async () => {
     queSms.stop();
     console.log(
@@ -473,21 +473,21 @@ if (env.NODE_ENV === "production1") {
   queSms.start();
 }
 
-// if (env.NODE_ENV === "production1" /* || env.NODE_ENV === "development" */) {
-//   const dataEntry = cron.schedule("*/5 * * * *", async () => {
-//     dataEntry.stop();
-//     console.log("------------------New User Data Entry Started---------------");
+if (env.NODE_ENV === "production1" /* || env.NODE_ENV === "development" */) {
+  const dataEntry = cron.schedule("*/5 * * * *", async () => {
+    dataEntry.stop();
+    console.log("------------------New User Data Entry Started---------------");
 
-//     await fillGoogleSheat();
+    await fillGoogleSheat();
 
-//     console.log("--------------------- New User Data Entry Compleated-------------")
+    console.log("--------------------- New User Data Entry Compleated-------------")
 
-//     dataEntry.start();
-//   })
-//   dataEntry.start();
-// }
+    dataEntry.start();
+  })
+  dataEntry.start();
+}
 
-if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   const planExpire = cron.schedule(
     "50 23 * * *",
     async () => {
