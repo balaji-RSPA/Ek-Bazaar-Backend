@@ -4850,6 +4850,7 @@ let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => 
               status: paymentResponse.status,
               orderId: null,
               captured: paymentResponse.charges.data[0].captured || "",
+              error_code: null,
               error_description: "",
               invoice: (invoice && invoice.Location) || ""
             }
