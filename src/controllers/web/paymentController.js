@@ -32,7 +32,12 @@ const {
   stripeApiKeys,
   tenderApiBaseUrl,
   tradeApiBaseUrl,
-  tradeSiteUrl
+  tradeSiteUrl,
+  mPesa,
+  ShortCode,
+  Passkey,
+  ValidationURL,
+  ConfirmationURL
 } = require("../../utils/globalConstants");
 const stripe = require("stripe")(stripeApiKeys.secretKey);
 
@@ -75,6 +80,9 @@ const isProd = process.env.NODE_ENV === "production";
 const toWords = new ToWords();
 const crypto = require("crypto");
 const { createHmac, Hmac } = crypto;
+
+const Mpesa = require('../../models/mPesaOrderSchema')
+
 
 const createPdf = async (seller, plan, orderDetails) =>
   new Promise((resolve, reject) => {
@@ -1763,6 +1771,8 @@ module.exports.subscriptionCharged = async (req, res) => {
 
 module.exports.paymentFailedHook = async (req, res) => {
   try {
+    const iswhatsapp = req.body.payload.payment.entity.notes.iswhatsapp
+    const sellerId=req.body.payload.payment.entity.notes.sellerId
     const check = await getCancledPaymentHook({ uniqueEventId: req.headers['x-razorpay-event-id'] })
     let save;
     if (check && check.length) {
@@ -1774,9 +1784,32 @@ module.exports.paymentFailedHook = async (req, res) => {
         uniqueEventId: req.headers['x-razorpay-event-id'],
         oprated: false
       });
+      if (iswhatsapp) {
+        const url = "https://app.chat360.io/api/ekbazaar/payment/status"
+        const fres = req.body
+        const data = {
+          sellerId,
+          userId: null,
+          paymentSuccess: false,
+          currency: fres.payload.payment.entity.currency,
+          amount: fres.payload.payment.entity.amount,
+          payment_id: fres.payload.payment.entity.id,
+          source: "ekbazaar",
+          order_id: fres.payload.payment.entity.order_id,
+          status: fres.payload.payment.entity.status,
+          captured: fres.payload.payment.entity.captured,
+          error_code: fres.payload.payment.entity.error_code,
+          error_description: fres.payload.payment.entity.error_description,
+          invoice: null
+        }
+        console.log(url, data, "Before sending fail data to whats app=================--------------");
+        await sendDatatoWhatsapp(url, data)
+      }
+
       if (save) {
         res.status(200).json({ status: "ok" });
       }
+
     }
     console.log("🚀 ~ file: paymentController.js ~ line 1741 ~ module.exports.paymentFailedHook= ~ save", save)
 
@@ -2238,8 +2271,10 @@ module.exports.createWhatsappPaymentLink = async (req, res) => {
         notes: {
           client: "trade",
           url: tradeSiteUrl,
+          iswhatsapp: true,
+          sellerId
         },
-        callback_url: tradeApiBaseUrl + "captureLinkPayment",
+        callback_url: tradeApiBaseUrl + "captureLinkPayment?iswhatsapp=true",
         callback_method: "get",
       });
       console.log("🚀 ~ file: paymentController.js:2239 ~ module.exports.createWhatsappPaymentLink= ~ result:", result)
@@ -2281,6 +2316,7 @@ module.exports.captureLink = async (req, res) => {
       razorpay_payment_link_reference_id,
       razorpay_payment_link_status,
       razorpay_signature,
+      iswhatsapp
     } = req.query;
 
     const resive = await findPayLink({
@@ -2429,7 +2465,8 @@ module.exports.captureLink = async (req, res) => {
                   checkPaidSeller,
                   oldPlanType,
                   url,
-                  dateNow
+                  dateNow,
+                  iswhatsapp
                 );
                 if (result && result.status === "ok") {
                   // return respSuccess(
@@ -2682,6 +2719,19 @@ module.exports.captureLink = async (req, res) => {
                 // return respSuccess(res, { payment: true }, 'subscription activated successfully!')
               } else {
                 console.log("-------  Payment Failled -------------");
+                if (iswhatsapp === "true") {
+                  const url = "https://app.chat360.io/api/ekbazaar/payment/status"
+                  const paydetails = JSON.parse(body)
+                  const data = {
+                    sellerId, userId, 
+                    paymentSuccess: false, 
+                    payment_id: paymentResponse.razorpay_payment_id || "", 
+                    error_code: paydetails.error.code || "", 
+                    error_description: paydetails.error.description || "",
+                    source:"ekbazaar"
+                  }
+                  await sendDatatoWhatsapp(url, data)
+                }
                 const paymentJson = {
                   ...userData,
                   paymentResponse: paymentResponse,
@@ -3146,7 +3196,8 @@ const assignPlantoUser = async (
   checkPaidSeller,
   oldPlanType,
   url,
-  dateNow
+  dateNow,
+  iswhatsapp
 ) => {
   try {
     const invoiceNumner = await getInvoiceNumber({ id: 1 });
@@ -3361,6 +3412,27 @@ const assignPlantoUser = async (
       },
       order_details
     );
+    
+    if (iswhatsapp === "true") {
+      const url = "https://app.chat360.io/api/ekbazaar/payment/status"
+      const paydetails = JSON.parse(body)
+
+      const data = {
+        ...userData,
+        paymentSuccess: true,
+        payment_id: paymentResponse.razorpay_payment_id,
+        amount: paydetails.amount,
+        currency: paydetails.currency,
+        status: paydetails.status,
+        order_id: paydetails.order_id,
+        captured: paydetails.captured,
+        error_code: paydetails.error_code,
+        error_description: paydetails.error_description,
+        source: "ekbazaar",
+        invoice: (invoice && invoice.Location) || ""
+      }
+      await sendDatatoWhatsapp(url, data)
+    }
 
     await addSellerPlanLog(planLog);
     if (
@@ -3496,6 +3568,18 @@ const assignPlantoUser = async (
     console.log("Errrrrrrrrrrrr...", error);
   }
 };
+
+const sendDatatoWhatsapp = async (url, data) => new Promise(async (resolve, reject) => {
+  try {
+     console.log(url, data,"===========Before sending data to whats app============");
+    const response = await axios.post(url, data);
+    resolve(response)
+    console.log(url, data, "===========sending data to whatsapp Completed============");
+  } catch (error) {
+    resolve(error)
+    console.log("🚀 ~ file: utils.js:433 ~ module.exports.insetInSheat= ~ error:", error)
+  }
+})
 
 // For Manully Assign Plan.
 
@@ -4446,6 +4530,8 @@ module.exports.createStripeLink = async (req, res) => {
   }
 }
 
+// FOR SUCCESS RESPONSE HANDELING PURPOSE
+
 let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => {
   if (!data.payment_link) {
     resolve(true)
@@ -4503,7 +4589,8 @@ let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => 
           seller.mobile[0].mobile;
         const existingGroup = seller.sellerType[0].group;
         const currentGroup = planDetails.groupType;
-
+        const isWhatsappApp = seller && seller.isWhatsappApp
+        // console.log(seller, "rrr", isWhatsappApp, "tttttttttttttttttttttttttttt");
         let sellerPlanDetails =
           seller && seller.planId
             ? await getSellerPlan({ _id: seller.planId })
@@ -4629,6 +4716,8 @@ let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => 
             currency,
           };
           const payment = await addPayment(paymentJson);
+
+
           const planData = {
             ...userData,
             ..._p_details,
@@ -4749,7 +4838,24 @@ let handleLinkPaymentSuccess = (data) => new Promise(async (resolve, reject) => 
           );
 
           // const invoice = await createOnebazaarPdf(seller, { ..._p_details, totalPlanPrice: price, pricePerMonth, isFreeTrialIncluded, planValidFrom }, order_details)
+          if (isWhatsappApp === true) {
+            const url = "https://app.chat360.io/api/ekbazaar/payment/status"
 
+            const data = {
+              ...userData, source: "onebazaar",
+              paymentSuccess: true,
+              payment_id: paymentResponse.id,
+              amount: paymentResponse.amount,
+              currency: paymentResponse.currency,
+              status: paymentResponse.status,
+              orderId: null,
+              captured: paymentResponse.charges.data[0].captured || "",
+              error_code: null,
+              error_description: "",
+              invoice: (invoice && invoice.Location) || ""
+            }
+            await sendDatatoWhatsapp(url, data)
+          }
           await addSellerPlanLog(planLog);
           if (
             deleteProduct === true &&
@@ -4986,10 +5092,13 @@ module.exports.captureStripWebhook = async (req, res) => {
       case 'checkout.session.completed':
         const checkoutSession = event.data.object;
         response = await handleLinkPaymentSuccess(checkoutSession)
-
+        break;
+      case 'checkout.session.failed':
+        const failedPaymentIntent = event.data.object;
+        console.log('Payment failed:--------------------', failedPaymentIntent.id);
         break;
       // ... handle other event types
-      default:
+      default: 
         console.log(`Unhandled event type ${event.type}`);
     }
     if (response) {
@@ -5514,4 +5623,178 @@ module.exports.addCashPlan = async (req, res) => {
     console.log("🚀 ~ file: paymentController.js:5010 ~ module.exports.addCashPlan= ~ error:", error)
   }
 }
+
+module.exports.registerC2B = async (req, res) => {
+  try {
+    let url = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl'
+    let auth = 'Bearer ' + req.access_token;
+
+    request(
+      {
+        method:"POST",
+        url:url,
+        headers:{
+          "Authorization": auth
+        },
+        json:{
+          "ShortCode": ShortCode,
+          "ResponseType": "Completed",
+          "ConfirmationURL": ConfirmationURL,
+          "ValidationURL": ValidationURL
+        }
+      },
+      (error, response, body) => {
+      
+        if (error) {
+          console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
+        }
+        let _body = JSON.parse(body)
+        respSuccess(res, _body)
+      }
+    )
+
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:5522 ~ module.exports.registoreC2B= ~ error:", error)
+  }
+}
+
+module.exports.smulatePayment = async (req, res) => {
+  try {
+
+    console.log(req.body,"============DATA================"); 
+
+    let { sellerId, subscriptionId, userId, orderDetails, currency } = req.body;
+
+    let url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate";
+    let auth = 'Bearer ' + req.access_token;
+
+    request(
+      {
+        method: "POST",
+        url: url,
+        headers: {
+          "Authorization": auth
+        },
+        json: {
+          "ShortCode": ShortCode,
+          "CommandID": "CustomerPayBillOnline",
+          "Amount": "100",
+          "Msisdn": "254708374149",
+          "BillRefNumber": "TestAPI"
+        }
+      },
+      (error, response, body) => {
+        console.log(error, "🚀 ~ file: paymentController.js:5555 ~ module.exports.registerC2B= ~ body:", body)
+        if (error) {
+          console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
+        }
+        // let _body = JSON.parse(body)
+        respSuccess(res, { body })
+      }
+    )
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:5562 ~ module.exports.smulatePayment= ~ error:", error)
+  }
+}
+
+module.exports.processRequest = async (req, res) => {
+  try {
+
+    let UpdatedExcenge = require("../../models/updatedExcengeRateSchema")
+
+    console.log(req.body, "============DATA================");
+
+    let { sellerId, subscriptionId, userId, orderDetails, currency } = req.body;
+
+    let mobile = orderDetails && orderDetails.mobile && orderDetails.mobile.mobile
+
+    let url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
+    let auth = 'Bearer ' + req.access_token;
+
+    const planDetails = await getSubscriptionPlanDetail({
+      _id: subscriptionId,
+    }); 
+    
+    if (!planDetails){
+      return respError(res,"Not an valid Plan")
+    }
+    
+    let usdPrice = planDetails && planDetails.usdPrice;
+    
+    let updatedExcenge = await UpdatedExcenge.findOne({});
+
+    let kenyaExcengeRate = updatedExcenge && updatedExcenge.rates && updatedExcenge.rates.KES;
+
+    let amount =  Math.round(usdPrice * kenyaExcengeRate);
+    
+    console.log("🚀 ~ file: paymentController.js:5673 ~ module.exports.processRequest= ~ planDetails:", amount);
+    // console.log()
+
+    let timeStamp = moment( new Date()).format('yyyy:mm:DD:hh:mm:ss').split(':').join('');
+
+    let password = new Buffer.from(`${ShortCode}${Passkey}${timeStamp}`).toString('base64');
+
+    request(
+      {
+        method: "POST",
+        url: url,
+        headers: {
+          "Authorization": auth
+        },
+        json: {
+          "BusinessShortCode": ShortCode,
+          "Password": password,
+          "Timestamp": timeStamp,
+          "TransactionType": "CustomerPayBillOnline",
+          "Amount": amount,
+          "PartyA": `254${mobile}`,
+          "PartyB": ShortCode,
+          "PhoneNumber": `254${mobile}`,
+          "CallBackURL": ConfirmationURL,
+          "AccountReference": "ONEBAZAAR",
+          "TransactionDesc": "Test"
+        }
+      },
+      async (error, response, body) => {
+        console.log(error, "🚀 ~ file: paymentController.js:5555 ~ module.exports.registerC2B= ~ body:", body)
+        if (error) {
+          console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
+        }
+        // let _body = JSON.parse(body)
+        let resp = await Mpesa.create({
+          sellerId,
+          subscriptionId,
+          userId,
+          orderDetails,
+          currency,
+          kenyanAmount: amount,
+          mPesaResponce: body
+        })
+        respSuccess(res, { resp })
+      }
+    )
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:5562 ~ module.exports.smulatePayment= ~ error:", error)
+  }
+}
+
+module.exports.coinfurmPayment = async (req, res) => {
+  try {
+    let MpesaCallBack = require('../../models/mPesaCallBackResposeSchema')
+    console.log(req.body, "==============coinfurmation============");
+
+    let response = await MpesaCallBack.create({ data: req.body })
+    console.log("🚀 ~ file: paymentController.js:5787 ~ module.exports.coinfurmPayment= ~ response:", response)
+
+    res.send({
+      "ResultCode": "0",
+      "ResultDesc": "Accepted",
+    })
+  } catch (error) {
+    console.log("🚀 ~ file: paymentController.js:5743 ~ module.exports.coinfurmPayment= ~ error:", error)
+  }
+}
+
+
+
 

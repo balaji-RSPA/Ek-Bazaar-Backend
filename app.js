@@ -21,7 +21,7 @@ require('./config/db').dbConnection();
 require('./config/tenderdb').conn
 const Logger = require('./src/utils/logger');
 const config = require('./config/config')
-const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, fillGoogleSheat, deleteOtps, deleteExtraCurrency, sendWhatsappNotification } = require('./src/crons/cron')
+const { sendQueSms, getExpirePlansCron, sendQueEmails, getAboutToExpirePlan, sendDailyCount, createCurrencyExcenge, updateCurrencyExcenge, getCurrencySymboles, getMasterCount, getProductCount, updateMasterCollection, updateMasterCollectionAmount, deleteMasterColl, fillGoogleSheat, deleteOtps, deleteExtraCurrency, sendWhatsappNotification, keepUpdatedExcenageRate } = require('./src/crons/cron')
 const { fetchPartiallyRegistredSeller, fetchPartiallyRegistredBuyer } = require('./src/modules/sellersModule')
 const { updatePriority, gujaratSellerData, getSellersList, getPaymentList, getTrialPlanExpiredSellerData } = require('./src/controllers/web/testController')
 const { respSuccess, respError } = require("./src/utils/respHadler")
@@ -129,9 +129,22 @@ app.get("/send-daily-report", async function (req, res) {
 
 app.get("/sendWhatsappNotification", async function (req, res) {
   try {
+
+    console.log("**********sendWhatsappNotification**********")
     let resp = await sendWhatsappNotification();
 
     return respSuccess(res,resp)
+  } catch (error) {
+    console.log("🚀 ~ file: app.js:134 ~ error:", error)
+    return respError(res, "Something went wrong try again!")
+  }
+})
+
+app.get("/keepUpdatedExcenageRate", async (req, res) => {
+  try {
+    let data = await keepUpdatedExcenageRate();
+
+    return respSuccess(res, data)
   } catch (error) {
     console.log("🚀 ~ file: app.js:134 ~ error:", error)
     return respError(res, "Something went wrong try again!")
@@ -439,7 +452,7 @@ server.on("listening", () => {
 //   })
 // }
 
-if (env.NODE_ENV === 'production1') {
+if (env.NODE_ENV === 'production') {
   const dailyCount = cron.schedule("30 2 * * *", async () => {
     dailyCount.stop();
     console.log(
@@ -447,6 +460,7 @@ if (env.NODE_ENV === 'production1') {
       new Date()
     );
     await sendDailyCount();
+    await keepUpdatedExcenageRate();
     console.log(
       "-------------------- dailyCount cron completed --------------------",
       new Date()
@@ -456,7 +470,7 @@ if (env.NODE_ENV === 'production1') {
   dailyCount.start();
 }
 
-if (env.NODE_ENV === "production1") {
+if (env.NODE_ENV === "production") {
   const queSms = cron.schedule("* * * * *", async () => {
     queSms.stop();
     console.log(
@@ -473,21 +487,35 @@ if (env.NODE_ENV === "production1") {
   queSms.start();
 }
 
-// if (env.NODE_ENV === "production1" /* || env.NODE_ENV === "development" */) {
-//   const dataEntry = cron.schedule("*/5 * * * *", async () => {
-//     dataEntry.stop();
-//     console.log("------------------New User Data Entry Started---------------");
+if (env.NODE_ENV === "production" /* || env.NODE_ENV === "development" */) {
+  const dataEntry = cron.schedule("*/5 * * * *", async () => {
+    dataEntry.stop();
+    console.log("------------------New User Data Entry Started---------------");
 
-//     await fillGoogleSheat();
+    await fillGoogleSheat();
 
-//     console.log("--------------------- New User Data Entry Compleated-------------")
+    console.log("--------------------- New User Data Entry Compleated-------------")
 
-//     dataEntry.start();
-//   })
-//   dataEntry.start();
-// }
+    dataEntry.start();
+  })
+  dataEntry.start();
+}
 
-if (env.NODE_ENV === "production1" || env.NODE_ENV === "staging") {
+if (env.NODE_ENV === "production" /* || env.NODE_ENV === "development" */) {
+  const dataEntry = cron.schedule("* */6 * * *", async () => {
+    dataEntry.stop();
+    console.log("------------------Send Whatsapp Notification tp User---------------");
+
+    await sendWhatsappNotification();
+
+    console.log("------------------Send Whatsapp Notification tp User---------------")
+
+    dataEntry.start();
+  })
+  dataEntry.start();
+}
+
+if (env.NODE_ENV === "production" || env.NODE_ENV === "staging") {
   const planExpire = cron.schedule(
     "50 23 * * *",
     async () => {

@@ -8,7 +8,9 @@ const { getSellerProfile } = sellers
 const { getSubscriptionPlanDetail } = subscriptionPlan;
 const request = require("request");
 const { respSuccess, respError } = require("../utils/respHadler");
-const { razorPayCredentials } = require('../utils/globalConstants')
+const { razorPayCredentials,mPesa } = require('../utils/globalConstants');
+
+
 
 async function CalculateGst(price, findPinCode, currency) {
     const gstValue = 18;
@@ -220,4 +222,33 @@ exports.subscriptionPaymentAuth = async (req, res, next) => {
     }
 
 
+}
+
+exports.mpesaAuth = async (req, res, next) => {
+    try {
+        let url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+        let auth = new Buffer.from(`${mPesa.Consumer_key}:${mPesa.Consumer_Secret}`).toString('base64');
+
+        request(
+            {
+                method:'GET',
+                url: url,
+                headers: {
+                    "Authorization": "Basic " + auth
+                }
+            },
+            (error, response,body) => {
+                console.log(error,"🚀 ~ file: paymentAuth.js:249 ~ exports.mpesaAuth= ~ response:", response)
+                if(error){
+                    console.log("🚀 ~ file: paymentAuth.js:240 ~ exports.mpesaAuth= ~ error:", error)
+                }
+
+                let _body = JSON.parse(body)
+                req.access_token = _body.access_token
+                next();
+            }
+        )
+    } catch (error) {
+        console.log("🚀 ~ file: paymentAuth.js:229 ~ exports.mpesaAuth=async ~ error:", error)
+    }
 }

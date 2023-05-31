@@ -2,7 +2,7 @@ const express = require('express')
 const { Router } = express
 const router = Router()
 const payment = require('../../controllers/web/paymentController')
-const { subscriptionPaymentAuth} = require('../../middleware/paymentAuth')
+const { subscriptionPaymentAuth, mpesaAuth } = require('../../middleware/paymentAuth')
 
 router.post('/createRazorPayOrder', payment.createRazorPayOrder)
 router.post('/captureRazorPayPayment/:paymentId', payment.captureRazorPayPayment)
@@ -21,7 +21,31 @@ router.post('/whtasappONEpayment',payment.createStripeLink);
 
 router.post('/addCashPlan',payment.addCashPlan)
 
+
+
+/**
+ * mPesa Routes
+ */
+router.post('/coinfurmation', payment.coinfurmPayment)
+
+// router.post('/validation', (req, res) => {
+//     console.log(req.body, "==============validation============");
+//     res.send({
+//         "ResultCode": "0",
+//         "ResultDesc": "Accepted",
+//     })
+// })
+
+router.post('/registerUrl', mpesaAuth, payment.registerC2B)
+
+router.post('/requestMpesa', mpesaAuth, payment.smulatePayment);
+
+router.post('/processRequest',mpesaAuth, payment.processRequest)
+
+
+// router.get('/mPesa', mpesaAuth)
+
 // router.post('/subscriptionPending', payment.pendingSubWebHook)
 // router.post('/subscriptionHalted', payment.subscriptionHalted)
 // router.post('/subscriptionCharged', payment.subscriptionCharged)
-module.exports = router
+module.exports = router;

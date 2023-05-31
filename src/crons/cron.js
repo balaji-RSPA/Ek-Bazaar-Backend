@@ -1789,6 +1789,27 @@ exports.getCurrencySymboles = async (req, res) => new Promise(async (resolve, re
   resolve(responce)
 })
 
+exports.keepUpdatedExcenageRate = async () => new Promise(async (resolve, reject) => {
+  try {
+    let UpdatedExcenge = require("../models/updatedExcengeRateSchema")
+    let excengeData = await axios.get('https://api.apilayer.com/exchangerates_data/latest?apikey=8xpcMh2BlJBARPiSg22ItKPaygiiQWJu&base=USD');
+    console.log("🚀 ~ file: cron.js:1795 ~ exports.keepUpdatedExcenageRate= ~ excengeData:", excengeData.data)
+
+    let excengeObj = excengeData && excengeData.data;
+
+    delete excengeObj.success
+    // delete excengeObj.timestamp
+
+    let updatedRes = await UpdatedExcenge.findOneAndUpdate({}, excengeObj,{new:true})
+
+    resolve(updatedRes)
+  } catch (error) {
+    Logger.error(error.message);
+    console.error(error.message);
+    resolve(error.message);
+  }
+})
+
 
 exports.getProductCount = async (req, res) => new Promise(async (resolve, reject) => {
   try {
@@ -2044,10 +2065,11 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
 
   let { sendWhatsaapWelcome, setLanguageWhatsapp, completeProfileWhatsapp, onCompleteProfileWhatsapp, toAddProductWhatsapp, addProductReminderWhatsapp } = require('../controllers/web/whatsappTemplateController');
 
-  let sellers = await Seller.find({ whatsappNotificationCompleted: false }).populate('whatsappNotification');
+  let sellers = await Seller.find({ whatsappNotificationCompleted: false, whatsappNotification: {$ne:null} }).populate('whatsappNotification');
 
-  let requiredGapInSameNotification = 6;
-  let requiredGapIndiffrentNotification = 1;
+
+  let requiredGapInSameNotification = 24;
+  let requiredGapIndiffrentNotification = 12;
 
   let noti = [];
   for (let i = 0; i < sellers.length; i++) {
@@ -2055,9 +2077,9 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
     const today_date = moment(new Date())
     let seller = sellers[i];
     let whatsapNoti = seller && seller.whatsappNotification;
-
+    
     // Checking for user name is avilabel or not  
-    if (whatsapNoti.firstName === '' && seller.name !== null) {
+    if (whatsapNoti && whatsapNoti.firstName === '' && seller.name !== null) {
       let updated = await updateWhatsappNotificationDoc({ _id: whatsapNoti._id }, { firstName: seller.name })
       whatsapNoti = updated;
     }
@@ -2071,14 +2093,17 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
     let Notification5_status = whatsapNoti && whatsapNoti.addProductReminder;
     let Notification_Max_Count = 3
 
-    let gapWithLastTriggred = today_date.diff(whatsapNoti.lastTriggerdTime, 'minutes')
-    console.log("🚀 ~ file: cron.js:1983 ~ exports.sendWhatsappNotification= ~ gapWithLastTriggred:", gapWithLastTriggred)
+    let gapWithLastTriggred = today_date.diff(whatsapNoti && whatsapNoti.lastTriggerdTime, 'hours')
+    if (!gapWithLastTriggred){
+      gapWithLastTriggred = requiredGapIndiffrentNotification;
+    }
+    console.log(whatsapNoti,"🚀 ~ file: cron.js:1983 ~ exports.sendWhatsappNotification= ~ gapWithLastTriggred:", gapWithLastTriggred)
 
     if (gapWithLastTriggred >= requiredGapIndiffrentNotification) {
 
       // check for notification 1
       if ((!Notification1_status.started) || (Notification1_status.started && !Notification1_status.completed && Notification1_status.count < Notification_Max_Count)) {
-        let timeGapforsetLangNotification = today_date.diff(Notification1_status.lastTriggerd ? Notification1_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'minutes')
+        let timeGapforsetLangNotification = today_date.diff(Notification1_status.lastTriggerd ? Notification1_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'hours')
         console.log("🚀 ~ file: cron.js:1992 ~ exports.sendWhatsappNotification= ~ timeGapfrosetLangNotification:", timeGapforsetLangNotification)
         if (!Notification1_status.started || (Notification1_status.count < Notification_Max_Count && timeGapforsetLangNotification > requiredGapInSameNotification)) {
 
@@ -2096,7 +2121,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
 
           let responce = await setLanguageWhatsapp(setLangData)
 
-          console.log(responce, "********************setLanguageNotification*****************")
+          console.log(responce.data, "********************setLanguageNotification*****************")
           Notification1_status.started = true;
           Notification1_status.count = Notification1_status.count + 1;
           Notification1_status.lastTriggerd = today_date;
@@ -2112,7 +2137,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
 
       // checking for Notification 2 and 3.
       if ((!Notification2_status.started) || (Notification2_status.started && !Notification2_status.completed && Notification2_status.count <= Notification_Max_Count)) {
-        let timeGapforNotification2 = today_date.diff(Notification2_status.lastTriggerd ? Notification2_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'minutes')
+        let timeGapforNotification2 = today_date.diff(Notification2_status.lastTriggerd ? Notification2_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'hours')
         console.log("🚀 ~ file: cron.js:2016 ~ exports.sendWhatsappNotification= ~ timeGapforNotification2:", timeGapforNotification2)
 
 
@@ -2134,7 +2159,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
 
           let response = await completeProfileWhatsapp(completeProfileData)
 
-          console.log(response, "********************completeProfilReminder*****************")
+          console.log(response.data, "********************completeProfilReminder*****************")
           Notification2_status.started = true;
           Notification2_status.count = Notification2_status.count + 1;
           Notification2_status.lastTriggerd = today_date;
@@ -2170,7 +2195,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
           Notification3_status.triggredTime = today_date;
 
           let update = await updateWhatsappNotificationDoc({ _id: whatsapNoti._id }, { lastTriggerdTime: today_date, completeProfilReminder: Notification2_status, onCompleteProfile: Notification3_status })
-          // continue;
+          continue;
         }
 
       }
@@ -2180,7 +2205,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
 
         //Here we can check for if seller has product or not.
 
-        let timeGapforNotification4 = today_date.diff(Notification4_status.lastTriggred ? Notification4_status.lastTriggred : whatsapNoti.lastTriggerdTime, 'minutes');
+        let timeGapforNotification4 = today_date.diff(Notification4_status.lastTriggred ? Notification4_status.lastTriggred : whatsapNoti.lastTriggerdTime, 'hours');
         console.log("🚀 ~ file: cron.js:2055 ~ exports.sendWhatsappNotification= ~ timeGapforNotification4:", timeGapforNotification4)
 
         if (!Notification4_status.started || (Notification4_status.count < Notification_Max_Count && timeGapforNotification4 > requiredGapInSameNotification)) {
@@ -2213,7 +2238,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
       // check for Notification 5
       if ((!Notification5_status.started && Notification4_status.completed) || (Notification4_status.completed && Notification5_status.started && !Notification5_status.completed && Notification5_status.count <= Notification_Max_Count)) {
 
-        let timeGapforNotification5 = today_date.diff(Notification5_status.lastTriggerd ? Notification5_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'minutes');
+        let timeGapforNotification5 = today_date.diff(Notification5_status.lastTriggerd ? Notification5_status.lastTriggerd : whatsapNoti.lastTriggerdTime, 'hours');
         console.log("🚀 ~ file: cron.js:2080 ~ exports.sendWhatsappNotification= ~ timeGapforNotification5:", timeGapforNotification5);
 
         if (!Notification5_status.started || (Notification5_status.count < Notification_Max_Count && timeGapforNotification5 > requiredGapInSameNotification)) {
@@ -2228,7 +2253,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
             website: whatsapNoti.website
           }
 
-          let response = await addProductReminderWhatsapp()
+          let response = await addProductReminderWhatsapp(remindData)
 
           let data = {}
           console.log("*************addProductReminder******************")
@@ -2246,6 +2271,7 @@ exports.sendWhatsappNotification = async () => new Promise(async (resolve, rejec
           data.lastTriggerdTime = today_date;
           data.addProductReminder = Notification5_status;
           let update = await updateWhatsappNotificationDoc({ _id: whatsapNoti._id }, data)
+          continue;
         }
 
       }
