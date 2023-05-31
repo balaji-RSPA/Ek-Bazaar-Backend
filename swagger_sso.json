@@ -1,0 +1,334 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Ekbazaar SSO Docs's",
+        "version": "1.0.0",
+        "title": "Ekbazaar SSO API",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "schemes": [
+        "http","https"
+    ],
+    "basePath": "/api",
+    "paths": {
+        "/user/rfp": {
+            "post": {
+                "summary": "Send Message",
+                "description": "API to send message",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "mobile": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "location":{
+                                    "type":"object"
+                                },
+                                "productDetails": {
+                                    "type": "object"
+                                },
+                                "ipAddress": {
+                                    "type": "string"
+                                },
+                                "requestType":{
+                                    "type":"integer"
+                                },
+                                "sellerId":{
+                                    "type":"string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "success": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/todosResponse"
+                            }
+                        }
+                    },
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "post": {
+                "summary": "For user registration",
+                "description": "",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string"
+                                },
+                                "mobile": {
+                                    "type":"object"
+                                },
+                                "password":{
+                                    "type":"string"
+                                },
+                                "ipAddress": {
+                                    "type": "string"
+                                },
+                                "preferredLanguage": {
+                                    "type": "object"
+                                },
+                                "countryCode":{
+                                    "type":"string"
+                                },
+                                "origin":{
+                                    "type":"string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "success": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/todosResponse"
+                            }
+                        }
+                    },
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "summary": "For login",
+                "description": "",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "mobile": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                },
+                                "userType": {
+                                    "type": "string"
+                                },
+                                "origin": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "success": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/todosResponse"
+                            }
+                        }
+                    },
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/logout": {
+            "post": {
+                "summary": "User Logout",
+                "description": "",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "authorization",
+                        "description": "Use JWT",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "origin": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "success": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logged": {
+            "get": {
+                "summary": "Check For logged in Users",
+                "description": "API for Checking logged in Users",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "origin",
+                        "description": "Enter trade here",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "name": "authorization",
+                        "description": "Use JWT",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "success": {
+                        "description": "Successful Response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "failed": {
+                        "description": "Failed  Response -> Here Success value will be: 'false' with Status as 200",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "todosResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "data": {
+                    "type": "object"
+                }
+            }
+        },
+        "InvalidResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "false"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

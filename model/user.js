@@ -176,6 +176,14 @@ const userSchema = new Schema({
       type: String,
       trim: true
     },
+  },
+  isMobileApp: {
+    type:Boolean,
+    default:false
+  },
+  isWhatsappApp: {
+    type: Boolean,
+    default: false
   }
 }, {
   versionKey: false,

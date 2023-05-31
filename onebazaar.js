@@ -19,6 +19,8 @@ app.use(cors({
     "https://www.trade.onebazaar.com",
     "https://www.tenders.onebazaar.com",
     "https://www.investment.onebazaar.com",
+    "https://v2trade.ekbazaar.com",
+    "https://v2trade.onebazaar.com"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
   credentials: true,

@@ -11,12 +11,15 @@ const cors = require('cors');
 require('./config/db').conn
 const router = require("./router");
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSso = require('./swagger_sso.json');
+
 const app = express();
 app.use(bodyParser.json());
 app.use(cors({
   origin: [
     /** development **/
-    "http://localhost:8085", "http://localhost:8080", "http://localhost:8071","http://localhost:8081",
+    "http://localhost:8085", "http://localhost:8080", "http://localhost:8071", "http://localhost:8081","http://localhost:8086",
     /** ekbazaar beta + live **/
     "https://www.trade.ekbazaar.com", "https://tradebazaar.tech-active.com",
     "https://www.tenders.ekbazaar.com", "https://ekbazaar.tech-active.com",
@@ -25,7 +28,9 @@ app.use(cors({
     "https://onebazaar.tech-active.com",
     "https://tradeonebazaar.tech-active.com",
     "https://tendersonebazaar.tech-active.com",
-    "https://investmentonebazaar.tech-active.com"
+    "https://investmentonebazaar.tech-active.com",
+    "https://v2trade.ekbazaar.com",
+    "https://v2trade.onebazaar.com"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
   credentials: true,
@@ -85,6 +90,14 @@ app.get("/", (req, res, next) => {
     title: "SSO-Server | Home",
   });
 });
+
+var options = {}
+
+app.use('/api-docs/sso', function (req, res, next) {
+  swaggerSso.host = req.get('host');
+  req.swaggerDoc = swaggerSso;
+  next();
+}, swaggerUi.serveFiles(swaggerSso, options), swaggerUi.setup());
 
 app.use((req, res, next) => {
   // catch 404 and forward to error handler

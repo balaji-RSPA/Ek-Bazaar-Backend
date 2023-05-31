@@ -31,6 +31,7 @@
     "mongoose": "^5.11.19",
     "morgan": "^1.9.0",
     "node-machine-id": "^1.1.12",
+    "swagger-ui-express": "^4.6.0",
     "uuid": "^3.4.0"
   },
   "devDependencies": {

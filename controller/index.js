@@ -201,14 +201,20 @@ const register = async (req, res, next) => {
     preferredLanguage,
     countryCode,
     origin,
+    whatsappChecked,
+    isMobileApp,
+    isWhatsappApp
   } = req.body;
   req.body.password = encodePassword(password);
+  console.log(req.body,"====================")
   const tenderUser = {
     email,
     countryCode: Boolean(mobile.countryCode) && mobile.countryCode || countryCode || "+91",
     mobile: Boolean(mobile.mobile) && parseInt(mobile.mobile) || mobile && parseInt(mobile) || null,
     isPhoneVerified: 2,
     password: req.body.password,
+    isMobileApp: isMobileApp || false,
+    isWhatsappApp: isWhatsappApp || false
     // preferredLanguage
   };
 
@@ -320,6 +326,8 @@ const register = async (req, res, next) => {
 
   const intrmid = encodedId();
   storeApplicationInCache(_url.origin, id, intrmid);
+
+  console.log(url,"-===bbbbbbbbbbbbbbbbbbbbbbbb", mobile)
   const response = await axios({
     url,
     method: "POST",
@@ -334,9 +342,13 @@ const register = async (req, res, next) => {
       preferredLanguage,
       countryCode,
       origin,
-      _base: req.headers.origin
+      _base: req.headers.origin,
+      whatsappChecked,
+      isMobileApp: isMobileApp || false,
+      isWhatsappApp: isWhatsappApp || false
     },
   });
+  console.log("🚀 ~ file: index.js:349 ~ register ~ response:", response)
   const { data } = response;
   if (data.success) {
     req.session.token = data.data.token;
@@ -568,6 +580,8 @@ const postRFP = async (req, res, next) => {
     requestType,
     sellerId,
   } = req.body;
+
+  console.log(JSON.stringify(req.body),"sdfgffffffffffffffffffffffffff")
 
   let user = await UserModel.findOne({ mobile: mobile.mobile })
     .select({

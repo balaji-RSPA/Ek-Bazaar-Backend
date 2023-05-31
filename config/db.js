@@ -13,6 +13,8 @@ const options = {
     serverSelectionTimeoutMS: 10000,
 };
 const url = `mongodb://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
+// let url = `mongodb://${config.host1}:${config.port},${config.host2}:${config.port},${config.host3}:${config.port}/${config.database}?replicaSet=${config.replicaName}&retryWrites=true&isMaster=true&readPreference=primary`;
+// url = `mongodb://${config.user}:${config.password}@${config.host1}:${config.port}/${config.database}`;
 
 const conn = mongoose.createConnection(url, options);
 if (conn.name) {
