@@ -15,7 +15,7 @@ const sellerTypeSchema = new Schema(
     group: {
       type: Number,
       default: 1
-    }
+    },
     
   },
   {
